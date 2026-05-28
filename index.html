@@ -2169,11 +2169,13 @@
             z-index: 4000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.25s ease, visibility 0.25s;
+            visibility: hidden;
         }
         .action-sheet-backdrop.active {
             opacity: 1;
             pointer-events: auto;
+            visibility: visible;
         }
         .action-sheet {
             position: absolute;
@@ -2184,10 +2186,12 @@
             padding: 8px 16px 32px 16px;
             z-index: 4001;
             transform: translateY(100%);
-            transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0.25s;
+            visibility: hidden;
         }
         .action-sheet.active {
             transform: translateY(0);
+            visibility: visible;
         }
         .action-sheet-group {
             background-color: #fff;
@@ -5802,27 +5806,7 @@ function filterWorkerByExactJob(jobName) {
             input.value = '';
             msgContainer.scrollTop = msgContainer.scrollHeight;
 
-            // Simulate reply after 2 seconds
-            setTimeout(() => {
-                const replies = [
-                    'Rendben, holnap ott leszek!',
-                    'Köszönöm, hamarosan visszajövök.',
-                    'Igen, megfelelő! 👍',
-                    'Oké, várlak!',
-                ];
-                const reply = replies[Math.floor(Math.random() * replies.length)];
-                const rb = document.createElement('div');
-                rb.style.cssText = `
-                    max-width:80%; padding:10px 14px; border-radius:18px 18px 18px 4px;
-                    background:#fff; color:var(--color-navy); font-size:14px;
-                    align-self:flex-start; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-                `;
-                const now2 = new Date();
-                const t2 = now2.getHours() + ':' + String(now2.getMinutes()).padStart(2, '0');
-                rb.innerHTML = reply + `<div style="font-size:10px; opacity:0.5; margin-top:4px;">${t2}</div>`;
-                msgContainer.appendChild(rb);
-                msgContainer.scrollTop = msgContainer.scrollHeight;
-            }, 2000);
+            // Automated replies disabled. The chat is strictly between users.
         }
 
         function triggerPhotoAttach() {

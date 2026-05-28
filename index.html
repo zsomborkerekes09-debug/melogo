@@ -2169,13 +2169,12 @@
             z-index: 4000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.25s ease, visibility 0.25s;
-            visibility: hidden;
+            transition: opacity 0.25s ease;
+            display: none;
         }
         .action-sheet-backdrop.active {
             opacity: 1;
             pointer-events: auto;
-            visibility: visible;
         }
         .action-sheet {
             position: absolute;
@@ -2186,12 +2185,11 @@
             padding: 8px 16px 32px 16px;
             z-index: 4001;
             transform: translateY(100%);
-            transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0.25s;
-            visibility: hidden;
+            transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: none;
         }
         .action-sheet.active {
             transform: translateY(0);
-            visibility: visible;
         }
         .action-sheet-group {
             background-color: #fff;
@@ -5755,8 +5753,9 @@ function filterWorkerByExactJob(jobName) {
             // Build simulated conversation dynamically based on job status
             let msgs = [];
             if (jobTitle === gameState.jobTitle && gameState.applied) {
+                const isEmployer = (currentRole === 'employer');
                 msgs = [
-                    { from: 'me', text: 'Szia! Jelentkeztem a munkádra, szívesen elvállalom.<br>Mikor és hogyan egyezünk meg a részletekről?', time: '14:00' }
+                    { from: isEmployer ? 'other' : 'me', text: 'Szia! Jelentkeztem a munkádra, szívesen elvállalom.<br>Mikor és hogyan egyezünk meg a részletekről?', time: '14:00' }
                 ];
             } else {
                 msgs = [
@@ -6408,8 +6407,16 @@ function filterWorkerByExactJob(jobName) {
             try {
                 const saved = localStorage.getItem('melogo_local_chats');
                 if (saved) {
-                    // Töröljük a korábbi beépített dummy beszélgetéseket, ha még benne lennének a felhasználó LocalStorage-ében
-                    localChats = JSON.parse(saved).filter(c => c.id !== 'chat_toth_janos' && c.id !== 'chat_nagy_peter' && c.id !== 'chat_kovacs_edit');
+                    // Töröljük a korábbi beépített dummy beszélgetéseket a nevük és ID-juk alapján is, így 100% kikerülnek a gyorsítótárból
+                    localChats = JSON.parse(saved).filter(c => 
+                        c.name !== 'Tóth János' && 
+                        c.name !== 'Nagy Péter' && 
+                        c.name !== 'Kovács Edit' && 
+                        c.name !== 'Kovács Edit (Megbízó)' && 
+                        c.id !== 'chat_toth_janos' && 
+                        c.id !== 'chat_nagy_peter' && 
+                        c.id !== 'chat_kovacs_edit'
+                    );
                     localStorage.setItem('melogo_local_chats', JSON.stringify(localChats));
                 } else {
                     localStorage.setItem('melogo_local_chats', JSON.stringify(localChats));
@@ -6596,13 +6603,32 @@ function filterWorkerByExactJob(jobName) {
             // Vibrate feedback
             if (navigator.vibrate) navigator.vibrate([40, 30, 40]);
             
-            document.getElementById('msg-action-sheet-backdrop').classList.add('active');
-            document.getElementById('msg-action-sheet').classList.add('active');
+            const sheet = document.getElementById('msg-action-sheet');
+            const backdrop = document.getElementById('msg-action-sheet-backdrop');
+            
+            sheet.style.display = 'block';
+            backdrop.style.display = 'block';
+            
+            // Force reflow
+            sheet.offsetHeight;
+            
+            backdrop.classList.add('active');
+            sheet.classList.add('active');
         }
 
         function closeMsgActionSheet() {
-            document.getElementById('msg-action-sheet-backdrop').classList.remove('active');
-            document.getElementById('msg-action-sheet').classList.remove('active');
+            const sheet = document.getElementById('msg-action-sheet');
+            const backdrop = document.getElementById('msg-action-sheet-backdrop');
+            
+            backdrop.classList.remove('active');
+            sheet.classList.remove('active');
+            
+            setTimeout(() => {
+                if (!sheet.classList.contains('active')) {
+                    sheet.style.display = 'none';
+                    backdrop.style.display = 'none';
+                }
+            }, 250);
         }
 
         function archiveSelectedChat() {

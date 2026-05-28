@@ -3412,6 +3412,7 @@
                         <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px;">
                             <div id="chat-detail-name" style="font-size: 16px; font-weight: 700; color: #0A0F2E;">Tóth János</div>
                             <div id="chat-detail-job" style="font-size: 12px; font-weight: 600; color: #22C55E;">Fűnyírás</div>
+                            <div id="chat-detail-datetime" style="font-size: 11px; font-weight: 500; color: #6B7280; margin-top: 1px;"></div>
                         </div>
                     </div>
                     
@@ -5697,16 +5698,56 @@ function filterWorkerByExactJob(jobName) {
             
             // Populate chat pinned summary info bar dynamically
             let matchedJob = localEmployerJobs.find(j => j.title === jobTitle);
-            if (!matchedJob) {
+            let jobTimeStr = '';
+            
+            if (matchedJob) {
+                jobTimeStr = matchedJob.datetime || matchedJob.time || '';
+            } else {
                 // Check mockJobs
                 const mock = mockJobs.find(j => j.title === jobTitle);
                 if (mock) {
                     matchedJob = {
                         location: mock.location,
                         price: mock.price,
-                        title: mock.title
+                        title: mock.title,
+                        time: mock.time
                     };
+                    jobTimeStr = mock.time || '';
+                } else {
+                    // Check localWorkerApplications
+                    const app = localWorkerApplications.find(a => a.title === jobTitle);
+                    if (app) {
+                        jobTimeStr = app.date || app.datetime || '';
+                    }
                 }
+            }
+            
+            // Format if it is YYYY-MM-DDTHH:MM
+            if (jobTimeStr && jobTimeStr.includes('T')) {
+                try {
+                    const parts = jobTimeStr.split('T');
+                    const dateParts = parts[0].split('-');
+                    const timeParts = parts[1].split(':');
+                    
+                    const year = dateParts[0];
+                    const month = parseInt(dateParts[1]);
+                    const day = dateParts[2];
+                    const hour = timeParts[0];
+                    const minute = timeParts[1];
+                    
+                    const monthNames = ['jan.', 'feb.', 'már.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+                    const monthName = monthNames[month - 1] || '';
+                    
+                    jobTimeStr = `${year}. ${monthName} ${day}. ${hour}:${minute}`;
+                } catch(e) {
+                    // fall back to raw if error
+                }
+            }
+            
+            const datetimeEl = document.getElementById('chat-detail-datetime');
+            if (datetimeEl) {
+                datetimeEl.innerText = jobTimeStr ? jobTimeStr : 'Nincs megadva időpont';
+                datetimeEl.style.display = jobTimeStr ? 'block' : 'none';
             }
             
             const pinnedAddr = document.getElementById('chat-pinned-address');

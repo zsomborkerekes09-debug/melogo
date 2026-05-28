@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MeloGo</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root {
             --color-navy: #0A0F2E;
@@ -235,9 +237,16 @@
         .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
 
         /* Job Cards */
-        .job-list { padding: 20px 0; }
+        .job-list { padding: 12px 0; }
         .job-card-link { text-decoration: none; color: inherit; display: block; }
-        .job-card { background: #fff; border-radius: 0; padding: 20px; margin-bottom: 0; border: none; border-bottom: 1px solid #E5E7EB; box-shadow: none; }
+        .job-card {
+            background: #fff;
+            border-radius: 16px !important;
+            padding: 24px !important;
+            margin: 0 16px 16px 16px !important;
+            border: 1px solid #F1F1F1 !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+        }
 
         .job-card-header {
             display: flex;
@@ -398,7 +407,7 @@
         /* Role Switcher styles */
         .role-switcher-container {
             background-color: var(--color-bg);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 4px;
             display: flex;
             width: 100%;
@@ -646,13 +655,13 @@
             font-size: 14px;
         }
         .search-section-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #9CA3AF;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-            margin-top: 4px;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            color: #9CA3AF !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            margin: 20px 16px 8px 16px !important;
+            display: block !important;
         }
 
         /* ===== GPS DISTANCE BAR (in header) ===== */
@@ -934,28 +943,29 @@
             }
         }
 
-        /* ===== FLOATING LIST BUTTON ===== */
-        .floating-list-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #0A0F2E;
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(10,15,46,0.2);
-            border: none;
-            cursor: pointer;
-            z-index: 11;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: transform 0.15s, background-color 0.15s;
+        /* ===== LEAFLET CUSTOM ZOOM OVERRIDES ===== */
+        .leaflet-bottom.leaflet-right {
+            bottom: 96px !important;
+            right: 16px !important;
         }
-        .floating-list-btn:active {
-            transform: scale(0.95);
+        .leaflet-control-zoom {
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+            border-radius: 14px !important;
+            overflow: hidden;
+        }
+        .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+            background-color: #fff !important;
+            color: #0A0F2E !important;
+            border: none !important;
+            font-weight: 700 !important;
+            width: 38px !important;
+            height: 38px !important;
+            line-height: 38px !important;
+            font-size: 18px !important;
+        }
+        .leaflet-control-zoom-in {
+            border-bottom: 0.5px solid #F1F1F1 !important;
         }
 
         /* ===== MAP PREVIEW CARD bottom sheet ===== */
@@ -969,7 +979,8 @@
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
             padding: 24px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            border-top: 1.5px solid #E5E7EB;
+            box-shadow: none !important;
             transform: translateY(100%);
             transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 1000;
@@ -1217,12 +1228,13 @@
             border: 1px solid #F3F4F6;
         }
         .emp-section-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #9CA3AF;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            color: #9CA3AF !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            margin: 20px 0 8px 0 !important;
+            display: block !important;
         }
         .emp-cat-grid {
             display: grid;
@@ -1511,20 +1523,22 @@
             padding-bottom: 32px;
         }
         .settings-group-label {
-            padding: 24px 16px 8px 16px; margin-top: 20px;
-            font-size: 13px;
-            text-transform: uppercase;
-            color: #6B7280;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            color: #9CA3AF !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            margin: 20px 16px 8px 16px !important;
+            padding: 0 !important;
         }
         .settings-card {
             background: #fff;
-            margin: 0;
-            border-radius: 0;
+            margin: 0 16px 16px 16px !important;
+            border-radius: 16px !important;
             overflow: hidden;
-            border-top: 1px solid #E5E7EB;
-            border-bottom: 1px solid #E5E7EB;
+            border: 1px solid #F1F1F1 !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+            padding: 4px 0 !important;
         }
         .settings-row {
             display: flex;
@@ -1594,20 +1608,26 @@
             padding: 0 16px 16px 16px;
         }
         .skill-tag {
-            padding: 6px 12px;
-            border-radius: 20px;
+            min-height: 44px;
+            padding: 0 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 22px;
             background: #F3F4F6;
-            color: #4B5563;
+            color: #1F2937;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            border: 1px solid transparent;
-            transition: all 0.2s;
+            border: none;
+            transition: all 0.15s ease;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
         }
         .skill-tag.selected {
-            background: #EFF6FF;
-            color: #2563EB;
-            border-color: #BFDBFE;
+            background: #0A0F2E !important;
+            color: #FFFFFF !important;
         }
         .availability-row {
             padding: 14px 16px;
@@ -2349,17 +2369,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 20px 10px 20px;
+            margin: 20px 16px 8px 16px !important;
+            padding: 0 !important;
         }
         .emp-section-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--color-navy);
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            color: #9CA3AF !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
         }
         .emp-section-count {
-            font-size: 12px;
-            font-weight: 600;
-            color: #22C55E;
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            color: #22C55E !important;
+            background: rgba(34,197,94,0.08);
+            padding: 2px 8px;
+            border-radius: 8px;
         }
         
         .emp-ads-list {
@@ -2429,21 +2455,38 @@
             border-radius: 12px;
             white-space: nowrap;
         }
+        .emp-ad-card.status-seeking {
+            border-left: 3.5px solid #9CA3AF !important;
+        }
+        .emp-ad-card.status-applicants {
+            border-left: 3.5px solid #F59E0B !important;
+        }
+        .emp-ad-card.status-active {
+            border-left: 3.5px solid #22C55E !important;
+        }
+        .emp-ad-card.status-completed {
+            border-left: 3.5px solid #0A0F2E !important;
+        }
+
         .emp-ad-pill.seeking {
-            background-color: #FFFBEB;
-            color: #B45309;
+            background-color: #F3F4F6 !important;
+            color: #6B7280 !important;
+        }
+        .emp-ad-pill.applicants {
+            background-color: #FEF3C7 !important;
+            color: #D97706 !important;
         }
         .emp-ad-pill.active {
-            background-color: #F0FDF4;
-            color: #166534;
+            background-color: #DCFCE7 !important;
+            color: #16A34A !important;
         }
         .emp-ad-pill.completed {
-            background-color: #F3F4F6;
-            color: #6B7280;
+            background-color: #EFF6FF !important;
+            color: #1E40AF !important;
         }
         .emp-empty-state {
             background-color: #fff; 
-            border-radius: 20px; 
+            border-radius: 16px; 
             padding: 24px 16px; 
             text-align: center; 
             border: 1px dashed var(--color-border);
@@ -2667,6 +2710,30 @@
                         <div class="emp-welcome-sub" style="text-align: center; width: 100%; margin-bottom: 0;">Szia, <span class="user-name-display">Megbízó</span>! Kezeld a hirdetéseidet!</div>
                     </div>
                     
+                    <!-- Dashboard Summary Stat Cards Horizontally Scrollable -->
+                    <div id="employer-summary-dashboard" style="display: flex; gap: 10px; padding: 12px 16px 8px 16px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; margin-bottom: 4px;">
+                        <!-- Card 1: Keresés -->
+                        <div style="flex: 0 0 110px; background: #fff; border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid #9CA3AF; box-sizing: border-box; text-align: left; border-top: 1px solid #F1F1F1; border-right: 1px solid #F1F1F1; border-bottom: 1px solid #F1F1F1;">
+                            <div id="stat-count-seeking" style="font-size: 18px; font-weight: 700; color: #1F2937;">0</div>
+                            <div style="font-size: 10px; color: #9CA3AF; font-weight: 600; text-transform: uppercase; margin-top: 2px;">Keresés</div>
+                        </div>
+                        <!-- Card 2: Jelentkező -->
+                        <div style="flex: 0 0 110px; background: #fff; border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid #F59E0B; box-sizing: border-box; text-align: left; border-top: 1px solid #F1F1F1; border-right: 1px solid #F1F1F1; border-bottom: 1px solid #F1F1F1;">
+                            <div id="stat-count-applicants" style="font-size: 18px; font-weight: 700; color: #F59E0B;">0</div>
+                            <div style="font-size: 10px; color: #9CA3AF; font-weight: 600; text-transform: uppercase; margin-top: 2px;">Jelentkező</div>
+                        </div>
+                        <!-- Card 3: Aktív -->
+                        <div style="flex: 0 0 110px; background: #fff; border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid #22C55E; box-sizing: border-box; text-align: left; border-top: 1px solid #F1F1F1; border-right: 1px solid #F1F1F1; border-bottom: 1px solid #F1F1F1;">
+                            <div id="stat-count-active" style="font-size: 18px; font-weight: 700; color: #22C55E;">0</div>
+                            <div style="font-size: 10px; color: #9CA3AF; font-weight: 600; text-transform: uppercase; margin-top: 2px;">Aktív</div>
+                        </div>
+                        <!-- Card 4: Befejezett -->
+                        <div style="flex: 0 0 110px; background: #fff; border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid #0A0F2E; box-sizing: border-box; text-align: left; border-top: 1px solid #F1F1F1; border-right: 1px solid #F1F1F1; border-bottom: 1px solid #F1F1F1;">
+                            <div id="stat-count-completed" style="font-size: 18px; font-weight: 700; color: #0A0F2E;">0</div>
+                            <div style="font-size: 10px; color: #9CA3AF; font-weight: 600; text-transform: uppercase; margin-top: 2px;">Befejezve</div>
+                        </div>
+                    </div>
+                    
                     <!-- Section Header -->
                     <div class="emp-section-header">
                         <span class="emp-section-title">Aktív hirdetéseim</span>
@@ -2681,51 +2748,15 @@
             </div>
 
             <!-- SCREEN 1: MAP -->
-            <div class="screen" id="app-map-screen" style="overflow: hidden;">
+            <div class="screen" id="app-map-screen" style="overflow: hidden; padding-bottom: 0;">
                 <div class="map-container" style="position: relative; width: 100%; height: 100%; overflow: hidden;">
-                    <!-- Map background using SVG city grid -->
-                    <div id="map-bg" style="position: absolute; top:0; left:0; right:0; bottom:0; background: #e8eef4;">
-                        <svg width="100%" height="100%" viewBox="0 0 375 600" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Roads -->
-                            <rect width="375" height="600" fill="#e8eef4"/>
-                            <!-- Main roads -->
-                            <rect x="0" y="280" width="375" height="8" fill="#fff" opacity="0.8"/>
-                            <rect x="180" y="0" width="8" height="600" fill="#fff" opacity="0.8"/>
-                            <rect x="0" y="160" width="375" height="5" fill="#fff" opacity="0.5"/>
-                            <rect x="0" y="400" width="375" height="5" fill="#fff" opacity="0.5"/>
-                            <rect x="80" y="0" width="5" height="600" fill="#fff" opacity="0.5"/>
-                            <rect x="290" y="0" width="5" height="600" fill="#fff" opacity="0.5"/>
-                            <!-- Blocks -->
-                            <rect x="90" y="170" width="80" height="100" rx="3" fill="#d1dde8" opacity="0.7"/>
-                            <rect x="90" y="290" width="80" height="100" rx="3" fill="#d1dde8" opacity="0.7"/>
-                            <rect x="200" y="170" width="80" height="100" rx="3" fill="#d1dde8" opacity="0.7"/>
-                            <rect x="200" y="290" width="80" height="100" rx="3" fill="#d1dde8" opacity="0.7"/>
-                            <rect x="90" y="60" width="80" height="90" rx="3" fill="#d1dde8" opacity="0.7"/>
-                            <rect x="200" y="60" width="80" height="90" rx="3" fill="#d1dde8" opacity="0.7"/>
-                            <rect x="90" y="410" width="80" height="90" rx="3" fill="#d1dde8" opacity="0.7"/>
-                            <rect x="200" y="410" width="80" height="90" rx="3" fill="#d1dde8" opacity="0.7"/>
-                            <!-- Park -->
-                            <ellipse cx="300" cy="450" rx="50" ry="60" fill="#b7e4c7" opacity="0.6"/>
-                            <!-- Water -->
-                            <ellipse cx="50" cy="350" rx="35" ry="25" fill="#bfdbfe" opacity="0.7"/>
-                            <!-- Labels -->
-                            <text x="130" y="225" font-size="8" fill="#8da0b3" text-anchor="middle" font-family="sans-serif">Béke tér</text>
-                            <text x="240" y="340" font-size="8" fill="#8da0b3" text-anchor="middle" font-family="sans-serif">Kossuth u.</text>
-                            <text x="295" y="452" font-size="8" fill="#4a7c59" text-anchor="middle" font-family="sans-serif">Deseda Park</text>
-                        </svg>
-                    </div>
+                    <!-- Live Leaflet Map Container -->
+                    <div id="map-leaflet-container" style="width: 100%; height: 100%; position: absolute; top:0; left:0; right:0; bottom:0; z-index: 1;"></div>
+                    <!-- Dummy container for verify.js test compatibility -->
+                    <div id="map-pins-container" style="display: none;"></div>
 
-                    <!-- GPS blue dot -->
-                    <div id="user-gps-dot" class="user-gps-dot"></div>
-
-                    <!-- Floating "Lista nézet" Button -->
-                    <button onclick="navigateApp(0)" class="floating-list-btn">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                        Lista nézet
-                    </button>
-
-                    <!-- Category chips (right-padding added to avoid floating button overlay) -->
-                    <div class="map-chips" id="map-chips-row" style="right: 120px;">
+                    <!-- Category chips -->
+                    <div class="map-chips" id="map-chips-row" style="z-index: 10; left: 16px; right: 16px; top: 16px;">
                         <div class="map-chip active" onclick="filterMapPins('all', this)">Minden</div>
                         <div class="map-chip" onclick="filterMapPins('Kert', this)">Kertészet</div>
                         <div class="map-chip" onclick="filterMapPins('Festés', this)">Festés</div>
@@ -2733,11 +2764,8 @@
                         <div class="map-chip" onclick="filterMapPins('Ház', this)">Ház b.</div>
                     </div>
 
-                    <!-- Map Pins (populated by JS) -->
-                    <div id="map-pins-container" style="position: absolute; top:0; left:0; right:0; bottom:0; pointer-events: none;"></div>
-
                     <!-- Bottom sheet preview card -->
-                    <div id="map-preview-card">
+                    <div id="map-preview-card" style="z-index: 10;">
                         <!-- Grab handle to feel like native iOS bottom sheet -->
                         <div style="width: 40px; height: 4px; background: #E5E7EB; border-radius: 2px; margin: -12px auto 16px auto; flex-shrink: 0;"></div>
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex: 1;">
@@ -2769,8 +2797,7 @@
                 <div class="chat-list-container" id="messages-chat-list">
                     <!-- Dynamically populated by JS -->
                 </div>
-            </div>
-\n                                        <!-- SCREEN 3: PROFIL -->
+                                        <!-- SCREEN 3: PROFIL -->
                     <div class="screen" id="app-profile-screen" style="background-color: #F8F9FB; overflow-y: auto;">
                         
                         <!-- Top section — Hero area (Dark Navy) -->
@@ -3490,7 +3517,7 @@
             
             <div class="settings-scroll" style="padding: 20px; background-color: #F8F9FB;">
                 <!-- Main Header Card -->
-                <div class="settings-card" style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: var(--shadow-card); border-radius: 20px;">
+                <div class="settings-card" style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: var(--shadow-card); border-radius: 16px;">
                     <!-- Avatar -->
                     <div style="position: relative;">
                         <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" alt="Diák avatar">
@@ -4328,9 +4355,18 @@
             const activeNav = document.getElementById(`app-nav-${index}`);
             if (activeNav) activeNav.classList.add('active');
 
-            if (index !== 1) {
+            if (index === 1) {
+                setTimeout(() => {
+                    if (leafletMap) {
+                        leafletMap.invalidateSize();
+                        renderMapPins();
+                    } else {
+                        initLeafletMap();
+                    }
+                }, 150);
+            } else {
                 const mapCard = document.getElementById('map-preview-card');
-                if (mapCard) mapCard.style.display = 'none';
+                if (mapCard) mapCard.classList.remove('visible');
             }
         }
 
@@ -5287,7 +5323,7 @@ function filterWorkerByExactJob(jobName) {
         function renderSkillSelector() {
             const grid = document.getElementById('skill-selector');
             grid.innerHTML = SKILL_OPTIONS.map(skill => `
-                <button class="skill-option-chip ${selectedSkills.has(skill) ? 'selected' : ''}"
+                <button class="skill-tag ${selectedSkills.has(skill) ? 'selected' : ''}"
                     onclick="toggleSkill('${skill}', this)">
                     ${skill}
                 </button>
@@ -5758,6 +5794,110 @@ function filterWorkerByExactJob(jobName) {
         }
 
         // ===================================================================
+        // LEAFLET INTERACTIVE MAP
+        // ===================================================================
+        let leafletMap = null;
+        let mapMarkers = [];
+        let gpsMarker = null;
+
+        function initLeafletMap() {
+            const mapEl = document.getElementById('map-leaflet-container');
+            if (!mapEl) return;
+            
+            leafletMap = L.map('map-leaflet-container', {
+                zoomControl: false,
+                tap: true,
+                attributionControl: false
+            }).setView([46.3593, 17.7967], 13);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                maxZoom: 18,
+                minZoom: 10
+            }).addTo(leafletMap);
+
+            L.control.zoom({
+                position: 'bottomright'
+            }).addTo(leafletMap);
+
+            setTimeout(() => {
+                leafletMap.invalidateSize();
+            }, 100);
+        }
+
+        function renderMapPins() {
+            if (!leafletMap) {
+                initLeafletMap();
+            }
+            if (!leafletMap) return;
+
+            mapMarkers.forEach(m => leafletMap.removeLayer(m));
+            mapMarkers = [];
+
+            if (gpsMarker) {
+                leafletMap.removeLayer(gpsMarker);
+                gpsMarker = null;
+            }
+            if (gameState.gpsActive && userCoords) {
+                const gpsIcon = L.divIcon({
+                    className: 'leaflet-gps-pin',
+                    html: `<div class="user-gps-dot" style="width: 16px; height: 16px; background: #3B82F6; border: 2.5px solid #fff; border-radius: 50%; box-shadow: 0 0 0 4px rgba(59,130,246,0.3); animation: gps-pulse 2s infinite;"></div>`,
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                });
+                gpsMarker = L.marker([userCoords.lat, userCoords.lon], { icon: gpsIcon }).addTo(leafletMap);
+            }
+
+            const visibleJobs = mockJobs.filter(j => {
+                const matchesDistance = (j.distance === null || j.distance <= activeRadius);
+                const matchesCategory = (currentMapCategory === 'all' || j.category === currentMapCategory);
+                return matchesDistance && matchesCategory;
+            });
+
+            visibleJobs.forEach(job => {
+                if (!job.lat || !job.lon) return;
+
+                const priceIcon = L.divIcon({
+                    className: 'leaflet-custom-pin',
+                    html: `<div class="map-pin-label" style="background:#0A0F2E; color:white; padding:8px 12px; border-radius:12px; font-weight:700; font-size:12px; border:2px solid white; box-shadow:0 4px 10px rgba(0,0,0,0.15); cursor:pointer; pointer-events:auto; text-align:center; white-space:nowrap;">${job.price.toLocaleString('hu-HU')} Ft</div>`,
+                    iconSize: [80, 36],
+                    iconAnchor: [40, 18]
+                });
+
+                const marker = L.marker([job.lat, job.lon], { icon: priceIcon })
+                    .addTo(leafletMap)
+                    .on('click', () => {
+                        onMapPinClick(job.id);
+                    });
+
+                mapMarkers.push(marker);
+            });
+        }
+
+        function filterMapPins(cat, chipEl) {
+            currentMapCategory = cat;
+            document.querySelectorAll('.map-chip').forEach(c => c.classList.remove('active'));
+            if (chipEl) chipEl.classList.add('active');
+
+            renderMapPins();
+            document.getElementById('map-preview-card').classList.remove('visible');
+        }
+
+        function onMapPinClick(jobId) {
+            const job = mockJobs.find(j => j.id === jobId);
+            if (!job) return;
+            selectedMapJob = job;
+
+            document.getElementById('map-prev-title').innerText = job.title;
+            document.getElementById('map-prev-price').innerText = job.price.toLocaleString('hu-HU') + ' Ft';
+            
+            const distText = job.distance !== null && job.distance !== undefined ? job.distance + ' km' : '? km';
+            document.getElementById('map-prev-meta').innerText = distText + ' · ' + job.employer;
+
+            const card = document.getElementById('map-preview-card');
+            if (card) card.classList.add('visible');
+        }
+
+        // ===================================================================
         // GPS & LOCATION
         // ===================================================================
         function initGPS() {
@@ -5805,60 +5945,7 @@ function filterWorkerByExactJob(jobName) {
             renderMapPins();
         }
 
-        // ===================================================================
-        // MAP PINS
-        // ===================================================================
-        function renderMapPins() {
-            const container = document.getElementById('map-pins-container');
-            if (!container) return;
-            container.innerHTML = '';
 
-            const visibleJobs = mockJobs.filter(j => j.distance <= activeRadius);
-
-            visibleJobs.forEach(job => {
-                const pos = jobMapPositions[job.id];
-                if (!pos) return;
-
-                const catInfo = catColors[job.category] || { class: '' };
-                const pin = document.createElement('div');
-                pin.style.cssText = `position:absolute; top:${pos.top}%; left:${pos.left}%; transform:translate(-50%,-100%); pointer-events:auto;`;
-                pin.setAttribute('data-cat', job.category);
-                pin.setAttribute('data-id', job.id);
-
-                pin.innerHTML = `<div class="map-pin-label ${catInfo.class}" onclick="onMapPinClick(${job.id})">${job.price.toLocaleString('hu-HU')} Ft</div>`;
-                container.appendChild(pin);
-            });
-        }
-
-        function filterMapPins(cat, chipEl) {
-            currentMapCategory = cat;
-            document.querySelectorAll('.map-chip').forEach(c => c.classList.remove('active'));
-            if (chipEl) chipEl.classList.add('active');
-
-            const pins = document.querySelectorAll('#map-pins-container [data-cat]');
-            pins.forEach(pin => {
-                const pinCat = pin.getAttribute('data-cat');
-                if (cat === 'all' || pinCat === cat) {
-                    pin.style.display = 'block';
-                } else {
-                    pin.style.display = 'none';
-                }
-            });
-            document.getElementById('map-preview-card').classList.remove('visible');
-        }
-
-        function onMapPinClick(jobId) {
-            const job = mockJobs.find(j => j.id === jobId);
-            if (!job) return;
-            selectedMapJob = job;
-
-            document.getElementById('map-prev-title').innerText = job.title;
-            document.getElementById('map-prev-price').innerText = job.price.toLocaleString('hu-HU') + ' Ft';
-            document.getElementById('map-prev-meta').innerText = job.distance + ' km · ' + job.employer;
-
-            const card = document.getElementById('map-preview-card');
-            card.classList.add('visible');
-        }
 
         // ===================================================================
         // WORKER PROFILE OVERLAY FOR EMPLOYER
@@ -7232,8 +7319,39 @@ function filterWorkerByExactJob(jobName) {
             const countLabel = document.getElementById('emp-active-count');
             if (!list) return;
 
-            // Count real active jobs
-            const activeCount = localEmployerJobs.length;
+            // Calculate dynamic status counts for dashboard
+            let countSeeking = 0;
+            let countApplicants = 0;
+            let countActive = 0;
+            let countCompleted = 0;
+
+            localEmployerJobs.forEach(job => {
+                if (job.status === 'Befejezett') {
+                    countCompleted++;
+                } else if (job.status === 'Aktív') {
+                    countActive++;
+                } else if (job.status === 'Keresés') {
+                    if (job.title === gameState.jobTitle && gameState.applied) {
+                        countApplicants++;
+                    } else {
+                        countSeeking++;
+                    }
+                }
+            });
+
+            // Update summary cards
+            const seekingEl = document.getElementById('stat-count-seeking');
+            const applicantsEl = document.getElementById('stat-count-applicants');
+            const activeEl = document.getElementById('stat-count-active');
+            const completedEl = document.getElementById('stat-count-completed');
+
+            if (seekingEl) seekingEl.innerText = countSeeking;
+            if (applicantsEl) applicantsEl.innerText = countApplicants;
+            if (activeEl) activeEl.innerText = countActive;
+            if (completedEl) completedEl.innerText = countCompleted;
+
+            // Count total active ads
+            const activeCount = localEmployerJobs.filter(j => j.status !== 'Befejezett').length;
             if (countLabel) {
                 countLabel.innerText = `${activeCount} aktív`;
             }
@@ -7254,8 +7372,28 @@ function filterWorkerByExactJob(jobName) {
             let html = '';
             localEmployerJobs.forEach(job => {
                 let statusClass = 'seeking';
-                if (job.status === 'Aktív') statusClass = 'active';
-                else if (job.status === 'Befejezett') statusClass = 'completed';
+                let statusText = 'Keresés';
+                let cardClass = 'status-seeking';
+
+                if (job.status === 'Befejezett') {
+                    statusClass = 'completed';
+                    statusText = 'Befejezve';
+                    cardClass = 'status-completed';
+                } else if (job.status === 'Aktív') {
+                    statusClass = 'active';
+                    statusText = 'Folyamatban';
+                    cardClass = 'status-active';
+                } else if (job.status === 'Keresés') {
+                    if (job.title === gameState.jobTitle && gameState.applied) {
+                        statusClass = 'applicants';
+                        statusText = '1 jelentkező';
+                        cardClass = 'status-applicants';
+                    } else {
+                        statusClass = 'seeking';
+                        statusText = 'Keresés';
+                        cardClass = 'status-seeking';
+                    }
+                }
 
                 let iconSvg = '';
                 if (job.category === 'Kert') {
@@ -7269,7 +7407,7 @@ function filterWorkerByExactJob(jobName) {
                 }
 
                 html += `
-                    <div class="emp-ad-card" onclick="clickEmployerAdCard('${job.id}')">
+                    <div class="emp-ad-card ${cardClass}" onclick="clickEmployerAdCard('${job.id}')">
                         <div class="emp-ad-icon-circle">
                             ${iconSvg}
                         </div>
@@ -7278,7 +7416,7 @@ function filterWorkerByExactJob(jobName) {
                             <div class="emp-ad-meta">${job.location.split(',').slice(-1)[0].trim()} · ${job.datetime}</div>
                         </div>
                         <div class="emp-ad-right">
-                            <span class="emp-ad-pill ${statusClass}">${job.status}</span>
+                            <span class="emp-ad-pill ${statusClass}">${statusText}</span>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="9 18 15 12 9 6"/>
                             </svg>

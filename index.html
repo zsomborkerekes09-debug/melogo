@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MeloGo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --color-navy: #0A0F2E;
@@ -20,7 +20,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'DM Sans', sans-serif !important;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -883,46 +883,105 @@
 
         /* ===== MAP PINS ===== */
         .map-pin-label {
-            background: var(--color-navy);
+            background: #0A0F2E;
             color: #fff;
-            padding: 5px 9px;
-            border-radius: 10px;
-            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: 700;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
             position: relative;
             cursor: pointer;
             transition: transform 0.15s;
             pointer-events: auto;
+            border: 1.5px solid #fff;
         }
         .map-pin-label:active { transform: scale(0.95); }
-        .map-pin-label::after {
+
+        /* ===== USER GPS DOT ===== */
+        .user-gps-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            background-color: #2563EB;
+            border: 2.5px solid #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+            z-index: 5;
+            pointer-events: none;
+        }
+        .user-gps-dot::after {
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid var(--color-navy);
-        }
-        .map-pin-label.cat-kert { background: #16a34a; }
-        .map-pin-label.cat-kert::after { border-top-color: #16a34a; }
-        .map-pin-label.cat-auto { background: #d97706; }
-        .map-pin-label.cat-auto::after { border-top-color: #d97706; }
-        .map-pin-label.cat-festes { background: #7c3aed; }
-        .map-pin-label.cat-festes::after { border-top-color: #7c3aed; }
-        .map-pin-label.cat-haz { background: #2563eb; }
-        .map-pin-label.cat-haz::after { border-top-color: #2563eb; }
-
-        /* ===== MAP PREVIEW CARD animation ===== */
-        #map-preview-card {
-            transition: opacity 0.2s, transform 0.2s;
+            top: -2.5px;
+            left: -2.5px;
+            width: 14px;
+            height: 14px;
+            border: 2.5px solid #2563EB;
+            border-radius: 50%;
+            animation: pulse-gps 2s infinite ease-out;
             opacity: 0;
-            transform: translateY(10px);
+            box-sizing: content-box;
+        }
+        @keyframes pulse-gps {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        /* ===== FLOATING LIST BUTTON ===== */
+        .floating-list-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #0A0F2E;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(10,15,46,0.2);
+            border: none;
+            cursor: pointer;
+            z-index: 11;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.15s, background-color 0.15s;
+        }
+        .floating-list-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== MAP PREVIEW CARD bottom sheet ===== */
+        #map-preview-card {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 280px;
+            background: #fff;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            transform: translateY(100%);
+            transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         #map-preview-card.visible {
-            opacity: 1;
             transform: translateY(0);
         }
 
@@ -1055,6 +1114,26 @@
             border-color: transparent;
         }
         .sort-pill.active svg { stroke: #fff; }
+
+        /* ===== CATEGORY FILTER BUTTONS ===== */
+        .category-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+            box-sizing: border-box;
+        }
+        .category-btn.active {
+            background-color: var(--color-navy) !important;
+            color: #fff !important;
+            border-color: transparent !important;
+        }
 
         /* ===== APPLY BUTTON ===== */
         .apply-btn-main {
@@ -2561,11 +2640,11 @@
 
                     <!-- Category Pills -->
                     <div class="categories-row" style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 10px; padding: 0 16px 4px 16px; scrollbar-width: none;">
-                        <div class="category-btn active" onclick="filterWorkerJobs('Összes')" style="padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; background-color: var(--color-navy); color: #fff;">Minden</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Kert')" style="padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; background-color: #fff; border: 1px solid var(--color-border); color: var(--color-text);">Kertészet</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Festés')" style="padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; background-color: #fff; border: 1px solid var(--color-border); color: var(--color-text);">Festés</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Autó')" style="padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; background-color: #fff; border: 1px solid var(--color-border); color: var(--color-text);">Autó</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Ház')" style="padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; background-color: #fff; border: 1px solid var(--color-border); color: var(--color-text);">Ház b.</div>
+                        <div class="category-btn active" onclick="filterWorkerJobs('Összes')">Minden</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Kert')">Kertészet</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Festés')">Festés</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Autó')">Autó</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Ház')">Ház b.</div>
                     </div>
 
                     <!-- Sort Pills -->
@@ -2637,8 +2716,17 @@
                         </svg>
                     </div>
 
-                    <!-- Category chips -->
-                    <div class="map-chips" id="map-chips-row">
+                    <!-- GPS blue dot -->
+                    <div id="user-gps-dot" class="user-gps-dot"></div>
+
+                    <!-- Floating "Lista nézet" Button -->
+                    <button onclick="navigateApp(0)" class="floating-list-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        Lista nézet
+                    </button>
+
+                    <!-- Category chips (right-padding added to avoid floating button overlay) -->
+                    <div class="map-chips" id="map-chips-row" style="right: 120px;">
                         <div class="map-chip active" onclick="filterMapPins('all', this)">Minden</div>
                         <div class="map-chip" onclick="filterMapPins('Kert', this)">Kertészet</div>
                         <div class="map-chip" onclick="filterMapPins('Festés', this)">Festés</div>
@@ -2649,16 +2737,18 @@
                     <!-- Map Pins (populated by JS) -->
                     <div id="map-pins-container" style="position: absolute; top:0; left:0; right:0; bottom:0; pointer-events: none;"></div>
 
-                    <!-- Floating preview card -->
-                    <div id="map-preview-card" style="position: absolute; bottom: 20px; left: 16px; right: 16px; background: white; border-radius: 20px; padding: 16px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.12);">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
-                            <div>
-                                <div class="job-title" id="map-prev-title">Fűnyírás a Desedánál</div>
-                                <div style="font-size: 12px; color: var(--color-text-light); margin-top:2px;" id="map-prev-meta">2.5 km · Tóth János</div>
+                    <!-- Bottom sheet preview card -->
+                    <div id="map-preview-card">
+                        <!-- Grab handle to feel like native iOS bottom sheet -->
+                        <div style="width: 40px; height: 4px; background: #E5E7EB; border-radius: 2px; margin: -12px auto 16px auto; flex-shrink: 0;"></div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex: 1;">
+                            <div style="text-align: left; padding-right: 12px;">
+                                <div class="job-title" id="map-prev-title" style="font-size: 17px; font-weight: 700; color: #0A0F2E; line-height: 1.3;">Fűnyírás a Desedánál</div>
+                                <div style="font-size: 13px; color: #6B7280; font-weight: 500; margin-top:6px;" id="map-prev-meta">2.5 km · Tóth János</div>
                             </div>
-                            <div class="job-price" id="map-prev-price">8 000 Ft</div>
+                            <div class="job-price" id="map-prev-price" style="font-size: 19px; font-weight: 700; color: #22C55E; white-space: nowrap;">8 000 Ft</div>
                         </div>
-                        <button class="job-apply-btn" onclick="openJobDetailFromMap()" style="border-radius:12px; font-size:13px; padding:10px;">Részletek →</button>
+                        <button class="job-apply-btn" onclick="openJobDetailFromMap()" style="width: 100%; height: 52px; background: #0A0F2E; color: white; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(10,15,46,0.15); transition: transform 0.1s ease;">Részletek és Jelentkezés →</button>
                     </div>
                 </div>
             </div>
@@ -2772,7 +2862,7 @@
                                     </div>
                                     <div style="margin-left: 48px; height: 0.5px; background-color: #E5E7EB;"></div>
                                     
-                                    <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('worker-settings').classList.add('open'); setTimeout(() => { document.querySelector('#skill-selector').scrollIntoView({ behavior: 'smooth' }); }, 300);">
+                                    <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('worker-settings').classList.add('open'); setTimeout(() => { const sc = document.getElementById('worker-settings-scroll'); const target = document.getElementById('skill-selector'); if (sc && target) { sc.scrollTo({ top: target.offsetTop - 100, behavior: 'smooth' }); } }, 300);">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0F2E" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Szaktudások kezelése</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -2844,16 +2934,6 @@
                                 <span style="font-size: 11px; font-weight: 700;">Díj: <span id="worker-job-detail-price" style="color: var(--color-green-go);">12 000 Ft</span></span>
                                 <span style="font-size: 11px; color: var(--color-text-muted);" id="worker-job-detail-loc">Rómahegyi u. 12.</span>
                             </div>
-                            
-                            <div style="background-color: #f5f7ff; border: 0.5px solid rgba(10,15,46,0.1); border-radius: 10px; padding: 8px; display: flex; align-items: center; gap: 8px;">
-                                <span style="display: flex; width: 26px; height: 26px; border-radius: 6px; background-color: rgba(10,15,46,0.07); align-items: center; justify-content: center; flex-shrink: 0; color: #0A0F2E;">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                </span>
-                                <div style="flex-grow: 1; text-align: left;">
-                                    <p style="font-size: 10px; font-weight: 600; color: #0A0F2E; line-height: 1;">Generali Biztosítás véd</p>
-                                    <p style="font-size: 9px; color: #86868b; margin-top: 2px; line-height: 1.4;">Felelősségbiztosítás fedezi az esetleges kárfelelősséget 10M Ft-ig.</p>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- ÉLŐ CHAT BESZÉLGETÉS A DIÁKNÁL -->
@@ -2885,7 +2965,7 @@
                         <div class="settings-title">Beállítások</div>
                     </div>
 
-                    <div class="settings-scroll">
+                    <div class="settings-scroll" id="worker-settings-scroll">
 
                         <!-- Profil szekció -->
                         <div>
@@ -2924,6 +3004,7 @@
                                     </div>
                                     <span class="settings-row-label">Válassz készségeket</span>
                                 </div>
+                                <div id="skills-warning-msg" style="display:none; color:#EF4444; font-size:12px; font-weight:600; padding: 4px 16px; margin-bottom: 8px; text-align: left;">Maximum 6 szaktudást adhatsz hozzá</div>
                                 <div class="skill-selector-grid" id="skill-selector">
                                     <!-- Generatedby JS -->
                                 </div>
@@ -3399,7 +3480,74 @@
                     <button class="push-banner-close" onclick="document.getElementById('push-banner').classList.remove('show')">×</button>
                 </div>
 
-                <!-- ===== CHAT DETAIL OVERLAY ===== -->
+        <!-- ===== WORKER PROFILE OVERLAY FOR EMPLOYER ===== -->
+        <div class="settings-overlay" id="worker-profile-overlay" style="z-index: 3000;">
+            <div class="settings-header">
+                <button class="settings-back-btn" onclick="document.getElementById('worker-profile-overlay').classList.remove('open')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A0F2E" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <div class="settings-title">Munkavállaló Profilja</div>
+            </div>
+            
+            <div class="settings-scroll" style="padding: 20px; background-color: #F8F9FB;">
+                <!-- Main Header Card -->
+                <div class="settings-card" style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: var(--shadow-card); border-radius: 20px;">
+                    <!-- Avatar -->
+                    <div style="position: relative;">
+                        <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" alt="Diák avatar">
+                        <div id="wp-verified" style="position: absolute; bottom: 0; right: 0; background: #22C55E; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <h2 id="wp-name" style="font-size: 19px; font-weight: 700; color: #0A0F2E; font-family: 'DM Sans', sans-serif;">Kovács Bence</h2>
+                        </div>
+                        <p id="wp-trust-badge" style="display: inline-block; background: rgba(37,99,235,0.08); color: #2563EB; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; margin-top: 6px;">Megbízható Diák</p>
+                    </div>
+
+                    <!-- Stars & Stats Grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; width: 100%; border-top: 0.5px solid #F1F1F1; padding-top: 16px; margin-top: 8px;">
+                        <div style="border-right: 0.5px solid #F1F1F1;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 16px; font-weight: 700; color: #D97706;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#D97706" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                <span id="wp-stars">4.9</span>
+                            </div>
+                            <p style="font-size: 10px; color: #9CA3AF; font-weight: 500; margin-top: 2px;">Átlagos Értékelés</p>
+                        </div>
+                        <div>
+                            <div id="wp-completed-count" style="font-size: 16px; font-weight: 700; color: #0A0F2E;">14</div>
+                            <p style="font-size: 10px; color: #9CA3AF; font-weight: 500; margin-top: 2px;">Lezárt Meló</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Intro/Bio -->
+                <div class="settings-card" style="padding: 16px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Bemutatkozás</h3>
+                    <p id="wp-bio" style="font-size: 13px; color: #4B5563; line-height: 1.5; font-style: italic;">"Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok."</p>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="settings-card" style="padding: 16px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;">Szaktudások</h3>
+                    <div id="wp-skills" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <!-- Dynamically filled with chips -->
+                    </div>
+                </div>
+
+                <!-- Reviews List Section -->
+                <div class="settings-card" style="padding: 16px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Visszajelzések (Utolsó 5)</h3>
+                    <div id="wp-reviews-container" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Reviews populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CHAT DETAIL OVERLAY ===== -->
                 <div class="settings-overlay" id="chat-detail-overlay">
                     <!-- Redesigned Centered Header -->
                     <div style="background: #fff; padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: center; color: #0A0F2E; flex-shrink: 0; position: relative; border-bottom: 1px solid var(--color-border); min-height: 88px; box-sizing: border-box;">
@@ -3513,19 +3661,7 @@
                 </div>
             </div>
             
-            <!-- Card 3: Biztosítás -->
-            <div style="background: #fff; border-radius: 16px; padding: 16px; border: 1px solid #F1F1F1; cursor: pointer;" onclick="toggleAdDetailInsurance()">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #166534;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        Generali Partner Biztosítás Aktív
-                    </div>
-                    <svg id="ad-insurance-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" style="transition: transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
-                </div>
-                <div id="ad-detail-insurance-content" style="display: none; font-size: 11px; color: #14532d; line-height: 1.4; margin-top: 10px; border-top: 0.5px solid rgba(22,101,52,0.15); padding-top: 10px;">
-                    Ez a feladat automatikusan biztosítva van dologi és személyi károkra 10 000 000 Ft összeghatárig a Generali Biztosító Zrt. partnerségével.
-                </div>
-            </div>
+
             
         </div>
         
@@ -3620,13 +3756,7 @@
                         A munkadíjat a Megbízó a munka kezdetekor (amikor elfogadja a jelentkezésedet) letétbe helyezi a Stripe biztonsági számláján. Amint befejezted a feladatot, és feltöltöttél egy fotót igazolásként, a Megbízó jóváhagyja azt. A munkadíj azonnal jóváíródik a Stripe Connect számládon, ahonnan minden hétfőn automatikusan átutaljuk a regisztrált bankszámládra.
                     </div>
                 </div>
-                <div style="height: 0.5px; background: #F1F1F1;"></div>
-                <div>
-                    <div style="font-weight: 700; color: #0A0F2E; font-size: 13px; margin-bottom: 6px;">Biztosítva van-e a munkám?</div>
-                    <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">
-                        Igen! Minden MeloGo-n keresztül végzett és kifizetett feladat automatikusan biztosítva van a Generali partnereként dologi és személyi károkra 10 000 000 Ft-os összeghatárig. Így teljesen nyugodtan dolgozhatsz.
-                    </div>
-                </div>
+
                 <div style="height: 0.5px; background: #F1F1F1;"></div>
                 <div>
                     <div style="font-weight: 700; color: #0A0F2E; font-size: 13px; margin-bottom: 6px;">Mit jelent a Hűség pontszám?</div>
@@ -4906,7 +5036,21 @@ function filterWorkerByExactJob(jobName) {
 
         // D. HIRDETŐ MEGNYITJA A CHATET
         function openEmployerChatRoom() {
-            document.getElementById('employer-action-title').innerHTML = `Kovács Bence <svg class="verified-badge-svg" style="width: 15px; height: 15px; fill: #007aff; display: inline-block; vertical-align: middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+            document.getElementById('employer-action-title').innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px; cursor:pointer;" onclick="openWorkerProfile('Kovács Bence')">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 30px; height: 30px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,0.3);" alt="Avatar">
+                    <div style="text-align:left;">
+                        <div style="font-size:14px; font-weight:700; color:#fff; display:flex; align-items:center; gap:4px; line-height:1.2;">
+                            Kovács Bence
+                            <svg class="verified-badge-svg" style="width: 13px; height: 13px; fill: #007aff; display: inline-block;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        </div>
+                        <div style="font-size:10px; color:#A1A1AA; display:flex; align-items:center; gap:2px; margin-top:1px; line-height:1;">
+                            <span>★ 4.9</span>
+                            <span>· Megbízható</span>
+                        </div>
+                    </div>
+                </div>
+            `;
 
             // Dynamically update the Pinned Info Bar inside the Chat Overlay
             const pinnedTitle = document.getElementById('employer-chat-pinned-title');
@@ -5152,17 +5296,21 @@ function filterWorkerByExactJob(jobName) {
         }
 
         function toggleSkill(skill, el) {
+            const warningEl = document.getElementById('skills-warning-msg');
             if (selectedSkills.has(skill)) {
                 selectedSkills.delete(skill);
                 el.classList.remove('selected');
+                if (warningEl) warningEl.style.display = 'none';
             } else {
                 if (selectedSkills.size >= 6) {
+                    if (warningEl) warningEl.style.display = 'block';
                     el.style.animation = 'shake 0.3s ease';
                     setTimeout(() => el.style.animation = '', 300);
                     return;
                 }
                 selectedSkills.add(skill);
                 el.classList.add('selected');
+                if (warningEl) warningEl.style.display = 'none';
             }
         }
 
@@ -5208,6 +5356,7 @@ function filterWorkerByExactJob(jobName) {
                 ).join('');
             }
             showToast('Profil sikeresen mentve!');
+            setTimeout(closeSettings, 500);
         }
 
         function showToast(message) {
@@ -5285,12 +5434,7 @@ function filterWorkerByExactJob(jobName) {
             });
         }
 
-        // ================================================
-        // GENERALI BANNER COLLAPSE
-        // ================================================
-        function toggleGeneraliBanner(el) {
-            el.classList.toggle('expanded');
-        }
+
 
         // Restore last sort preference on load
         window.addEventListener('DOMContentLoaded', () => {
@@ -5307,14 +5451,14 @@ function filterWorkerByExactJob(jobName) {
         // MOCK JOB DATABASE
         // ===================================================================
         const mockJobs = [
-            { id: 1, title: 'Fűnyírás a Desedánál', isNew: true, employer: 'Tóth János', price: 8000, distance: 2.5, category: 'Kert', location: 'Kaposvár, Deseda u. 12.', time: '2026. máj. 24.', urgent: false, timeOffset: 0, desc: 'Kb. 200m² gyep levágása. Fűnyíró van, csak jöjj és csináld! Rövid munka, max 2-3 óra.' },
-            { id: 2, title: 'Kerítésfestés', isNew: true, employer: 'Nagy Péter', price: 12000, distance: 3.1, category: 'Festés', location: 'Kaposvár, Fő u. 5.', time: 'Holnap 09:00', urgent: false, timeOffset: 1, desc: 'Kb. 30 méter deszkakerítés festése fehér színűre. Festék és ecset adott, csak munkáskéz kell.' },
-            { id: 3, title: 'Autómosás (kézi)', employer: 'Szabó Éva', price: 5000, distance: 0.8, category: 'Autó', location: 'Kaposvár, Sport u. 8.', time: '2026. máj. 24.', urgent: true, timeOffset: 0, desc: 'Kis SUV kézi mosása kint az udvaron. Víz és szivacs adott. Sürgős, ma estére kell!' },
-            { id: 4, title: 'Ablakok tisztítása', employer: 'Molnár István', price: 7000, distance: 1.2, category: 'Ház', location: 'Kaposvár, Vár u. 3.', time: 'Holnap 10:00', urgent: false, timeOffset: 1, desc: 'Emelt szintű lakás 6 ablakának belső+külső tisztítása. Eszközök adottak.' },
-            { id: 5, title: 'Gyomirtás, kapálás', employer: 'Kiss Mária', price: 6500, distance: 4.2, category: 'Kert', location: 'Kaposvár, Kert u. 1.', time: 'H', urgent: false, timeOffset: 3, desc: 'Veteményes kert kapálása és gyomtalanítása. Szerszámok a helyszínen.' },
-            { id: 6, title: 'Bútor összeszerelés', employer: 'Horváth Gábor', price: 9000, distance: 2.0, category: 'Ház', location: 'Kaposvár, Béke tér 7.', time: 'K', urgent: true, timeOffset: 2, desc: 'IKEA PAX szekrény összeszerelek 3 ajtóval. Az instrukciók megvannak, csak kell egy segítő kéz!' },
-            { id: 7, title: 'Kutyasétáltatás', employer: 'Kovács Edit', price: 3000, distance: 0.5, category: 'Ház', location: 'Kaposvár, Rózsa u. 9.', time: '2026. máj. 24.', urgent: false, timeOffset: 0, desc: 'Kis labrador kutyus sétáltatása kb. 45 percig a Deseda körül. Szabad és barátságos kutya!' },
-            { id: 8, title: 'Hólapátolás', employer: 'Fekete Zoltán', price: 4000, distance: 5.5, category: 'Kert', location: 'Kaposvár, Somogyi u. 15.', time: 'Ma 08:00', urgent: true, timeOffset: 0, desc: 'Bejáró és járda felszabadítása hó alól. Kb. 1 óra munka. Lapát adott.' },
+            { id: 1, title: 'Fűnyírás a Desedánál', isNew: true, employer: 'Tóth János', price: 8000, distance: 2.5, lat: 46.3812, lon: 17.8123, category: 'Kert', location: 'Kaposvár, Deseda u. 12.', time: '2026. máj. 24.', urgent: false, timeOffset: 0, desc: 'Kb. 200m² gyep levágása. Fűnyíró van, csak jöjj és csináld! Rövid munka, max 2-3 óra.' },
+            { id: 2, title: 'Kerítésfestés', isNew: true, employer: 'Nagy Péter', price: 12000, distance: 3.1, lat: 46.3512, lon: 17.8345, category: 'Festés', location: 'Kaposvár, Fő u. 5.', time: 'Holnap 09:00', urgent: false, timeOffset: 1, desc: 'Kb. 30 méter deszkakerítés festése fehér színűre. Festék és ecset adott, csak munkáskéz kell.' },
+            { id: 3, title: 'Autómosás (kézi)', employer: 'Szabó Éva', price: 5000, distance: 0.8, lat: 46.3634, lon: 17.7899, category: 'Autó', location: 'Kaposvár, Sport u. 8.', time: '2026. máj. 24.', urgent: true, timeOffset: 0, desc: 'Kis SUV kézi mosása kint az udvaron. Víz és szivacs adott. Sürgős, ma estére kell!' },
+            { id: 4, title: 'Ablakok tisztítása', employer: 'Molnár István', price: 7000, distance: 1.2, lat: 46.3689, lon: 17.7912, category: 'Ház', location: 'Kaposvár, Vár u. 3.', time: 'Holnap 10:00', urgent: false, timeOffset: 1, desc: 'Emelt szintű lakás 6 ablakának belső+külső tisztítása. Eszközök adottak.' },
+            { id: 5, title: 'Gyomirtás, kapálás', employer: 'Kiss Mária', price: 6500, distance: 4.2, lat: 46.3312, lon: 17.7654, category: 'Kert', location: 'Kaposvár, Kert u. 1.', time: 'H', urgent: false, timeOffset: 3, desc: 'Veteményes kert kapálása és gyomtalanítása. Szerszámok a helyszínen.' },
+            { id: 6, title: 'Bútor összeszerelés', employer: 'Horváth Gábor', price: 9000, distance: 2.0, lat: 46.3721, lon: 17.7888, category: 'Ház', location: 'Kaposvár, Béke tér 7.', time: 'K', urgent: true, timeOffset: 2, desc: 'IKEA PAX szekrény összeszerelek 3 ajtóval. Az instrukciók megvannak, csak kell egy segítő kéz!' },
+            { id: 7, title: 'Kutyasétáltatás', employer: 'Kovács Edit', price: 3000, distance: 0.5, lat: 46.3567, lon: 17.7922, category: 'Ház', location: 'Kaposvár, Rózsa u. 9.', time: '2026. máj. 24.', urgent: false, timeOffset: 0, desc: 'Kis labrador kutyus sétáltatása kb. 45 percig a Deseda körül. Szabad és barátságos kutya!' },
+            { id: 8, title: 'Hólapátolás', employer: 'Fekete Zoltán', price: 4000, distance: 5.5, lat: 46.3112, lon: 17.7788, category: 'Kert', location: 'Kaposvár, Somogyi u. 15.', time: 'Ma 08:00', urgent: true, timeOffset: 0, desc: 'Bejáró és járda felszabadítása hó alól. Kb. 1 óra munka. Lapát adott.' },
         ];
 
         // Current state
@@ -5323,6 +5467,29 @@ function filterWorkerByExactJob(jobName) {
         let activeCategoryFilter = 'Összes';
         let currentMapCategory = 'all';
         let selectedMapJob = null;
+        let userCoords = { lat: 46.3593, lon: 17.7967 }; // Central Kaposvár coordinates
+
+        function calculateHaversine(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function recalculateJobDistances() {
+            mockJobs.forEach(job => {
+                if (gameState.gpsActive && userCoords && job.lat && job.lon) {
+                    const d = calculateHaversine(userCoords.lat, userCoords.lon, job.lat, job.lon);
+                    job.distance = Math.round(d * 10) / 10;
+                } else {
+                    job.distance = null;
+                }
+            });
+        }
 
         // Map pin positions (relative % coordinates)
         const jobMapPositions = {
@@ -5379,7 +5546,7 @@ function filterWorkerByExactJob(jobName) {
                     <div class="job-meta" style="margin-bottom:0;">
                         <div class="job-meta-item">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            <span class="job-distance-text">${job.distance}</span> km
+                            <span class="job-distance-text">${job.distance !== null && job.distance !== undefined ? job.distance + ' km' : '? km'}</span>
                         </div>
                         <div class="job-meta-item">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -5427,23 +5594,20 @@ function filterWorkerByExactJob(jobName) {
         // ===================================================================
         function filterWorkerJobs(cat) {
             activeCategoryFilter = cat;
+            const catMap = { 'Összes': 'Minden', 'Kert': 'Kertészet', 'Festés': 'Festés', 'Autó': 'Autó', 'Ház': 'Ház b.' };
             const btns = document.querySelectorAll('.category-btn');
             btns.forEach(btn => {
                 const label = btn.innerText.trim();
-                const isActive = (cat === 'Összes' && label === 'Minden') ||
-                                 label === cat ||
-                                 (cat === 'all' && label === 'Minden');
+                const isActive = (catMap[cat] === label) || (cat === 'all' && label === 'Minden') || (cat === label);
                 if (isActive) {
                     btn.classList.add('active');
-                    btn.style.backgroundColor = 'var(--color-navy)';
-                    btn.style.color = '#fff';
-                    btn.style.border = 'none';
                 } else {
                     btn.classList.remove('active');
-                    btn.style.backgroundColor = '#fff';
-                    btn.style.color = 'var(--color-text)';
-                    btn.style.border = '1px solid var(--color-border)';
                 }
+                // remove any explicit inline styling so class rules apply
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+                btn.style.border = '';
             });
             refreshJobList();
         }
@@ -5604,18 +5768,23 @@ function filterWorkerByExactJob(jobName) {
             }
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    // Szimuláció: koordináta alapján meghatározunk egy városnevet
-                    // Valódi appban reverse geocoding API-t hívnánk
+                    userCoords = {
+                        lat: pos.coords.latitude || 46.3593,
+                        lon: pos.coords.longitude || 17.7967
+                    };
                     setGPSStatus(true, 'Kaposvár');
                 },
                 (err) => {
-                    setGPSStatus(false, 'Helyzet ismeretlen');
+                    // Fall back to Kaposvár coordinates so it always works in demo environments!
+                    userCoords = { lat: 46.3593, lon: 17.7967 };
+                    setGPSStatus(true, 'Kaposvár');
                 },
                 { timeout: 5000 }
             );
         }
 
         function setGPSStatus(active, cityName) {
+            gameState.gpsActive = active;
             const dot = document.getElementById('gps-dot');
             const label = document.getElementById('gps-city-label');
             const locText = document.getElementById('gps-location-text');
@@ -5629,7 +5798,12 @@ function filterWorkerByExactJob(jobName) {
                 dot.className = 'gps-dot off';
                 label.innerText = cityName;
                 locText.className = 'gps-location unknown';
+                userCoords = null;
             }
+
+            recalculateJobDistances();
+            refreshJobList();
+            renderMapPins();
         }
 
         // ===================================================================
@@ -5685,6 +5859,97 @@ function filterWorkerByExactJob(jobName) {
 
             const card = document.getElementById('map-preview-card');
             card.classList.add('visible');
+        }
+
+        // ===================================================================
+        // WORKER PROFILE OVERLAY FOR EMPLOYER
+        // ===================================================================
+        function openWorkerProfile(workerName) {
+            const name = workerName || 'Kovács Bence';
+            document.getElementById('wp-name').innerText = name;
+            
+            // Set some high-fidelity dynamic values based on the worker name
+            let completedJobs = 14;
+            let rating = 4.9;
+            let bio = "Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok.";
+            let skills = ['Kertészet', 'Autómosás', 'Takarítás'];
+            let trustBadge = "Megbízható Diák";
+            let avatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80";
+
+            if (name === 'Kovács Bence') {
+                if (typeof userData !== 'undefined') {
+                    completedJobs = userData.stats ? userData.stats.jobs : 14;
+                    rating = userData.stats ? userData.stats.rating : 4.9;
+                    bio = userData.bio || bio;
+                    skills = Array.from(selectedSkills || ['Kertészet', 'Autómosás', 'Takarítás']);
+                }
+            } else if (name === 'Nagy Péter') {
+                completedJobs = 8;
+                rating = 4.7;
+                bio = "Sziasztok! Másodéves gépészmérnök hallgató vagyok. Főleg fizikai munkát, pakolást és kerítésfestést vállalok Kaposváron.";
+                skills = ['Kerítésfestés', 'Költöztetés', 'Fűnyírás'];
+                trustBadge = "Tapasztalt Diák";
+                avatar = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80";
+            } else if (name === 'Tóth János') {
+                completedJobs = 26;
+                rating = 5.0;
+                bio = "Diákmunkát keresek rugalmas időbeosztással. Bármilyen kerti munkában, fűnyírásban és takarításban segítek.";
+                skills = ['Fűnyírás', 'Gyomirtás', 'Takarítás'];
+                trustBadge = "Prémium Diák";
+                avatar = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80";
+            } else {
+                completedJobs = 3;
+                rating = 4.5;
+                bio = "Sziasztok! Kisebb kisegítő munkákat keresek suli mellett. Rugalmas és barátságos vagyok.";
+                skills = ['Kutyasétáltatás', 'Bevásárlás'];
+                trustBadge = "Kezdő Diák";
+                avatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80";
+            }
+
+            document.getElementById('wp-completed-count').innerText = completedJobs;
+            document.getElementById('wp-stars').innerText = rating.toFixed(1);
+            document.getElementById('wp-bio').innerText = '"' + bio + '"';
+            document.getElementById('wp-trust-badge').innerText = trustBadge;
+            document.getElementById('wp-avatar').src = avatar;
+
+            // Render Skills
+            const wpSkills = document.getElementById('wp-skills');
+            if (wpSkills) {
+                wpSkills.innerHTML = skills.map(s => `
+                    <span class="profile-skill-chip" style="background:#fff; border:0.5px solid var(--color-border); padding: 6px 12px; border-radius: 12px; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M3 12h1M20 12h1M12 3v1M12 20v1"/></svg>
+                        ${s}
+                    </span>
+                `).join('');
+            }
+
+            // Render Reviews (last 5)
+            const reviewsContainer = document.getElementById('wp-reviews-container');
+            if (reviewsContainer) {
+                const reviews = [
+                    { reviewer: 'Nagy Gábor (Megbízó)', stars: 5, date: '2026. máj. 24.', text: 'Nagyon pontosan érkezett, és a megbeszéltek szerint hihetetlenül precíz munkát végzett! Csak ajánlani tudom.' },
+                    { reviewer: 'Kiss Mária (Megbízó)', stars: 5, date: '2026. máj. 18.', text: 'Nagyon barátságos diák, gyorsan és hatékonyan dolgozott. Köszönöm a segítséget!' },
+                    { reviewer: 'Molnár István (Megbízó)', stars: 4, date: '2026. máj. 10.', text: 'Elégedett vagyok a munkájával, kicsit késett az egyeztetett időpontról, de pótolta a kiesett időt.' },
+                    { reviewer: 'Szabó Éva (Megbízó)', stars: 5, date: '2026. ápr. 28.', text: 'Kiváló kommunikáció és professzionális teljesítés. Minden a megbeszéltek szerint zajlott.' },
+                    { reviewer: 'Kovács Edit (Megbízó)', stars: 5, date: '2026. ápr. 15.', text: 'Szuperül és gyorsan elvégezte a feladatot. Biztosan fogom még hívni!' }
+                ];
+                
+                reviewsContainer.innerHTML = reviews.map((r, i) => {
+                    const activeStars = '⭐'.repeat(r.stars);
+                    return `
+                        <div style="background: white; border-radius: 12px; border: 0.5px solid #F1F1F1; padding: 12px 14px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                                <div style="font-size: 12px; font-weight:700; color: #0A0F2E;">${r.reviewer}</div>
+                                <div style="font-size: 10px; color: #9CA3AF;">${r.date}</div>
+                            </div>
+                            <div style="font-size: 11px; margin-bottom: 4px;">${activeStars}</div>
+                            <div style="font-size: 11.5px; color: #4B5563; line-height:1.4;">${r.text}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('worker-profile-overlay').classList.add('open');
         }
 
         // ===================================================================
@@ -6280,15 +6545,15 @@ function filterWorkerByExactJob(jobName) {
                     // Kovács Bence applied
                     appContainer.innerHTML = `
                         <div style="display: flex; align-items: center; justify-content: space-between; background: #F9FAFB; padding: 12px; border-radius: 12px; border: 1px solid #F1F1F1;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #0A0F2E, #1e3a8a); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 700;">KB</div>
+                            <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openWorkerProfile('Kovács Bence')">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Avatar">
                                 <div>
                                     <div style="font-size: 14px; font-weight: 600; color: #0A0F2E; display: flex; align-items: center; gap: 4px;">
                                         Kovács Bence
                                         <svg style="width: 13px; height: 13px; fill: #007aff;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                                     </div>
                                     <div style="font-size: 11px; color: #6B7280; display: flex; align-items: center; gap: 4px; margin-top: 1px;">
-                                        <span>★ 5.0</span>
+                                        <span>★ 4.9</span>
                                         <span style="background: #EFF6FF; color: #1D4ED8; padding: 1px 6px; border-radius: 10px; font-weight: 600; font-size: 9px;">Megbízható</span>
                                     </div>
                                 </div>
@@ -6300,14 +6565,17 @@ function filterWorkerByExactJob(jobName) {
                     // Kovács Bence matched/active
                     appContainer.innerHTML = `
                         <div style="display: flex; align-items: center; justify-content: space-between; background: #F0FDF4; padding: 12px; border-radius: 12px; border: 1px solid #DCFCE7;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #0A0F2E, #1e3a8a); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 700;">KB</div>
+                            <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openWorkerProfile('Kovács Bence')">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Avatar">
                                 <div>
                                     <div style="font-size: 14px; font-weight: 600; color: #0A0F2E; display: flex; align-items: center; gap: 4px;">
                                         Kovács Bence
                                         <svg style="width: 13px; height: 13px; fill: #007aff;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                                     </div>
-                                    <div style="font-size: 11px; color: #166534; font-weight: 600; margin-top: 1px;">Kiválasztott munkás</div>
+                                    <div style="font-size: 11px; color: #166534; font-weight: 600; margin-top: 1px; display:flex; align-items:center; gap:4px;">
+                                        <span>★ 4.9</span>
+                                        <span>· Kiválasztott munkás</span>
+                                    </div>
                                 </div>
                             </div>
                             <button onclick="openEmployerChatRoomFromAd()" style="background: var(--color-navy); color: #fff; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Csevegés</button>
@@ -7746,7 +8014,7 @@ function filterWorkerByExactJob(jobName) {
                     { title: '🔒 Letét zárolva', msg: 'A Stripe biztonságosan zárolta a munkadíjadat. Megkezdheted a munkát!', time: 'Most', color: '#22C55E', isNew: true },
                     { title: '📩 Jelentkezés elküldve', msg: 'Sikeresen jelentkeztél a(z) ' + (gameState.jobTitle || 'Fűnyírás') + ' feladatra.', time: '10 perce', color: '#0A0F2E', isNew: false },
                     { title: '💰 Stripe Kifizetés', msg: '47 500 Ft kifizetése sikeresen elindítva a bankszámládra.', time: 'Tegnap', color: '#22C55E', isNew: false },
-                    { title: '🛡️ Generali Biztosítás', msg: 'Generali Partner Biztosításod sikeresen aktiválva lett.', time: 'máj. 22.', color: '#166534', isNew: false },
+                    { title: '⭐ Megbízható státusz', msg: 'Gratulálunk! Profilod elnyerte a Megbízható Diák jelvényt a kiváló visszajelzések alapján.', time: 'máj. 22.', color: '#16a34a', isNew: false },
                     { title: '🎉 Üdv a MeloGo-ban!', msg: 'Fiókod sikeresen aktiválva. Kezdj el böngészni a diákmunkák között!', time: 'máj. 20.', color: '#0A0F2E', isNew: false }
                 ];
                 

@@ -5030,7 +5030,7 @@ function filterWorkerByExactJob(jobName) {
                 html += `
                     <div style="text-align:center; margin: 16px 0;">
                         <span style="display:inline-block; background: #F8F9FB; color: #080C1E; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #D1D5DB;">
-                            💸 Letét zárolva. Kezdődhet a munka!
+                            📅 Kérlek, érkezz pontosan a megbeszélt időpontra!
                         </span>
                     </div>
                 `;
@@ -5232,7 +5232,7 @@ function filterWorkerByExactJob(jobName) {
                 html += `
                     <div style="text-align:center; margin: 16px 0;">
                         <span style="display:inline-block; background: #F8F9FB; color: #080C1E; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #D1D5DB;">
-                            💸 Letét zárolva. Kezdődhet a munka!
+                            📅 Munkavállaló értesítve a kezdésről.
                         </span>
                     </div>
                 `;
@@ -6278,7 +6278,8 @@ function filterWorkerByExactJob(jobName) {
                     msgs.push({ from: 'system', text: acceptText });
                 }
                 if (gameState.status === 'Fizetve' || gameState.status === 'Befejezve' || gameState.status === 'Kifizetve') {
-                    msgs.push({ from: 'system', text: '💸 Letét zárolva. Kezdődhet a munka!' });
+                    const startText = isEmployer ? '📅 Munkavállaló értesítve a kezdésről.' : `📅 Kérlek, érkezz pontosan a megbeszélt időpontra!`;
+                    msgs.push({ from: 'system', text: startText });
                 }
                 if (gameState.status === 'Befejezve' || gameState.status === 'Kifizetve') {
                     msgs.push({ from: 'system', text: '📸 Munka befejezve, ellenőrzésre vár' });
@@ -6476,7 +6477,7 @@ function filterWorkerByExactJob(jobName) {
                 if (gameState.status === 'Keresés') {
                     btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Már jelentkeztél';
                 } else if (gameState.status === 'Fizetve') {
-                    btn.innerHTML = '🔒 Letét zárolva — Munkára!';
+                    btn.innerHTML = '📅 Indulás a munkára!';
                 }
             }
         }
@@ -8320,7 +8321,7 @@ function filterWorkerByExactJob(jobName) {
             if (list) {
                 // List of high-fidelity notifications based on actual user milestones
                 const notifications = [
-                    { title: '🔒 Letét zárolva', msg: 'A Stripe biztonságosan zárolta a munkadíjadat. Megkezdheted a munkát!', time: 'Most', color: '#22C55E', isNew: true },
+                    { title: '📅 Időpont közeleg', msg: 'A munkaidő közeledik. Kérlek, érkezz pontosan a megbeszélt időpontra!', time: 'Most', color: '#080C1E', isNew: true },
                     { title: '📩 Jelentkezés elküldve', msg: 'Sikeresen jelentkeztél a(z) ' + (gameState.jobTitle || 'Fűnyírás') + ' feladatra.', time: '10 perce', color: '#080C1E', isNew: false },
                     { title: '💰 Stripe Kifizetés', msg: '47 500 Ft kifizetése sikeresen elindítva a bankszámládra.', time: 'Tegnap', color: '#22C55E', isNew: false },
                     { title: '⭐ Megbízható státusz', msg: 'Gratulálunk! Profilod elnyerte a Megbízható Diák jelvényt a kiváló visszajelzések alapján.', time: 'máj. 22.', color: '#16a34a', isNew: false },

@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root {
-            --color-navy: #111111;
+            --color-navy: #080C1E;
             --color-green: #22C55E;
             --color-bg: #F8F9FB;
             --color-text: #1F2937;
@@ -907,7 +907,7 @@
 
         /* ===== MAP PINS ===== */
         .map-pin-label {
-            background: #111111;
+            background: #080C1E;
             color: #fff;
             padding: 8px 12px;
             border-radius: 12px;
@@ -974,7 +974,7 @@
         }
         .leaflet-control-zoom-in, .leaflet-control-zoom-out {
             background-color: #fff !important;
-            color: #111111 !important;
+            color: #080C1E !important;
             border: none !important;
             font-weight: 700 !important;
             width: 38px !important;
@@ -1073,11 +1073,11 @@
             position: relative;
         }
         .nav-item.active {
-            color: #111111;
+            color: #080C1E;
         }
         .nav-item.active svg {
-            color: #111111;
-            stroke: #111111;
+            color: #080C1E;
+            stroke: #080C1E;
         }
         .nav-icon {
             width: 22px;
@@ -1089,7 +1089,7 @@
         }
         .nav-item.active .nav-label {
             font-weight: 500;
-            color: #111111;
+            color: #080C1E;
         }
         .nav-badge {
             position: absolute;
@@ -1137,7 +1137,7 @@
         }
         .sort-pill svg { flex-shrink: 0; }
         .sort-pill.active {
-            background: #111111;
+            background: #080C1E;
             color: #fff;
             border-color: transparent;
         }
@@ -1167,7 +1167,7 @@
         .apply-btn-main {
             width: 100%;
             height: 52px;
-            background: #111111;
+            background: #080C1E;
             color: #fff;
             border: none;
             border-radius: 14px;
@@ -1205,7 +1205,7 @@
 
         /* ===== EMPLOYER FORM - FULL REDESIGN ===== */
         .emp-form-header {
-            background: #111111;
+            background: #080C1E;
             padding: 44px 20px 20px 20px;
             display: flex;
             align-items: center;
@@ -1276,9 +1276,9 @@
             color: #374151;
         }
         .emp-cat-card.active {
-            border: 2px solid #111111;
+            border: 2px solid #080C1E;
             background: #F0F2FF;
-            color: #111111;
+            color: #080C1E;
         }
         .emp-cat-card:active { transform: scale(0.97); }
         .emp-picker-row {
@@ -1350,7 +1350,7 @@
         .emp-price-number {
             font-size: 40px;
             font-weight: 800;
-            color: #111111;
+            color: #080C1E;
             font-family: 'Poppins', sans-serif;
             letter-spacing: -1px;
         }
@@ -1384,7 +1384,7 @@
         .emp-submit-btn {
             width: 100%;
             height: 52px;
-            background: #111111;
+            background: #080C1E;
             color: #fff;
             border: none;
             border-radius: 14px;
@@ -1445,7 +1445,7 @@
         .emp-success-title {
             font-size: 22px;
             font-weight: 700;
-            color: #111111;
+            color: #080C1E;
             margin-bottom: 8px;
         }
         .emp-success-sub {
@@ -1644,7 +1644,7 @@
             -webkit-user-select: none;
         }
         .skill-tag.selected {
-            background: #111111 !important;
+            background: #080C1E !important;
             color: #FFFFFF !important;
         }
         .availability-row {
@@ -2483,7 +2483,7 @@
             border-left: 3.5px solid #22C55E !important;
         }
         .emp-ad-card.status-completed {
-            border-left: 3.5px solid #111111 !important;
+            border-left: 3.5px solid #080C1E !important;
         }
 
         .emp-ad-pill.seeking {
@@ -2519,7 +2519,7 @@
 <body>
 
 
-<div id="onboarding-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#111111;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
+<div id="onboarding-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#080C1E;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
     <button onclick="skipOnboarding()" style="position:absolute;top:52px;right:24px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:14px;font-weight:500;cursor:pointer;z-index:10;">Kihagyás</button>
     
     <div id="onboarding-slides" style="display:flex;width:300%;height:100%;transition:transform 0.4s cubic-bezier(0.25,0.8,0.25,1);">
@@ -2653,12 +2653,12 @@
     <div id="auth-toggle-row" style="margin-top:20px;padding-bottom:40px;display:flex;gap:12px;">
         <div id="auth-card-register" onclick="switchToRegister()" style="flex:1;border:2px solid #22C55E;border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;background:#F0FDF4;transition:all 0.2s;">
             <div style="font-size:18px;margin-bottom:4px;">✏️</div>
-            <div style="font-size:13px;font-weight:700;color:#111111;">Regisztráció</div>
+            <div style="font-size:13px;font-weight:700;color:#080C1E;">Regisztráció</div>
             <div style="font-size:11px;color:#6B7280;margin-top:2px;">Új fiók</div>
         </div>
         <div id="auth-card-login" onclick="switchToLogin()" style="flex:1;border:2px solid #E5E7EB;border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;background:#fff;transition:all 0.2s;">
             <div style="font-size:18px;margin-bottom:4px;">🔑</div>
-            <div style="font-size:13px;font-weight:700;color:#111111;">Belépés</div>
+            <div style="font-size:13px;font-weight:700;color:#080C1E;">Belépés</div>
             <div style="font-size:11px;color:#6B7280;margin-top:2px;">Van már fiókom</div>
         </div>
     </div>
@@ -2746,8 +2746,8 @@
                             <div style="font-size: 10px; color: #9CA3AF; font-weight: 600; text-transform: uppercase; margin-top: 2px;">Aktív</div>
                         </div>
                         <!-- Card 4: Befejezett -->
-                        <div style="flex: 0 0 110px; background: #fff; border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid #111111; box-sizing: border-box; text-align: left; border-top: 1px solid #F1F1F1; border-right: 1px solid #F1F1F1; border-bottom: 1px solid #F1F1F1;">
-                            <div id="stat-count-completed" style="font-size: 18px; font-weight: 700; color: #111111;">0</div>
+                        <div style="flex: 0 0 110px; background: #fff; border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid #080C1E; box-sizing: border-box; text-align: left; border-top: 1px solid #F1F1F1; border-right: 1px solid #F1F1F1; border-bottom: 1px solid #F1F1F1;">
+                            <div id="stat-count-completed" style="font-size: 18px; font-weight: 700; color: #080C1E;">0</div>
                             <div style="font-size: 10px; color: #9CA3AF; font-weight: 600; text-transform: uppercase; margin-top: 2px;">Befejezve</div>
                         </div>
                     </div>
@@ -2788,12 +2788,12 @@
                         <div style="width: 40px; height: 4px; background: #E5E7EB; border-radius: 2px; margin: -12px auto 16px auto; flex-shrink: 0;"></div>
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex: 1;">
                             <div style="text-align: left; padding-right: 12px;">
-                                <div class="job-title" id="map-prev-title" style="font-size: 17px; font-weight: 700; color: #111111; line-height: 1.3;">Fűnyírás a Desedánál</div>
+                                <div class="job-title" id="map-prev-title" style="font-size: 17px; font-weight: 700; color: #080C1E; line-height: 1.3;">Fűnyírás a Desedánál</div>
                                 <div style="font-size: 13px; color: #6B7280; font-weight: 500; margin-top:6px;" id="map-prev-meta">2.5 km · Tóth János</div>
                             </div>
                             <div class="job-price" id="map-prev-price" style="font-size: 19px; font-weight: 700; color: #22C55E; white-space: nowrap;">8 000 Ft</div>
                         </div>
-                        <button class="job-apply-btn" onclick="openJobDetailFromMap()" style="width: 100%; height: 52px; background: #111111; color: white; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(10,15,46,0.15); transition: transform 0.1s ease;">Részletek és Jelentkezés →</button>
+                        <button class="job-apply-btn" onclick="openJobDetailFromMap()" style="width: 100%; height: 52px; background: #080C1E; color: white; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(10,15,46,0.15); transition: transform 0.1s ease;">Részletek és Jelentkezés →</button>
                     </div>
                 </div>
             </div>
@@ -2821,16 +2821,16 @@
             <div class="screen" id="app-profile-screen" style="background-color: #F8F9FB; overflow-y: auto;">
                         
                         <!-- Top section — Hero area (Dark Navy) -->
-                        <div style="background-color: #111111; padding: 40px 20px 80px 20px; position: relative; text-align: center;">
+                        <div style="background-color: #080C1E; padding: 40px 20px 80px 20px; position: relative; text-align: center;">
                             <button onclick="document.getElementById('worker-settings').classList.add('open')" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; cursor: pointer;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                             </button>
 
                             <div style="position: relative; display: inline-block; margin-top: 10px; margin-bottom: 12px;">
-                                <div id="profile-avatar-circle" class="user-avatar-bg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #22C55E; background-color: #111111; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: white;">
+                                <div id="profile-avatar-circle" class="user-avatar-bg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #22C55E; background-color: #080C1E; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: white;">
                                     <span class="user-initials-display">?</span>
                                 </div>
-                                <div style="position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; background-color: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: 2px solid #111111;">
+                                <div style="position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; background-color: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: 2px solid #080C1E;">
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </div>
                             </div>
@@ -2852,7 +2852,7 @@
                         <!-- Stats bar floating card -->
                         <div style="margin: -35px 20px 20px 20px; background-color: white; border-radius: 16px; border: 1px solid #F1F1F1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; position: relative; z-index: 2; padding: 16px 0;">
                             <div style="flex: 1; text-align: center; border-right: 1px solid #F1F1F1;">
-                                <div style="font-size: 20px; font-weight: 600; color: #111111;" class="user-job-count">0</div>
+                                <div style="font-size: 20px; font-weight: 600; color: #080C1E;" class="user-job-count">0</div>
                                 <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Meló</div>
                             </div>
                             <div style="flex: 1; text-align: center; border-right: 1px solid #F1F1F1;">
@@ -2860,7 +2860,7 @@
                                 <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Hűség</div>
                             </div>
                             <div style="flex: 1; text-align: center;">
-                                <div style="font-size: 20px; font-weight: 600; color: #111111;" class="user-rating-display">5.0</div>
+                                <div style="font-size: 20px; font-weight: 600; color: #080C1E;" class="user-rating-display">5.0</div>
                                 <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Értékelés</div>
                             </div>
                         </div>
@@ -2873,8 +2873,8 @@
                                 <div style="font-size: 12px; text-transform: uppercase; color: #9CA3AF; letter-spacing: 0.5px; margin-top: 20px; margin-bottom: 8px; margin-left: 4px; font-weight: 600;">SZEREPEM</div>
                                 <div style="background-color: white; border-radius: 16px; border: 1px solid #F1F1F1; padding: 16px;">
                                     <div class="role-switcher-container" style="max-width: 100%; margin-bottom: 8px; background-color: #F8F9FB;">
-                                        <button class="role-btn active" id="role-btn-worker" onclick="switchRole('worker')" style="color: #111111;">Munkás</button>
-                                        <button class="role-btn" id="role-btn-employer" onclick="switchRole('employer')" style="color: #111111;">Megbízó</button>
+                                        <button class="role-btn active" id="role-btn-worker" onclick="switchRole('worker')" style="color: #080C1E;">Munkás</button>
+                                        <button class="role-btn" id="role-btn-employer" onclick="switchRole('employer')" style="color: #080C1E;">Megbízó</button>
                                     </div>
                                     <div id="role-description-text" style="font-size: 11px; color: #9CA3AF; text-align: center; font-style: italic;">
                                         Közeli munkákat keresel és vállalsz.
@@ -2895,28 +2895,28 @@
                                 <div style="font-size: 12px; text-transform: uppercase; color: #9CA3AF; letter-spacing: 0.5px; margin-top: 20px; margin-bottom: 8px; margin-left: 4px; font-weight: 600;">FIÓKOM</div>
                                 <div style="background-color: white; border-radius: 16px; border: 1px solid #F1F1F1;">
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('worker-settings').classList.add('open')">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Bemutatkozás szerkesztése</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
                                     <div style="margin-left: 48px; height: 0.5px; background-color: #E5E7EB;"></div>
                                     
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('photo-upload').click()">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Profilkép módosítása</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
                                     <div style="margin-left: 48px; height: 0.5px; background-color: #E5E7EB;"></div>
                                     
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('worker-settings').classList.add('open'); setTimeout(() => { const sc = document.getElementById('worker-settings-scroll'); const target = document.getElementById('skill-selector'); if (sc && target) { sc.scrollTo({ top: target.offsetTop - 100, behavior: 'smooth' }); } }, 300);">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Szaktudások kezelése</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
                                     <div style="margin-left: 48px; height: 0.5px; background-color: #E5E7EB;"></div>
                                     
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="openNotificationsOverlay()">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Értesítések</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
@@ -2930,21 +2930,21 @@
                                 <div style="font-size: 12px; text-transform: uppercase; color: #9CA3AF; letter-spacing: 0.5px; margin-bottom: 8px; margin-left: 4px; font-weight: 600;">Támogatás</div>
                                 <div style="background-color: white; border-radius: 16px; border: 1px solid #F1F1F1;">
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('help-overlay').classList.add('open')">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Súgó és GYIK</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
                                     <div style="margin-left: 48px; height: 0.5px; background-color: #E5E7EB;"></div>
                                     
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('privacy-overlay').classList.add('open')">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Adatvédelem</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
                                     <div style="margin-left: 48px; height: 0.5px; background-color: #E5E7EB;"></div>
                                     
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('terms-overlay').classList.add('open')">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2" style="margin-right: 12px; flex-shrink: 0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Felhasználási feltételek</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
@@ -3006,7 +3006,7 @@
 
                     <div class="settings-header">
                         <button class="settings-back-btn" onclick="closeSettings()">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                         </button>
                         <div class="settings-title">Beállítások</div>
                     </div>
@@ -3270,7 +3270,7 @@
                                         <div style="width:32px; height:32px; background:#22C55E; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0;">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                         </div>
-                                        <div style="font-size:14px; font-weight:600; color:#111111; line-height:1.4;" id="emp-confirmed-address"></div>
+                                        <div style="font-size:14px; font-weight:600; color:#080C1E; line-height:1.4;" id="emp-confirmed-address"></div>
                                     </div>
                                     <button type="button" onclick="resetAddressSearch()" style="background:none; border:none; color:#9CA3AF; padding:8px; cursor:pointer;">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -3300,7 +3300,7 @@
                                         width: 160px;
                                         font-size: 40px;
                                         font-weight: 800;
-                                        color: #111111;
+                                        color: #080C1E;
                                         font-family: 'Poppins', sans-serif;
                                         letter-spacing: -1px;
                                         border: none;
@@ -3337,7 +3337,7 @@
                     
                     <!-- Fixed Submit Button Strip -->
                     <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: #fff; border-top: 1px solid #F1F1F1; z-index: 100; padding: 0 20px; display: flex; align-items: center; padding-bottom: 16px;">
-                        <button class="emp-submit-btn" style="height: 52px; border-radius: 14px; background: #111111; color: #fff; width: 100%; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 16px; cursor:pointer;" onclick="employerPublishJobNew()">
+                        <button class="emp-submit-btn" style="height: 52px; border-radius: 14px; background: #080C1E; color: #fff; width: 100%; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 16px; cursor:pointer;" onclick="employerPublishJobNew()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                             Hirdetés közzététele
                         </button>
@@ -3356,7 +3356,7 @@
                 <!-- Hirdető Chat & Jóváhagyás Overlay -->
                 <div class="action-overlay" id="employer-action-overlay">
                     <!-- Navy Header -->
-                    <div style="background: #111111; padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; position: relative; min-height: 96px; box-sizing: border-box;">
+                    <div style="background: #080C1E; padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; position: relative; min-height: 96px; box-sizing: border-box;">
                         <button onclick="closeEmployerJobDetail()" style="position: absolute; left: 20px; bottom: 20px; background: none; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -3372,7 +3372,7 @@
                     <!-- Pinned Info Bar -->
                     <div id="employer-chat-pinned-bar" style="background: #fff; border-bottom: 1px solid #F1F1F1; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
                         <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
-                            <div id="employer-chat-pinned-title" style="font-size: 14px; font-weight: 700; color: #111111;">Fűnyírás</div>
+                            <div id="employer-chat-pinned-title" style="font-size: 14px; font-weight: 700; color: #080C1E;">Fűnyírás</div>
                             <div id="employer-chat-pinned-desc" style="font-size: 11px; color: #6B7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">Kerítés melletti fű és gaz vágása...</div>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0;">
@@ -3514,7 +3514,7 @@
         <div class="settings-overlay" id="worker-profile-overlay" style="z-index: 3000;">
             <div class="settings-header">
                 <button class="settings-back-btn" onclick="document.getElementById('worker-profile-overlay').classList.remove('open')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <div class="settings-title">Munkavállaló Profilja</div>
             </div>
@@ -3532,7 +3532,7 @@
                     
                     <div>
                         <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-                            <h2 id="wp-name" style="font-size: 19px; font-weight: 700; color: #111111; font-family: 'DM Sans', sans-serif;">Kovács Bence</h2>
+                            <h2 id="wp-name" style="font-size: 19px; font-weight: 700; color: #080C1E; font-family: 'DM Sans', sans-serif;">Kovács Bence</h2>
                         </div>
                         <p id="wp-trust-badge" style="display: inline-block; background: rgba(37,99,235,0.08); color: #2563EB; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px; margin-top: 6px;">Megbízható Diák</p>
                     </div>
@@ -3547,7 +3547,7 @@
                             <p style="font-size: 10px; color: #9CA3AF; font-weight: 500; margin-top: 2px;">Átlagos Értékelés</p>
                         </div>
                         <div>
-                            <div id="wp-completed-count" style="font-size: 16px; font-weight: 700; color: #111111;">14</div>
+                            <div id="wp-completed-count" style="font-size: 16px; font-weight: 700; color: #080C1E;">14</div>
                             <p style="font-size: 10px; color: #9CA3AF; font-weight: 500; margin-top: 2px;">Lezárt Meló</p>
                         </div>
                     </div>
@@ -3580,15 +3580,15 @@
         <!-- ===== CHAT DETAIL OVERLAY ===== -->
                 <div class="settings-overlay" id="chat-detail-overlay">
                     <!-- Redesigned Centered Header -->
-                    <div style="background: #fff; padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: center; color: #111111; flex-shrink: 0; position: relative; border-bottom: 1px solid var(--color-border); min-height: 88px; box-sizing: border-box;">
-                        <button onclick="document.getElementById('chat-detail-overlay').classList.remove('open')" style="position: absolute; left: 20px; bottom: 20px; background: none; border: none; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">
+                    <div style="background: #fff; padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: center; color: #080C1E; flex-shrink: 0; position: relative; border-bottom: 1px solid var(--color-border); min-height: 88px; box-sizing: border-box;">
+                        <button onclick="document.getElementById('chat-detail-overlay').classList.remove('open')" style="position: absolute; left: 20px; bottom: 20px; background: none; border: none; color: #080C1E; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
                             </svg>
                         </button>
                         <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px;">
-                            <div id="chat-detail-name" style="font-size: 16px; font-weight: 700; color: #111111;">Tóth János</div>
+                            <div id="chat-detail-name" style="font-size: 16px; font-weight: 700; color: #080C1E;">Tóth János</div>
                             <div id="chat-detail-job" style="font-size: 12px; font-weight: 600; color: #22C55E;">Fűnyírás</div>
                             <div id="chat-detail-datetime" style="font-size: 11px; font-weight: 500; color: #6B7280; margin-top: 1px;"></div>
                         </div>
@@ -3624,7 +3624,7 @@
                         <!-- Populated dynamically -->
                     </div>
                     <div id="employer-close-job-bar" style="padding:10px 16px;background:#fff;display:none;border-top:1px solid #F1F1F1;">
-                        <button onclick="openCloseJobSheet()" style="width:100%;height:48px;background:#111111;color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+                        <button onclick="openCloseJobSheet()" style="width:100%;height:48px;background:#080C1E;color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                             Munka lezárása
                         </button>
@@ -3647,7 +3647,7 @@
     <!-- REDESIGN: Full screen Employer Ad Detail Screen -->
     <div class="full-screen-right" id="employer-ad-detail-screen">
         <!-- Navy Header -->
-        <div style="background: #111111; padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: space-between; color: #fff; flex-shrink: 0; position: relative;">
+        <div style="background: #080C1E; padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: space-between; color: #fff; flex-shrink: 0; position: relative;">
             <button onclick="closeEmployerAdDetailNew()" style="background: none; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -3672,10 +3672,10 @@
             <!-- Card 1: Részletek -->
             <div style="background: #fff; border-radius: 16px; padding: 16px; border: 1px solid #F1F1F1;">
                 <div style="font-size: 11px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Részletek</div>
-                <div style="font-size: 16px; font-weight: 700; color: #111111; margin-bottom: 4px;" id="ad-detail-address">Helyszín betöltése...</div>
+                <div style="font-size: 16px; font-weight: 700; color: #080C1E; margin-bottom: 4px;" id="ad-detail-address">Helyszín betöltése...</div>
                 <div style="font-size: 13px; color: #6B7280; margin-bottom: 16px;" id="ad-detail-datetime">Időpont betöltése...</div>
                 
-                <div style="font-size: 32px; font-weight: 800; color: #111111; text-align: center; font-family: 'Poppins', sans-serif; margin-bottom: 2px;" id="ad-detail-price">12 000 Ft</div>
+                <div style="font-size: 32px; font-weight: 800; color: #080C1E; text-align: center; font-family: 'Poppins', sans-serif; margin-bottom: 2px;" id="ad-detail-price">12 000 Ft</div>
                 <span style="font-size: 12px; color: #9CA3AF; text-align: center; display: block; margin-bottom: 16px;">Felkínált munkadíj</span>
                 
                 <div style="font-size: 14px; color: #374151; line-height: 1.5; border-top: 0.5px solid #F3F4F6; padding-top: 12px;" id="ad-detail-desc">
@@ -3724,7 +3724,7 @@
     <div class="settings-overlay" id="notifications-overlay">
         <div class="settings-header">
             <button class="settings-back-btn" onclick="document.getElementById('notifications-overlay').classList.remove('open')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="settings-title">Értesítések</div>
         </div>
@@ -3737,7 +3737,7 @@
     <div class="confirm-sheet-backdrop" id="earnings-backdrop" onclick="closeEarningsSheet()"></div>
     <div class="confirm-sheet" id="earnings-sheet" style="padding: 20px 20px 32px 20px; max-height: 70vh; display: flex; flex-direction: column; box-sizing: border-box;">
         <div class="confirm-sheet-handle" style="margin: 0 auto 16px auto;"></div>
-        <div class="confirm-sheet-title" style="text-align: center; font-size: 18px; font-weight: 700; color: #111111;">Stripe Kifizetések</div>
+        <div class="confirm-sheet-title" style="text-align: center; font-size: 18px; font-weight: 700; color: #080C1E;">Stripe Kifizetések</div>
         <div class="confirm-sheet-desc" style="text-align: center; font-size: 12px; color: #6B7280; margin-bottom: 20px;">
             A megkeresett összegeket a Stripe Connect rendszerén keresztül minden hétfőn automatikusan kiutaljuk a bankszámládra.
         </div>
@@ -3751,16 +3751,16 @@
     <div class="confirm-sheet-backdrop" id="last-job-backdrop" onclick="closeLastJobSheet()"></div>
     <div class="confirm-sheet" id="last-job-sheet" style="padding: 20px 20px 32px 20px; box-sizing: border-box;">
         <div class="confirm-sheet-handle" style="margin: 0 auto 16px auto;"></div>
-        <div class="confirm-sheet-title" style="text-align: center; font-size: 18px; font-weight: 700; color: #111111;">Legutóbbi visszajelzés</div>
+        <div class="confirm-sheet-title" style="text-align: center; font-size: 18px; font-weight: 700; color: #080C1E;">Legutóbbi visszajelzés</div>
         <div style="background: #F8F9FB; border-radius: 16px; padding: 16px; margin-top: 16px; border: 1px solid #F1F1F1;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-weight: 700; color: #111111; font-size: 15px;">Fűnyírás és szegélynyírás</span>
+                <span style="font-weight: 700; color: #080C1E; font-size: 15px;">Fűnyírás és szegélynyírás</span>
                 <span style="font-weight: 700; color: #22C55E; font-size: 15px;">12 000 Ft</span>
             </div>
             <div style="font-size: 11px; color: #9CA3AF; margin-bottom: 12px;">Helyszín: Kaposvár, Jókai u. · Befejezve: 2026. máj. 22.</div>
             <div style="border-top: 0.5px solid #E5E7EB; padding-top: 12px;">
-                <div style="font-weight: 600; font-size: 12px; color: #111111; margin-bottom: 4px;">Megbízó értékelése:</div>
-                <div style="color: #F59E0B; font-size: 14px; margin-bottom: 6px; letter-spacing: 2px;">★★★★★ <span style="color:#111111; font-weight:700; font-size:12px; margin-left:4px;">5.0</span></div>
+                <div style="font-weight: 600; font-size: 12px; color: #080C1E; margin-bottom: 4px;">Megbízó értékelése:</div>
+                <div style="color: #F59E0B; font-size: 14px; margin-bottom: 6px; letter-spacing: 2px;">★★★★★ <span style="color:#080C1E; font-weight:700; font-size:12px; margin-left:4px;">5.0</span></div>
                 <div style="font-size: 13px; color: #4B5563; font-style: italic; line-height: 1.4;">
                     "Bence rendkívül gyors és precíz volt. A megbeszélt időben érkezett, és gyönyörűen rendbe tette a teljes elvadult udvart. Csak ajánlani tudom őt!"
                 </div>
@@ -3774,14 +3774,14 @@
     <div class="settings-overlay" id="help-overlay">
         <div class="settings-header">
             <button class="settings-back-btn" onclick="document.getElementById('help-overlay').classList.remove('open')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="settings-title">Súgó és GYIK</div>
         </div>
         <div class="settings-scroll" style="padding: 16px; background-color: #F8F9FB;">
             <div class="settings-card" style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
                 <div>
-                    <div style="font-weight: 700; color: #111111; font-size: 13px; margin-bottom: 6px;">Hogyan kapom meg a fizetésem?</div>
+                    <div style="font-weight: 700; color: #080C1E; font-size: 13px; margin-bottom: 6px;">Hogyan kapom meg a fizetésem?</div>
                     <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">
                         A munkadíjat a Megbízó a munka kezdetekor (amikor elfogadja a jelentkezésedet) letétbe helyezi a Stripe biztonsági számláján. Amint befejezted a feladatot, és feltöltöttél egy fotót igazolásként, a Megbízó jóváhagyja azt. A munkadíj azonnal jóváíródik a Stripe Connect számládon, ahonnan minden hétfőn automatikusan átutaljuk a regisztrált bankszámládra.
                     </div>
@@ -3789,14 +3789,14 @@
 
                 <div style="height: 0.5px; background: #F1F1F1;"></div>
                 <div>
-                    <div style="font-weight: 700; color: #111111; font-size: 13px; margin-bottom: 6px;">Mit jelent a Hűség pontszám?</div>
+                    <div style="font-weight: 700; color: #080C1E; font-size: 13px; margin-bottom: 6px;">Mit jelent a Hűség pontszám?</div>
                     <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">
                         A Hűség pontszám a megbízhatóságod mérőszáma. Azt mutatja, hogy az elvállalt munkák mekkora részét végezted el sikeresen visszamondás vagy késés nélkül. A magas (95%+) hűségpontszámmal rendelkező diákokat kiemelt helyen ajánlja a rendszer a munkaadóknak!
                     </div>
                 </div>
                 <div style="height: 0.5px; background: #F1F1F1;"></div>
                 <div>
-                    <div style="font-weight: 700; color: #111111; font-size: 13px; margin-bottom: 6px;">Hogyan lehetek Megbízó?</div>
+                    <div style="font-weight: 700; color: #080C1E; font-size: 13px; margin-bottom: 6px;">Hogyan lehetek Megbízó?</div>
                     <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">
                         Nagyon egyszerűen! A Profil lapodon a "SZEREPEM" résznél válaszd a "Megbízó" gombot. Ezzel azonnal átváltasz munkaadó módba, és máris feladhatsz saját munkákat a piactérre!
                     </div>
@@ -3809,23 +3809,23 @@
     <div class="settings-overlay" id="privacy-overlay">
         <div class="settings-header">
             <button class="settings-back-btn" onclick="document.getElementById('privacy-overlay').classList.remove('open')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="settings-title">Adatvédelem</div>
         </div>
         <div class="settings-scroll" style="padding: 16px; background-color: #F8F9FB;">
             <div class="settings-card" style="padding: 16px; display: flex; flex-direction: column; gap: 14px;">
-                <div style="font-weight: 700; color: #111111; font-size: 14px; margin-bottom: 4px;">Személyes adatok védelme</div>
+                <div style="font-weight: 700; color: #080C1E; font-size: 14px; margin-bottom: 4px;">Személyes adatok védelme</div>
                 <p style="font-size: 12px; color: #6B7280; line-height: 1.4; margin: 0;">
                     A MeloGo elkötelezett a felhasználók személyes adatainak védelme iránt. Minden adatot a hatályos európai GDPR szabályozásnak megfelelően kezelünk és tárolunk.
                 </p>
                 <div style="height: 0.5px; background: #F1F1F1; margin: 4px 0;"></div>
-                <div style="font-weight: 700; color: #111111; font-size: 13px;">Biztonságos Adatátvitel</div>
+                <div style="font-weight: 700; color: #080C1E; font-size: 13px;">Biztonságos Adatátvitel</div>
                 <p style="font-size: 12px; color: #6B7280; line-height: 1.4; margin: 0;">
                     Az alkalmazás és a szerverek közötti kommunikáció végpontok közötti 256 bites SSL titkosítással történik. A pontos helyadatokat kizárólag a közeli munkák megkeresésére használjuk fel, és azokat harmadik fél számára soha nem adjuk át.
                 </p>
                 <div style="height: 0.5px; background: #F1F1F1; margin: 4px 0;"></div>
-                <div style="font-weight: 700; color: #111111; font-size: 13px;">Fizetési adatok biztonsága</div>
+                <div style="font-weight: 700; color: #080C1E; font-size: 13px;">Fizetési adatok biztonsága</div>
                 <p style="font-size: 12px; color: #6B7280; line-height: 1.4; margin: 0;">
                     A MeloGo nem tárolja és nem kezeli a bankkártya- és számlaadatokat. A teljes tranzakciós folyamatot és a kifizetéseket a globálisan minősített Stripe végzi a legmagasabb szintű PCI-DSS Level 1 biztonsági megfelelőséggel.
                 </p>
@@ -3837,28 +3837,28 @@
     <div class="settings-overlay" id="terms-overlay">
         <div class="settings-header">
             <button class="settings-back-btn" onclick="document.getElementById('terms-overlay').classList.remove('open')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="settings-title">Feltételek</div>
         </div>
         <div class="settings-scroll" style="padding: 16px; background-color: #F8F9FB;">
             <div class="settings-card" style="padding: 16px; display: flex; flex-direction: column; gap: 14px;">
-                <div style="font-weight: 700; color: #111111; font-size: 14px; margin-bottom: 4px;">Általános Szerződési Feltételek</div>
+                <div style="font-weight: 700; color: #080C1E; font-size: 14px; margin-bottom: 4px;">Általános Szerződési Feltételek</div>
                 <p style="font-size: 12px; color: #6B7280; line-height: 1.4; margin: 0;">
                     Üdvözlünk a MeloGo-ban! A platform használatával elfogadod az alábbi alapvető feltételeket, amelyek a tisztességes, biztonságos és átlátható működést garantálják.
                 </p>
                 <div style="height: 0.5px; background: #F1F1F1; margin: 4px 0;"></div>
-                <div style="font-weight: 700; color: #111111; font-size: 13px;">1. Szolgáltatási Díj</div>
+                <div style="font-weight: 700; color: #080C1E; font-size: 13px;">1. Szolgáltatási Díj</div>
                 <p style="font-size: 12px; color: #6B7280; line-height: 1.4; margin: 0;">
                     A MeloGo a diákok számára teljesen ingyenes. Nincsenek rejtett levonások vagy havidíjak. A munkadíj 100%-át megkapod (kivéve a Stripe standard tranzakciós díját, ami mindössze 5%-ot tesz ki).
                 </p>
                 <div style="height: 0.5px; background: #F1F1F1; margin: 4px 0;"></div>
-                <div style="font-weight: 700; color: #111111; font-size: 13px;">2. Tisztességes Teljesítés</div>
+                <div style="font-weight: 700; color: #080C1E; font-size: 13px;">2. Tisztességes Teljesítés</div>
                 <p style="font-size: 12px; color: #6B7280; line-height: 1.4; margin: 0;">
                     A diák vállalja, hogy a munkát a legjobb tudása szerint, a megbeszélt időben és minőségben végzi el. A megbízó pedig vállalja, hogy a sikeres teljesítés igazolása után 24 órán belül jóváhagyja a kifizetést.
                 </p>
                 <div style="height: 0.5px; background: #F1F1F1; margin: 4px 0;"></div>
-                <div style="font-weight: 700; color: #111111; font-size: 13px;">3. Visszamondási szabályok</div>
+                <div style="font-weight: 700; color: #080C1E; font-size: 13px;">3. Visszamondási szabályok</div>
                 <p style="font-size: 12px; color: #6B7280; line-height: 1.4; margin: 0;">
                     Elfogadott munkát a kezdési időpont előtt legalább 12 órával lehet díjmentesen lemondani. Későbbi lemondás vagy meg nem jelenés esetén a hűségpontszám csökken, ami korlátozhatja a jövőbeni munkavállalást a platformon.
                 </p>
@@ -5142,7 +5142,7 @@ function filterWorkerByExactJob(jobName) {
             if (gameState.status === 'Keresés') {
                 footer.innerHTML = `
                     <div style="background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: none; display: flex; flex-direction: column; gap: 12px;">
-                        <button class="btn" style="height: 52px; border-radius: 14px; background: #111111; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(10, 15, 46, 0.25); transition: transform 0.1s;" onclick="employerLockEscrow()">
+                        <button class="btn" style="height: 52px; border-radius: 14px; background: #080C1E; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(10, 15, 46, 0.25); transition: transform 0.1s;" onclick="employerLockEscrow()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -5862,7 +5862,7 @@ function filterWorkerByExactJob(jobName) {
 
                 const priceIcon = L.divIcon({
                     className: 'leaflet-custom-pin',
-                    html: `<div class="map-pin-label" style="background:#111111; color:white; padding:8px 12px; border-radius:12px; font-weight:700; font-size:12px; border:2px solid white; box-shadow:0 4px 10px rgba(0,0,0,0.15); cursor:pointer; pointer-events:auto; text-align:center; white-space:nowrap;">${job.price.toLocaleString('hu-HU')} Ft</div>`,
+                    html: `<div class="map-pin-label" style="background:#080C1E; color:white; padding:8px 12px; border-radius:12px; font-weight:700; font-size:12px; border:2px solid white; box-shadow:0 4px 10px rgba(0,0,0,0.15); cursor:pointer; pointer-events:auto; text-align:center; white-space:nowrap;">${job.price.toLocaleString('hu-HU')} Ft</div>`,
                     iconSize: [80, 36],
                     iconAnchor: [40, 18]
                 });
@@ -6029,7 +6029,7 @@ function filterWorkerByExactJob(jobName) {
                     return `
                         <div style="background: white; border-radius: 12px; border: 0.5px solid #F1F1F1; padding: 16px 20px;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                                <div style="font-size: 13px; font-weight:700; color: #111111;">${r.reviewer}</div>
+                                <div style="font-size: 13px; font-weight:700; color: #080C1E;">${r.reviewer}</div>
                                 <div style="font-size: 11px; color: #9CA3AF;">${r.date}</div>
                             </div>
                             <div style="font-size: 13px; margin-bottom: 6px;">${activeStars}</div>
@@ -6299,7 +6299,7 @@ function filterWorkerByExactJob(jobName) {
                 btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Jelentkezés elküldve';
 
                 // Push notification
-                const _applyUser = loadCurrentUser(); showPushNotification('📩 ' + (_applyUser ? _applyUser.name : 'Valaki') + ' jelentkezett', 'A munkádra: ' + (gameState.jobTitle || 'Fűnyírás'), '#111111');
+                const _applyUser = loadCurrentUser(); showPushNotification('📩 ' + (_applyUser ? _applyUser.name : 'Valaki') + ' jelentkezett', 'A munkádra: ' + (gameState.jobTitle || 'Fűnyírás'), '#080C1E');
             }, 1000);
         }
 
@@ -6356,7 +6356,7 @@ function filterWorkerByExactJob(jobName) {
             const sheet = document.createElement('div');
             sheet.id = sheetId;
             sheet.style.cssText = 'position:absolute;bottom:0;left:0;right:0;background:#fff;border-top-left-radius:24px;border-top-right-radius:24px;z-index:8001;padding:20px;max-height:70%;overflow-y:auto;';
-            sheet.innerHTML = '<div style="width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 16px;"></div><div style="font-size:16px;font-weight:700;color:#111111;margin-bottom:16px;">' + empActiveCat + ' munkák</div>';
+            sheet.innerHTML = '<div style="width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 16px;"></div><div style="font-size:16px;font-weight:700;color:#080C1E;margin-bottom:16px;">' + empActiveCat + ' munkák</div>';
             
             items.forEach(item => {
                 const row = document.createElement('div');
@@ -6501,7 +6501,7 @@ function filterWorkerByExactJob(jobName) {
                 return;
             }
             suggList.innerHTML = matches.map(m => `
-                <div style="padding:12px 16px; border-bottom:1px solid #F1F1F1; font-size:14px; color:#111111; cursor:pointer; display:flex; align-items:center; gap:8px;" onclick="selectAddress('${m}')">
+                <div style="padding:12px 16px; border-bottom:1px solid #F1F1F1; font-size:14px; color:#080C1E; cursor:pointer; display:flex; align-items:center; gap:8px;" onclick="selectAddress('${m}')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="flex-shrink:0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     ${m.replace(new RegExp(term, 'gi'), match => `<b>${match}</b>`)}
                 </div>
@@ -6638,7 +6638,7 @@ function filterWorkerByExactJob(jobName) {
                             <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openWorkerProfile('Kovács Bence')">
                                 <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Avatar">
                                 <div>
-                                    <div style="font-size: 14px; font-weight: 600; color: #111111; display: flex; align-items: center; gap: 4px;">
+                                    <div style="font-size: 14px; font-weight: 600; color: #080C1E; display: flex; align-items: center; gap: 4px;">
                                         Kovács Bence
                                         <svg style="width: 13px; height: 13px; fill: #007aff;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                                     </div>
@@ -6658,7 +6658,7 @@ function filterWorkerByExactJob(jobName) {
                             <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openWorkerProfile('Kovács Bence')">
                                 <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Avatar">
                                 <div>
-                                    <div style="font-size: 14px; font-weight: 600; color: #111111; display: flex; align-items: center; gap: 4px;">
+                                    <div style="font-size: 14px; font-weight: 600; color: #080C1E; display: flex; align-items: center; gap: 4px;">
                                         Kovács Bence
                                         <svg style="width: 13px; height: 13px; fill: #007aff;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                                     </div>
@@ -7735,7 +7735,7 @@ function filterWorkerByExactJob(jobName) {
         }
 
         function calcTrustLevel(jobCount, rating) {
-            if (jobCount >= 15 && rating >= 4.7) return { level: 4, name: 'Prémium', bg: '#EEF2FF', color: '#111111' };
+            if (jobCount >= 15 && rating >= 4.7) return { level: 4, name: 'Prémium', bg: '#EEF2FF', color: '#080C1E' };
             if (jobCount >= 8 && rating >= 4.3) return { level: 3, name: 'Tapasztalt', bg: '#FFFBEB', color: '#B45309' };
             if (jobCount >= 3 && rating >= 4.0) return { level: 2, name: 'Megbízható', bg: '#EFF6FF', color: '#1D4ED8' };
             return { level: 1, name: 'Kezdő', bg: '#F3F4F6', color: '#6B7280' };
@@ -7776,7 +7776,7 @@ function filterWorkerByExactJob(jobName) {
 
         function getAvatarGradient(name) {
             const colors = [
-                '#111111',
+                '#080C1E',
                 '#7c3aed',
                 '#059669',
                 '#b45309',
@@ -7896,7 +7896,7 @@ function filterWorkerByExactJob(jobName) {
                 root.style.setProperty('--color-surface', '#FFFFFF');
                 root.style.setProperty('--color-card', '#FFFFFF');
                 root.style.setProperty('--color-border', '#F1F1F1');
-                root.style.setProperty('--color-text-dark', '#111111');
+                root.style.setProperty('--color-text-dark', '#080C1E');
                 root.style.setProperty('--color-text', '#18181B');
                 root.style.setProperty('--color-text-muted', '#6B7280');
                 document.body.style.background = '';
@@ -8009,8 +8009,8 @@ function filterWorkerByExactJob(jobName) {
             container.innerHTML = last5.map(function(r) {
                 return '<div style="background:#fff;border:1px solid #F1F1F1;border-radius:14px;padding:14px 16px;margin-bottom:10px;">' +
                     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
-                    '<div style="width:36px;height:36px;border-radius:50%;background-color:#111111;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">' + (r.initials || '?') + '</div>' +
-                    '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#111111;">' + r.name + '</div><div style="font-size:11px;color:#9CA3AF;">' + r.date + '</div></div>' +
+                    '<div style="width:36px;height:36px;border-radius:50%;background-color:#080C1E;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">' + (r.initials || '?') + '</div>' +
+                    '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#080C1E;">' + r.name + '</div><div style="font-size:11px;color:#9CA3AF;">' + r.date + '</div></div>' +
                     '<div style="color:#FBBF24;font-size:14px;">' + starsHtml(r.stars) + '</div>' +
                     '</div>' +
                     (r.text ? '<div style="font-size:13px;color:#374151;line-height:1.5;">' + r.text + '</div>' : '') +
@@ -8032,8 +8032,8 @@ function filterWorkerByExactJob(jobName) {
                     list.innerHTML = reviews.map(function(r) {
                         return '<div style="background:#fff;border:1px solid #F1F1F1;border-radius:14px;padding:14px 16px;margin-bottom:10px;">' +
                             '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
-                            '<div style="width:36px;height:36px;border-radius:50%;background-color:#111111;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">' + (r.initials || '?') + '</div>' +
-                            '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#111111;">' + r.name + '</div><div style="font-size:11px;color:#9CA3AF;">' + r.date + '</div></div>' +
+                            '<div style="width:36px;height:36px;border-radius:50%;background-color:#080C1E;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">' + (r.initials || '?') + '</div>' +
+                            '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#080C1E;">' + r.name + '</div><div style="font-size:11px;color:#9CA3AF;">' + r.date + '</div></div>' +
                             '<div style="color:#FBBF24;font-size:14px;">' + starsHtml(r.stars) + '</div>' +
                             '</div>' +
                             (r.text ? '<div style="font-size:13px;color:#374151;line-height:1.5;">' + r.text + '</div>' : '') +
@@ -8110,7 +8110,7 @@ function filterWorkerByExactJob(jobName) {
                 list.innerHTML = `
                     <div style="background: white; border-radius: 16px; border: 1px solid #F1F1F1; padding: 20px; text-align: center; box-sizing: border-box;">
                         <div style="font-size: 24px; margin-bottom: 8px;">💼</div>
-                        <div style="font-size: 13px; font-weight: 600; color: #111111;">Nincs még aktív jelentkezésed</div>
+                        <div style="font-size: 13px; font-weight: 600; color: #080C1E;">Nincs még aktív jelentkezésed</div>
                         <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px; line-height: 1.3;">Keress egy neked tetsző munkát a Főlapon, és jelentkezz rá!</div>
                     </div>
                 `;
@@ -8135,7 +8135,7 @@ function filterWorkerByExactJob(jobName) {
                 return `
                     <div style="background: white; border-radius: 16px; border: 1px solid #F1F1F1; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box; gap: 8px;">
                         <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
-                            <span style="font-size: 14px; font-weight: 700; color: #111111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${app.title}</span>
+                            <span style="font-size: 14px; font-weight: 700; color: #080C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${app.title}</span>
                             <span style="font-size: 11px; color: #9CA3AF;">${app.date} · <span style="font-weight: 600; color: #22C55E;">${app.price.toLocaleString('hu-HU')} Ft</span></span>
                         </div>
                         <span class="emp-ad-pill ${statusClass}" style="font-size: 11px; padding: 4px 10px; border-radius: 12px; flex-shrink: 0;">
@@ -8153,10 +8153,10 @@ function filterWorkerByExactJob(jobName) {
                 // List of high-fidelity notifications based on actual user milestones
                 const notifications = [
                     { title: '🔒 Letét zárolva', msg: 'A Stripe biztonságosan zárolta a munkadíjadat. Megkezdheted a munkát!', time: 'Most', color: '#22C55E', isNew: true },
-                    { title: '📩 Jelentkezés elküldve', msg: 'Sikeresen jelentkeztél a(z) ' + (gameState.jobTitle || 'Fűnyírás') + ' feladatra.', time: '10 perce', color: '#111111', isNew: false },
+                    { title: '📩 Jelentkezés elküldve', msg: 'Sikeresen jelentkeztél a(z) ' + (gameState.jobTitle || 'Fűnyírás') + ' feladatra.', time: '10 perce', color: '#080C1E', isNew: false },
                     { title: '💰 Stripe Kifizetés', msg: '47 500 Ft kifizetése sikeresen elindítva a bankszámládra.', time: 'Tegnap', color: '#22C55E', isNew: false },
                     { title: '⭐ Megbízható státusz', msg: 'Gratulálunk! Profilod elnyerte a Megbízható Diák jelvényt a kiváló visszajelzések alapján.', time: 'máj. 22.', color: '#16a34a', isNew: false },
-                    { title: '🎉 Üdv a MeloGo-ban!', msg: 'Fiókod sikeresen aktiválva. Kezdj el böngészni a diákmunkák között!', time: 'máj. 20.', color: '#111111', isNew: false }
+                    { title: '🎉 Üdv a MeloGo-ban!', msg: 'Fiókod sikeresen aktiválva. Kezdj el böngészni a diákmunkák között!', time: 'máj. 20.', color: '#080C1E', isNew: false }
                 ];
                 
                 // If not applied yet, remove the active application alert
@@ -8170,7 +8170,7 @@ function filterWorkerByExactJob(jobName) {
                             ${n.isNew ? '<div style="position: absolute; top: 16px; right: 16px; width: 8px; height: 8px; background-color: #EF4444; border-radius: 50%;"></div>' : ''}
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <div style="width: 8px; height: 8px; background: ${n.color}; border-radius: 50%;"></div>
-                                <span style="font-weight: 700; color: #111111; font-size: 13px;">${n.title}</span>
+                                <span style="font-weight: 700; color: #080C1E; font-size: 13px;">${n.title}</span>
                                 <span style="font-size: 10px; color: #9CA3AF; margin-left: auto;">${n.time}</span>
                             </div>
                             <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">${n.msg}</div>
@@ -8195,7 +8195,7 @@ function filterWorkerByExactJob(jobName) {
                     return `
                         <div style="background: #F8F9FB; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #F1F1F1; box-sizing: border-box;">
                             <div style="min-width: 0; flex: 1;">
-                                <div style="font-size: 13px; font-weight: 700; color: #111111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.title}</div>
+                                <div style="font-size: 13px; font-weight: 700; color: #080C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.title}</div>
                                 <div style="font-size: 10px; color: #9CA3AF; margin-top: 2px;">${e.date}</div>
                             </div>
                             <div style="text-align: right; flex-shrink: 0; margin-left: 8px;">

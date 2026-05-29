@@ -305,6 +305,9 @@
             font-weight: 600;
             color: var(--color-navy);
             margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .job-price {
@@ -506,6 +509,9 @@
         .action-overlay, .settings-overlay, .overlay-success, .confirm-sheet {
             position: absolute;
             left: 0;
+            right: 0;
+            margin: 0 auto;
+            max-width: 500px;
             width: 100%;
             background-color: #fff;
             z-index: 2000;
@@ -706,7 +712,7 @@
             flex-shrink: 0;
         }
         .search-result-info { flex: 1; }
-        .search-result-title { font-size: 14px; font-weight: 600; color: var(--color-navy); margin-bottom: 2px; }
+        .search-result-title { font-size: 14px; font-weight: 600; color: var(--color-navy); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .search-result-sub { font-size: 12px; color: var(--color-text-light); }
         .search-result-price { font-size: 14px; font-weight: 700; color: var(--color-green); flex-shrink: 0; }
         .search-empty {
@@ -1972,8 +1978,10 @@
 
     
         #celebration-overlay {
-            position: fixed;
+            position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
+            margin: 0 auto;
+            max-width: 500px;
             background: rgba(10, 15, 46, 0.95);
             z-index: 99999;
             display: flex;
@@ -2572,7 +2580,7 @@
 <body>
 
 
-<div id="onboarding-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#080C1E;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
+<div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width:500px;background:#080C1E;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
     <button onclick="skipOnboarding()" style="position:absolute;top:52px;right:24px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:14px;font-weight:500;cursor:pointer;z-index:10;">Kihagyás</button>
     
     <div id="onboarding-slides" style="display:flex;width:300%;height:100%;transition:transform 0.4s cubic-bezier(0.25,0.8,0.25,1);">
@@ -3199,6 +3207,15 @@
 
                 <!-- Logout confirmation bottom sheet -->
                 <div class="confirm-sheet-backdrop" id="logout-backdrop" onclick="closeLogoutConfirm()"></div>
+                
+                <div class="confirm-sheet-backdrop" id="close-job-backdrop" onclick="closeCloseJobSheet()" style="display:none;"></div>
+                <div class="confirm-sheet" id="close-job-sheet" style="padding: 20px; box-sizing: border-box; bottom: -300px; transition: bottom 0.3s ease;">
+                    <div class="confirm-sheet-handle" style="margin: 0 auto 16px auto;"></div>
+                    <div class="confirm-sheet-title" style="text-align: center; font-size: 18px; font-weight: 700; color: #080C1E;">Munka lezárása</div>
+                    <div class="confirm-sheet-desc" style="text-align: center; font-size: 14px; color: #6B7280; margin-bottom: 24px;">Biztosan befejezted a munkát?</div>
+                    <button class="confirm-sheet-btn confirm-btn-cancel" onclick="closeCloseJobSheet()" style="margin-bottom: 8px;">Mégse</button>
+                    <button class="confirm-sheet-btn confirm-btn-destructive" style="background:#080C1E; color:#fff;" onclick="confirmCloseJob(event)">Befejezés és Értékelés</button>
+                </div>
                 <div class="confirm-sheet" id="logout-sheet">
                     <div class="confirm-sheet-handle"></div>
                     <div class="confirm-sheet-title">Kijelentkezés</div>
@@ -3698,7 +3715,7 @@
                         <button onclick="triggerPhotoAttach()" style="background:#F3F4F6; border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                         </button>
-                        <input type="text" id="chat-reply-input" placeholder="Üzenet írása..." style="flex:1; background:#F3F4F6; border:none; padding:10px 14px; border-radius:20px; font-size:14px; outline:none;" onkeydown="if(event.key==='Enter') sendChatMessageNew()">
+                        <input type="text" id="chat-reply-input" placeholder="Üzenet írása..." maxlength="500" style="flex:1; background:#F3F4F6; border:none; padding:10px 14px; border-radius:20px; font-size:14px; outline:none;" onkeydown="if(event.key==='Enter') sendChatMessageNew()">
                         <button onclick="sendChatMessageNew()" style="background:var(--color-green); color:#fff; border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                         </button>
@@ -5876,10 +5893,44 @@ function filterWorkerByExactJob(jobName) {
         // ===================================================================
         // RENDER JOB CARDS
         // ===================================================================
+        function renderSkeletonJobs(containerId, count) {
+            const list = document.getElementById(containerId);
+            if (!list) return;
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                html += `
+                    <div class="job-card shimmer" style="min-height: 96px; margin-bottom: 16px; border-radius: 16px; border: 1px solid #F1F1F1; background: #fff; overflow: hidden; position: relative;">
+                        <div style="padding: 24px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                                <div style="width: 60%; height: 20px; background: #E5E7EB; border-radius: 6px;"></div>
+                                <div style="width: 25%; height: 20px; background: #E5E7EB; border-radius: 6px;"></div>
+                            </div>
+                            <div style="width: 40%; height: 16px; background: #F3F4F6; border-radius: 6px;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            list.innerHTML = html;
+        }
+
         function renderJobCards(jobs) {
             const list = document.getElementById('worker-jobs-list');
             if (!list) return;
             list.innerHTML = '';
+
+            if (!jobs || jobs.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5" style="margin-bottom: 12px;">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <h3 style="font-size: 16px; font-weight: 600; color: #080C1E; margin-bottom: 8px;">Nincs találat</h3>
+                        <p style="font-size: 13px; color: #6B7280; max-width: 260px; margin: 0 auto;">Jelenleg nincs a keresésnek megfelelő munka. Próbálkozz más kategóriával vagy várostal!</p>
+                    </div>
+                `;
+                return;
+            }
 
             jobs.forEach(job => {
                 const catInfo = catColors[job.category] || { bg: '#6B7280', class: '' };
@@ -5949,7 +6000,10 @@ function filterWorkerByExactJob(jobName) {
         }
 
         function refreshJobList() {
-            renderJobCards(getFilteredAndSortedJobs());
+            renderSkeletonJobs('worker-jobs-list', 3);
+            setTimeout(() => {
+                renderJobCards(getFilteredAndSortedJobs());
+            }, 300);
         }
 
         // ===================================================================
@@ -7142,7 +7196,10 @@ function filterWorkerByExactJob(jobName) {
             } catch(e) {
                 console.warn('[Chats] localStorage error:', e);
             }
-            renderChatList();
+            renderSkeletonChats('messages-chat-list', 3);
+            setTimeout(() => {
+                renderChatList();
+            }, 300);
         }
 
         function saveLocalChats() {
@@ -7152,6 +7209,24 @@ function filterWorkerByExactJob(jobName) {
             } catch(e) {
                 console.warn('[Chats] failed to save:', e);
             }
+        }
+
+        function renderSkeletonChats(containerId, count) {
+            const list = document.getElementById(containerId);
+            if (!list) return;
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                html += `
+                    <div class="shimmer" style="display:flex; align-items:center; padding:16px 20px; border-bottom:1px solid #F1F1F1; background:#fff; gap:14px;">
+                        <div style="width:48px; height:48px; border-radius:50%; background:#E5E7EB; flex-shrink:0;"></div>
+                        <div style="flex:1;">
+                            <div style="width:40%; height:16px; background:#E5E7EB; border-radius:6px; margin-bottom:8px;"></div>
+                            <div style="width:70%; height:14px; background:#F3F4F6; border-radius:6px;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            list.innerHTML = html;
         }
 
         function renderChatList() {
@@ -7452,7 +7527,7 @@ function filterWorkerByExactJob(jobName) {
                             Kovács Bence jelentkezett a munkára.
                         </div>
                     </div>
-                    <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(29, 78, 216, 0.2);" onclick="employerAcceptWorker('${jobTitle}')">
+                    <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(29, 78, 216, 0.2);" onclick="employerAcceptWorker('${jobTitle}', event)">
                         Elfogadás
                     </button>
                 `;
@@ -7520,7 +7595,13 @@ function filterWorkerByExactJob(jobName) {
             });
         }
 
-        function employerAcceptWorker(jobTitle) {
+        function employerAcceptWorker(jobTitle, event) {
+            if (event && event.currentTarget) {
+                const btn = event.currentTarget;
+                if (btn.disabled) return;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-small" style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite; margin-right: 4px;"></span>...';
+            }
             // 1. Update application status
             const appIndex = localWorkerApplications.findIndex(a => a.title === jobTitle);
             if (appIndex !== -1) {
@@ -7656,7 +7737,10 @@ function filterWorkerByExactJob(jobName) {
             } catch(e) {
                 console.warn('[Employer] localStorage error:', e);
             }
-            renderEmployerHome();
+            renderSkeletonEmployerJobs('employer-active-jobs-list', 2);
+            setTimeout(() => {
+                renderEmployerHome();
+            }, 300);
         }
 
         function saveEmployerJobs() {
@@ -7675,6 +7759,27 @@ function filterWorkerByExactJob(jobName) {
             } catch(e) {
                 console.warn('[Worker] failed to save applications:', e);
             }
+        }
+
+        function renderSkeletonEmployerJobs(containerId, count) {
+            const list = document.getElementById(containerId);
+            if (!list) return;
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                html += `
+                    <div class="emp-ad-card shimmer" style="border: 1px solid #F1F1F1; background: #fff;">
+                        <div class="emp-ad-icon-circle" style="background:#E5E7EB; border:none;"></div>
+                        <div class="emp-ad-middle">
+                            <div style="width:60%; height:14px; background:#E5E7EB; border-radius:4px; margin-bottom:6px;"></div>
+                            <div style="width:40%; height:10px; background:#F3F4F6; border-radius:4px;"></div>
+                        </div>
+                        <div class="emp-ad-right">
+                            <div style="width:48px; height:20px; background:#E5E7EB; border-radius:12px;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            list.innerHTML = html;
         }
 
         function renderEmployerHome() {
@@ -7862,10 +7967,18 @@ function filterWorkerByExactJob(jobName) {
         }
 
         // Overwrite employerPublishJob to push or update the localEmployerJobs database
-        function employerPublishJobNew() {
+        function employerPublishJobNew(btnEvent) {
             // Validate fields
             let valid = true;
             const details = document.getElementById('emp-details');
+            const submitBtn = document.querySelector('.emp-submit-btn');
+            
+            if (submitBtn) {
+                if (submitBtn.disabled) return;
+                submitBtn.disabled = true;
+                submitBtn._originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="spinner-small" style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;"></span> Feldolgozás...';
+            }
             
             // Hide all errors first
             document.querySelectorAll('.emp-field-error').forEach(e => e.classList.remove('show'));
@@ -7889,6 +8002,10 @@ function filterWorkerByExactJob(jobName) {
             if (!valid) {
                 const firstErr = document.querySelector('.emp-field-error.show');
                 if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = submitBtn._originalText || 'Hirdetés közzététele';
+                }
                 return;
             }
 
@@ -7926,6 +8043,7 @@ function filterWorkerByExactJob(jobName) {
                         // Update detail screen with new values!
                         openEmployerAdDetailNew(currentEditJobId);
                         showPushNotification('Hirdetés módosítva!', 'A változtatások sikeresen elmentve!', '#22C55E');
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = submitBtn._originalText || 'Hirdetés közzététele'; }
                     }, 1800);
                 }
             } else {
@@ -7957,6 +8075,7 @@ function filterWorkerByExactJob(jobName) {
                         renderEmployerHome();
                         renderMapPins(); // sync map pins
                         showPushNotification('Hirdetés közzétéve!', 'A diákok már látják a munkádat!', '#22C55E');
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = submitBtn._originalText || 'Hirdetés közzététele'; }
                     }, 1800);
                 }
             }
@@ -8337,7 +8456,13 @@ function filterWorkerByExactJob(jobName) {
             document.getElementById('close-job-sheet').style.bottom = '-300px';
         }
 
-        function confirmCloseJob() {
+        function confirmCloseJob(event) {
+            if (event && event.currentTarget) {
+                const btn = event.currentTarget;
+                if (btn.disabled) return;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-small" style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite; margin-right: 4px;"></span>...';
+            }
             closeCloseJobSheet();
             gameState.status = 'Kifizetve';
             
@@ -8349,6 +8474,10 @@ function filterWorkerByExactJob(jobName) {
             
             setTimeout(() => {
                 openRatingScreen('worker');
+                if (event && event.currentTarget) {
+                    event.currentTarget.disabled = false;
+                    event.currentTarget.innerHTML = 'Befejezés és Értékelés';
+                }
             }, 800);
         }
 
@@ -8599,6 +8728,8 @@ function filterWorkerByExactJob(jobName) {
                 try { if(typeof initLocalChats==='function') initLocalChats(); } catch(e) { console.warn('initLocalChats:', e); }
                 try { if(typeof initEmployerJobs==='function') initEmployerJobs(); } catch(e) { console.warn('initEmployerJobs:', e); }
                 try { if(typeof initWorkerApplications==='function') initWorkerApplications(); } catch(e) { console.warn('initWorkerApplications:', e); }
+
+                try { if(typeof refreshJobList==='function') refreshJobList(); } catch(e) { console.warn('refreshJobList:', e); }
 
                 try { if(typeof initOnboarding==='function') initOnboarding(); } catch(e) { console.warn('initOnboarding:', e); }
                 try { if(typeof initDarkMode==='function') initDarkMode(); } catch(e) { console.warn('initDarkMode:', e); }

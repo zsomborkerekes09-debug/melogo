@@ -2566,6 +2566,8 @@
             justify-content: center;
         }
     </style>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-192.svg" type="image/svg+xml">
 </head>
 <body>
 
@@ -4015,7 +4017,40 @@
                     if (typeof switchRole === 'function') switchRole(role);
                 }
                 
-                // TODO: Initialize Firestore data listeners here
+                // Setup Firestore listeners
+                if (!window.jobsUnsubscribe) {
+                    window.jobsUnsubscribe = onSnapshot(collection(db, "jobs"), (snapshot) => {
+                        let jobs = [];
+                        snapshot.forEach(d => jobs.push(d.data()));
+                        if (jobs.length > 0) {
+                            localEmployerJobs = jobs.sort((a,b) => b.createdAt - a.createdAt);
+                            if (typeof renderEmployerHome === 'function') renderEmployerHome();
+                            if (typeof renderWorkerHome === 'function') renderWorkerHome();
+                        }
+                    });
+                }
+                
+                if (!window.appsUnsubscribe) {
+                    window.appsUnsubscribe = onSnapshot(collection(db, "applications"), (snapshot) => {
+                        let apps = [];
+                        snapshot.forEach(d => apps.push(d.data()));
+                        if (apps.length > 0) {
+                            localWorkerApplications = apps.sort((a,b) => b.createdAt - a.createdAt);
+                            if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
+                        }
+                    });
+                }
+                
+                if (!window.chatsUnsubscribe) {
+                    window.chatsUnsubscribe = onSnapshot(collection(db, "chats"), (snapshot) => {
+                        let chats = [];
+                        snapshot.forEach(d => chats.push(d.data()));
+                        if (chats.length > 0) {
+                            localChats = chats.sort((a,b) => b.createdAt - a.createdAt);
+                            if (typeof loadChatsFromLocal === 'function') loadChatsFromLocal();
+                        }
+                    });
+                }
                 
             } else {
                 console.log("Firebase User is logged out");
@@ -4025,8 +4060,23 @@
                     screen.classList.remove('hidden');
                     screen.style.opacity = '1';
                 }
+                if (window.jobsUnsubscribe) { window.jobsUnsubscribe(); window.jobsUnsubscribe = null; }
+                if (window.appsUnsubscribe) { window.appsUnsubscribe(); window.appsUnsubscribe = null; }
+                if (window.chatsUnsubscribe) { window.chatsUnsubscribe(); window.chatsUnsubscribe = null; }
             }
         });
+
+        // Global Helper for cloud sync
+        window.saveToCloud = async function(collectionName, arrayData) {
+            if (!auth.currentUser) return;
+            try {
+                for (let item of arrayData) {
+                    if (!item.id) item.id = collectionName + '_' + Date.now() + Math.random().toString(36).substr(2, 5);
+                    if (!item.createdAt) item.createdAt = Date.now();
+                    await setDoc(doc(db, collectionName, item.id), item);
+                }
+            } catch(e) { console.error("Cloud sync error for " + collectionName, e); }
+        }
 
     </script>
 
@@ -5280,7 +5330,7 @@ function filterWorkerByExactJob(jobName) {
                 date: new Date().toLocaleDateString('hu-HU')
             };
             localWorkerApplications.unshift(newApp);
-            localStorage.setItem('melogo_worker_applications', JSON.stringify(localWorkerApplications));
+            saveWorkerApplications();
             renderWorkerApplications();
 
             // Keep matched job status as 'Keresés' until employer accepts
@@ -7098,6 +7148,7 @@ function filterWorkerByExactJob(jobName) {
         function saveLocalChats() {
             try {
                 localStorage.setItem('melogo_local_chats', JSON.stringify(localChats));
+                if (window.saveToCloud) window.saveToCloud('chats', localChats);
             } catch(e) {
                 console.warn('[Chats] failed to save:', e);
             }
@@ -7474,7 +7525,7 @@ function filterWorkerByExactJob(jobName) {
             const appIndex = localWorkerApplications.findIndex(a => a.title === jobTitle);
             if (appIndex !== -1) {
                 localWorkerApplications[appIndex].status = 'Aktív';
-                localStorage.setItem('melogo_worker_applications', JSON.stringify(localWorkerApplications));
+                saveWorkerApplications();
             }
 
             // 2. Update job status
@@ -7511,7 +7562,7 @@ function filterWorkerByExactJob(jobName) {
             const appIndex = localWorkerApplications.findIndex(a => a.title === jobTitle);
             if (appIndex !== -1) {
                 localWorkerApplications[appIndex].status = 'Értékelésre vár';
-                localStorage.setItem('melogo_worker_applications', JSON.stringify(localWorkerApplications));
+                saveWorkerApplications();
             }
 
             // 2. Update job status
@@ -7548,7 +7599,7 @@ function filterWorkerByExactJob(jobName) {
             if (appIndex !== -1) {
                 localWorkerApplications[appIndex].status = 'Befejezett';
                 localWorkerApplications[appIndex].rating = stars;
-                localStorage.setItem('melogo_worker_applications', JSON.stringify(localWorkerApplications));
+                saveWorkerApplications();
             }
 
             // 2. Update job status
@@ -7611,8 +7662,18 @@ function filterWorkerByExactJob(jobName) {
         function saveEmployerJobs() {
             try {
                 localStorage.setItem('melogo_employer_jobs', JSON.stringify(localEmployerJobs));
+                if (window.saveToCloud) window.saveToCloud('jobs', localEmployerJobs);
             } catch(e) {
                 console.warn('[Employer] failed to save:', e);
+            }
+        }
+        
+        function saveWorkerApplications() {
+            try {
+                localStorage.setItem('melogo_worker_applications', JSON.stringify(localWorkerApplications));
+                if (window.saveToCloud) window.saveToCloud('applications', localWorkerApplications);
+            } catch(e) {
+                console.warn('[Worker] failed to save applications:', e);
             }
         }
 
@@ -8397,7 +8458,7 @@ function filterWorkerByExactJob(jobName) {
                         status: gameState.status === 'Fizetve' ? 'Aktív' : gameState.status === 'Kifizetve' ? 'Kifizetve' : 'Függőben',
                         date: '2026. máj. 28.'
                     });
-                    localStorage.setItem('melogo_worker_applications', JSON.stringify(localWorkerApplications));
+                    saveWorkerApplications();
                 }
             } catch(e) {
                 console.warn('[Apps] init error:', e);

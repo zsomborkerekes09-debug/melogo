@@ -1,0 +1,21 @@
+{
+  "name": "Melogo Diákmunka",
+  "short_name": "Melogo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080C1E",
+  "theme_color": "#22C55E",
+  "description": "Találj munkát gyorsan, vagy hívj egy diákot segítségül!",
+  "icons": [
+    {
+      "src": "icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

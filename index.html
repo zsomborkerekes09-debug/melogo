@@ -6270,19 +6270,43 @@ function filterWorkerByExactJob(jobName) {
                 ];
             }
 
+            if (jobTitle === gameState.jobTitle && gameState.applied) {
+                const isEmployer = (currentRole === 'employer');
+                const acceptText = isEmployer ? '✨ Elfogadtad a jelentkezést' : '✨ A megbízó elfogadta a jelentkezést';
+                
+                if (gameState.status !== 'Keresés') {
+                    msgs.push({ from: 'system', text: acceptText });
+                }
+                if (gameState.status === 'Fizetve' || gameState.status === 'Befejezve' || gameState.status === 'Kifizetve') {
+                    msgs.push({ from: 'system', text: '💸 Letét zárolva. Kezdődhet a munka!' });
+                }
+                if (gameState.status === 'Befejezve' || gameState.status === 'Kifizetve') {
+                    msgs.push({ from: 'system', text: '📸 Munka befejezve, ellenőrzésre vár' });
+                }
+                if (gameState.status === 'Kifizetve') {
+                    const starsValue = (localWorkerApplications.find(a => a.title === jobTitle) || {}).rating || 5;
+                    msgs.push({ from: 'system', text: `✅ Sikeres kifizetés és értékelés<br><span style="font-size: 16px;">${starsHtml(starsValue)}</span>` });
+                }
+            }
+
             msgContainer.innerHTML = '<div style="font-size:11px; text-align:center; color:var(--color-text-light); margin-bottom:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Ma</div>';
 
             msgs.forEach(msg => {
                 const bubble = document.createElement('div');
-                const isMe = msg.from === 'me';
-                bubble.style.cssText = `
-                    max-width:80%; padding:10px 14px; border-radius:${isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px'};
-                    background:${isMe ? 'var(--color-navy)' : '#fff'};
-                    color:${isMe ? '#fff' : 'var(--color-navy)'};
-                    font-size:14px; align-self:${isMe ? 'flex-end' : 'flex-start'};
-                    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-                `;
-                bubble.innerHTML = msg.text + `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time}</div>`;
+                if (msg.from === 'system') {
+                    bubble.style.cssText = 'background: #F8F9FB; border: 1px solid #D1D5DB; color: #080C1E; padding: 10px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
+                    bubble.innerHTML = msg.text;
+                } else {
+                    const isMe = msg.from === 'me';
+                    bubble.style.cssText = `
+                        max-width:80%; padding:10px 14px; border-radius:${isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px'};
+                        background:${isMe ? 'var(--color-navy)' : '#fff'};
+                        color:${isMe ? '#fff' : 'var(--color-navy)'};
+                        font-size:14px; align-self:${isMe ? 'flex-end' : 'flex-start'};
+                        box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+                    `;
+                    bubble.innerHTML = msg.text + (msg.time ? `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time}</div>` : '');
+                }
                 msgContainer.appendChild(bubble);
             });
 

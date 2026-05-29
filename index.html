@@ -3942,6 +3942,94 @@
     </div>
 
     <!-- JAVASCRIPT: AZ INTERAKTÍV KÉTOLDALÚ KÖTÉS -->
+    <!-- Firebase SDK (Modular) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, setDoc, getDocs, getDoc, doc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDNysWD3J01zAyuFMCYq0BJAavhy206eMs",
+            authDomain: "melogo-app.firebaseapp.com",
+            projectId: "melogo-app",
+            storageBucket: "melogo-app.firebasestorage.app",
+            messagingSenderId: "54031234",
+            appId: "1:54031234:web:0a4c799b7a585291a9559b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Expose to global window object so the existing script can use them
+        window.firebaseApp = app;
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        
+        window.firebaseAPI = {
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged,
+            collection,
+            addDoc,
+            setDoc,
+            getDocs,
+            getDoc,
+            doc,
+            query,
+            where,
+            orderBy,
+            onSnapshot,
+            serverTimestamp
+        };
+        
+        console.log("Firebase initialized successfully");
+        
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("Firebase User is logged in:", user.email);
+                // Fetch profile
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        localStorage.setItem('melogo_name', data.name || 'Felhasználó');
+                        if (data.defaultRole) {
+                            localStorage.setItem('melogo_active_role', data.defaultRole);
+                        }
+                    }
+                } catch(e) { console.error("Error fetching user doc", e); }
+                
+                // Set legacy session flags so the rest of the app knows we're logged in
+                localStorage.setItem('melogo_app_session', 'true');
+                
+                // Hide login screen if it's visible
+                var screen = document.getElementById('app-login-screen');
+                if (screen && !screen.classList.contains('hidden')) {
+                    screen.classList.add('hidden');
+                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                    if (typeof updateGreetings === 'function') updateGreetings();
+                    let role = localStorage.getItem('melogo_active_role') || 'worker';
+                    if (typeof switchRole === 'function') switchRole(role);
+                }
+                
+                // TODO: Initialize Firestore data listeners here
+                
+            } else {
+                console.log("Firebase User is logged out");
+                localStorage.removeItem('melogo_app_session');
+                var screen = document.getElementById('app-login-screen');
+                if (screen) {
+                    screen.classList.remove('hidden');
+                    screen.style.opacity = '1';
+                }
+            }
+        });
+
+    </script>
+
     <script>
         // A 20 predefiniált munkatípus és áraik kategóriánként (Mockup alapján)
         const jobCatalog = {
@@ -4205,9 +4293,10 @@
             }
         }
 
-        function loginApp() {
+        async function loginApp() {
             clearLoginError();
             var role = loginSelectedRole || 'worker';
+            var btn = document.getElementById('main-auth-btn');
             
             if (isLoginMode) {
                 // LOGIN flow
@@ -4215,10 +4304,28 @@
                 var pw = (document.getElementById('login-pw') || {}).value || '';
                 if (!email || !email.includes('@')) { showLoginError('Kérlek adj meg érvényes email címet!'); return; }
                 if (!pw) { showLoginError('Add meg a jelszavad!'); return; }
-                // Simulate: retrieve saved name
-                var savedSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
-                var name = savedSession.name || localStorage.getItem('melogo_name') || 'Felhasználó';
-                doEnterApp(name, email, role);
+                
+                try {
+                    btn.disabled = true;
+                    btn.innerText = 'Bejelentkezés...';
+                    
+                    const userCredential = await window.firebaseAPI.signInWithEmailAndPassword(window.firebaseAuth, email, pw);
+                    const user = userCredential.user;
+                    
+                    // Fetch user profile from Firestore
+                    const userDoc = await window.firebaseAPI.getDoc(window.firebaseAPI.doc(window.firebaseDb, "users", user.uid));
+                    let name = 'Felhasználó';
+                    if (userDoc.exists()) {
+                        name = userDoc.data().name || name;
+                        // Opcionálisan beállíthatjuk a mentett rolet, de a UI role választó erősebb most
+                    }
+                    
+                    doEnterApp(name, email, role);
+                } catch (error) {
+                    showLoginError('Hiba: Helytelen email vagy jelszó!');
+                    btn.disabled = false;
+                    btn.innerText = 'Bejelentkezem';
+                }
             } else {
                 // REGISTER flow
                 var name = ((document.getElementById('app-name') || {}).value || '').trim();
@@ -4229,7 +4336,28 @@
                 if (!email || !email.includes('@')) { showLoginError('Kérlek adj meg érvényes email címet!'); return; }
                 if (!pw || pw.length < 6) { showLoginError('A jelszónak legalább 6 karakternek kell lennie!'); return; }
                 if (pw !== pw2) { showLoginError('A két jelszó nem egyezik meg!'); return; }
-                doEnterApp(name, email, role);
+                
+                try {
+                    btn.disabled = true;
+                    btn.innerText = 'Regisztráció...';
+                    
+                    const userCredential = await window.firebaseAPI.createUserWithEmailAndPassword(window.firebaseAuth, email, pw);
+                    const user = userCredential.user;
+                    
+                    // Save initial user profile to Firestore
+                    await window.firebaseAPI.setDoc(window.firebaseAPI.doc(window.firebaseDb, "users", user.uid), {
+                        name: name,
+                        email: email,
+                        defaultRole: role,
+                        createdAt: window.firebaseAPI.serverTimestamp()
+                    });
+                    
+                    doEnterApp(name, email, role);
+                } catch (error) {
+                    showLoginError('Hiba a regisztráció során: ' + (error.code === 'auth/email-already-in-use' ? 'Ez az email cím már foglalt!' : error.message));
+                    btn.disabled = false;
+                    btn.innerText = 'Regisztrálok & Bejelentkezem';
+                }
             }
         }
 
@@ -4240,7 +4368,13 @@
             doEnterApp(name, email, loginSelectedRole || 'worker');
         }
         
-        function logoutApp() {
+        async function logoutApp() {
+            try {
+                if (window.firebaseAuth) {
+                    await window.firebaseAPI.signOut(window.firebaseAuth);
+                }
+            } catch (e) { console.error("Firebase kijelentkezés sikertelen", e); }
+            
             localStorage.removeItem('melogo_app_session');
             localStorage.removeItem('melogo_active_role');
             location.reload();

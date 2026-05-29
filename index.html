@@ -5017,6 +5017,43 @@ function filterWorkerByExactJob(jobName) {
                 </div>
             `;
             
+            if (gameState.status !== 'Keresés') {
+                html += `
+                    <div style="text-align:center; margin: 16px 0;">
+                        <span style="display:inline-block; background: #F0FDF4; color: #10B981; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #10B981;">
+                            ✨ A megbízó elfogadta a jelentkezést
+                        </span>
+                    </div>
+                `;
+            }
+            if (gameState.status === 'Fizetve') {
+                html += `
+                    <div style="text-align:center; margin: 16px 0;">
+                        <span style="display:inline-block; background: #EFF6FF; color: #3B82F6; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #3B82F6;">
+                            💸 Letét zárolva. Kezdődhet a munka!
+                        </span>
+                    </div>
+                `;
+            }
+            if (gameState.status === 'Befejezve' || gameState.status === 'Kifizetve') {
+                html += `
+                    <div style="text-align:center; margin: 16px 0;">
+                        <span style="display:inline-block; background: #F8F9FB; color: #6B7280; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #D1D5DB;">
+                            📸 Munka befejezve, ellenőrzésre vár
+                        </span>
+                    </div>
+                `;
+            }
+            if (gameState.status === 'Kifizetve') {
+                html += `
+                    <div style="text-align:center; margin: 16px 0;">
+                        <span style="display:inline-block; background: #F0FDF4; color: #10B981; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #10B981;">
+                            ✅ Sikeres kifizetés és értékelés
+                        </span>
+                    </div>
+                `;
+            }
+            
             chatBox.innerHTML = html;
             
             // Görgetés a legalsó üzenethez
@@ -5181,6 +5218,43 @@ function filterWorkerByExactJob(jobName) {
                     <span class="chat-bubble-time">14:00</span>
                 </div>
             `;
+
+            if (gameState.status !== 'Keresés') {
+                html += `
+                    <div style="text-align:center; margin: 16px 0;">
+                        <span style="display:inline-block; background: #F0FDF4; color: #10B981; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #10B981;">
+                            ✨ Elfogadtad a jelentkezést
+                        </span>
+                    </div>
+                `;
+            }
+            if (gameState.status === 'Fizetve') {
+                html += `
+                    <div style="text-align:center; margin: 16px 0;">
+                        <span style="display:inline-block; background: #EFF6FF; color: #3B82F6; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #3B82F6;">
+                            💸 Letét zárolva. Kezdődhet a munka!
+                        </span>
+                    </div>
+                `;
+            }
+            if (gameState.status === 'Befejezve' || gameState.status === 'Kifizetve') {
+                html += `
+                    <div style="text-align:center; margin: 16px 0;">
+                        <span style="display:inline-block; background: #F8F9FB; color: #6B7280; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #D1D5DB;">
+                            📸 Munka befejezve, ellenőrzésre vár
+                        </span>
+                    </div>
+                `;
+            }
+            if (gameState.status === 'Kifizetve') {
+                html += `
+                    <div style="text-align:center; margin: 16px 0;">
+                        <span style="display:inline-block; background: #F0FDF4; color: #10B981; padding: 6px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #10B981;">
+                            ✅ Sikeres kifizetés és értékelés
+                        </span>
+                    </div>
+                `;
+            }
 
             chatMessages.innerHTML = html;
 
@@ -7331,9 +7405,8 @@ function filterWorkerByExactJob(jobName) {
             const msgContainer = document.getElementById('chat-detail-messages');
             if (msgContainer) {
                 const bubble = document.createElement('div');
-                const starsText = '⭐'.repeat(stars);
-                bubble.style.cssText = 'background: #FFFBEB; border: 1px solid #FEF3C7; color: #B45309; padding: 10px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
-                bubble.innerText = `A munkáltató lezárta a munkát és értékelte a teljesítményt: ${starsText}`;
+                bubble.style.cssText = 'background: #F8F9FB; border: 1px solid #D1D5DB; color: #080C1E; padding: 10px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
+                bubble.innerHTML = `A munkáltató lezárta a munkát és értékelte a teljesítményt: <br><span style="font-size: 16px;">${starsHtml(stars)}</span>`;
                 msgContainer.appendChild(bubble);
                 msgContainer.scrollTop = msgContainer.scrollHeight;
             }
@@ -7886,8 +7959,8 @@ function filterWorkerByExactJob(jobName) {
             document.querySelectorAll('.rating-star-btn').forEach((btn, i) => {
                 const star = btn.querySelector('.rating-star');
                 if (i < n) {
-                    star.style.fill = '#FBBF24';
-                    star.style.color = '#FBBF24';
+                    star.style.fill = '#080C1E';
+                    star.style.color = '#080C1E';
                     btn.style.transform = 'scale(1.15)';
                 } else {
                     star.style.fill = 'none';
@@ -8061,9 +8134,10 @@ function filterWorkerByExactJob(jobName) {
 
         
         function starsHtml(n) {
-            const filled = '★'.repeat(Math.max(0, Math.min(5, n)));
-            const empty = '☆'.repeat(Math.max(0, 5 - Math.min(5, n)));
-            return filled + empty;
+            const num = Math.max(0, Math.min(5, n));
+            const filledStr = '<span style="color:#080C1E;">★</span>'.repeat(num);
+            const emptyStr = '<span style="color:#9CA3AF;">★</span>'.repeat(5 - num);
+            return filledStr + emptyStr;
         }
 
         function renderProfileReviews() {
@@ -8198,8 +8272,8 @@ function filterWorkerByExactJob(jobName) {
                     statusText = 'Értékelésre vár';
                 } else if (app.status === 'Befejezett' || app.status === 'Kifizetve') {
                     statusClass = 'completed';
-                    const stars = app.rating ? ' ⭐'.repeat(app.rating) : ' ⭐⭐⭐⭐⭐';
-                    statusText = 'Befejezett' + stars;
+                    const starsVal = app.rating ? app.rating : 5;
+                    statusText = 'Befejezett <span style="margin-left:4px;">' + starsHtml(starsVal) + '</span>';
                 }
                 
                 return `

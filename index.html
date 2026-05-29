@@ -3538,23 +3538,23 @@
                 </div>
 
                 <!-- Intro/Bio -->
-                <div class="settings-card" style="padding: 16px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
-                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Bemutatkozás</h3>
-                    <p id="wp-bio" style="font-size: 13px; color: #4B5563; line-height: 1.5; font-style: italic;">"Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok."</p>
+                <div class="settings-card" style="padding: 24px 20px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Bemutatkozás</h3>
+                    <p id="wp-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; border-left: 3px solid #E5E7EB;">"Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok."</p>
                 </div>
 
                 <!-- Skills Section -->
-                <div class="settings-card" style="padding: 16px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
-                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;">Szaktudások</h3>
-                    <div id="wp-skills" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <div class="settings-card" style="padding: 24px 20px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px;">Szaktudások</h3>
+                    <div id="wp-skills" style="display: flex; flex-wrap: wrap; gap: 10px;">
                         <!-- Dynamically filled with chips -->
                     </div>
                 </div>
 
                 <!-- Reviews List Section -->
-                <div class="settings-card" style="padding: 16px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
-                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Visszajelzések (Utolsó 5)</h3>
-                    <div id="wp-reviews-container" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="settings-card" style="padding: 24px 20px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                    <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px;">Visszajelzések (Utolsó 5)</h3>
+                    <div id="wp-reviews-container" style="display: flex; flex-direction: column; gap: 14px;">
                         <!-- Reviews populated dynamically -->
                     </div>
                 </div>
@@ -6011,13 +6011,13 @@ function filterWorkerByExactJob(jobName) {
                 reviewsContainer.innerHTML = reviews.map((r, i) => {
                     const activeStars = '⭐'.repeat(r.stars);
                     return `
-                        <div style="background: white; border-radius: 12px; border: 0.5px solid #F1F1F1; padding: 12px 14px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
-                                <div style="font-size: 12px; font-weight:700; color: #0A0F2E;">${r.reviewer}</div>
-                                <div style="font-size: 10px; color: #9CA3AF;">${r.date}</div>
+                        <div style="background: white; border-radius: 12px; border: 0.5px solid #F1F1F1; padding: 16px 20px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                                <div style="font-size: 13px; font-weight:700; color: #0A0F2E;">${r.reviewer}</div>
+                                <div style="font-size: 11px; color: #9CA3AF;">${r.date}</div>
                             </div>
-                            <div style="font-size: 11px; margin-bottom: 4px;">${activeStars}</div>
-                            <div style="font-size: 11.5px; color: #4B5563; line-height:1.4;">${r.text}</div>
+                            <div style="font-size: 13px; margin-bottom: 6px;">${activeStars}</div>
+                            <div style="font-size: 13px; color: #4B5563; line-height:1.5;">${r.text}</div>
                         </div>
                     `;
                 }).join('');

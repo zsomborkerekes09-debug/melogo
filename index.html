@@ -4157,7 +4157,7 @@
                 if (!pw) { showLoginError('Add meg a jelszavad!'); return; }
                 // Simulate: retrieve saved name
                 var savedSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
-                var name = savedSession.name || email.split('@')[0];
+                var name = savedSession.name || localStorage.getItem('melogo_name') || 'Felhasználó';
                 doEnterApp(name, email, role);
             } else {
                 // REGISTER flow
@@ -7711,9 +7711,13 @@ function filterWorkerByExactJob(jobName) {
             userData.rating = dynamicRating;
             userData.reviewCount = userData.reviews.length;
             localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+            let resolvedName = session.name;
+            if (session.email && resolvedName === session.email.split('@')[0]) {
+                resolvedName = localStorage.getItem('melogo_name') || 'Felhasználó';
+            }
             
             return {
-                name: session.name || 'Felhasználó',
+                name: resolvedName,
                 email: session.email || '',
                 role: session.role || activeRole,
                 jobCount: dynamicJobCount,

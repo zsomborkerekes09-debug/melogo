@@ -6837,7 +6837,7 @@ function filterWorkerByExactJob(jobName) {
                          onmouseup="handleChatMouseUp(event)"
                          onmouseleave="handleChatMouseUp(event)">
                         
-                        <div class="chat-item-avatar-container">
+                        <div class="chat-item-avatar-container" ${currentRole === 'employer' ? `onclick="event.stopPropagation(); openWorkerProfile('${chat.name}')" style="cursor:pointer;"` : ''}>
                             <div class="chat-item-avatar" style="background:${avatarBg};">${initials}</div>
                             ${chat.isOnline ? '<div class="chat-item-online"></div>' : ''}
                         </div>

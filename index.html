@@ -2618,6 +2618,48 @@
             align-items: center;
             justify-content: center;
         }
+        
+        /* Premium Application Bottom Sheet */
+        .apply-sheet-backdrop {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(8,12,46,0.4);
+            z-index: 10050;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .apply-sheet-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .apply-bottom-sheet {
+            position: absolute;
+            bottom: -65%;
+            left: 0; right: 0;
+            height: 65%;
+            background: #fff;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            z-index: 10100;
+            box-shadow: 0 -10px 40px rgba(8,12,46,0.15);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 20px;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .apply-bottom-sheet.open {
+            transform: translateY(-100%);
+        }
+        .grab-handle {
+            width: 40px;
+            height: 5px;
+            background: #E5E7EB;
+            border-radius: 3px;
+            margin: 0 auto 20px auto;
+            flex-shrink: 0;
+        }
     </style>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="app_icon.png" type="image/png">
@@ -2626,6 +2668,11 @@
 </head>
 <body>
 
+
+<!-- Splash Screen -->
+<div id="splash-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width:500px;background:#080C1E;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition: opacity 0.5s ease;">
+    <div style="font-size:44px;font-weight:700;color:#fff;font-family:'DM Sans',sans-serif;letter-spacing:-1.5px;animation: pulse 2s infinite;">Melo<span style="color:#22C55E;">Go</span></div>
+</div>
 
 <div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width:500px;background:#080C1E;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
     <button onclick="skipOnboarding()" style="position:absolute;top:52px;right:24px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:14px;font-weight:500;cursor:pointer;z-index:10;">Kihagyás</button>
@@ -3119,12 +3166,26 @@
                         </div>
 
                         <div id="worker-status-section" style="display:flex; flex-direction:column; gap: 12px; margin-top: auto; flex-shrink: 0;">
-                            <button class="apply-btn-main" id="worker-apply-btn" onclick="handleWorkerApply()">
+                            <button class="apply-btn-main" id="worker-apply-btn" onclick="openApplySheet()">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 Jelentkezem a munkára
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <!-- Worker Job Application Bottom Sheet -->
+                <div id="worker-apply-sheet-backdrop" class="apply-sheet-backdrop" onclick="closeApplySheet()"></div>
+                <div id="worker-apply-sheet" class="apply-bottom-sheet">
+                    <div class="grab-handle"></div>
+                    <h3 style="font-size: 18px; font-weight: 700; color: var(--color-navy); margin-bottom: 8px; font-family:'DM Sans',sans-serif;">Jelentkezés a munkára</h3>
+                    <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 20px; font-family:'DM Sans',sans-serif;">Szeretnél írni egy üzenetet a megbízónak a jelentkezésed mellé?</p>
+                    
+                    <textarea id="worker-apply-message" placeholder="Szia! Szívesen elvállalom a munkát, nagyon precíz vagyok..." style="width: 100%; height: 120px; border: 1px solid var(--color-border); border-radius: 16px; padding: 14px; box-sizing: border-box; font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; resize: none; margin-bottom: auto; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-green)'" onblur="this.style.borderColor='var(--color-border)'"></textarea>
+                    
+                    <button class="apply-btn-main" id="sheet-submit-btn" onclick="submitWorkerApplyFromSheet()" style="width: 100%; height: 52px; background: var(--color-navy); color: #fff; border: none; border-radius: 16px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; font-family:'DM Sans',sans-serif; transition: transform 0.1s ease;">
+                        Jelentkezés elküldése
+                    </button>
                 </div>
 
                 <!-- Settings overlay (slides from right) -->
@@ -4351,24 +4412,49 @@
             }
         };
 
-        function highlightInputError(id) {
+        function highlightInputError(id, msg) {
             const input = document.getElementById(id);
             if (!input) return;
             const group = input.closest('.floating-group');
             if (group) {
                 group.classList.add('has-error');
+                let errSlot = group.querySelector('.inline-err-msg');
+                if (!errSlot) {
+                    errSlot = document.createElement('div');
+                    errSlot.className = 'inline-err-msg';
+                    errSlot.style.cssText = 'color:#EF4444;font-size:11px;margin-top:4px;font-weight:500;text-align:left;padding-left:4px;';
+                    group.appendChild(errSlot);
+                }
+                if (msg) {
+                    errSlot.innerText = msg;
+                    errSlot.style.display = 'block';
+                }
             }
         }
 
         function clearAllInputErrors() {
             document.querySelectorAll('.floating-group.has-error').forEach(group => {
                 group.classList.remove('has-error');
+                const errSlot = group.querySelector('.inline-err-msg');
+                if (errSlot) errSlot.style.display = 'none';
             });
             const termsBox = document.getElementById('terms-checkbox');
             if (termsBox && !termsAccepted) {
                 termsBox.style.borderColor = 'var(--color-border)';
             }
         }
+
+        // Auto-clear inline error messages when user types
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('login-input')) {
+                const group = e.target.closest('.floating-group');
+                if (group) {
+                    group.classList.remove('has-error');
+                    const errSlot = group.querySelector('.inline-err-msg');
+                    if (errSlot) errSlot.style.display = 'none';
+                }
+            }
+        });
 
         let termsAccepted = false;
         function toggleTermsCheckbox() {
@@ -4514,12 +4600,12 @@
                 
                 let hasError = false;
                 if (!email || !email.includes('@')) {
-                    highlightInputError('login-email');
+                    highlightInputError('login-email', 'Kérlek adj meg érvényes email címet!');
                     showLoginError('Kérlek adj meg érvényes email címet!');
                     hasError = true;
                 }
                 if (!pw) {
-                    highlightInputError('login-pw');
+                    highlightInputError('login-pw', 'Add meg a jelszavad!');
                     if (!hasError) showLoginError('Add meg a jelszavad!');
                     hasError = true;
                 }
@@ -4542,8 +4628,8 @@
                     doEnterApp(name, email, role);
                 } catch (error) {
                     showLoginError('Hiba: Helytelen email vagy jelszó!');
-                    highlightInputError('login-email');
-                    highlightInputError('login-pw');
+                    highlightInputError('login-email', 'Helytelen email cím!');
+                    highlightInputError('login-pw', 'Helytelen jelszó!');
                     btn.disabled = false;
                     btn.innerText = 'Bejelentkezem';
                 }
@@ -4561,23 +4647,22 @@
                 
                 let hasError = false;
                 if (!name || name.length < 2) {
-                    highlightInputError('app-name');
+                    highlightInputError('app-name', 'Kérlek add meg a teljes neved!');
                     showLoginError('Kérlek add meg a teljes neved!');
                     hasError = true;
                 }
                 if (!email || !email.includes('@')) {
-                    highlightInputError('app-email');
+                    highlightInputError('app-email', 'Kérlek adj meg érvényes email címet!');
                     if (!hasError) showLoginError('Kérlek adj meg érvényes email címet!');
                     hasError = true;
                 }
                 if (!pw || pw.length < 6) {
-                    highlightInputError('app-pw');
+                    highlightInputError('app-pw', 'A jelszónak legalább 6 karakternek kell lennie!');
                     if (!hasError) showLoginError('A jelszónak legalább 6 karakternek kell lennie!');
                     hasError = true;
                 }
                 if (pw !== pw2) {
-                    highlightInputError('app-pw');
-                    highlightInputError('app-pw2');
+                    highlightInputError('app-pw2', 'A két jelszó nem egyezik meg!');
                     if (!hasError) showLoginError('A két jelszó nem egyezik meg!');
                     hasError = true;
                 }
@@ -4610,7 +4695,7 @@
                     doEnterApp(name, email, role);
                 } catch (error) {
                     showLoginError('Hiba a regisztráció során: ' + (error.code === 'auth/email-already-in-use' ? 'Ez az email cím már foglalt!' : error.message));
-                    highlightInputError('app-email');
+                    highlightInputError('app-email', 'Ez az email cím már foglalt!');
                     btn.disabled = false;
                     btn.innerText = 'Regisztrálok & Bejelentkezem';
                 }
@@ -6934,9 +7019,24 @@ function filterWorkerByExactJob(jobName) {
         // ================================================================
         // NEW APPLY BUTTON HANDLER
         // ================================================================
-        function handleWorkerApply() {
+        function openApplySheet() {
             const btn = document.getElementById('worker-apply-btn');
             if (!btn || btn.classList.contains('loading') || btn.classList.contains('confirmed') || btn.classList.contains('applied')) return;
+            document.getElementById('worker-apply-message').value = '';
+            document.getElementById('worker-apply-sheet-backdrop').classList.add('open');
+            document.getElementById('worker-apply-sheet').classList.add('open');
+        }
+
+        function closeApplySheet() {
+            document.getElementById('worker-apply-sheet-backdrop').classList.remove('open');
+            document.getElementById('worker-apply-sheet').classList.remove('open');
+        }
+
+        function submitWorkerApplyFromSheet() {
+            closeApplySheet();
+            
+            const btn = document.getElementById('worker-apply-btn');
+            if (!btn) return;
 
             // Loading state
             btn.classList.add('loading');
@@ -6952,7 +7052,8 @@ function filterWorkerByExactJob(jobName) {
                 btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Jelentkezés elküldve';
 
                 // Push notification
-                const _applyUser = loadCurrentUser(); showPushNotification('📩 ' + (_applyUser ? _applyUser.name : 'Valaki') + ' jelentkezett', 'A munkádra: ' + (gameState.jobTitle || 'Fűnyírás'), '#080C1E');
+                const _applyUser = loadCurrentUser(); 
+                showPushNotification('📩 ' + (_applyUser ? _applyUser.name : 'Valaki') + ' jelentkezett', 'A munkádra: ' + (gameState.jobTitle || 'Fűnyírás'), '#080C1E');
             }, 1000);
         }
 
@@ -8344,7 +8445,21 @@ function filterWorkerByExactJob(jobName) {
         function initOnboarding() {
             const seen = localStorage.getItem('melogo_onboarding_done');
             const screen = document.getElementById('onboarding-screen');
+            const splash = document.getElementById('splash-screen');
+            
             if (!screen) return;
+            
+            // Premium Splash Screen auto fadeout after 1.5 seconds!
+            setTimeout(() => {
+                if (splash) {
+                    splash.style.opacity = '0';
+                    splash.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                    }, 500);
+                }
+            }, 1500);
+
             if (seen) {
                 screen.style.display = 'none';
                 screen.style.pointerEvents = 'none';

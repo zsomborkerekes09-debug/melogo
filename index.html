@@ -2660,6 +2660,19 @@
             margin: 0 auto 20px auto;
             flex-shrink: 0;
         }
+
+        /* Viewport Peaking Prevention */
+        .confirm-sheet, #distance-sheet, .apply-bottom-sheet, .overlay-success {
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+        .confirm-sheet.open, .confirm-sheet.active,
+        #distance-sheet.open, #distance-sheet.active,
+        .apply-bottom-sheet.open, .apply-bottom-sheet.active,
+        .overlay-success.open, .overlay-success.active {
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
     </style>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="app_icon.png" type="image/png">

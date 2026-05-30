@@ -8449,7 +8449,7 @@ function filterWorkerByExactJob(jobName) {
             
             if (!screen) return;
             
-            // Premium Splash Screen auto fadeout after 1.5 seconds!
+            // Premium Splash Screen auto fadeout after 0.8 seconds!
             setTimeout(() => {
                 if (splash) {
                     splash.style.opacity = '0';
@@ -8458,7 +8458,7 @@ function filterWorkerByExactJob(jobName) {
                         splash.style.display = 'none';
                     }, 500);
                 }
-            }, 1500);
+            }, 800);
 
             if (seen) {
                 screen.style.display = 'none';

@@ -2673,6 +2673,60 @@
             visibility: visible !important;
             pointer-events: auto !important;
         }
+        /* Redesigned Clean & Modern Auth Screen Styles */
+        .auth-input-container {
+            width: 100%;
+            height: 52px;
+            background: #F8F9FB;
+            border-radius: 12px;
+            position: relative;
+            box-sizing: border-box;
+            border: 1.5px solid transparent;
+            transition: all 0.25s ease;
+        }
+        .auth-input-container:focus-within {
+            border-color: #0A0F2E;
+            background: #fff;
+        }
+        .auth-input-field {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 0 16px;
+            font-family: 'DM Sans', sans-serif !important;
+            font-size: 14px;
+            color: #0A0F2E;
+            box-sizing: border-box;
+        }
+        .auth-input-field::placeholder {
+            color: #9CA3AF;
+            font-size: 14px;
+        }
+        
+        /* New Role Selection Cards */
+        .auth-role-card {
+            flex: 1;
+            height: 56px;
+            background: #fff;
+            border: 1px solid #E5E7EB;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6B7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .auth-role-card.active {
+            border: 2px solid #0A0F2E;
+            background: #F0F2FF;
+            color: #0A0F2E;
+        }
     </style>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="app_icon.png" type="image/png">
@@ -2750,108 +2804,99 @@
 .ob-dot-active { background:#22C55E;width:24px;border-radius:4px; }
 </style>
 
-<div id="phone-app" class="phone-container">
-    <div id="app-login-screen">
-        <!-- Logo -->
-        <div class="login-logo">Melo<span>Go</span></div>
-        <div class="login-subtitle" id="login-mode-subtitle">Hozd létre a fiókodat</div>
-
-        <!-- Compact Role Selector Slider Pill -->
-        <div class="login-role-selector" id="login-role-selector" style="display: flex; background: #F3F4F6; padding: 4px; border-radius: 12px; margin-bottom: 24px;">
-            <button type="button" id="role-pill-worker" onclick="selectLoginRole('worker')" style="flex: 1; border: none; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: #fff; color: var(--color-navy); box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                👨‍🎓 Diák vagyok
-            </button>
-            <button type="button" id="role-pill-employer" onclick="selectLoginRole('employer')" style="flex: 1; border: none; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: #6B7280; box-shadow: none;">
-                💼 Megbízó vagyok
-            </button>
+    <div id="app-login-screen" style="position:absolute; top:0; left:0; right:0; bottom:0; background-color:#fff !important; z-index:1000; padding:60px 24px 40px 24px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; -ms-overflow-style:none; box-sizing:border-box;">
+        
+        <!-- Logo centered -->
+        <div style="display:flex; justify-content:center; align-items:center;">
+            <div style="font-size:36px; font-weight:800; font-family:'DM Sans',sans-serif; letter-spacing:-1.5px; color:#0A0F2E; width:160px; text-align:center; user-select:none;">Melo<span style="color:#22C55E;">Go</span></div>
         </div>
 
-        <!-- Error message -->
-        <div id="login-err" style="display:none;color:#EF4444;font-size:13px;text-align:center;margin:0 0 12px;padding:10px 16px;background:#FEF2F2;border-radius:10px;border:1px solid #FECACA;"></div>
+        <!-- Title -->
+        <div style="margin-top:16px; text-align:center;">
+            <h2 id="login-mode-subtitle" style="font-size:22px; font-weight:500; color:#0A0F2E; margin:0; font-family:'DM Sans',sans-serif;">Hozd létre a fiókodat</h2>
+        </div>
 
-        <!-- REGISTER fields (shown by default) -->
-        <div id="register-fields">
-            <div class="floating-group">
-                <input type="text" id="app-name" class="login-input" placeholder=" " autocomplete="name" oninput="this.closest('.floating-group').classList.remove('has-error')">
-                <label class="floating-label">Teljes neved (pl. Diák)</label>
+        <!-- Role Selector Card Row -->
+        <div style="margin-top:32px; display:flex; gap:12px;" id="login-role-selector">
+            <div id="role-pill-worker" class="auth-role-card active" onclick="selectLoginRole('worker')">
+                Diák vagyok
             </div>
-            <div class="floating-group">
-                <input type="email" id="app-email" class="login-input with-icon" placeholder=" " autocomplete="email" oninput="this.closest('.floating-group').classList.remove('has-error')">
-                <label class="floating-label with-icon">Email cím</label>
-                <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+            <div id="role-pill-employer" class="auth-role-card" onclick="selectLoginRole('employer')">
+                Megbízó vagyok
             </div>
-            <div class="floating-group">
-                <input type="password" id="app-pw" class="login-input with-icon" placeholder=" " autocomplete="new-password" oninput="this.closest('.floating-group').classList.remove('has-error')">
-                <label class="floating-label with-icon">Jelszó (min. 6 karakter)</label>
-                <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <!-- Eye visibility button -->
-                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('app-pw', this)">
-                    <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
+        </div>
+
+        <!-- Error message slot -->
+        <div id="login-err" style="display:none; color:#EF4444; font-size:13px; text-align:center; margin:16px 0 0 0; padding:10px 16px; background:#FEF2F2; border-radius:10px; border:1px solid #FECACA; font-family:'DM Sans',sans-serif;"></div>
+
+        <!-- REGISTER fields -->
+        <div id="register-fields" style="margin-top:24px; display:flex; flex-direction:column; gap:12px;">
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="text" id="app-name" class="auth-input-field login-input" placeholder="Teljes neved">
+                </div>
             </div>
-            <div class="floating-group">
-                <input type="password" id="app-pw2" class="login-input with-icon" placeholder=" " autocomplete="new-password" oninput="this.closest('.floating-group').classList.remove('has-error')">
-                <label class="floating-label with-icon">Jelszó megerősítése</label>
-                <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
-                <!-- Eye visibility button -->
-                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('app-pw2', this)">
-                    <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="email" id="app-email" class="auth-input-field login-input" placeholder="Email cím">
+                </div>
+            </div>
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="password" id="app-pw" class="auth-input-field login-input" placeholder="Jelszó" style="padding-right:44px;">
+                    <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('app-pw', this)">
+                        <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="password" id="app-pw2" class="auth-input-field login-input" placeholder="Jelszó megerősítése" style="padding-right:44px;">
+                    <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('app-pw2', this)">
+                        <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Custom ÁSZF checkbox group -->
-            <div id="terms-group" class="floating-group" style="display: flex; gap: 10px; align-items: flex-start; margin: 16px 4px 8px 4px; cursor: pointer;" onclick="toggleTermsCheckbox()">
-                <div id="terms-checkbox" style="width: 20px; height: 20px; border: 1.5px solid var(--color-border); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fff; transition: all 0.2s;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" style="display: none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div id="terms-group" class="floating-group" style="display:flex; gap:10px; align-items:flex-start; margin:16px 4px 0 4px; cursor:pointer;" onclick="toggleTermsCheckbox()">
+                <div id="terms-checkbox" style="width:16px; height:16px; border:1.5px solid var(--color-border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#fff; transition:all 0.2s;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </div>
-                <div style="font-size: 12px; color: #6B7280; line-height: 1.4; user-select: none;">
-                    Elfogadom az <span style="color: var(--color-navy); font-weight: 600; text-decoration: underline;" onclick="event.stopPropagation(); alert('MeloGo ÁSZF megnyitása...')">ÁSZF</span>-et és az <span style="color: var(--color-navy); font-weight: 600; text-decoration: underline;" onclick="event.stopPropagation(); alert('MeloGo Adatkezelési Tájékoztató megnyitása...')">Adatkezelési Tájékoztatót</span>.
+                <div style="font-size:12px; color:#6B7280; line-height:1.4; user-select:none; margin-top:-1px;">
+                    Elfogadom az <span style="color:#0A0F2E; font-weight:600; text-decoration:underline;" onclick="event.stopPropagation(); alert('MeloGo ÁSZF megnyitása...')">ÁSZF</span>-et és az <span style="color:#0A0F2E; font-weight:600; text-decoration:underline;" onclick="event.stopPropagation(); alert('MeloGo Adatkezelési Tájékoztató megnyitása...')">Adatkezelési Tájékoztatót</span>.
                 </div>
             </div>
         </div>
 
         <!-- LOGIN fields (hidden by default) -->
-        <div id="login-fields" style="display:none;">
-            <div class="floating-group">
-                <input type="email" id="login-email" class="login-input with-icon" placeholder=" " autocomplete="email" oninput="this.closest('.floating-group').classList.remove('has-error')">
-                <label class="floating-label with-icon">Email cím</label>
-                <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+        <div id="login-fields" style="display:none; margin-top:24px; flex-direction:column; gap:12px;">
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="email" id="login-email" class="auth-input-field login-input" placeholder="Email cím">
+                </div>
             </div>
-            <div class="floating-group">
-                <input type="password" id="login-pw" class="login-input with-icon" placeholder=" " autocomplete="current-password" oninput="this.closest('.floating-group').classList.remove('has-error')">
-                <label class="floating-label with-icon">Jelszó</label>
-                <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <!-- Eye visibility button -->
-                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('login-pw', this)">
-                    <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="password" id="login-pw" class="auth-input-field login-input" placeholder="Jelszó" style="padding-right:44px;">
+                    <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('login-pw', this)">
+                        <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
             </div>
-            <div style="text-align:right;margin:8px 0 20px;">
-                <span style="color:var(--color-navy);font-size:13px;font-weight:500;cursor:pointer;" onclick="alert('Jelszó emlékeztetőt elküldtük a megadott email címre!')">Elfelejtett jelszó?</span>
+            <div style="text-align:right; margin:4px 4px 0 0;">
+                <span style="color:#0A0F2E; font-size:12px; font-weight:500; cursor:pointer;" onclick="alert('Jelszó emlékeztetőt elküldtük a megadott email címre!')">Elfelejtett jelszó?</span>
             </div>
         </div>
 
-        <!-- Main action button -->
-        <button class="login-btn" id="main-auth-btn" onclick="loginApp()" style="margin-top:20px;">Regisztrálok & Bejelentkezem</button>
+        <!-- Main primary auth button -->
+        <button class="login-btn" id="main-auth-btn" onclick="loginApp()" style="margin-top:24px; width:100%; height:52px; background-color:#0A0F2E; color:#fff; border:none; border-radius:14px; font-size:16px; font-weight:500; cursor:pointer; transition:transform 0.15s ease, opacity 0.15s ease;">Regisztrálok & Bejelentkezem</button>
 
-        <!-- Face ID button -->
-        <button class="face-id-btn" onclick="loginAppFaceID()" style="display:flex;align-items:center;justify-content:center;gap:10px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3a2 2 0 0 0-2 2v4"/><path d="M19 3a2 2 0 0 1 2 2v4"/><path d="M5 21a2 2 0 0 1-2-2v-4"/><path d="M19 21a2 2 0 0 0 2-2v-4"/><path d="M9 9l.01 0"/><path d="M15 9l.01 0"/><path d="M12 15a3 3 0 0 0 3-3"/></svg>
-            Gyors bejelentkezés Face ID-val
-        </button>
-
-        <!-- Toggle register/login — styled like role cards -->
-        <div id="auth-toggle-row" style="margin-top:20px;padding-bottom:40px;display:flex;gap:12px;">
-            <div id="auth-card-register" onclick="switchToRegister()" style="flex:1;border:2px solid #22C55E;border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;background:#F0FDF4;transition:all 0.2s;">
-                <div style="font-size:18px;margin-bottom:4px;">✏️</div>
-                <div style="font-size:13px;font-weight:700;color:#080C1E;">Regisztráció</div>
-                <div style="font-size:11px;color:#6B7280;margin-top:2px;">Új fiók</div>
-            </div>
-            <div id="auth-card-login" onclick="switchToLogin()" style="flex:1;border:2px solid #E5E7EB;border-radius:16px;padding:16px 12px;text-align:center;cursor:pointer;background:#fff;transition:all 0.2s;">
-                <div style="font-size:18px;margin-bottom:4px;">🔑</div>
-                <div style="font-size:13px;font-weight:700;color:#080C1E;">Belépés</div>
-                <div style="font-size:11px;color:#6B7280;margin-top:2px;">Van már fiókom</div>
-            </div>
+        <!-- Dynamic Login/Register Toggle Underline Link -->
+        <div style="margin-top:16px; text-align:center;">
+            <span id="auth-switch-text" style="font-size:13px; color:#6B7280; font-family:'DM Sans',sans-serif; user-select:none;">
+                Van már fiókod? <span style="color:#0A0F2E; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>
+            </span>
         </div>
     </div>
 
@@ -4510,23 +4555,23 @@
             if (!pWorker || !pEmployer) return;
             
             if (role === 'worker') {
-                pWorker.style.background = '#fff';
-                pWorker.style.color = 'var(--color-navy)';
-                pWorker.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-                pEmployer.style.background = 'transparent';
-                pEmployer.style.color = '#6B7280';
-                pEmployer.style.boxShadow = 'none';
+                pWorker.classList.add('active');
+                pEmployer.classList.remove('active');
             } else {
-                pEmployer.style.background = '#fff';
-                pEmployer.style.color = 'var(--color-navy)';
-                pEmployer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-                pWorker.style.background = 'transparent';
-                pWorker.style.color = '#6B7280';
-                pWorker.style.boxShadow = 'none';
+                pEmployer.classList.add('active');
+                pWorker.classList.remove('active');
             }
         }
 
         let isLoginMode = false;
+
+        function toggleAuthMode() {
+            if (isLoginMode) {
+                switchToRegister();
+            } else {
+                switchToLogin();
+            }
+        }
 
         function switchToLogin() {
             isLoginMode = true;
@@ -4534,14 +4579,14 @@
             var lf = document.getElementById('login-fields');
             var sub = document.getElementById('login-mode-subtitle');
             var btn = document.getElementById('main-auth-btn');
-            var cReg = document.getElementById('auth-card-register');
-            var cLog = document.getElementById('auth-card-login');
+            var sw = document.getElementById('auth-switch-text');
+            
             if (rf) rf.style.display = 'none';
-            if (lf) lf.style.display = 'block';
-            if (sub) sub.innerText = 'Üdv vissza!';
+            if (lf) lf.style.display = 'flex';
+            if (sub) sub.innerText = 'Lépj be a fiókodba';
             if (btn) btn.innerText = 'Bejelentkezem';
-            if (cReg) { cReg.style.borderColor = '#E5E7EB'; cReg.style.background = '#fff'; }
-            if (cLog) { cLog.style.borderColor = '#22C55E'; cLog.style.background = '#F0FDF4'; }
+            if (sw) sw.innerHTML = 'Nincs még fiókod? <span style="color:#0A0F2E; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>';
+            
             clearAllInputErrors();
             clearLoginError();
         }
@@ -4552,14 +4597,14 @@
             var lf = document.getElementById('login-fields');
             var sub = document.getElementById('login-mode-subtitle');
             var btn = document.getElementById('main-auth-btn');
-            var cReg = document.getElementById('auth-card-register');
-            var cLog = document.getElementById('auth-card-login');
-            if (rf) rf.style.display = 'block';
+            var sw = document.getElementById('auth-switch-text');
+            
+            if (rf) rf.style.display = 'flex';
             if (lf) lf.style.display = 'none';
             if (sub) sub.innerText = 'Hozd létre a fiókodat';
             if (btn) btn.innerText = 'Regisztrálok & Bejelentkezem';
-            if (cReg) { cReg.style.borderColor = '#22C55E'; cReg.style.background = '#F0FDF4'; }
-            if (cLog) { cLog.style.borderColor = '#E5E7EB'; cLog.style.background = '#fff'; }
+            if (sw) sw.innerHTML = 'Van már fiókod? <span style="color:#0A0F2E; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>';
+            
             clearAllInputErrors();
             clearLoginError();
         }

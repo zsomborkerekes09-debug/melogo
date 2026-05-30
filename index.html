@@ -4104,28 +4104,45 @@
                             localEmployerJobs = jobs.sort((a,b) => b.createdAt - a.createdAt);
                             if (typeof renderEmployerHome === 'function') renderEmployerHome();
                             if (typeof renderWorkerHome === 'function') renderWorkerHome();
+                            if (typeof renderMapPins === 'function') renderMapPins();
                         }
                     });
                 }
                 
                 if (!window.appsUnsubscribe) {
                     window.appsUnsubscribe = onSnapshot(collection(db, "applications"), (snapshot) => {
+                        const currentUserEmail = auth.currentUser ? auth.currentUser.email : '';
                         let apps = [];
-                        snapshot.forEach(d => apps.push(d.data()));
-                        if (apps.length > 0) {
-                            localWorkerApplications = apps.sort((a,b) => b.createdAt - a.createdAt);
-                            if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
-                        }
+                        snapshot.forEach(d => {
+                            const app = d.data();
+                            if (app.workerEmail === currentUserEmail || app.employerEmail === currentUserEmail) {
+                                apps.push(app);
+                            }
+                        });
+                        localWorkerApplications = apps.sort((a,b) => b.createdAt - a.createdAt);
+                        if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
                     });
                 }
                 
                 if (!window.chatsUnsubscribe) {
                     window.chatsUnsubscribe = onSnapshot(collection(db, "chats"), (snapshot) => {
+                        const currentUserEmail = auth.currentUser ? auth.currentUser.email : '';
                         let chats = [];
-                        snapshot.forEach(d => chats.push(d.data()));
-                        if (chats.length > 0) {
-                            localChats = chats.sort((a,b) => b.createdAt - a.createdAt);
-                            if (typeof loadChatsFromLocal === 'function') loadChatsFromLocal();
+                        snapshot.forEach(d => {
+                            const chat = d.data();
+                            if (chat.workerEmail === currentUserEmail || chat.employerEmail === currentUserEmail) {
+                                chats.push(chat);
+                            }
+                        });
+                        localChats = chats.sort((a,b) => b.createdAt - a.createdAt);
+                        if (typeof renderChatList === 'function') renderChatList();
+                        
+                        // Real-time active chat room refresh
+                        if (window.selectedChatId) {
+                            const activeChat = localChats.find(c => c.id === window.selectedChatId);
+                            if (activeChat && typeof openChat === 'function') {
+                                openChat(activeChat.name, activeChat.jobTitle, activeChat.lastMsg, activeChat.time, false, activeChat.id);
+                            }
                         }
                     });
                 }
@@ -5492,10 +5509,14 @@ function filterWorkerByExactJob(jobName) {
             const badge = document.getElementById('app-msg-badge');
             if (badge) { badge.innerText = '1'; badge.style.display = 'flex'; }
 
+            const matchedJob = localEmployerJobs.find(j => j.title === gameState.jobTitle);
+            const employerEmail = (matchedJob && matchedJob.ownerEmail) ? matchedJob.ownerEmail : 'employer@melogo.hu';
+            const workerEmail = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : 'worker@melogo.hu';
+
             // REDESIGN: insert applying user to localChats
             const newChat = {
                 id: 'chat_' + Date.now(),
-                name: '${currentUser ? currentUser.name : "Diák"}',
+                name: currentUser ? currentUser.name : "Diák",
                 jobTitle: gameState.jobTitle || 'Fűnyírás',
                 lastMsg: 'Szia! Jelentkeztem a munkádra, szívesen elvállalom. Mikor és hogyan egyezünk meg a részletekről?',
                 time: 'Most',
@@ -5504,7 +5525,12 @@ function filterWorkerByExactJob(jobName) {
                 isOnline: true,
                 role: 'worker',
                 active: true,
-                archived: false
+                archived: false,
+                workerEmail: workerEmail,
+                employerEmail: employerEmail,
+                messages: [
+                    { from: 'me', text: 'Szia! Jelentkeztem a munkádra, szívesen elvállalom.<br>Mikor és hogyan egyezünk meg a részletekről?', time: '14:00' }
+                ]
             };
             
             // Unshift and save
@@ -5518,7 +5544,10 @@ function filterWorkerByExactJob(jobName) {
                 title: gameState.jobTitle || 'Fűnyírás',
                 price: gameState.jobPrice || 12000,
                 status: 'Függőben',
-                date: new Date().toLocaleDateString('hu-HU')
+                date: new Date().toLocaleDateString('hu-HU'),
+                workerEmail: workerEmail,
+                employerEmail: employerEmail,
+                createdAt: Date.now()
             };
             localWorkerApplications.unshift(newApp);
             saveWorkerApplications();
@@ -6599,7 +6628,9 @@ function filterWorkerByExactJob(jobName) {
         // ===================================================================
         let currentChatMessages = [];
 
-        function openChat(name, jobTitle, lastMsg, time, isUnread) {
+        function openChat(name, jobTitle, lastMsg, time, isUnread, chatId) {
+            selectedChatId = chatId;
+            window.selectedChatId = chatId;
             document.getElementById('chat-detail-name').innerText = name || 'Ismeretlen';
             document.getElementById('chat-detail-job').innerText = jobTitle || '';
             
@@ -6667,19 +6698,29 @@ function filterWorkerByExactJob(jobName) {
 
             const msgContainer = document.getElementById('chat-detail-messages');
 
-            // Build simulated conversation dynamically based on job status
+            // Build simulated conversation dynamically based on job status or load persisted messages
             let msgs = [];
-            if (jobTitle === gameState.jobTitle && gameState.applied) {
-                const isEmployer = (currentRole === 'employer');
-                msgs = [
-                    { from: isEmployer ? 'other' : 'me', text: 'Szia! Jelentkeztem a munkádra, szívesen elvállalom.<br>Mikor és hogyan egyezünk meg a részletekről?', time: '14:00' }
-                ];
+            const chat = localChats.find(c => c.id === chatId);
+            
+            if (chat && chat.messages) {
+                msgs = [...chat.messages]; // Use copy to avoid side-effects
             } else {
-                msgs = [
-                    { from: 'other', text: 'Szia! Elvállalnád a munkát?', time: '10:00' },
-                    { from: 'me', text: 'Szia! Igen, szívesen! Mikor kell?', time: '10:05' },
-                    { from: 'other', text: lastMsg || 'Mikor tudnál jönni holnap?', time: time || '10:42' },
-                ];
+                if (jobTitle === gameState.jobTitle && gameState.applied) {
+                    const isEmployer = (currentRole === 'employer');
+                    msgs = [
+                        { from: isEmployer ? 'other' : 'me', text: 'Szia! Jelentkeztem a munkádra, szívesen elvállalom.<br>Mikor és hogyan egyezünk meg a részletekről?', time: '14:00' }
+                    ];
+                } else {
+                    msgs = [
+                        { from: 'other', text: 'Szia! Elvállalnád a munkát?', time: '10:00' },
+                        { from: 'me', text: 'Szia! Igen, szívesen! Mikor kell?', time: '10:05' },
+                        { from: 'other', text: lastMsg || 'Mikor tudnál jönni holnap?', time: time || '10:42' },
+                    ];
+                }
+                if (chat) {
+                    chat.messages = msgs;
+                    saveLocalChats();
+                }
             }
 
             if (jobTitle === gameState.jobTitle && gameState.applied) {
@@ -6687,18 +6728,28 @@ function filterWorkerByExactJob(jobName) {
                 const acceptText = isEmployer ? '✨ Elfogadtad a jelentkezést' : '✨ A megbízó elfogadta a jelentkezést';
                 
                 if (gameState.status !== 'Keresés') {
-                    msgs.push({ from: 'system', text: acceptText });
+                    if (!msgs.some(m => m.from === 'system' && m.text === acceptText)) {
+                        msgs.push({ from: 'system', text: acceptText });
+                    }
                 }
                 if (gameState.status === 'Fizetve' || gameState.status === 'Befejezve' || gameState.status === 'Kifizetve') {
                     const startText = isEmployer ? '📅 Munkavállaló értesítve a kezdésről.' : `📅 Kérlek, érkezz pontosan a megbeszélt időpontra!`;
-                    msgs.push({ from: 'system', text: startText });
+                    if (!msgs.some(m => m.from === 'system' && m.text === startText)) {
+                        msgs.push({ from: 'system', text: startText });
+                    }
                 }
                 if (gameState.status === 'Befejezve' || gameState.status === 'Kifizetve') {
-                    msgs.push({ from: 'system', text: '📸 Munka befejezve, ellenőrzésre vár' });
+                    const compText = '📸 Munka befejezve, ellenőrzésre vár';
+                    if (!msgs.some(m => m.from === 'system' && m.text === compText)) {
+                        msgs.push({ from: 'system', text: compText });
+                    }
                 }
                 if (gameState.status === 'Kifizetve') {
                     const starsValue = (localWorkerApplications.find(a => a.title === jobTitle) || {}).rating || 5;
-                    msgs.push({ from: 'system', text: `✅ Sikeres kifizetés és értékelés<br><span style="font-size: 16px;">${starsHtml(starsValue)}</span>` });
+                    const payText = `✅ Sikeres kifizetés és értékelés<br><span style="font-size: 16px;">${starsHtml(starsValue)}</span>`;
+                    if (!msgs.some(m => m.from === 'system' && m.text.includes('Sikeres kifizetés'))) {
+                        msgs.push({ from: 'system', text: payText });
+                    }
                 }
             }
 
@@ -6739,7 +6790,7 @@ function filterWorkerByExactJob(jobName) {
             const t = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
 
             bubble.style.cssText = `
-                max-width:80%; padding:10px 14px; border-radius: 16px; 18px 4px 18px;
+                max-width:80%; padding:10px 14px; border-radius: 18px 18px 4px 18px;
                 background:var(--color-navy); color:#fff; font-size:14px;
                 align-self:flex-end; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
             `;
@@ -6748,7 +6799,18 @@ function filterWorkerByExactJob(jobName) {
             input.value = '';
             msgContainer.scrollTop = msgContainer.scrollHeight;
 
-            // Automated replies disabled. The chat is strictly between users.
+            // Persist sent message inside localChats and trigger save/sync!
+            if (selectedChatId) {
+                const chat = localChats.find(c => c.id === selectedChatId);
+                if (chat) {
+                    if (!chat.messages) chat.messages = [];
+                    chat.messages.push({ from: 'me', text: text, time: t });
+                    chat.lastMsg = text;
+                    chat.time = 'Most';
+                    saveLocalChats();
+                    renderChatList();
+                }
+            }
         }
 
         function triggerPhotoAttach() {
@@ -6756,13 +6818,27 @@ function filterWorkerByExactJob(jobName) {
             const msgContainer = document.getElementById('chat-detail-messages');
             const bubble = document.createElement('div');
             bubble.style.cssText = `
-                max-width:85%; padding:10px 14px; border-radius: 16px; 18px 4px 18px;
+                max-width:85%; padding:10px 14px; border-radius: 18px 18px 4px 18px;
                 background:var(--color-navy); color:#fff; font-size:14px;
                 align-self:flex-end; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
             `;
-            bubble.innerHTML = '<div style="width:100%; height:80px; background:rgba(255,255,255,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:24px;">📷</div><div style="font-size:11px; margin-top:6px; opacity:0.7;">Munka fotója elküldve</div>';
+            const photoHtml = '<div style="width:100%; height:80px; background:rgba(255,255,255,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:24px;">📷</div><div style="font-size:11px; margin-top:6px; opacity:0.7;">Munka fotója elküldve</div>';
+            bubble.innerHTML = photoHtml;
             msgContainer.appendChild(bubble);
             msgContainer.scrollTop = msgContainer.scrollHeight;
+
+            // Persist photo attachment inside localChats and trigger save/sync!
+            if (selectedChatId) {
+                const chat = localChats.find(c => c.id === selectedChatId);
+                if (chat) {
+                    if (!chat.messages) chat.messages = [];
+                    chat.messages.push({ from: 'me', text: photoHtml, time: 'Most' });
+                    chat.lastMsg = '📷 Munka fotója elküldve';
+                    chat.time = 'Most';
+                    saveLocalChats();
+                    renderChatList();
+                }
+            }
         }
 
         // ===================================================================
@@ -7669,7 +7745,7 @@ function filterWorkerByExactJob(jobName) {
                 renderChatList();
                 
                 const chat = localChats[index];
-                openChat(chat.name, chat.jobTitle, chat.lastMsg, chat.time, false);
+                openChat(chat.name, chat.jobTitle, chat.lastMsg, chat.time, false, chat.id);
             }
         }
 
@@ -7961,13 +8037,16 @@ function filterWorkerByExactJob(jobName) {
             const countLabel = document.getElementById('emp-active-count');
             if (!list) return;
 
+            const currentUserEmail = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : '';
+            const myJobs = localEmployerJobs.filter(j => !j.ownerEmail || j.ownerEmail === currentUserEmail);
+
             // Calculate dynamic status counts for dashboard
             let countSeeking = 0;
             let countApplicants = 0;
             let countActive = 0;
             let countCompleted = 0;
 
-            localEmployerJobs.forEach(job => {
+            myJobs.forEach(job => {
                 if (job.status === 'Befejezett') {
                     countCompleted++;
                 } else if (job.status === 'Aktív') {
@@ -7993,12 +8072,12 @@ function filterWorkerByExactJob(jobName) {
             if (completedEl) completedEl.innerText = countCompleted;
 
             // Count total active ads
-            const activeCount = localEmployerJobs.filter(j => j.status !== 'Befejezett').length;
+            const activeCount = myJobs.filter(j => j.status !== 'Befejezett').length;
             if (countLabel) {
                 countLabel.innerText = `${activeCount} aktív`;
             }
 
-            if (localEmployerJobs.length === 0) {
+            if (myJobs.length === 0) {
                 list.innerHTML = `
                     <div class="emp-empty-state">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-navy)" stroke-width="1.5" style="margin-bottom:8px;">
@@ -8012,7 +8091,7 @@ function filterWorkerByExactJob(jobName) {
             }
 
             let html = '';
-            localEmployerJobs.forEach(job => {
+            myJobs.forEach(job => {
                 let statusClass = 'seeking';
                 let statusText = 'Keresés';
                 let cardClass = 'status-seeking';
@@ -8230,7 +8309,9 @@ function filterWorkerByExactJob(jobName) {
                     price: price,
                     status: 'Keresés',
                     category: empActiveCat,
-                    datetime: dt
+                    datetime: dt,
+                    ownerEmail: (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : 'employer@melogo.hu',
+                    createdAt: Date.now()
                 };
 
                 localEmployerJobs.unshift(newJob);

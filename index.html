@@ -67,7 +67,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background-color: #fff;
             z-index: 1000;
-            padding: 60px 24px 30px 24px;
+            padding: 0 24px 30px 24px;
             display: flex;
             flex-direction: column;
         }
@@ -239,7 +239,7 @@
         /* Home Header */
         .header-midnight {
             background-color: var(--color-navy);
-            padding: 64px 20px 36px 20px;
+            padding: 20px 20px 24px 20px;
             border-bottom-left-radius: 30px;
             border-bottom-right-radius: 30px;
         }
@@ -2149,7 +2149,7 @@
 
         .msg-midnight-header {
             background-color: var(--color-navy);
-            padding: 64px 20px 32px 20px;
+            padding: 20px 20px 20px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -2158,7 +2158,7 @@
         .msg-filter-row {
             display: flex;
             gap: 8px;
-            padding: 12px 20px;
+            padding: 16px 20px 12px 20px;
             background-color: #fff;
             border-bottom: 0.5px solid var(--color-border);
             flex-shrink: 0;
@@ -2645,7 +2645,9 @@
 
 <div id="app-login-screen">
     <!-- Logo -->
-    <div class="login-logo" style="display: flex; justify-content: center;"><img src="logo.png" alt="MeloGo" style="height: 64px; width: auto; object-fit: contain; display: inline-block; margin-bottom: 20px;"></div>
+    <div class="login-logo" style="display: flex; justify-content: center; padding-top: 60px; margin-bottom: 48px;">
+    <img src="logo.png" alt="MeloGo" style="width: 180px; height: auto; object-fit: contain; display: block; opacity: 1 !important;">
+</div>
     <div class="login-subtitle" id="login-mode-subtitle">Hozd létre a fiókodat</div>
 
     <!-- Role cards -->
@@ -2741,7 +2743,9 @@
             <!-- SCREEN 0: HOME -->
             <div class="screen" id="app-home-screen">
                 <div class="header-midnight">
-                    <div class="brand-logo" style="display: flex; align-items: center;"><img src="logo.png" alt="MeloGo" style="height: 48px; width: auto; object-fit: contain; display: inline-block;"></div>
+                    <div class="brand-logo" style="display: flex; align-items: flex-start; margin-bottom: 24px;">
+    <img src="logo.png" alt="MeloGo" style="width: 140px; height: auto; object-fit: contain; display: block; opacity: 1 !important;">
+</div>
                     <div class="welcome-text">Szia, <span class="user-first-name-display"></span>!</div>
                     
                     <div class="search-bar" onclick="openSearchOverlay()" style="cursor:pointer;">
@@ -2794,8 +2798,10 @@
                 <div id="home-employer-view" class="job-list" style="display: none; padding: 0 0 96px 0; flex-direction: column;">
                     <!-- Employer Specific Header -->
                     <div class="emp-home-header">
-                        <div class="emp-welcome-title" style="text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;"><img src="logo.png" alt="MeloGo" style="height: 48px; width: auto; object-fit: contain; display: inline-block;"></div>
-                        <div class="emp-welcome-sub" style="text-align: center; width: 100%; margin-bottom: 0;">Szia, <span class="user-name-display">Megbízó</span>! Kezeld a hirdetéseidet!</div>
+                        <div class="emp-welcome-title" style="text-align: left; width: 100%; display: flex; justify-content: flex-start; align-items: flex-start; margin-bottom: 24px;">
+    <img src="logo.png" alt="MeloGo" style="width: 140px; height: auto; object-fit: contain; display: block; opacity: 1 !important;">
+</div>
+                        <div class="emp-welcome-sub" style="text-align: left; width: 100%; margin-bottom: 0;">Szia, <span class="user-name-display">Megbízó</span>! Kezeld a hirdetéseidet!</div>
                     </div>
                     
                     <!-- Dashboard Summary Stat Cards Horizontally Scrollable -->
@@ -2872,8 +2878,10 @@
             <div class="screen" id="app-messages-screen" style="background:#F8F9FB; padding-bottom: 96px; display: flex; flex-direction: column; overflow: hidden;">
                 <!-- Midnight Navy Header -->
                 <div class="msg-midnight-header">
-                    <div class="brand-logo" style="display: flex; align-items: center; width: 100%;"><img src="logo.png" alt="MeloGo" style="height: 48px; width: auto; object-fit: contain; display: inline-block;"></div>
-                </div>
+    <div class="brand-logo" style="display: flex; align-items: flex-start; width: 100%;">
+        <img src="logo.png" alt="MeloGo" style="height: 36px; width: auto; object-fit: contain; display: block; opacity: 1 !important;">
+    </div>
+</div>
                 
                 <!-- Filter Pills Row -->
                 <div class="msg-filter-row">
@@ -4192,9 +4200,8 @@
                 return `Boldog államalapítást, ${name}! 🇭🇺`;
             }
             
-            if (hour < 10) return `Jó reggelt, ${name}!`;
-            if (hour >= 19) return `Jó estét, ${name}!`;
-            return `Szia, ${name}!`;
+            const greetingPrefix = hour < 10 ? 'Jó reggelt' : (hour >= 19 ? 'Jó estét' : 'Szia');
+            return name ? `${greetingPrefix}, ${name}!` : `${greetingPrefix}!`;
         }
         function updateGreetings() {
             const workerSess = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}'); const firstName = (workerSess.name || 'Barátom').split(' ')[0];

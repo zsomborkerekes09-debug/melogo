@@ -2734,6 +2734,7 @@
     <link rel="icon" href="icon-192.svg" type="image/svg+xml">
 </head>
 <body>
+<div id="phone-app" class="phone-container">
 
 
 <!-- Splash Screen -->
@@ -3623,7 +3624,7 @@
                             </svg>
                         </button>
                         <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px;">
-                            <div id="employer-action-title" style="font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 4px;">${currentUser ? currentUser.name : "Diák"}</div>
+                            <div id="employer-action-title" style="font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 4px;" class="user-name-display">Diák</div>
                             <div id="employer-chat-job-subtitle" style="font-size: 12px; font-weight: 600; color: #22C55E;">Fűnyírás</div>
                         </div>
                     </div>
@@ -3656,7 +3657,7 @@
                     <div class="settings-scroll" style="background-color: var(--color-bg-light); padding: 20px;">
                         <div style="text-align: center; margin-bottom: 20px;">
                             <div style="font-size: 13px; color: var(--color-text-muted);">Munkás neve</div>
-                            <div style="font-size: 18px; font-weight: 700; color: var(--color-navy);" id="offer-worker-name">${currentUser ? currentUser.name : "Diák"}</div>
+                            <div style="font-size: 18px; font-weight: 700; color: var(--color-navy);" id="offer-worker-name" class="user-name-display">Diák</div>
                         </div>
                         
                         <div class="form-card" style="margin-top: 0;">
@@ -3791,7 +3792,7 @@
                     
                     <div>
                         <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-                            <h2 id="wp-name" style="font-size: 19px; font-weight: 700; color: #080C1E; font-family: 'DM Sans', sans-serif;">${currentUser ? currentUser.name : "Diák"}</h2>
+                            <h2 id="wp-name" style="font-size: 19px; font-weight: 700; color: #080C1E; font-family: 'DM Sans', sans-serif;">Diák</h2>
                         </div>
                         <p id="wp-trust-badge" style="display: inline-block; background: rgba(37,99,235,0.08); color: #2563EB; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 16px; margin-top: 6px;">Megbízható Diák</p>
                     </div>
@@ -4295,6 +4296,17 @@
     </script>
 
     <script>
+        // Global getter to evaluate currentUser dynamically safely anywhere in JS
+        Object.defineProperty(window, 'currentUser', {
+            get: function() {
+                if (typeof loadCurrentUser === 'function') {
+                    return loadCurrentUser();
+                }
+                return null;
+            },
+            configurable: true
+        });
+
         // A 20 predefiniált munkatípus és áraik kategóriánként (Mockup alapján)
         const jobCatalog = {
             Kert: [
@@ -4467,6 +4479,13 @@
                 }
             } else {
                 switchRole('worker'); // default for login screen
+                // Ensure all overlays and action sheets are closed on startup if not logged in
+                if (typeof closeAllActionOverlays === 'function') {
+                    closeAllActionOverlays();
+                }
+                document.querySelectorAll('.action-overlay, .settings-overlay').forEach(el => {
+                    el.classList.remove('active', 'open');
+                });
             }
         };
 
@@ -6679,7 +6698,9 @@ function filterWorkerByExactJob(jobName) {
         // WORKER PROFILE OVERLAY FOR EMPLOYER
         // ===================================================================
         function openWorkerProfile(workerName) {
-            const name = workerName || '${currentUser ? currentUser.name : "Diák"}';
+            const currentUser = loadCurrentUser();
+            const currentUserName = currentUser ? currentUser.name : "Diák";
+            const name = workerName || currentUserName;
             document.getElementById('wp-name').innerText = name;
             
             // Set some high-fidelity dynamic values based on the worker name
@@ -6690,7 +6711,7 @@ function filterWorkerByExactJob(jobName) {
             let trustBadge = "Megbízható Diák";
             let avatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80";
 
-            if (name === '${currentUser ? currentUser.name : "Diák"}') {
+            if (name === currentUserName) {
                 if (typeof userData !== 'undefined') {
                     completedJobs = userData.stats ? userData.stats.jobs : 14;
                     rating = userData.stats ? userData.stats.rating : 4.9;

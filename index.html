@@ -2147,22 +2147,8 @@
             color: rgba(255, 255, 255, 0.8);
         }
 
-        .msg-midnight-header {
-            background-color: var(--color-navy);
-            padding: 64px 20px 32px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        .msg-filter-row {
-            display: flex;
-            gap: 8px;
-            padding: 12px 20px;
-            background-color: #fff;
-            border-bottom: 0.5px solid var(--color-border);
-            flex-shrink: 0;
-        }
+        .msg-midnight-header { background-color: var(--color-navy); padding: 20px 20px 20px 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .msg-filter-row { display: flex; gap: 8px; padding: 16px 20px 12px 20px; background-color: #fff; border-bottom: 0.5px solid var(--color-border); flex-shrink: 0; }
         .msg-filter-pill {
             padding: 6px 16px;
             border-radius: 16px;
@@ -2646,7 +2632,7 @@
 <div id="app-login-screen">
     <!-- Logo -->
     <div class="login-logo">
-    <img src="logo_dark.png" alt="MeloGo" style="height: 36px; width: auto; object-fit: contain; vertical-align: middle;">
+    <img src="logo_dark.png" alt="MeloGo" style="width: 180px; height: auto; object-fit: contain; margin-bottom: 16px;">
 </div>
     <div class="login-subtitle" id="login-mode-subtitle">Hozd létre a fiókodat</div>
 
@@ -2743,8 +2729,8 @@
             <!-- SCREEN 0: HOME -->
             <div class="screen" id="app-home-screen">
                 <div class="header-midnight">
-                    <div class="brand-logo" style="display: flex; align-items: center;">
-    <img src="logo_light.png" alt="MeloGo" style="height: 44px; width: auto; object-fit: contain;">
+                    <div class="brand-logo">
+    <img src="logo_light.png" alt="MeloGo" style="width: 140px; height: auto; object-fit: contain;">
 </div>
                     <div class="welcome-text">Szia, <span class="user-first-name-display"></span>!</div>
                     
@@ -2798,7 +2784,7 @@
                 <div id="home-employer-view" class="job-list" style="display: none; padding: 0 0 96px 0; flex-direction: column;">
                     <!-- Employer Specific Header -->
                     <div class="emp-home-header">
-                        <div class="emp-welcome-title" style="text-align: center; width: 100%;">Melo<span style="color:var(--color-green)">Go</span></div>
+                        <div class="emp-welcome-title" style="text-align: left; width: 100%; margin-bottom: 24px;"><img src="logo_light.png" alt="MeloGo" style="width: 140px; height: auto; object-fit: contain;"></div>
                         <div class="emp-welcome-sub" style="text-align: center; width: 100%; margin-bottom: 0;">Szia, <span class="user-name-display">Megbízó</span>! Kezeld a hirdetéseidet!</div>
                     </div>
                     
@@ -2876,7 +2862,9 @@
             <div class="screen" id="app-messages-screen" style="background:#F8F9FB; padding-bottom: 96px; display: flex; flex-direction: column; overflow: hidden;">
                 <!-- Midnight Navy Header -->
                 <div class="msg-midnight-header">
-                    <div class="brand-logo" style="font-size: 24px; font-weight: 700; color: #fff; margin: 0;  text-align: left; width: 100%;">Melo<span style="color:var(--color-green)">Go</span></div>
+                    <div class="brand-logo" style="margin: 0; text-align: left; width: 100%;">
+    <img src="logo_light.png" alt="MeloGo" style="height: 36px; width: auto; object-fit: contain;">
+</div>
                 </div>
                 
                 <!-- Filter Pills Row -->

@@ -8,6 +8,11 @@
   "description": "Találj munkát gyorsan, vagy hívj egy diákot segítségül!",
   "icons": [
     {
+      "src": "app_icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
       "src": "icon-192.svg",
       "sizes": "192x192",
       "type": "image/svg+xml"

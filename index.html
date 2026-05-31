@@ -4881,8 +4881,21 @@
                     
                     doEnterApp(name, email, role);
                 } catch (error) {
-                    showLoginError('Hiba a regisztráció során: ' + (error.code === 'auth/email-already-in-use' ? 'Ez az email cím már foglalt!' : error.message));
-                    highlightInputError('app-email', 'Ez az email cím már foglalt!');
+                    let errMsg = 'Sikertelen regisztráció!';
+                    if (error.code === 'auth/email-already-in-use') {
+                        errMsg = 'Ez az email cím már foglalt!';
+                        highlightInputError('app-email', errMsg);
+                    } else if (error.code === 'auth/invalid-email') {
+                        errMsg = 'Érvénytelen email cím!';
+                        highlightInputError('app-email', errMsg);
+                    } else if (error.code === 'auth/weak-password') {
+                        errMsg = 'A jelszó túl gyenge (legalább 6 karakter szükséges)!';
+                        highlightInputError('app-pw', errMsg);
+                    } else {
+                        errMsg = error.message || errMsg;
+                        highlightInputError('app-email', errMsg);
+                    }
+                    showLoginError('Hiba a regisztráció során: ' + errMsg);
                     btn.disabled = false;
                     btn.innerText = 'Regisztrálok & Bejelentkezem';
                 }

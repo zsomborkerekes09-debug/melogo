@@ -4774,11 +4774,28 @@
                     // Fetch user profile from Firestore
                     const userDoc = await window.firebaseAPI.getDoc(window.firebaseAPI.doc(window.firebaseDb, "users", user.uid));
                     let name = 'Felhasználó';
+                    let bio = '';
+                    let skills = [];
+                    let photoURL = '';
+                    let defaultRole = role;
+                    
                     if (userDoc.exists()) {
-                        name = userDoc.data().name || name;
+                        const data = userDoc.data();
+                        name = data.name || name;
+                        bio = data.bio || '';
+                        skills = data.skills || [];
+                        photoURL = data.photoURL || '';
+                        defaultRole = data.defaultRole || role;
                     }
                     
-                    doEnterApp(name, email, role);
+                    // Save to user_data
+                    const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
+                    userData.bio = bio;
+                    userData.skills = skills;
+                    userData.photoURL = photoURL;
+                    localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+                    
+                    doEnterApp(name, email, defaultRole);
                 } catch (error) {
                     showLoginError('Hiba: Helytelen email vagy jelszó!');
                     highlightInputError('login-email', 'Helytelen email cím!');

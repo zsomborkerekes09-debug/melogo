@@ -4291,6 +4291,7 @@
                         snapshot.forEach(d => jobs.push(d.data()));
                         if (jobs.length > 0) {
                             localEmployerJobs = jobs.sort((a,b) => b.createdAt - a.createdAt);
+                            localStorage.setItem('melogo_employer_jobs', JSON.stringify(localEmployerJobs));
                             if (typeof renderEmployerHome === 'function') renderEmployerHome();
                             if (typeof renderWorkerHome === 'function') renderWorkerHome();
                             if (typeof renderMapPins === 'function') renderMapPins();
@@ -4309,6 +4310,11 @@
                             }
                         });
                         localWorkerApplications = apps.sort((a,b) => b.createdAt - a.createdAt);
+                        localStorage.setItem('melogo_worker_applications', JSON.stringify(localWorkerApplications));
+                        
+                        // Force redraw profile ratings, reviews, greetings, and name headers with fresh data
+                        if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                        if (typeof updateGreetings === 'function') updateGreetings();
                         if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
                     });
                 }
@@ -4324,6 +4330,7 @@
                             }
                         });
                         localChats = chats.sort((a,b) => b.createdAt - a.createdAt);
+                        localStorage.setItem('melogo_chats', JSON.stringify(localChats));
                         if (typeof renderChatList === 'function') renderChatList();
                         
                         // Real-time active chat room refresh

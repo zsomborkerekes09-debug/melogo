@@ -7057,56 +7057,89 @@ function filterWorkerByExactJob(jobName) {
         // ===================================================================
         // WORKER PROFILE OVERLAY FOR EMPLOYER
         // ===================================================================
-        function openWorkerProfile(workerName) {
+        async function openWorkerProfile(workerName) {
             const currentUser = loadCurrentUser();
             const currentUserName = currentUser ? currentUser.name : "Diák";
             const name = workerName || currentUserName;
+            
             document.getElementById('wp-name').innerText = name;
             
-            // Set some high-fidelity dynamic values based on the worker name
+            // Default mockup fallback values
             let completedJobs = 14;
             let rating = 4.9;
             let bio = "Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok.";
             let skills = ['Kertészet', 'Autómosás', 'Takarítás'];
             let trustBadge = "Megbízható Diák";
             let avatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80";
-
-            if (name === currentUserName) {
-                if (typeof userData !== 'undefined') {
-                    completedJobs = userData.stats ? userData.stats.jobs : 14;
-                    rating = userData.stats ? userData.stats.rating : 4.9;
-                    bio = userData.bio || bio;
-                    skills = Array.from(selectedSkills || ['Kertészet', 'Autómosás', 'Takarítás']);
+            
+            // Try to fetch real profile data from Firestore by querying the name field
+            if (window.firebaseAPI && window.firebaseDb) {
+                try {
+                    const q = window.firebaseAPI.query(
+                        window.firebaseAPI.collection(window.firebaseDb, "users"), 
+                        window.firebaseAPI.where("name", "==", name)
+                    );
+                    const querySnapshot = await window.firebaseAPI.getDocs(q);
+                    
+                    if (!querySnapshot.empty) {
+                        const userDoc = querySnapshot.docs[0];
+                        const data = userDoc.data();
+                        
+                        bio = data.bio || bio;
+                        skills = data.skills || skills;
+                        avatar = data.photoURL || avatar;
+                        
+                        completedJobs = data.jobCount !== undefined ? data.jobCount : completedJobs;
+                        rating = data.rating !== undefined ? data.rating : rating;
+                        
+                        if (completedJobs >= 15 && rating >= 4.7) trustBadge = "Prémium Diák";
+                        else if (completedJobs >= 8 && rating >= 4.3) trustBadge = "Tapasztalt Diák";
+                        else if (completedJobs >= 3 && rating >= 4.0) trustBadge = "Megbízható Diák";
+                        else trustBadge = "Kezdő Diák";
+                    }
+                } catch(e) {
+                    console.error("Error fetching worker profile from Firestore:", e);
                 }
-            } else if (name === 'Nagy Péter') {
-                completedJobs = 8;
-                rating = 4.7;
-                bio = "Sziasztok! Másodéves gépészmérnök hallgató vagyok. Főleg fizikai munkát, pakolást és kerítésfestést vállalok Kaposváron.";
-                skills = ['Kerítésfestés', 'Költöztetés', 'Fűnyírás'];
-                trustBadge = "Tapasztalt Diák";
-                avatar = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80";
-            } else if (name === 'Tóth János') {
-                completedJobs = 26;
-                rating = 5.0;
-                bio = "Diákmunkát keresek rugalmas időbeosztással. Bármilyen kerti munkában, fűnyírásban és takarításban segítek.";
-                skills = ['Fűnyírás', 'Gyomirtás', 'Takarítás'];
-                trustBadge = "Prémium Diák";
-                avatar = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80";
-            } else {
-                completedJobs = 3;
-                rating = 4.5;
-                bio = "Sziasztok! Kisebb kisegítő munkákat keresek suli mellett. Rugalmas és barátságos vagyok.";
-                skills = ['Kutyasétáltatás', 'Bevásárlás'];
-                trustBadge = "Kezdő Diák";
-                avatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80";
             }
-
+            
+            // Also override with local active user details if looking up oneself
+            if (name === currentUserName) {
+                completedJobs = currentUser.jobCount !== undefined ? currentUser.jobCount : completedJobs;
+                rating = currentUser.rating !== undefined ? currentUser.rating : rating;
+                bio = currentUser.bio || bio;
+                skills = currentUser.skills || skills;
+                avatar = currentUser.photoURL || avatar;
+                
+                if (completedJobs >= 15 && rating >= 4.7) trustBadge = "Prémium Diák";
+                else if (completedJobs >= 8 && rating >= 4.3) trustBadge = "Tapasztalt Diák";
+                else if (completedJobs >= 3 && rating >= 4.0) trustBadge = "Megbízható Diák";
+                else trustBadge = "Kezdő Diák";
+            }
+            
+            // Render on overlay
             document.getElementById('wp-completed-count').innerText = completedJobs;
             document.getElementById('wp-stars').innerText = rating.toFixed(1);
             document.getElementById('wp-bio').innerText = '"' + bio + '"';
             document.getElementById('wp-trust-badge').innerText = trustBadge;
-            document.getElementById('wp-avatar').src = avatar;
-
+            
+            // Avatar display with initials fallback if Base64 photo is not available
+            const avatarImg = document.getElementById('wp-avatar');
+            const wpFallback = document.getElementById('wp-avatar-fallback');
+            
+            if (avatarImg && wpFallback) {
+                if (avatar && (avatar.startsWith('data:image') || avatar.startsWith('http'))) {
+                    avatarImg.src = avatar;
+                    avatarImg.style.display = 'block';
+                    wpFallback.style.display = 'none';
+                } else {
+                    avatarImg.style.display = 'none';
+                    wpFallback.innerText = getInitials(name);
+                    wpFallback.style.display = 'flex';
+                }
+            } else if (avatarImg) {
+                avatarImg.src = avatar;
+            }
+            
             // Render Skills
             const wpSkills = document.getElementById('wp-skills');
             if (wpSkills) {
@@ -7117,33 +7150,41 @@ function filterWorkerByExactJob(jobName) {
                     </span>
                 `).join('');
             }
-
+            
             // Render Reviews (last 5)
             const reviewsContainer = document.getElementById('wp-reviews-container');
             if (reviewsContainer) {
-                const reviews = [
-                    { reviewer: 'Nagy Gábor (Megbízó)', stars: 5, date: '2026. máj. 24.', text: 'Nagyon pontosan érkezett, és a megbeszéltek szerint hihetetlenül precíz munkát végzett! Csak ajánlani tudom.' },
-                    { reviewer: 'Kiss Mária (Megbízó)', stars: 5, date: '2026. máj. 18.', text: 'Nagyon barátságos diák, gyorsan és hatékonyan dolgozott. Köszönöm a segítséget!' },
-                    { reviewer: 'Molnár István (Megbízó)', stars: 4, date: '2026. máj. 10.', text: 'Elégedett vagyok a munkájával, kicsit késett az egyeztetett időpontról, de pótolta a kiesett időt.' },
-                    { reviewer: 'Szabó Éva (Megbízó)', stars: 5, date: '2026. ápr. 28.', text: 'Kiváló kommunikáció és professzionális teljesítés. Minden a megbeszéltek szerint zajlott.' },
-                    { reviewer: 'Kovács Edit (Megbízó)', stars: 5, date: '2026. ápr. 15.', text: 'Szuperül és gyorsan elvégezte a feladatot. Biztosan fogom még hívni!' }
-                ];
+                let reviews = [];
+                if (name === currentUserName && currentUser.reviews && currentUser.reviews.length > 0) {
+                    reviews = currentUser.reviews.slice(0, 5);
+                } else {
+                    reviews = [
+                        { name: 'Nagy Gábor (Megbízó)', stars: 5, date: '2026. máj. 24.', text: 'Nagyon pontosan érkezett, és a megbeszéltek szerint hihetetlenül precíz munkát végzett! Csak ajánlani tudom.' },
+                        { name: 'Kiss Mária (Megbízó)', stars: 5, date: '2026. máj. 18.', text: 'Nagyon barátságos diák, gyorsan és hatékonyan dolgozott. Köszönöm a segítséget!' },
+                        { name: 'Molnár István (Megbízó)', stars: 4, date: '2026. máj. 10.', text: 'Elégedett vagyok a munkájával, kicsit késett az egyeztetett időpontról, de pótolta a kiesett időt.' },
+                        { name: 'Szabó Éva (Megbízó)', stars: 5, date: '2026. ápr. 28.', text: 'Kiváló kommunikáció és professzionális teljesítés. Minden a megbeszéltek szerint zajlott.' },
+                        { name: 'Kovács Edit (Megbízó)', stars: 5, date: '2026. ápr. 15.', text: 'Szuperül és gyorsan elvégezte a feladatot. Biztosan fogom még hívni!' }
+                    ];
+                }
                 
                 reviewsContainer.innerHTML = reviews.map((r, i) => {
-                    const activeStars = '⭐'.repeat(r.stars);
+                    const activeStars = '⭐'.repeat(r.stars || r.rating || 5);
+                    const reviewerName = r.name || r.reviewer || 'Megbízó';
+                    const reviewDate = r.date || new Date().toLocaleDateString('hu-HU');
+                    const reviewText = r.text || 'Kiváló és megbízható munka! Köszönöm.';
                     return `
                         <div style="background: white; border-radius: 16px; border: 0.5px solid #F1F1F1; padding: 16px 20px;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                                <div style="font-size: 13px; font-weight:700; color: #080C1E;">${r.reviewer}</div>
-                                <div style="font-size: 11px; color: #9CA3AF;">${r.date}</div>
+                                <div style="font-size: 13px; font-weight:700; color: #080C1E;">${reviewerName}</div>
+                                <div style="font-size: 11px; color: #9CA3AF;">${reviewDate}</div>
                             </div>
                             <div style="font-size: 13px; margin-bottom: 6px;">${activeStars}</div>
-                            <div style="font-size: 13px; color: #4B5563; line-height:1.5;">${r.text}</div>
+                            <div style="font-size: 13px; color: #4B5563; line-height:1.5;">${reviewText}</div>
                         </div>
                     `;
                 }).join('');
             }
-
+            
             document.getElementById('worker-profile-overlay').classList.add('open');
         }
 

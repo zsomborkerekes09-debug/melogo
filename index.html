@@ -4268,11 +4268,12 @@
                         employerSession.email = user.email;
                         localStorage.setItem('melogo_employer_session', JSON.stringify(employerSession));
 
-                        // Store in user_data as well
-                        const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
-                        userData.bio = data.bio || userData.bio || '';
-                        userData.skills = data.skills || userData.skills || [];
-                        userData.photoURL = data.photoURL || userData.photoURL || '';
+                        // Store in user_data as well - completely overwrite from Firestore to prevent stale local cache inheritance!
+                        const userData = {};
+                        userData.bio = data.bio || '';
+                        userData.skills = data.skills || [];
+                        userData.photoURL = data.photoURL || '';
+                        userData.reviews = data.reviews || [];
                         localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     }
                 } catch(e) { console.error("Error fetching user doc", e); }
@@ -4804,11 +4805,12 @@
                         defaultRole = data.defaultRole || role;
                     }
                     
-                    // Save to user_data
-                    const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
+                    // Save to user_data - completely overwrite from Firestore to prevent stale local cache inheritance!
+                    const userData = {};
                     userData.bio = bio;
                     userData.skills = skills;
                     userData.photoURL = photoURL;
+                    userData.reviews = userDoc.exists() ? (userDoc.data().reviews || []) : [];
                     localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     
                     doEnterApp(name, email, defaultRole);
@@ -4878,6 +4880,17 @@
                         createdAt: window.firebaseAPI.serverTimestamp()
                     });
                     
+                    // Initialize a brand new, empty local profile to prevent stale local cache inheritance!
+                    const userData = {
+                        bio: '',
+                        skills: [],
+                        photoURL: '',
+                        reviews: []
+                    };
+                    localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+                    localStorage.setItem('melogo_worker_applications', '[]');
+                    localStorage.setItem('melogo_chats', '[]');
+                    
                     doEnterApp(name, email, role);
                 } catch (error) {
                     let errMsg = 'Sikertelen regisztráció!';
@@ -4915,8 +4928,21 @@
                 }
             } catch (e) { console.error("Firebase kijelentkezés sikertelen", e); }
             
-            localStorage.removeItem('melogo_app_session');
-            localStorage.removeItem('melogo_active_role');
+            // Completely clear all MeloGo keys in local storage to prevent session leakage/stale ratings
+            const keysToRemove = [
+                'melogo_app_session',
+                'melogo_active_role',
+                'melogo_name',
+                'melogo_worker_session',
+                'melogo_employer_session',
+                'melogo_user_data',
+                'melogo_worker_applications',
+                'melogo_chats',
+                'melogo_employer_jobs',
+                'melogo_sort'
+            ];
+            keysToRemove.forEach(k => localStorage.removeItem(k));
+            
             location.reload();
         }
 

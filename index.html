@@ -3064,7 +3064,7 @@
                         
                         <!-- Top section — Hero area (Dark Navy) -->
                         <div style="background-color: #080C1E; padding: 40px 20px 80px 20px; position: relative; text-align: center;">
-                            <button onclick="document.getElementById('worker-settings').classList.add('open')" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; cursor: pointer;">
+                            <button onclick="openSettings()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; cursor: pointer;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                             </button>
 
@@ -3154,7 +3154,7 @@
                             <div>
                                 <div style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">FIÓKOM</div>
                                 <div style="background-color: white; border-radius: 16px; border: 1px solid #F1F1F1;">
-                                    <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('worker-settings').classList.add('open')">
+                                    <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="openSettings()">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="1.5" style="margin-right: 12px; flex-shrink: 0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Bemutatkozás szerkesztése</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -3168,7 +3168,7 @@
                                     </div>
                                     <div style="margin-left: 48px; height: 0.5px; background-color: #E5E7EB;"></div>
                                     
-                                    <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('worker-settings').classList.add('open'); setTimeout(() => { const sc = document.getElementById('worker-settings-scroll'); const target = document.getElementById('skill-selector'); if (sc && target) { sc.scrollTo({ top: target.offsetTop - 100, behavior: 'smooth' }); } }, 300);">
+                                    <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="openSettings(); setTimeout(() => { const sc = document.getElementById('worker-settings-scroll'); const target = document.getElementById('skill-selector'); if (sc && target) { sc.scrollTo({ top: target.offsetTop - 100, behavior: 'smooth' }); } }, 300);">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="1.5" style="margin-right: 12px; flex-shrink: 0;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Szaktudások kezelése</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -4246,6 +4246,24 @@
                         if (data.defaultRole) {
                             localStorage.setItem('melogo_active_role', data.defaultRole);
                         }
+                        
+                        // Sync names into worker and employer sessions if they are missing
+                        const workerSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
+                        workerSession.name = data.name || workerSession.name || 'Felhasználó';
+                        workerSession.email = user.email;
+                        localStorage.setItem('melogo_worker_session', JSON.stringify(workerSession));
+                        
+                        const employerSession = JSON.parse(localStorage.getItem('melogo_employer_session') || '{}');
+                        employerSession.name = data.name || employerSession.name || 'Felhasználó';
+                        employerSession.email = user.email;
+                        localStorage.setItem('melogo_employer_session', JSON.stringify(employerSession));
+
+                        // Store in user_data as well
+                        const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
+                        userData.bio = data.bio || userData.bio || '';
+                        userData.skills = data.skills || userData.skills || [];
+                        userData.photoURL = data.photoURL || userData.photoURL || '';
+                        localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     }
                 } catch(e) { console.error("Error fetching user doc", e); }
                 
@@ -4256,11 +4274,15 @@
                 var screen = document.getElementById('app-login-screen');
                 if (screen && !screen.classList.contains('hidden')) {
                     screen.classList.add('hidden');
-                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
-                    if (typeof updateGreetings === 'function') updateGreetings();
-                    let role = localStorage.getItem('melogo_active_role') || 'worker';
-                    if (typeof switchRole === 'function') switchRole(role);
                 }
+                
+                // ALWAYS refresh UI with the correct fetched name/details on load or login
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof updateGreetings === 'function') updateGreetings();
+                
+                let role = localStorage.getItem('melogo_active_role') || 'worker';
+                if (typeof switchRole === 'function') switchRole(role);
+            }
                 
                 // Setup Firestore listeners
                 if (!window.jobsUnsubscribe) {

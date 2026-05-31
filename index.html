@@ -1720,9 +1720,27 @@
         }
         .skill-selector-grid {
             display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 0 16px 16px 16px;
+        }
+        .skill-category-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .skill-category-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #9CA3AF;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .skill-category-tags {
+            display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            padding: 0 16px 16px 16px;
         }
         .skill-tag {
             min-height: 44px;
@@ -1741,49 +1759,33 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 5;
+            pointer-events: auto !important;
         }
         .skill-tag.selected {
             background: #080C1E !important;
             color: #FFFFFF !important;
         }
-        .availability-row {
-            padding: 14px 16px;
-        }
-        .availability-options {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .avail-btn {
-            flex: 1;
-            padding: 10px 0;
-            border-radius: 10px;
-            border: 1px solid #E5E7EB;
+        .profile-skill-chip {
             background: #fff;
-            color: #4B5563;
-            font-size: 13px;
+            border: 0.5px solid #E5E7EB;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 6px;
-        }
-        #avail-active.active {
-            background: #F0FDF4;
-            color: #16A34A;
-            border-color: #BBF7D0;
-        }
-        #avail-busy.active {
-            background: #FEFCE8;
-            color: #CA8A04;
-            border-color: #FEF08A;
-        }
-        #avail-inactive.active {
-            background: #F3F4F6;
             color: #374151;
-            border-color: #E5E7EB;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
         }
         .settings-save-btn {
             background: var(--color-navy);
@@ -2735,6 +2737,9 @@
 </head>
 <body>
 <div id="phone-app" class="phone-container">
+    <!-- Hidden inputs for photo and camera pickers -->
+    <input type="file" id="avatar-gallery-picker" accept="image/*" style="display:none;" onchange="handleAvatarFileSelected(event, 'gallery')">
+    <input type="file" id="avatar-camera-picker" accept="image/*" capture="user" style="display:none;" onchange="handleAvatarFileSelected(event, 'camera')">
 
 
 <!-- Splash Screen -->
@@ -3119,6 +3124,24 @@
                                 </div>
                             </div>
 
+                            <!-- Section: BEMUTATKOZÁS & SZAKTUDÁS -->
+                            <div id="profile-bio-skills-card" style="display: block;">
+                                <div style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS & SZAKTUDÁS</div>
+                                <div style="background-color: white; border-radius: 16px; border: 1px solid #F1F1F1; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                                    <div>
+                                        <div style="font-size: 11px; font-weight: 700; color: #9CA3AF; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Bemutatkozás</div>
+                                        <div id="profile-bio-display" style="font-size: 14px; color: #374151; line-height: 1.5; font-style: italic;">"Nincs bemutatkozás megadva."</div>
+                                    </div>
+                                    <div style="height: 0.5px; background-color: #E5E7EB;"></div>
+                                    <div>
+                                        <div style="font-size: 11px; font-weight: 700; color: #9CA3AF; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Szaktudások</div>
+                                        <div id="profile-skills-display" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                            <!-- Dynamically filled by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Section: JELENTKEZÉSEIM (csak Munkás nézetben) -->
                             <div id="profile-applications-section" style="display: block;">
                                 <div style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">JELENTKEZÉSEIM</div>
@@ -3138,7 +3161,7 @@
                                     </div>
                                     <div style="margin-left: 48px; height: 0.5px; background-color: #E5E7EB;"></div>
                                     
-                                    <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('photo-upload').click()">
+                                    <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="openAvatarPicker()">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#080C1E" stroke-width="1.5" style="margin-right: 12px; flex-shrink: 0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                                         <span style="font-size: 15px; color: #000; flex-grow: 1;">Profilkép módosítása</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -3269,14 +3292,13 @@
                             <div class="settings-group-label">Profil</div>
                             <div class="settings-card">
                                 <!-- Foto -->
-                                <div class="settings-row" onclick="document.getElementById('photo-upload').click()">
+                                <div class="settings-row" onclick="openAvatarPicker()">
                                     <div class="settings-row-icon">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                     </div>
                                     <span class="settings-row-label">Profilkép módosítása</span>
                                     <svg class="settings-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
                                 </div>
-                                <input type="file" id="photo-upload" accept="image/*" capture="camera" style="display:none" onchange="handlePhotoUpload(event)">
                                 <!-- Bio -->
                                 <div style="border-bottom: 0.5px solid #F3F4F6;">
                                     <div style="display:flex;align-items:center;gap:12px;padding:14px 16px 4px 16px;">
@@ -3304,26 +3326,6 @@
                                 <div id="skills-warning-msg" style="display:none; color:#EF4444; font-size:12px; font-weight:600; padding: 4px 16px; margin-bottom: 8px; text-align: left;">Maximum 6 szaktudást adhatsz hozzá</div>
                                 <div class="skill-selector-grid" id="skill-selector">
                                     <!-- Generatedby JS -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Elérhetőség -->
-                        <div>
-                            <div class="settings-group-label">Elérhetőség</div>
-                            <div class="settings-card">
-                                <div class="availability-row">
-                                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
-                                        <div class="settings-row-icon">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                        </div>
-                                        <span class="settings-row-label">Jelenlegi állapot</span>
-                                    </div>
-                                    <div class="availability-options">
-                                        <button class="avail-btn active-green" id="avail-active" onclick="setAvailability('active')"> Aktív</button>
-                                        <button class="avail-btn" id="avail-busy" onclick="setAvailability('busy')"> Elfoglalt</button>
-                                        <button class="avail-btn" id="avail-inactive" onclick="setAvailability('inactive')"> Inaktív</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3403,6 +3405,50 @@
                     <div class="confirm-sheet-desc">Biztosan ki szeretnél jelentkezni a MeloGo-ból?</div>
                     <button class="confirm-sheet-btn confirm-btn-cancel" onclick="closeLogoutConfirm()"></button>
                     <button class="confirm-sheet-btn confirm-btn-destructive" onclick="logoutWorker()">Kijeléntkezés</button>
+                </div>
+
+                <!-- Avatar Picker Bottom Sheet & Backdrop -->
+                <div class="confirm-sheet-backdrop" id="avatar-picker-backdrop" onclick="closeAvatarPicker()"></div>
+                <div class="confirm-sheet" id="avatar-picker-sheet" style="padding: 24px; box-sizing: border-box; z-index: 3101;">
+                    <div class="confirm-sheet-handle" style="margin: 0 auto 16px auto;"></div>
+                    <div class="confirm-sheet-title" style="text-align: center; font-size: 17px; font-weight: 700; color: #080C1E; margin-bottom: 24px; font-family:'DM Sans',sans-serif;">Profilkép módosítása</div>
+                    
+                    <button class="confirm-sheet-btn" type="button" onclick="triggerCameraPicker()" style="background:#0A0F2E; color:#fff; height:50px; border-radius:14px; width:100%; border:none; font-weight:600; font-size:15px; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:8px; font-family:'DM Sans',sans-serif; transition: transform 0.15s ease;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        Fénykép készítése
+                    </button>
+                    <button class="confirm-sheet-btn" type="button" onclick="triggerGalleryPicker()" style="background:#F3F4F6; color:#0A0F2E; height:50px; border-radius:14px; width:100%; border:none; font-weight:600; font-size:15px; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:8px; font-family:'DM Sans',sans-serif; transition: transform 0.15s ease;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        Választás a galériából
+                    </button>
+                    <button class="confirm-sheet-btn" type="button" onclick="closeAvatarPicker()" style="background:none; color:#6B7280; height:44px; width:100%; border:none; font-weight:500; font-size:14px; cursor:pointer; font-family:'DM Sans',sans-serif;">Mégse</button>
+                </div>
+
+                <!-- Avatar Crop Overlay -->
+                <div id="avatar-crop-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 12, 46, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; overflow: hidden; font-family: 'DM Sans', sans-serif;">
+                    <div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 24px; text-align: center;">Profilkép igazítása</div>
+                    
+                    <!-- Circular Crop Area -->
+                    <div style="position: relative; width: 260px; height: 260px; border-radius: 50%; overflow: hidden; border: 3px solid #22C55E; background: #000; box-shadow: 0 10px 45px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+                        <img id="crop-preview-image" style="max-width: none; position: absolute; transform-origin: center; cursor: move; user-select: none; -webkit-user-drag: none;" alt="Preview">
+                    </div>
+                    
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 16px; margin-bottom: 24px; text-align: center; max-width: 260px;">Húzd a képet a mozgatáshoz, és használd a csúszkát a nagyításhoz</div>
+                    
+                    <!-- Controls -->
+                    <div style="width: 100%; max-width: 260px; margin-bottom: 32px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px; color: white;">
+                            <span>Nagyítás</span>
+                            <span id="zoom-value">100%</span>
+                        </div>
+                        <input type="range" id="crop-zoom-slider" min="50" max="300" value="100" style="width: 100%; accent-color: #22C55E; cursor: pointer;">
+                    </div>
+                    
+                    <!-- Buttons -->
+                    <div style="width: 100%; display: flex; gap: 12px; max-width: 260px;">
+                        <button type="button" onclick="cancelCrop()" style="flex: 1; height: 48px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.25); background: none; color: white; font-weight: 600; font-size: 14px; cursor: pointer; font-family:'DM Sans',sans-serif;">Mégse</button>
+                        <button type="button" onclick="confirmCrop()" style="flex: 1; height: 48px; border-radius: 12px; border: none; background: #22C55E; color: white; font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(34,197,94,0.3); font-family:'DM Sans',sans-serif;">Mentés</button>
+                    </div>
                 </div>
 
                 <!-- Job Picker Bottom Sheet -->
@@ -3783,8 +3829,9 @@
                 <!-- Main Header Card -->
                 <div class="settings-card" style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: var(--shadow-card); border-radius: 16px;">
                     <!-- Avatar -->
-                    <div style="position: relative;">
-                        <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" alt="Diák avatar">
+                    <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
+                        <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: block;" alt="Diák avatar">
+                        <div id="wp-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); background-color: #080C1E; color: white; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">KB</div>
                         <div id="wp-verified" style="position: absolute; bottom: 0; right: 0; background: #22C55E; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
@@ -4405,9 +4452,16 @@
             return name ? `${greetingPrefix}, ${name}!` : `${greetingPrefix}!`;
         }
         function updateGreetings() {
-            const workerSess = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}'); const firstName = (workerSess.name || 'Barátom').split(' ')[0];
-            const greeting = getGreeting(firstName);
+            const user = loadCurrentUser();
+            const fullName = user ? user.name : 'Felhasználó';
+            const greeting = getGreeting(fullName);
             document.querySelectorAll('.greeting-text').forEach(el => el.innerText = greeting);
+            
+            // Direct update welcome-text
+            const welcomeText = document.querySelector('.welcome-text');
+            if (welcomeText) {
+                welcomeText.innerHTML = greeting;
+            }
         }
 
         
@@ -5984,14 +6038,22 @@ function filterWorkerByExactJob(jobName) {
         // ================================================
         // SETTINGS SCREEN FUNCTIONS
         // ================================================
-        const SKILL_OPTIONS = [
-            'Kertészet', 'Fűnyírás', 'Festés', 'Autómosás',
-            'Takarítás', 'Bevásárlás', 'Kutyasétáltatás', 'Hólapátolás',
-            'Bútor összszerelés', 'Költöztetés', 'Ablaktisztítás'
-        ];
+        const SKILL_CATEGORIES = {
+            'Kertészet': [
+                'Kertészet', 'Fűnyírás', 'Gyomirtás', 'Hólapátolás', 'Növénygondozás'
+            ],
+            'Festés & Karbantartás': [
+                'Festés', 'Bútor összeszerelés', 'Költöztetés', 'Kisebb javítások', 'Szerelés'
+            ],
+            'Autóápolás': [
+                'Autómosás', 'Porszívózás', 'Autókozmetika', 'Kerékcsere'
+            ],
+            'Házimunka & Segítség': [
+                'Takarítás', 'Bevásárlás', 'Kutyasétáltatás', 'Ablaktisztítás', 'Mosogatás', 'Vasalás'
+            ]
+        };
 
         let selectedSkills = new Set(['Kertészet', 'Autómosás', 'Takarítás']);
-        let currentAvailability = 'active';
 
         
         function animateProfile() {
@@ -6032,12 +6094,25 @@ function filterWorkerByExactJob(jobName) {
 
         function renderSkillSelector() {
             const grid = document.getElementById('skill-selector');
-            grid.innerHTML = SKILL_OPTIONS.map(skill => `
-                <button class="skill-tag ${selectedSkills.has(skill) ? 'selected' : ''}"
-                    onclick="toggleSkill('${skill}', this)">
-                    ${skill}
-                </button>
-            `).join('');
+            if (!grid) return;
+            
+            let html = '';
+            for (const [category, skills] of Object.entries(SKILL_CATEGORIES)) {
+                html += `
+                    <div class="skill-category-block">
+                        <div class="skill-category-title">${category}</div>
+                        <div class="skill-category-tags">
+                            ${skills.map(skill => `
+                                <button type="button" class="skill-tag ${selectedSkills.has(skill) ? 'selected' : ''}"
+                                    onclick="toggleSkill('${skill}', this)">
+                                    ${skill}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
         }
 
         function toggleSkill(skill, el) {
@@ -6069,37 +6144,276 @@ function filterWorkerByExactJob(jobName) {
             }
         }
 
-        function setAvailability(state) {
-            currentAvailability = state;
-            document.getElementById('avail-active').className = 'avail-btn' + (state === 'active' ? ' active-green' : '');
-            document.getElementById('avail-busy').className = 'avail-btn' + (state === 'busy' ? ' active-yellow' : '');
-            document.getElementById('avail-inactive').className = 'avail-btn' + (state === 'inactive' ? ' active-gray' : '');
+        // ================================================
+        // PROFILKÉP KIVÁLASZTÁS ÉS CROPPER FUNKCIÓK
+        // ================================================
+        function openAvatarPicker() {
+            const backdrop = document.getElementById('avatar-picker-backdrop');
+            const sheet = document.getElementById('avatar-picker-sheet');
+            if (backdrop && sheet) {
+                backdrop.classList.add('open', 'active');
+                sheet.classList.add('open', 'active');
+            }
         }
 
-        function handlePhotoUpload(event) {
+        function closeAvatarPicker() {
+            const backdrop = document.getElementById('avatar-picker-backdrop');
+            const sheet = document.getElementById('avatar-picker-sheet');
+            if (backdrop && sheet) {
+                backdrop.classList.remove('open', 'active');
+                sheet.classList.remove('open', 'active');
+            }
+        }
+
+        function triggerCameraPicker() {
+            closeAvatarPicker();
+            const picker = document.getElementById('avatar-camera-picker');
+            if (picker) picker.click();
+        }
+
+        function triggerGalleryPicker() {
+            closeAvatarPicker();
+            const picker = document.getElementById('avatar-gallery-picker');
+            if (picker) picker.click();
+        }
+
+        function handleAvatarFileSelected(event, source) {
             const file = event.target.files[0];
-            if (file) {
-                showToast('Profilkép frissítve!');
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                showCropOverlay(e.target.result);
+            };
+            reader.readAsDataURL(file);
+            
+            // Reset input values
+            event.target.value = '';
+        }
+
+        function showCropOverlay(imgSrc) {
+            const overlay = document.getElementById('avatar-crop-overlay');
+            const img = document.getElementById('crop-preview-image');
+            const slider = document.getElementById('crop-zoom-slider');
+            const zoomVal = document.getElementById('zoom-value');
+            
+            if (!overlay || !img) return;
+            
+            img.src = imgSrc;
+            overlay.style.display = 'flex';
+            
+            // Reset crop state
+            cropState.currentX = 0;
+            cropState.currentY = 0;
+            cropState.scale = 1.0;
+            if (slider) slider.value = '100';
+            if (zoomVal) zoomVal.innerText = '100%';
+            
+            img.onload = function() {
+                const naturalW = img.naturalWidth;
+                const naturalH = img.naturalHeight;
+                
+                if (naturalW > naturalH) {
+                    img.height = 260;
+                    img.width = (naturalW / naturalH) * 260;
+                } else {
+                    img.width = 260;
+                    img.height = (naturalH / naturalW) * 260;
+                }
+                updateCropTransform();
+            };
+            
+            initCropDrag();
+        }
+
+        function cancelCrop() {
+            const overlay = document.getElementById('avatar-crop-overlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+
+        async function confirmCrop() {
+            const img = document.getElementById('crop-preview-image');
+            if (!img || !img.src) return;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            
+            const displayedW = img.width || 260;
+            const displayedH = img.height || 260;
+            
+            ctx.beginPath();
+            ctx.arc(100, 100, 100, 0, Math.PI * 2);
+            ctx.clip();
+            
+            const multiplier = 200 / 260;
+            
+            const destW = displayedW * cropState.scale * multiplier;
+            const destH = displayedH * cropState.scale * multiplier;
+            
+            const destX = 100 + (cropState.currentX * multiplier) - (destW / 2);
+            const destY = 100 + (cropState.currentY * multiplier) - (destH / 2);
+            
+            ctx.drawImage(img, destX, destY, destW, destH);
+            
+            const croppedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+            
+            await saveProfilePhoto(croppedBase64);
+            cancelCrop();
+        }
+
+        let cropState = {
+            isDragging: false,
+            startX: 0,
+            startY: 0,
+            currentX: 0,
+            currentY: 0,
+            scale: 1.0
+        };
+
+        function initCropDrag() {
+            const img = document.getElementById('crop-preview-image');
+            const slider = document.getElementById('crop-zoom-slider');
+            const zoomVal = document.getElementById('zoom-value');
+            
+            if (!img || !slider) return;
+            
+            slider.oninput = function() {
+                cropState.scale = this.value / 100;
+                if (zoomVal) zoomVal.innerText = this.value + '%';
+                updateCropTransform();
+            };
+            
+            const startDrag = (e) => {
+                cropState.isDragging = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                cropState.startX = clientX - cropState.currentX;
+                cropState.startY = clientY - cropState.currentY;
+                e.preventDefault();
+            };
+            
+            const moveDrag = (e) => {
+                if (!cropState.isDragging) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                cropState.currentX = clientX - cropState.startX;
+                cropState.currentY = clientY - cropState.startY;
+                updateCropTransform();
+            };
+            
+            const endDrag = () => {
+                cropState.isDragging = false;
+            };
+            
+            img.onmousedown = startDrag;
+            img.ontouchstart = startDrag;
+            
+            window.onmousemove = moveDrag;
+            window.ontouchmove = moveDrag;
+            
+            window.onmouseup = endDrag;
+            window.ontouchend = endDrag;
+        }
+
+        function updateCropTransform() {
+            const img = document.getElementById('crop-preview-image');
+            if (img) {
+                img.style.transform = `translate(${cropState.currentX}px, ${cropState.currentY}px) scale(${cropState.scale})`;
             }
         }
 
-        function saveSettings() {
-            // Update bio on profile screen
-            const bio = document.getElementById('settings-bio');
-            const bioDisplay = document.getElementById('profile-bio-display');
-            if (bio && bioDisplay) {
-                bioDisplay.textContent = '\u201c' + bio.value + '\u201d';
+        async function saveProfilePhoto(photoURL) {
+            const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
+            userData.photoURL = photoURL;
+            localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+            
+            updateAllAvatarDisplays(photoURL);
+            
+            if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                try {
+                    const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", window.firebaseAuth.currentUser.uid);
+                    await window.firebaseAPI.updateDoc(userRef, {
+                        photoURL: photoURL
+                    });
+                } catch(e) {
+                    console.error("Firestore photo update error:", e);
+                }
             }
-            // Update skills on profile screen
-            const skillsDisplay = document.getElementById('profile-skills-display');
-            if (skillsDisplay) {
-                skillsDisplay.innerHTML = Array.from(selectedSkills).map(s =>
-                    `<span class="profile-skill-chip">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#86868b" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M3 12h1M20 12h1M12 3v1M12 20v1"/></svg>
-                        ${s}
-                    </span>`
-                ).join('');
+            
+            // Force redraw on profile screen
+            if (typeof updateAllUserUI === 'function') {
+                updateAllUserUI();
             }
+        }
+
+        function updateAllAvatarDisplays(photoURL) {
+            const user = loadCurrentUser();
+            const initials = user ? user.initials : 'KB';
+            const url = photoURL || (user ? user.photoURL : '');
+            
+            // 1. Profile screen avatar
+            const profileAvatar = document.getElementById('profile-avatar-circle');
+            if (profileAvatar) {
+                if (url) {
+                    profileAvatar.style.backgroundImage = `url(${url})`;
+                    profileAvatar.style.backgroundSize = 'cover';
+                    profileAvatar.style.backgroundPosition = 'center';
+                    const initialsEl = profileAvatar.querySelector('.user-initials-display');
+                    if (initialsEl) initialsEl.style.display = 'none';
+                } else {
+                    profileAvatar.style.backgroundImage = 'none';
+                    const initialsEl = profileAvatar.querySelector('.user-initials-display');
+                    if (initialsEl) {
+                        initialsEl.innerText = initials;
+                        initialsEl.style.display = 'block';
+                    }
+                }
+            }
+            
+            // 2. Worker profile overlay (employer view)
+            const wpAvatar = document.getElementById('wp-avatar');
+            const wpFallback = document.getElementById('wp-avatar-fallback');
+            if (wpAvatar && wpFallback) {
+                if (url) {
+                    wpAvatar.src = url;
+                    wpAvatar.style.display = 'block';
+                    wpFallback.style.display = 'none';
+                } else {
+                    wpAvatar.style.display = 'none';
+                    wpFallback.innerText = initials;
+                    wpFallback.style.display = 'flex';
+                }
+            }
+        }
+
+        async function saveSettings() {
+            const bioVal = document.getElementById('settings-bio')?.value || '';
+            const skillsArr = Array.from(selectedSkills);
+            
+            // Save to local storage
+            const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
+            userData.bio = bioVal;
+            userData.skills = skillsArr;
+            localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+            
+            // Save to Firestore if available
+            if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                try {
+                    const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", window.firebaseAuth.currentUser.uid);
+                    await window.firebaseAPI.updateDoc(userRef, {
+                        bio: bioVal,
+                        skills: skillsArr
+                    });
+                } catch(e) {
+                    console.error("Firestore user profile save error:", e);
+                }
+            }
+            
+            // Re-render user UI to refresh profile views
+            updateAllUserUI();
+            
             showToast('Profil sikeresen mentve!');
             setTimeout(closeSettings, 500);
         }
@@ -8638,9 +8952,9 @@ function filterWorkerByExactJob(jobName) {
             userData.rating = dynamicRating;
             userData.reviewCount = userData.reviews.length;
             localStorage.setItem('melogo_user_data', JSON.stringify(userData));
-            let resolvedName = session.name;
-            if (session.email && resolvedName === session.email.split('@')[0]) {
-                resolvedName = localStorage.getItem('melogo_name') || 'Felhasználó';
+            let resolvedName = localStorage.getItem('melogo_name') || session.name || 'Felhasználó';
+            if (resolvedName.includes('@')) {
+                resolvedName = resolvedName.split('@')[0];
             }
             
             return {
@@ -8655,6 +8969,9 @@ function filterWorkerByExactJob(jobName) {
                 trustLevel: calcTrustLevel(dynamicJobCount, dynamicRating),
                 initials: getInitials(session.name || 'Felhasználó'),
                 darkMode: localStorage.getItem('melogo_dark_mode') === 'true',
+                bio: userData.bio || 'Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok.',
+                skills: userData.skills || ['Kertészet', 'Autómosás', 'Takarítás'],
+                photoURL: userData.photoURL || ''
             };
         }
 
@@ -8683,7 +9000,7 @@ function filterWorkerByExactJob(jobName) {
             
             // Update all name elements
             document.querySelectorAll('.user-name-display').forEach(el => { el.innerText = user.name; });
-            document.querySelectorAll('.user-first-name-display').forEach(el => { el.innerText = user.name.split(' ')[0]; });
+            document.querySelectorAll('.user-first-name-display').forEach(el => { el.innerText = user.name; });
             document.querySelectorAll('.user-initials-display').forEach(el => { el.innerText = user.initials; });
             document.querySelectorAll('.user-location-display').forEach(el => { el.innerText = user.location; });
             document.querySelectorAll('.user-job-count').forEach(el => { el.innerText = user.jobCount; });
@@ -8692,6 +9009,36 @@ function filterWorkerByExactJob(jobName) {
             
             const avatarBg = getAvatarGradient(user.name);
             document.querySelectorAll('.user-avatar-bg').forEach(el => { el.style.background = avatarBg; });
+
+            // Update bio and skills displays on profile screen
+            const bioDisplay = document.getElementById('profile-bio-display');
+            if (bioDisplay) {
+                bioDisplay.textContent = user.bio ? '\u201c' + user.bio + '\u201d' : '"Nincs bemutatkozás megadva."';
+            }
+            
+            const skillsDisplay = document.getElementById('profile-skills-display');
+            if (skillsDisplay && user.skills) {
+                skillsDisplay.innerHTML = user.skills.map(s => `
+                    <span class="profile-skill-chip">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M3 12h1M20 12h1M12 3v1M12 20v1"/></svg>
+                        ${s}
+                    </span>
+                `).join('');
+                
+                // Keep the selectedSkills Set in sync
+                selectedSkills = new Set(user.skills);
+            }
+
+            // Sync bio field in settings overlay
+            const settingsBioInput = document.getElementById('settings-bio');
+            if (settingsBioInput) {
+                settingsBioInput.value = user.bio || '';
+            }
+
+            // Update avatar displays
+            if (typeof updateAllAvatarDisplays === 'function') {
+                updateAllAvatarDisplays(user.photoURL);
+            }
 
             // Frissítsük a Jelentkezéseim listát a profil lapon
             if (typeof renderWorkerApplications === 'function') renderWorkerApplications();

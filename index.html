@@ -3299,6 +3299,16 @@
                                     <span class="settings-row-label">Profilkép módosítása</span>
                                     <svg class="settings-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
                                 </div>
+                                <!-- Name -->
+                                <div style="border-bottom: 0.5px solid #F3F4F6; padding: 0 16px 12px 16px;">
+                                    <div style="display:flex;align-items:center;gap:12px;padding:12px 0 4px 0;">
+                                        <div class="settings-row-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                        </div>
+                                        <span class="settings-row-label">Teljes neved</span>
+                                    </div>
+                                    <input type="text" id="settings-name" style="width: 100%; border: none; background: #F8F9FB; padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 500; color: #080C1E; box-sizing: border-box;" placeholder="Add meg a teljes neved">
+                                </div>
                                 <!-- Bio -->
                                 <div style="border-bottom: 0.5px solid #F3F4F6;">
                                     <div style="display:flex;align-items:center;gap:12px;padding:14px 16px 4px 16px;">
@@ -6435,10 +6445,21 @@ function filterWorkerByExactJob(jobName) {
         }
 
         async function saveSettings() {
+            const nameVal = document.getElementById('settings-name')?.value || '';
             const bioVal = document.getElementById('settings-bio')?.value || '';
             const skillsArr = Array.from(selectedSkills);
             
             // Save to local storage
+            localStorage.setItem('melogo_name', nameVal);
+            
+            const workerSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
+            workerSession.name = nameVal;
+            localStorage.setItem('melogo_worker_session', JSON.stringify(workerSession));
+            
+            const employerSession = JSON.parse(localStorage.getItem('melogo_employer_session') || '{}');
+            employerSession.name = nameVal;
+            localStorage.setItem('melogo_employer_session', JSON.stringify(employerSession));
+            
             const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
             userData.bio = bioVal;
             userData.skills = skillsArr;
@@ -6449,6 +6470,7 @@ function filterWorkerByExactJob(jobName) {
                 try {
                     const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", window.firebaseAuth.currentUser.uid);
                     await window.firebaseAPI.updateDoc(userRef, {
+                        name: nameVal,
                         bio: bioVal,
                         skills: skillsArr
                     });
@@ -9120,6 +9142,12 @@ function filterWorkerByExactJob(jobName) {
             const settingsBioInput = document.getElementById('settings-bio');
             if (settingsBioInput) {
                 settingsBioInput.value = user.bio || '';
+            }
+
+            // Sync name field in settings overlay
+            const settingsNameInput = document.getElementById('settings-name');
+            if (settingsNameInput) {
+                settingsNameInput.value = user.name || '';
             }
 
             // Update avatar displays

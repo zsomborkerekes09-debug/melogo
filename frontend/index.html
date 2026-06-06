@@ -604,7 +604,7 @@
         }
 
         .settings-overlay {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
@@ -3345,7 +3345,7 @@
                 </div>
 
                 <!-- ===== MAPS ACTION SHEET ===== -->
-                <div id="maps-action-sheet-backdrop" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 10000; display: none;" onclick="closeMapsActionSheet()"></div>
+                <div id="maps-action-sheet-backdrop" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 10000; display: none;" onclick="closeMapsActionSheet()"></div>
                 <div id="maps-action-sheet" class="confirm-sheet" style="z-index: 10001; bottom: 0; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 24px 20px; box-sizing: border-box; display: none; flex-direction: column; gap: 12px; width: 100%; max-width: 500px; margin: 0 auto; left: 0; right: 0; position: absolute;">
                     <div style="font-size: 15px; font-weight: 700; color: #080C1E; text-align: center; margin-bottom: 8px;">Megnyitás ezzel:</div>
                     <button onclick="openExternalMap('google')" style="width: 100%; height: 50px; background: #22C55E; color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -4070,7 +4070,7 @@
 
         <!-- ===== CHAT DETAIL OVERLAY ===== -->
                 <div id="chat-detail-overlay" style="
-                    position: fixed;
+                    position: absolute;
                     top: 0; left: 0; right: 0; bottom: 0;
                     width: 100%; height: 100%;
                     background: #F8F9FB;
@@ -7687,13 +7687,12 @@ let settingsConfirmedAddress = null;
 
         let ptrStartY = 0;
         let ptrActive = false;
-        const ptrThreshold = 70;
+        const ptrThreshold = 60;
         
         function initPullToRefresh() {
             const homeScreen = document.getElementById('app-home-screen');
             const ptr = document.getElementById('pull-to-refresh');
-            const ptrText = document.getElementById('pull-to-refresh-text');
-            const ptrSpinner = ptr ? ptr.querySelector('.spinner') : null;
+            const ptrSpinner = document.getElementById('ptr-spinner');
             
             if (!homeScreen || !ptr) return;
             
@@ -7701,11 +7700,16 @@ let settingsConfirmedAddress = null;
                 const activeTab = currentRole === 'worker' ? document.getElementById('home-worker-view') : document.getElementById('home-employer-view');
                 if (!activeTab) return;
                 
-                if (activeTab.scrollTop === 0) {
+                // Only allow pull-to-refresh if the user is EXACTLY at the top of the page
+                if (homeScreen.scrollTop <= 0) {
                     ptrStartY = e.touches[0].pageY;
                     ptrActive = true;
                     ptr.style.transition = 'none';
                     activeTab.style.transition = 'none';
+                    if (ptrSpinner) {
+                        ptrSpinner.style.animation = 'none';
+                        ptrSpinner.style.transform = 'rotate(0deg)';
+                    }
                 } else {
                     ptrActive = false;
                 }
@@ -7720,21 +7724,26 @@ let settingsConfirmedAddress = null;
                 const currentY = e.touches[0].pageY;
                 const diff = currentY - ptrStartY;
                 
-                if (diff > 0 && activeTab.scrollTop === 0) {
+                // Only act if pulling down AND we are still at the top
+                if (diff > 0 && homeScreen.scrollTop <= 0) {
                     if (e.cancelable) e.preventDefault();
                     
                     // Apply drag resistance
-                    const y = Math.min(diff * 0.4, 80);
+                    const y = Math.min(diff * 0.4, 60);
                     ptr.style.transform = `translateY(${y}px)`;
                     ptr.style.opacity = Math.min(y / ptrThreshold, 1);
                     
                     activeTab.style.transform = `translateY(${y}px)`;
                     
-                    if (y >= ptrThreshold) {
-                        if (ptrText) ptrText.innerText = 'Engedd el a frissítéshez';
-                    } else {
-                        if (ptrText) ptrText.innerText = 'Húzd le a frissítéshez';
+                    if (ptrSpinner) {
+                        ptrSpinner.style.transform = `rotate(${y * 3}deg)`;
                     }
+                } else {
+                    // Reset if scrolled up
+                    ptrActive = false;
+                    ptr.style.transform = 'translateY(0)';
+                    activeTab.style.transform = 'translateY(0)';
+                    ptr.style.opacity = '0';
                 }
             }, { passive: false });
             
@@ -7756,8 +7765,9 @@ let settingsConfirmedAddress = null;
                     // Trigger refresh loading state
                     ptr.style.transform = `translateY(${ptrThreshold}px)`;
                     activeTab.style.transform = `translateY(${ptrThreshold}px)`;
-                    if (ptrText) ptrText.innerText = 'Frissítés...';
-                    if (ptrSpinner) ptrSpinner.style.display = 'block';
+                    if (ptrSpinner) {
+                        ptrSpinner.style.animation = 'spin 1s linear infinite';
+                    }
                     
                     // Simulate loading / Trigger recalculation
                     setTimeout(() => {
@@ -7774,10 +7784,6 @@ let settingsConfirmedAddress = null;
                         activeTab.style.transform = 'translateY(0)';
                         ptr.style.opacity = '0';
                         
-                        setTimeout(() => {
-                            if (ptrSpinner) ptrSpinner.style.display = 'none';
-                            if (ptrText) ptrText.innerText = 'Húzd le a frissítéshez';
-                        }, 300);
                     }, 1200);
                 } else {
                     // Slide back without action
@@ -7787,7 +7793,7 @@ let settingsConfirmedAddress = null;
                 }
             });
         }
-
+        
         function sortWorkerJobsNew(mode) {
             activeSortMode = mode;
             document.querySelectorAll('.sort-pill').forEach(p => p.classList.remove('active'));

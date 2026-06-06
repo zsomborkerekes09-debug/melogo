@@ -57,12 +57,12 @@
             max-width: 500px;
             height: 100vh;
             height: 100dvh;
-            background-color: #fff;
+            background-color: var(--color-bg);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            
         }
 
         .hidden { display: none !important; }
@@ -348,7 +348,7 @@
             padding: 24px !important;
             margin: 0 16px 16px 16px !important;
             border: 1px solid #F1F1F1 !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+            
         }
 
         .job-card-header {
@@ -431,7 +431,7 @@
             font-weight: 500;
             color: var(--color-navy);
             white-space: nowrap;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            
         }
         .map-chip.active {
             background-color: var(--color-navy);
@@ -534,7 +534,7 @@
         .role-btn.active {
             background-color: #fff;
             color: var(--color-navy);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            
         }
 \n        /* Common utilities */
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
@@ -584,12 +584,12 @@
             bottom: 0;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
-            box-shadow: none;
+            
             height: 65%;
         }
         .action-overlay.active {
             transform: translateY(0);
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+            
         }
 
         .action-header {
@@ -647,13 +647,13 @@
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
             padding: 20px 24px 32px 24px;
-            box-shadow: none;
+            
             z-index: 3001;
             max-height: 80%;
         }
         .confirm-sheet.open {
             transform: translateY(0);
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+            
         }
         
         .overlay-backdrop {
@@ -777,7 +777,7 @@
             align-items: center;
             gap: 12px;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            
             transition: transform 0.15s;
         }
         .search-result-item:active { transform: scale(0.98); }
@@ -939,7 +939,7 @@
             border-radius: 50%;
             background: var(--color-green);
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(34,197,94,0.4);
+            
         }
         .distance-confirm-btn {
             width: 100%;
@@ -965,7 +965,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            
             transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         #push-banner.show { top: 16px; }
@@ -1004,7 +1004,7 @@
         }
         .job-card:active {
             transform: scale(0.98);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            
         }
         .job-badge-urgent {
             background: #FEF3C7;
@@ -1038,7 +1038,7 @@
             border-radius: 16px;
             font-size: 13px;
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+            
             position: relative;
             cursor: pointer;
             transition: transform 0.15s;
@@ -1058,7 +1058,7 @@
             border: 2.5px solid #fff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+            
             z-index: 5;
             pointer-events: none;
         }
@@ -1093,7 +1093,7 @@
         }
         .leaflet-control-zoom {
             border: none !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+            
             border-radius: 16px; !important;
             overflow: hidden;
         }
@@ -1123,7 +1123,7 @@
             border-top-right-radius: 24px;
             padding: 24px;
             border-top: 1.5px solid #E5E7EB;
-            box-shadow: none !important;
+            
             transform: translateY(100%);
             transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 1000;
@@ -1520,7 +1520,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 16px rgba(10,15,46,0.3);
+            
             transition: transform 0.12s;
         }
         .emp-submit-btn:active { transform: scale(0.98); }
@@ -1685,7 +1685,7 @@
             border-radius: 16px !important;
             overflow: hidden;
             border: 1px solid #F1F1F1 !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+            
             padding: 4px 0 !important;
         }
         .settings-row {
@@ -1810,7 +1810,7 @@
             align-items: center;
             gap: 6px;
             color: #374151;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            
             transition: all 0.2s ease;
         }
         @keyframes shake {
@@ -1827,7 +1827,7 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(10,15,46,0.15);
+            
             transition: transform 0.15s, background 0.15s;
             width: 100%;
             display: flex;
@@ -1879,7 +1879,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            
             z-index: 10000;
             transition: top 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
             pointer-events: none;
@@ -1932,9 +1932,9 @@
 
     
         @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+            0% {  }
+            70% {  }
+            100% {  }
         }
         .loc-dot {
             width: 8px;
@@ -2139,7 +2139,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0px 2px 8px rgba(34, 197, 94, 0.35);
+            
             transition: transform 0.1s ease;
             flex-shrink: 0;
         }
@@ -2181,7 +2181,7 @@
             overflow: hidden;
             border-radius: 40px; /* Keep it inside the phone container borders */
             max-height: 100%;
-            box-shadow: none;
+            
         }
         #employer-action-overlay.active {
             transform: translateX(0);
@@ -2198,7 +2198,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            
             word-wrap: break-word;
         }
         .chat-bubble.incoming {
@@ -2213,7 +2213,7 @@
             color: #fff;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 4px 12px rgba(10, 15, 46, 0.15);
+            
         }
         .chat-bubble-time {
             font-size: 10px;
@@ -2273,7 +2273,8 @@
             height: 72px;
             overflow: hidden;
             background-color: #fff;
-        }
+            flex-shrink: 0;
+}
         .chat-item-content {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -2513,7 +2514,7 @@
             justify-content: center;
             gap: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(34,197,94,0.3);
+            
             transition: transform 0.1s ease;
         }
         .emp-btn-publish:active {
@@ -2675,7 +2676,7 @@
             border-top-left-radius: 30px;
             border-top-right-radius: 30px;
             z-index: 10100;
-            box-shadow: 0 -10px 40px rgba(8,12,46,0.15);
+            
             display: flex;
             flex-direction: column;
             padding: 24px 20px;
@@ -3109,7 +3110,7 @@
                             </div>
                             <div class="job-price" id="map-prev-price" style="font-size: 19px; font-weight: 700; color: #22C55E; white-space: nowrap;">8 000 Ft</div>
                         </div>
-                        <button class="job-apply-btn" onclick="openJobDetailFromMap()" style="width: 100%; height: 52px; background: #080C1E; color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(10,15,46,0.15); transition: transform 0.1s ease;">Részletek és Jelentkezés →</button>
+                        <button class="job-apply-btn" onclick="openJobDetailFromMap()" style="width: 100%; height: 52px; background: #080C1E; color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center;  transition: transform 0.1s ease;">Részletek és Jelentkezés →</button>
                     </div>
                 </div>
             </div>
@@ -3166,7 +3167,7 @@
                         </div>
 
                         <!-- Stats bar floating card -->
-                        <div style="margin: -35px 20px 20px 20px; background-color: white; border-radius: 16px; border: 1px solid #F1F1F1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; position: relative; z-index: 2; padding: 16px 0;">
+                        <div style="margin: -35px 20px 20px 20px; background-color: white; border-radius: 16px; border: 1px solid #F1F1F1;  display: flex; position: relative; z-index: 2; padding: 16px 0;">
                             <div style="flex: 1; text-align: center; border-right: 1px solid #F1F1F1;">
                                 <div style="font-size: 20px; font-weight: 600; color: #080C1E;" class="user-job-count">0</div>
                                 <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Meló</div>
@@ -3307,7 +3308,7 @@
                     </div>
                     <div class="chat-body" style="gap: 12px;">
                         <!-- Munka részletei kis kártya -->
-                        <div style="background-color: white; padding: 12px; border-radius: 16px; border: 0.5px solid var(--color-border); flex-shrink: 0; box-shadow: var(--shadow-card);">
+                        <div style="background-color: white; padding: 12px; border-radius: 16px; border: 0.5px solid var(--color-border); flex-shrink: 0; ">
                             <h4 style="font-size: 13px; margin-bottom: 4px; font-weight: 800;">Munka részletei</h4>
                             <p style="font-size: 11px; color: var(--color-text-muted); margin-bottom: 8px;" id="worker-job-detail-desc">Hétvégi ház udvarának teljes fűnyírása.</p>
                             <div style="display:flex; justify-content:space-between; align-items:center; border-top:0.5px solid var(--color-border); padding-top:8px; margin-bottom: 6px;">
@@ -3532,7 +3533,7 @@
                     <div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 24px; text-align: center;">Profilkép igazítása</div>
                     
                     <!-- Circular Crop Area -->
-                    <div style="position: relative; width: 260px; height: 260px; border-radius: 50%; overflow: hidden; border: 3px solid #22C55E; background: #000; box-shadow: 0 10px 45px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+                    <div style="position: relative; width: 260px; height: 260px; border-radius: 50%; overflow: hidden; border: 3px solid #22C55E; background: #000;  display: flex; align-items: center; justify-content: center;">
                         <img id="crop-preview-image" style="max-width: none; position: absolute; transform-origin: center; cursor: move; user-select: none; -webkit-user-drag: none;" alt="Preview">
                     </div>
                     
@@ -3550,7 +3551,7 @@
                     <!-- Buttons -->
                     <div style="width: 100%; display: flex; gap: 12px; max-width: 260px;">
                         <button type="button" onclick="cancelCrop()" style="flex: 1; height: 48px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.25); background: none; color: white; font-weight: 600; font-size: 14px; cursor: pointer; font-family:'DM Sans',sans-serif;">Mégse</button>
-                        <button type="button" onclick="confirmCrop()" style="flex: 1; height: 48px; border-radius: 12px; border: none; background: #22C55E; color: white; font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(34,197,94,0.3); font-family:'DM Sans',sans-serif;">Mentés</button>
+                        <button type="button" onclick="confirmCrop()" style="flex: 1; height: 48px; border-radius: 12px; border: none; background: #22C55E; color: white; font-weight: 700; font-size: 14px; cursor: pointer;  font-family:'DM Sans',sans-serif;">Mentés</button>
                     </div>
                 </div>
 
@@ -3695,7 +3696,7 @@
                                 </div>
                                 <label style="position:relative; display:inline-block; width:48px; height:26px; cursor:pointer;">
                                     <input type="checkbox" id="emp-urgent-toggle" onchange="toggleUrgentJob(this.checked)" style="opacity:0;width:0;height:0;">
-                                    <span id="urgent-track" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#E5E7EB;border-radius:13px;transition:0.3s;"><span id="urgent-thumb" style="position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span></span>
+                                    <span id="urgent-track" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#E5E7EB;border-radius:13px;transition:0.3s;"><span id="urgent-thumb" style="position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s;"></span></span>
                                 </label>
                             </div>
                         </div>
@@ -3714,7 +3715,7 @@
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" style="flex-shrink:0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                                     <input class="emp-input" id="emp-address-input" placeholder="Keress egy címet..." autocomplete="off" oninput="handleAddressInput(this.value)">
                                 </div>
-                                <div id="emp-address-suggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #F1F1F1; border-radius: 16px; box-shadow:0 10px 25px rgba(0,0,0,0.1); z-index:50; margin-top:4px; max-height:200px; overflow-y:auto;">
+                                <div id="emp-address-suggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #F1F1F1; border-radius: 16px;  z-index:50; margin-top:4px; max-height:200px; overflow-y:auto;">
                                 </div>
                                 <div class="emp-field-error" id="err-loc">Kérjük válassz egy valós címet a listából.</div>
                             </div>
@@ -3826,7 +3827,7 @@
                     </div>
 
                     <!-- Pinned Info Bar -->
-                    <div id="employer-chat-pinned-bar" style="background: #fff; border-bottom: 1px solid #F1F1F1; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                    <div id="employer-chat-pinned-bar" style="background: #fff; border-bottom: 1px solid #F1F1F1; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; ">
                         <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
                             <div id="employer-chat-pinned-title" style="font-size: 14px; font-weight: 700; color: #080C1E;">Fűnyírás</div>
                             <div id="employer-chat-pinned-desc" style="font-size: 11px; color: #6B7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">Kerítés melletti fű és gaz vágása...</div>
@@ -3977,12 +3978,12 @@
             
             <div class="settings-scroll" style="padding: 20px; background-color: #F8F9FB;">
                 <!-- Main Header Card -->
-                <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-bottom: 1px solid #F1F1F1; background: #fff;">
+                <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-radius: 20px; margin: 16px; background: #fff;">
                     <!-- Avatar -->
                     <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
-                        <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: block;" alt="Diák avatar">
-                        <div id="wp-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); background-color: #080C1E; color: white; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">KB</div>
-                        <div id="wp-verified" style="position: absolute; bottom: 0; right: 0; background: #22C55E; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff;  display: block;" alt="Diák avatar">
+                        <div id="wp-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;  background-color: #080C1E; color: white; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">KB</div>
+                        <div id="wp-verified" style="position: absolute; bottom: 0; right: 0; background: #22C55E; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; ">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
                     </div>
@@ -4011,13 +4012,13 @@
                 </div>
 
                 <!-- Intro/Bio -->
-                <div style="padding: 24px 20px; border-bottom: 1px solid #F1F1F1; text-align: left; background: #fff;">
+                <div style="padding: 24px 20px; text-align: left; background: #fff; border-radius: 20px; margin: 16px;">
                     <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS</h3>
                     <p id="wp-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; margin-left: 8px; border-left: 3px solid #E5E7EB;">"Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok."</p>
                 </div>
 
                 <!-- Skills Section -->
-                <div style="padding: 24px 20px; border-bottom: 1px solid #F1F1F1; text-align: left; background: #fff;">
+                <div style="padding: 24px 20px; text-align: left; background: #fff; border-radius: 20px; margin: 16px;">
                     <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">SZAKTUDÁSOK</h3>
                     <div id="wp-skills" style="display: flex; flex-wrap: wrap; gap: 10px; margin-left: 8px;">
                         <!-- Dynamically filled with chips -->
@@ -4025,7 +4026,7 @@
                 </div>
 
                 <!-- Reviews List Section -->
-                <div style="padding: 24px 20px; border-bottom: 1px solid #F1F1F1; text-align: left; background: #fff;">
+                <div style="padding: 24px 20px; text-align: left; background: #fff; border-radius: 20px; margin: 16px;">
                     <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">VISSZAJELZÉSEK (UTOLSÓ 5)</h3>
                     <div id="wp-reviews-container" style="display: flex; flex-direction: column; gap: 14px; margin-left: 8px; margin-right: 8px;">
                         <!-- Reviews populated dynamically -->
@@ -4045,11 +4046,11 @@
             
             <div class="settings-scroll" style="padding: 20px; background-color: #F8F9FB;">
                 <!-- Main Header Card -->
-                <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-bottom: 1px solid #F1F1F1; background: #fff;">
+                <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-radius: 20px; margin: 16px; background: #fff;">
                     <!-- Avatar -->
                     <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
-                        <img id="ep-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none;" alt="Megbízó avatar">
-                        <div id="ep-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); background-color: #080C1E; color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">M</div>
+                        <img id="ep-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff;  display: none;" alt="Megbízó avatar">
+                        <div id="ep-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;  background-color: #080C1E; color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">M</div>
                     </div>
                     
                     <div>
@@ -4061,7 +4062,7 @@
                 </div>
 
                 <!-- Intro/Bio -->
-                <div style="padding: 24px 20px; border-bottom: 1px solid #F1F1F1; text-align: left; background: #fff;">
+                <div style="padding: 24px 20px; text-align: left; background: #fff; border-radius: 20px; margin: 16px;">
                     <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS</h3>
                     <p id="ep-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; margin-left: 8px; border-left: 3px solid #E5E7EB;">"Megbízható házigazda Kaposváron. Rendszeresen keresek segítséget kerti munkákhoz és takarításhoz."</p>
                 </div>
@@ -4130,7 +4131,7 @@
                     </div>
                     <div id="chat-detail-messages" style="flex:1; background:#F8F9FB; padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
                         <!-- Populated dynamically -->
-                        <div id="chat-typing-indicator" style="display:none; max-width:80%; padding:10px 14px; border-radius:18px 18px 18px 4px; background:#fff; color:var(--color-navy); font-size:14px; align-self:flex-start; box-shadow: 0 1px 4px rgba(0,0,0,0.07); align-items:center; gap:6px;">
+                        <div id="chat-typing-indicator" style="display:none; max-width:80%; padding:10px 14px; border-radius:18px 18px 18px 4px; background:#fff; color:var(--color-navy); font-size:14px; align-self:flex-start;  align-items:center; gap:6px;">
                             <span id="chat-typing-name" style="font-weight:700;"></span>
                             <span style="color:#6B7280; font-size:13px;">éppen gépel</span>
                             <div style="display:flex; gap:3px; align-items:center; margin-left:2px;">
@@ -4755,7 +4756,7 @@
             if (!text) return;
             
             const msgBox = document.createElement('div');
-            msgBox.style.cssText = "background: var(--color-green-go); padding: 12px 16px; border-radius: 16px; border-bottom-right-radius: 4px; align-self: flex-end; max-width: 80%; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-size: 14px; color: white;";
+            msgBox.style.cssText = "background: var(--color-green-go); padding: 12px 16px; border-radius: 16px; border-bottom-right-radius: 4px; align-self: flex-end; max-width: 80%;  font-size: 14px; color: white;";
             msgBox.innerText = text;
             
             const container = document.getElementById('chat-detail-messages').querySelector('div:last-child');
@@ -6286,7 +6287,7 @@ function filterWorkerByExactJob(jobName) {
                 `;
             } else if (gameState.status === 'Értékelve' || gameState.status === 'Kifizetve') {
                 container.innerHTML = `
-                    <div style="background-color: #f0fdf4; color: #166534; padding: 16px; border-radius: 8px; font-size: 12px; font-weight:700; text-align:center; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                    <div style="background-color: #f0fdf4; color: #166534; padding: 16px; border-radius: 8px; font-size: 12px; font-weight:700; text-align:center; ">
                         🎉 A munka lezárult és értékelve lett!
                     </div>
                 `;
@@ -6489,8 +6490,8 @@ function filterWorkerByExactJob(jobName) {
             const footer = document.getElementById('employer-action-footer');
             if (gameState.status === 'Keresés') {
                 footer.innerHTML = `
-                    <div style="background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: none; display: flex; flex-direction: column; gap: 12px;">
-                        <button class="btn" style="height: 52px; border-radius: 16px; background: #080C1E; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(10, 15, 46, 0.25); transition: transform 0.1s;" onclick="employerLockEscrow()">
+                    <div style="background: #fff; border-radius: 16px; padding: 16px;  border: none; display: flex; flex-direction: column; gap: 12px;">
+                        <button class="btn" style="height: 52px; border-radius: 16px; background: #080C1E; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;  transition: transform 0.1s;" onclick="employerLockEscrow()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -6507,7 +6508,7 @@ function filterWorkerByExactJob(jobName) {
                 `;
             } else if (gameState.status === 'Fizetve') {
                 footer.innerHTML = `
-                    <div style="background: #EFF6FF; border-radius: 16px; padding: 18px; border: none; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.08);">
+                    <div style="background: #EFF6FF; border-radius: 16px; padding: 18px; border: none; display: flex; align-items: center; gap: 14px; ">
                         <div style="width: 40px; height: 40px; border-radius: 50%; background: #3B82F6; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -6522,8 +6523,8 @@ function filterWorkerByExactJob(jobName) {
                 `;
             } else if (gameState.status === 'Befejezve') {
                 footer.innerHTML = `
-                    <div style="background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: none; display: flex; flex-direction: column; gap: 12px;">
-                        <button class="btn" style="height: 52px; border-radius: 16px; background: #22C55E; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25); transition: transform 0.1s;" onclick="employerApproveAndRelease()">
+                    <div style="background: #fff; border-radius: 16px; padding: 16px;  border: none; display: flex; flex-direction: column; gap: 12px;">
+                        <button class="btn" style="height: 52px; border-radius: 16px; background: #22C55E; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;  transition: transform 0.1s;" onclick="employerApproveAndRelease()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
@@ -6537,7 +6538,7 @@ function filterWorkerByExactJob(jobName) {
                 `;
             } else if (gameState.status === 'Értékelve' || gameState.status === 'Kifizetve') {
                 footer.innerHTML = `
-                    <div style="background: #F0FDF4; border-radius: 16px; padding: 18px; border: none; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.08);">
+                    <div style="background: #F0FDF4; border-radius: 16px; padding: 18px; border: none; display: flex; align-items: center; gap: 14px; ">
                         <div style="width: 40px; height: 40px; border-radius: 50%; background: #22C55E; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="20 6 9 17 4 12"></polyline>
@@ -8028,7 +8029,7 @@ let settingsConfirmedAddress = null;
             if (gameState.gpsActive && userCoords) {
                 const gpsIcon = L.divIcon({
                     className: 'leaflet-gps-pin',
-                    html: `<div class="user-gps-dot" style="width: 16px; height: 16px; background: #3B82F6; border: 2.5px solid #fff; border-radius: 50%; box-shadow: 0 0 0 4px rgba(59,130,246,0.3); animation: gps-pulse 2s infinite;"></div>`,
+                    html: `<div class="user-gps-dot" style="width: 16px; height: 16px; background: #3B82F6; border: 2.5px solid #fff; border-radius: 50%;  animation: gps-pulse 2s infinite;"></div>`,
                     iconSize: [20, 20],
                     iconAnchor: [10, 10]
                 });
@@ -8046,7 +8047,7 @@ let settingsConfirmedAddress = null;
 
                 const priceIcon = L.divIcon({
                     className: 'leaflet-custom-pin',
-                    html: `<div class="map-pin-label" style="background:#080C1E; color:white; padding:8px 12px; border-radius: 16px; font-weight:700; font-size:12px; border:2px solid white; box-shadow:0 4px 10px rgba(0,0,0,0.15); cursor:pointer; pointer-events:auto; text-align:center; white-space:nowrap;">${job.price.toLocaleString('hu-HU')} Ft</div>`,
+                    html: `<div class="map-pin-label" style="background:#080C1E; color:white; padding:8px 12px; border-radius: 16px; font-weight:700; font-size:12px; border:2px solid white;  cursor:pointer; pointer-events:auto; text-align:center; white-space:nowrap;">${job.price.toLocaleString('hu-HU')} Ft</div>`,
                     iconSize: [80, 36],
                     iconAnchor: [40, 18]
                 });
@@ -8444,7 +8445,7 @@ let settingsConfirmedAddress = null;
                         background:${isMe ? 'var(--color-navy)' : '#fff'};
                         color:${isMe ? '#fff' : 'var(--color-navy)'};
                         font-size:14px; align-self:${isMe ? 'flex-end' : 'flex-start'};
-                        box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+                        
                     `;
                     bubble.innerHTML = msg.text + (msg.time ? `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time}</div>` : '');
                 }
@@ -8519,7 +8520,7 @@ let settingsConfirmedAddress = null;
             bubble.style.cssText = `
                 max-width:80%; padding:10px 14px; border-radius: 18px 18px 4px 18px;
                 background:var(--color-navy); color:#fff; font-size:14px;
-                align-self:flex-end; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+                align-self:flex-end; 
             `;
             bubble.innerHTML = text + `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${t}</div>`;
             msgContainer.appendChild(bubble);
@@ -8569,7 +8570,7 @@ let settingsConfirmedAddress = null;
             bubble.style.cssText = `
                 max-width:85%; padding:10px 14px; border-radius: 18px 18px 4px 18px;
                 background:var(--color-navy); color:#fff; font-size:14px;
-                align-self:flex-end; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+                align-self:flex-end; 
             `;
             const photoHtml = '<div style="width:100%; height:80px; background:rgba(255,255,255,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:24px;">📷</div><div style="font-size:11px; margin-top:6px; opacity:0.7;">Munka fotója elküldve</div>';
             bubble.innerHTML = photoHtml;
@@ -9104,13 +9105,13 @@ let settingsConfirmedAddress = null;
             if (appContainer) {
                 if (job.status === 'Keresés' && gameState.applied && gameState.jobTitle === job.title) {
                     const workerName = currentUser ? currentUser.name : "Diák";
-                    let imgHtml = `<img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Avatar">`;
+                    let imgHtml = `<img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; " alt="Avatar">`;
                     if (window.avatarCache && window.avatarCache[workerName]) {
                         const photoURL = window.avatarCache[workerName];
                         if (photoURL.startsWith('http') || photoURL.startsWith('data:')) {
-                            imgHtml = `<img src="${photoURL}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Avatar">`;
+                            imgHtml = `<img src="${photoURL}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; " alt="Avatar">`;
                         } else {
-                            imgHtml = `<div style="width:36px; height:36px; border-radius:50%; background:${getAvatarColor(workerName)}; color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; border:1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">${photoURL}</div>`;
+                            imgHtml = `<div style="width:36px; height:36px; border-radius:50%; background:${getAvatarColor(workerName)}; color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; border:1.5px solid #fff; ">${photoURL}</div>`;
                         }
                     }
                     appContainer.innerHTML = `
@@ -9133,13 +9134,13 @@ let settingsConfirmedAddress = null;
                     `;
                 } else if (job.status === 'Aktív') {
                     const workerName = currentUser ? currentUser.name : "Diák";
-                    let imgHtml = `<img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Avatar">`;
+                    let imgHtml = `<img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; " alt="Avatar">`;
                     if (window.avatarCache && window.avatarCache[workerName]) {
                         const photoURL = window.avatarCache[workerName];
                         if (photoURL.startsWith('http') || photoURL.startsWith('data:')) {
-                            imgHtml = `<img src="${photoURL}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Avatar">`;
+                            imgHtml = `<img src="${photoURL}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; " alt="Avatar">`;
                         } else {
-                            imgHtml = `<div style="width:36px; height:36px; border-radius:50%; background:${getAvatarColor(workerName)}; color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; border:1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">${photoURL}</div>`;
+                            imgHtml = `<div style="width:36px; height:36px; border-radius:50%; background:${getAvatarColor(workerName)}; color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; border:1.5px solid #fff; ">${photoURL}</div>`;
                         }
                     }
                     appContainer.innerHTML = `
@@ -9775,7 +9776,7 @@ let settingsConfirmedAddress = null;
                             ${currentUser ? currentUser.name : "Diák"} jelentkezett a munkára.
                         </div>
                     </div>
-                    <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(29, 78, 216, 0.2);" onclick="employerAcceptWorker('${jobTitle}', event)">
+                    <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; " onclick="employerAcceptWorker('${jobTitle}', event)">
                         Elfogadás
                     </button>
                 `;
@@ -9791,7 +9792,7 @@ let settingsConfirmedAddress = null;
                             A munka aktív! Végeztél a feladattal?
                         </div>
                     </div>
-                    <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #16A34A; color: #fff; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);" onclick="workerFinishJob('${jobTitle}')">
+                    <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #16A34A; color: #fff; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; " onclick="workerFinishJob('${jobTitle}')">
                         Végeztem a munkával
                     </button>
                 `;
@@ -10718,7 +10719,7 @@ let settingsConfirmedAddress = null;
             if (!banner) {
                 banner = document.createElement('div');
                 banner.id = 'green-banner';
-                banner.style.cssText = 'position:fixed;top:-80px;left:50%;transform:translateX(-50%);background:rgba(8,12,30,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:14px 24px;border-radius:100px;font-weight:600;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9999;transition:top 0.4s cubic-bezier(0.175,0.885,0.32,1.275);white-space:nowrap;display:flex;align-items:center;gap:8px;';
+                banner.style.cssText = 'position: absolute;top:-80px;left:50%;transform:translateX(-50%);background:rgba(8,12,30,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:14px 24px;border-radius:100px;font-weight:600;font-size:14px;z-index:9999;transition:top 0.4s cubic-bezier(0.175,0.885,0.32,1.275);white-space:nowrap;display:flex;align-items:center;gap:8px;';
                 document.body.appendChild(banner);
             }
             banner.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg> <span>${text}</span>`;

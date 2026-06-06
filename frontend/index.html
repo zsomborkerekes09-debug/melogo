@@ -2957,32 +2957,26 @@
                 <!-- Pull to Refresh Indicator -->
                 <div id="pull-to-refresh" style="
                     position: absolute;
-                    top: -50px;
+                    top: 0;
                     left: 0;
                     width: 100%;
-                    height: 50px;
+                    height: 60px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    gap: 8px;
-                    z-index: 100;
-                    font-size: 13px;
-                    color: var(--color-navy);
-                    font-weight: 600;
+                    transform: translateY(-100%);
                     opacity: 0;
+                    z-index: 10;
                     pointer-events: none;
                 ">
-                    <svg class="spinner" width="16" height="16" viewBox="0 0 50 50" style="
+                    <div class="spinner" id="ptr-spinner" style="
+                        width: 24px;
+                        height: 24px;
+                        border: 3px solid #E5E7EB;
+                        border-top-color: #16C45A;
+                        border-radius: 50%;
                         animation: spin 1s linear infinite;
-                        display: none;
-                        color: var(--color-navy);
-                    ">
-                        <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" style="
-                            stroke-dasharray: 80, 150;
-                            stroke-dashoffset: 0;
-                        "></circle>
-                    </svg>
-                    <span id="pull-to-refresh-text">Húzd le a frissítéshez</span>
+                    "></div>
                 </div>
                 <div class="header-midnight">
                     <div class="brand-logo">Melo<span>Go</span></div>
@@ -3415,18 +3409,7 @@
                                     <textarea class="settings-textarea" id="settings-bio" maxlength="300" oninput="updateCharCounter()" placeholder="Írj rólad pár sort...">Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok.</textarea>
                                     <span class="char-counter" id="bio-char-counter">87 / 300</span>
                                 </div>
-                                <!-- Address (Employer only) -->
-                                <div id="settings-address-container" style="display:none; border-bottom: 0.5px solid #F3F4F6; padding: 0 16px 12px 16px;">
-                                    <div style="display:flex;align-items:center;gap:12px;padding:12px 0 4px 0;">
-                                        <div class="settings-row-icon">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                        </div>
-                                        <span class="settings-row-label">Pontos cím (Megbízóknak kötelező)</span>
-                                    </div>
-                                    <div style="position:relative;">
-                                        <input type="text" id="settings-address" class="auth-input-field login-input" placeholder="Kezdd el gépelni a címet..." oninput="handleSettingsAddressInput(this.value)" style="width: 100%; border: none; background: #F8F9FB; padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 500; color: #080C1E; box-sizing: border-box;">
-                                        <div id="settings-address-suggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #E5E7EB; border-radius:12px; margin-top:4px; z-index:1001; max-height:200px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.05); text-align:left;"></div>
-                                    </div>
+                                
                                 </div>
                             </div>
                         </div>
@@ -3994,7 +3977,7 @@
             
             <div class="settings-scroll" style="padding: 20px; background-color: #F8F9FB;">
                 <!-- Main Header Card -->
-                <div class="settings-card" style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: var(--shadow-card); border-radius: 16px;">
+                <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-bottom: 1px solid #F1F1F1; background: #fff;">
                     <!-- Avatar -->
                     <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
                         <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: block;" alt="Diák avatar">
@@ -4028,13 +4011,13 @@
                 </div>
 
                 <!-- Intro/Bio -->
-                <div class="settings-card" style="padding: 24px 20px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                <div style="padding: 24px 20px; border-bottom: 1px solid #F1F1F1; text-align: left; background: #fff;">
                     <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS</h3>
                     <p id="wp-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; margin-left: 8px; border-left: 3px solid #E5E7EB;">"Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok."</p>
                 </div>
 
                 <!-- Skills Section -->
-                <div class="settings-card" style="padding: 24px 20px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                <div style="padding: 24px 20px; border-bottom: 1px solid #F1F1F1; text-align: left; background: #fff;">
                     <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">SZAKTUDÁSOK</h3>
                     <div id="wp-skills" style="display: flex; flex-wrap: wrap; gap: 10px; margin-left: 8px;">
                         <!-- Dynamically filled with chips -->
@@ -4042,7 +4025,7 @@
                 </div>
 
                 <!-- Reviews List Section -->
-                <div class="settings-card" style="padding: 24px 20px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                <div style="padding: 24px 20px; border-bottom: 1px solid #F1F1F1; text-align: left; background: #fff;">
                     <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">VISSZAJELZÉSEK (UTOLSÓ 5)</h3>
                     <div id="wp-reviews-container" style="display: flex; flex-direction: column; gap: 14px; margin-left: 8px; margin-right: 8px;">
                         <!-- Reviews populated dynamically -->
@@ -4062,7 +4045,7 @@
             
             <div class="settings-scroll" style="padding: 20px; background-color: #F8F9FB;">
                 <!-- Main Header Card -->
-                <div class="settings-card" style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: var(--shadow-card); border-radius: 16px;">
+                <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-bottom: 1px solid #F1F1F1; background: #fff;">
                     <!-- Avatar -->
                     <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
                         <img id="ep-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none;" alt="Megbízó avatar">
@@ -4078,7 +4061,7 @@
                 </div>
 
                 <!-- Intro/Bio -->
-                <div class="settings-card" style="padding: 24px 20px; margin-bottom: 20px; text-align: left; border-radius: 16px;">
+                <div style="padding: 24px 20px; border-bottom: 1px solid #F1F1F1; text-align: left; background: #fff;">
                     <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS</h3>
                     <p id="ep-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; margin-left: 8px; border-left: 3px solid #E5E7EB;">"Megbízható házigazda Kaposváron. Rendszeresen keresek segítséget kerti munkákhoz és takarításhoz."</p>
                 </div>
@@ -5035,7 +5018,7 @@
             if (role === 'worker') {
                 pWorker.classList.add('active');
                 pEmployer.classList.remove('active');
-                if(addrGroup) addrGroup.style.display = 'none';
+                // if(addrGroup) addrGroup.style.display = 'none';
             } else {
                 pEmployer.classList.add('active');
                 pWorker.classList.remove('active');
@@ -5064,7 +5047,7 @@
             if (rf) rf.style.display = 'none';
             if (lf) lf.style.display = 'flex';
             const addrGroup = document.getElementById('register-employer-address-group');
-            if(addrGroup) addrGroup.style.display = 'none';
+            // if(addrGroup) addrGroup.style.display = 'none';
             if (sub) sub.innerText = 'Lépj be a fiókodba';
             if (btn) btn.innerText = 'Bejelentkezem';
             if (sw) sw.innerHTML = 'Nincs még fiókod? <span style="color:#0A0F2E; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>';
@@ -5084,7 +5067,7 @@
             if (rf) rf.style.display = 'flex';
             if (lf) lf.style.display = 'none';
             const addrGroup = document.getElementById('register-employer-address-group');
-            if(addrGroup && loginSelectedRole === 'employer') addrGroup.style.display = 'block';
+            if(addrGroup) addrGroup.style.display = 'block';
             if (sub) sub.innerText = 'Hozd létre a fiókodat';
             if (btn) btn.innerText = 'Regisztrálok & Bejelentkezem';
             if (sw) sw.innerHTML = 'Van már fiókod? <span style="color:#0A0F2E; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>';
@@ -5277,9 +5260,9 @@
                     if (!hasError) showLoginError('A két jelszó nem egyezik meg!');
                     hasError = true;
                 }
-                if (role === 'employer' && !regConfirmedAddress) {
-                    highlightInputError('app-address', 'Megbízóként kötelező kiválasztani a pontos címed!');
-                    if (!hasError) showLoginError('Megbízóként kötelező kiválasztani a pontos címed!');
+                if (!regConfirmedAddress) {
+                    highlightInputError('app-address', 'Kérjük add meg a lakcímedet!');
+                    if (!hasError) showLoginError('Kérjük add meg a lakcímedet!');
                     hasError = true;
                 }
                 if (!termsAccepted) {
@@ -5306,7 +5289,7 @@
                         defaultRole: role,
                         createdAt: window.firebaseAPI.serverTimestamp()
                     };
-                    if (role === 'employer' && regConfirmedAddress) {
+                    if (regConfirmedAddress) {
                         userDataToSave.address = regConfirmedAddress;
                     }
 
@@ -5319,7 +5302,7 @@
                         skills: [],
                         photoURL: '',
                         reviews: [],
-                        address: (role === 'employer' && regConfirmedAddress) ? regConfirmedAddress : ''
+                        address: (regConfirmedAddress) ? regConfirmedAddress : ''
                     };
                     localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     localStorage.setItem('melogo_worker_applications', '[]');
@@ -6681,7 +6664,53 @@ function filterWorkerByExactJob(jobName) {
             });
         }
 
-        let settingsConfirmedAddress = null;
+        function handleSettingsAddressInputNew(val) {
+            const suggList = document.getElementById('settings-address-suggestions');
+            if (!val || val.length < 2) {
+                suggList.style.display = 'none';
+                return;
+            }
+            suggList.innerHTML = '';
+            
+            const matches = (window.MOCK_ADDRESSES || []).filter(a => a.toLowerCase().includes(val.toLowerCase()));
+            if (matches.length > 0) {
+                matches.forEach(m => {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'padding:12px 16px; font-size:14px; font-weight:500; color:#0A0F2E; cursor:pointer; border-bottom:1px solid #F3F4F6;';
+                    div.innerText = m;
+                    div.onclick = async function() {
+                        document.getElementById('settings-address-input').value = m;
+                        suggList.style.display = 'none';
+                        
+                        // Save immediately
+                        let userData = JSON.parse(localStorage.getItem('melogo_user_data')) || {};
+                        userData.address = m;
+                        localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+                        
+                        document.getElementById('settings-current-address-display').innerText = m;
+                        
+                        if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                            try {
+                                const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", window.firebaseAuth.currentUser.uid);
+                                await window.firebaseAPI.updateDoc(userRef, { address: m });
+                            } catch(e) {
+                                console.error("Error saving address", e);
+                            }
+                        }
+                        
+                        setTimeout(() => {
+                            document.getElementById('settings-address-picker').style.display = 'none';
+                        }, 200);
+                    };
+                    suggList.appendChild(div);
+                });
+                suggList.style.display = 'block';
+            } else {
+                suggList.style.display = 'none';
+            }
+        }
+
+let settingsConfirmedAddress = null;
         function handleSettingsAddressInput(val) {
             const suggList = document.getElementById('settings-address-suggestions');
             if (!val || val.length < 2) {
@@ -6717,6 +6746,10 @@ function filterWorkerByExactJob(jobName) {
             // Load Bio from user data
             const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
             const bioField = document.getElementById('settings-bio');
+            const addrDisplay = document.getElementById('settings-current-address-display');
+            if (addrDisplay) {
+                addrDisplay.innerText = userData.address || 'Nincs megadva';
+            }
             if (bioField && userData.bio) {
                 bioField.value = userData.bio;
             }
@@ -6724,13 +6757,13 @@ function filterWorkerByExactJob(jobName) {
             const addrContainer = document.getElementById('settings-address-container');
             const addrField = document.getElementById('settings-address');
             if (activeRole === 'employer') {
-                if (addrContainer) addrContainer.style.display = 'block';
+                // replaced
                 if (addrField) {
                     addrField.value = userData.address || '';
                     settingsConfirmedAddress = userData.address || '';
                 }
             } else {
-                if (addrContainer) addrContainer.style.display = 'none';
+                // replaced
             }
 
             // Sync from Firestore if possible
@@ -7119,8 +7152,8 @@ function filterWorkerByExactJob(jobName) {
                     alert("Megbízóként kötelező megadni a pontos címed!");
                     return;
                 }
-                userData.address = settingsConfirmedAddress;
-                firestoreUpdateData.address = settingsConfirmedAddress;
+                // already saved
+                // already saved
             }
             
             localStorage.setItem('melogo_user_data', JSON.stringify(userData));

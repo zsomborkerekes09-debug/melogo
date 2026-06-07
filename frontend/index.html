@@ -2766,7 +2766,7 @@
 
 <!-- Splash Screen -->
 <div id="splash-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width:500px;background:#000000;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition: opacity 0.5s ease;">
-    <div style="font-size:44px;font-weight:700;color:#fff;font-family:'DM Sans',sans-serif;letter-spacing:-1.5px;animation: pulse 2s infinite;">Melo<span style="color:#000000;">Go</span></div>
+    <div style="font-size:44px;font-weight:700;color:#fff;font-family:'DM Sans',sans-serif;letter-spacing:-1.5px;animation: pulse 2s infinite;">Melo<span style="color:#ffffff;">Go</span></div>
 </div>
 
 <div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width:500px;background:#000000;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
@@ -7230,7 +7230,12 @@ let settingsConfirmedAddress = null;
                 if (mode === 'price') return parseInt(b.dataset.price || 0) - parseInt(a.dataset.price || 0);
                 if (mode === 'newest') return parseInt(a.dataset.time || 0) - parseInt(b.dataset.time || 0);
                 if (mode === 'urgent') return parseInt(b.dataset.urgent || 0) - parseInt(a.dataset.urgent || 0);
-                        window.mockJobs = [
+                return 0;
+            });
+            cards.forEach(c => jobsList.appendChild(c));
+        }
+
+        window.mockJobs = [
             { id: 1, title: 'Gyermekfelügyelet (Délután)', isNew: true, employer: 'Tóth János', price: 8000, distance: 2.5, lat: 46.3812, lon: 17.8123, category: 'Gyermekfelügyelet', location: 'Kaposvár, Deseda u. 12.', time: '2026-06-02', urgent: false, timeOffset: 1, desc: 'Délutáni gyermekfelügyelet egy 4 éves kisfiú mellé.', toolsRequired: 'employer' },
             { id: 2, title: 'Matek korrepetálás', isNew: true, employer: 'Nagy Péter', price: 12000, distance: 3.1, lat: 46.3512, lon: 17.8345, category: 'Korrepetálás', subcategory: 'Középiskola', location: 'Kaposvár, Fő u. 5.', time: '2026-06-03', urgent: false, timeOffset: 2, desc: 'Gimnazista fiamnak keresek matek tanárt heti 2 alkalomra.', toolsRequired: 'employer' },
             { id: 3, title: 'Kutyasétáltatás a parkban', employer: 'Szabó Éva', price: 5000, distance: 0.8, lat: 46.3634, lon: 17.7899, category: 'Kisállat gondozás', location: 'Kaposvár, Sport u. 8.', time: '2026-06-02', urgent: true, timeOffset: 1, desc: 'Nagytestű kutya sétáltatása a közeli parkban 1 órára.', toolsRequired: 'employer' },
@@ -8646,7 +8651,7 @@ let settingsConfirmedAddress = null;
                                 'Tökéletes.'
                             ];
                             const randomReply = cannedReplies[Math.floor(Math.random() * cannedReplies.length)];
-                            replyBubble.innerHTML = randomReply + \`<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">\${replyTime}</div>\`;
+                            replyBubble.innerHTML = randomReply + `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${replyTime}</div>`;
                             
                             // Insert before typing indicator if it's still there
                             const indicator = document.getElementById('chat-typing-indicator');

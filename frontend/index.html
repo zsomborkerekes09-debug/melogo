@@ -1921,13 +1921,7 @@
             display: none;
         }
         .category-gradient {
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 40px;
-            background: linear-gradient(to right, rgba(10,15,46,0) 0%, rgba(10,15,46,1) 100%);
-            pointer-events: none;
+            display: none;
         }
 
     
@@ -2097,11 +2091,7 @@
             100% { transform: translateX(100%); }
         }
         .job-card::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: translateX(-100%);
+            display: none;
         }
         .job-card.shimmer::after {
             animation: shimmer 0.4s ease-out forwards;
@@ -3977,59 +3967,62 @@
             </div>
             
             <div class="settings-scroll" style="padding: 20px; background-color: #F8F9FB;">
-                <!-- Main Header Card -->
-                <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-radius: 20px; margin: 16px; background: #fff;">
-                    <!-- Avatar -->
-                    <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
-                        <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff;  display: block;" alt="Diák avatar">
-                        <div id="wp-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;  background-color: #080C1E; color: white; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">KB</div>
-                        <div id="wp-verified" style="position: absolute; bottom: 0; right: 0; background: #22C55E; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; ">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-                            <h2 id="wp-name" style="font-size: 19px; font-weight: 700; color: #080C1E; font-family: 'DM Sans', sans-serif;">Diák</h2>
-                        </div>
-                        <p id="wp-trust-badge" style="display: inline-block; background: rgba(37,99,235,0.08); color: #2563EB; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 16px; margin-top: 6px;">Megbízható Diák</p>
-                    </div>
-
-                    <!-- Stars & Stats Grid -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; width: 100%; border-top: 0.5px solid #F1F1F1; padding-top: 16px; margin-top: 8px;">
-                        <div style="border-right: 0.5px solid #F1F1F1;">
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 16px; font-weight: 700; color: #D97706;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="#D97706" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                <span id="wp-stars">4.9</span>
+                <!-- Consolidated Worker Profile Card -->
+                <div style="border-radius: 20px; margin: 16px; background: #fff; border: 1px solid var(--color-border); overflow: hidden;">
+                    <!-- Main Header Card -->
+                    <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                        <!-- Avatar -->
+                        <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
+                            <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff;  display: block;" alt="Diák avatar">
+                            <div id="wp-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;  background-color: #080C1E; color: white; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">KB</div>
+                            <div id="wp-verified" style="position: absolute; bottom: 0; right: 0; background: #22C55E; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; ">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                             </div>
-                            <p style="font-size: 10px; color: #9CA3AF; font-weight: 500; margin-top: 2px;">Átlagos Értékelés</p>
                         </div>
+                        
                         <div>
-                            <div id="wp-completed-count" style="font-size: 16px; font-weight: 700; color: #080C1E;">14</div>
-                            <p style="font-size: 10px; color: #9CA3AF; font-weight: 500; margin-top: 2px;">Lezárt Meló</p>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                <h2 id="wp-name" style="font-size: 19px; font-weight: 700; color: #080C1E; font-family: 'DM Sans', sans-serif;">Diák</h2>
+                            </div>
+                            <p id="wp-trust-badge" style="display: inline-block; background: rgba(37,99,235,0.08); color: #2563EB; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 16px; margin-top: 6px;">Megbízható Diák</p>
+                        </div>
+
+                        <!-- Stars & Stats Grid -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; width: 100%; border-top: 0.5px solid #F1F1F1; padding-top: 16px; margin-top: 8px;">
+                            <div style="border-right: 0.5px solid #F1F1F1;">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 16px; font-weight: 700; color: #D97706;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#D97706" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    <span id="wp-stars">4.9</span>
+                                </div>
+                                <p style="font-size: 10px; color: #9CA3AF; font-weight: 500; margin-top: 2px;">Átlagos Értékelés</p>
+                            </div>
+                            <div>
+                                <div id="wp-completed-count" style="font-size: 16px; font-weight: 700; color: #080C1E;">14</div>
+                                <p style="font-size: 10px; color: #9CA3AF; font-weight: 500; margin-top: 2px;">Lezárt Meló</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Intro/Bio -->
-                <div style="padding: 24px 20px; text-align: left; background: #fff; border-radius: 20px; margin: 16px;">
-                    <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS</h3>
-                    <p id="wp-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; margin-left: 8px; border-left: 3px solid #E5E7EB;">"Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok."</p>
-                </div>
-
-                <!-- Skills Section -->
-                <div style="padding: 24px 20px; text-align: left; background: #fff; border-radius: 20px; margin: 16px;">
-                    <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">SZAKTUDÁSOK</h3>
-                    <div id="wp-skills" style="display: flex; flex-wrap: wrap; gap: 10px; margin-left: 8px;">
-                        <!-- Dynamically filled with chips -->
+                    <!-- Intro/Bio -->
+                    <div style="padding: 20px 24px; text-align: left; border-top: 1px solid var(--color-border);">
+                        <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS</h3>
+                        <p id="wp-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; margin-left: 8px; border-left: 3px solid #E5E7EB;">"Üdv! A Kaposvári Egyetem diákja vagyok. Szívesen vállalok fűnyírást és autómosást hétvégenként. Megbízható és pontos vagyok."</p>
                     </div>
-                </div>
 
-                <!-- Reviews List Section -->
-                <div style="padding: 24px 20px; text-align: left; background: #fff; border-radius: 20px; margin: 16px;">
-                    <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">VISSZAJELZÉSEK (UTOLSÓ 5)</h3>
-                    <div id="wp-reviews-container" style="display: flex; flex-direction: column; gap: 14px; margin-left: 8px; margin-right: 8px;">
-                        <!-- Reviews populated dynamically -->
+                    <!-- Skills Section -->
+                    <div style="padding: 20px 24px; text-align: left; border-top: 1px solid var(--color-border);">
+                        <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">SZAKTUDÁSOK</h3>
+                        <div id="wp-skills" style="display: flex; flex-wrap: wrap; gap: 10px; margin-left: 8px;">
+                            <!-- Dynamically filled with chips -->
+                        </div>
+                    </div>
+
+                    <!-- Reviews List Section -->
+                    <div style="padding: 20px 24px; text-align: left; border-top: 1px solid var(--color-border);">
+                        <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">VISSZAJELZÉSEK (UTOLSÓ 5)</h3>
+                        <div id="wp-reviews-container" style="display: flex; flex-direction: column; gap: 14px; margin-left: 8px; margin-right: 8px;">
+                            <!-- Reviews populated dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4045,26 +4038,27 @@
             </div>
             
             <div class="settings-scroll" style="padding: 20px; background-color: #F8F9FB;">
-                <!-- Main Header Card -->
-                <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; border-radius: 20px; margin: 16px; background: #fff;">
-                    <!-- Avatar -->
-                    <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
-                        <img id="ep-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff;  display: none;" alt="Megbízó avatar">
-                        <div id="ep-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;  background-color: #080C1E; color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">M</div>
-                    </div>
-                    
-                    <div>
-                        <h2 id="ep-name" style="font-size: 19px; font-weight: 700; color: #080C1E; font-family: 'DM Sans', sans-serif;">Megbízó</h2>
-                        <p id="ep-location" style="font-size: 13px; color: #6B7280; margin-top: 4px;">Kaposvár</p>
+                <!-- Consolidated Employer Profile Card -->
+                <div style="border-radius: 20px; margin: 16px; background: #fff; border: 1px solid var(--color-border); overflow: hidden;">
+                    <!-- Main Header Card -->
+                    <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                        <!-- Avatar -->
+                        <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
+                            <img id="ep-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff;  display: none;" alt="Megbízó avatar">
+                            <div id="ep-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;  background-color: #080C1E; color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">M</div>
+                        </div>
+                        
+                        <div>
+                            <h2 id="ep-name" style="font-size: 19px; font-weight: 700; color: #080C1E; font-family: 'DM Sans', sans-serif;">Megbízó</h2>
+                            <p id="ep-location" style="font-size: 13px; color: #6B7280; margin-top: 4px;">Kaposvár</p>
+                        </div>
                     </div>
 
-                    
-                </div>
-
-                <!-- Intro/Bio -->
-                <div style="padding: 24px 20px; text-align: left; background: #fff; border-radius: 20px; margin: 16px;">
-                    <h3 style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS</h3>
-                    <p id="ep-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; margin-left: 8px; border-left: 3px solid #E5E7EB;">"Megbízható házigazda Kaposváron. Rendszeresen keresek segítséget kerti munkákhoz és takarításhoz."</p>
+                    <!-- Intro/Bio -->
+                    <div style="padding: 20px 24px; text-align: left; border-top: 1px solid var(--color-border);">
+                        <h3 style="font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS</h3>
+                        <p id="ep-bio" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; font-style: italic; padding-left: 12px; margin-left: 8px; border-left: 3px solid #E5E7EB;">"Megbízható házigazda Kaposváron. Rendszeresen keresek segítséget kerti munkákhoz és takarításhoz."</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -8262,13 +8256,15 @@ let settingsConfirmedAddress = null;
                     const reviewerName = r.name || r.reviewer || 'Megbízó';
                     const reviewDate = r.date || new Date().toLocaleDateString('hu-HU');
                     const reviewText = r.text || 'Kiváló és megbízható munka! Köszönöm.';
+                    const isLast = i === reviews.length - 1;
+                    const borderStyle = isLast ? '' : 'border-bottom: 1px solid var(--color-border); padding-bottom: 14px; margin-bottom: 14px;';
                     return `
-                        <div style="background: white; border-radius: 16px; border: 0.5px solid #F1F1F1; padding: 16px 20px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                        <div style="${borderStyle}">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
                                 <div style="font-size: 13px; font-weight:700; color: #080C1E;">${reviewerName}</div>
                                 <div style="font-size: 11px; color: #9CA3AF;">${reviewDate}</div>
                             </div>
-                            <div style="font-size: 13px; margin-bottom: 6px;">${activeStars}</div>
+                            <div style="font-size: 12px; margin-bottom: 6px;">${activeStars}</div>
                             <div style="font-size: 13px; color: #4B5563; line-height:1.5;">${reviewText}</div>
                         </div>
                     `;

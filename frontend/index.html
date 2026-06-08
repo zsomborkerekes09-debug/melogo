@@ -3399,7 +3399,6 @@
                                 
                                 </div>
                             </div>
-                        </div>
 
                         <!-- Szaktudás -->
                         <div>
@@ -4396,7 +4395,7 @@
             </div>
         </div>
     </div>
-</div>
+
 
     <!-- TÁJÉKOZTATÓ SZEKCIÓ ASZTALI NÉZETRE -->
     <div class="desktop-info">
@@ -4414,6 +4413,8 @@
 
     <!-- JAVASCRIPT: AZ INTERAKTÍV KÉTOLDALÚ KÖTÉS -->
     <!-- Firebase SDK (Modular) -->
+</div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -4671,7 +4672,9 @@
 
     </script>
 
-    <script>
+    </body>
+</html>
+<script>
         // Global getter to evaluate currentUser dynamically safely anywhere in JS
         Object.defineProperty(window, 'currentUser', {
             get: function() {
@@ -11302,3 +11305,5 @@ let settingsConfirmedAddress = null;
         window.renderWorkerHome = renderWorkerHome;
 
         </script>
+</body>
+</html>

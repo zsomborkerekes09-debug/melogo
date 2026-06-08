@@ -14,7 +14,7 @@
     <style>
         :root {
             --color-navy: #000000;
-            --color-green: #000000;
+            --color-green: #c0fc2a;
             --color-bg: #FFFFFF;
             --color-text: #000000;
             --color-text-light: #000000;
@@ -4159,19 +4159,6 @@
                     <!-- DYNAMIC CHAT ACTION BAR -->
                     <div id="chat-action-bar" style="display: none; padding: 12px 16px; background-color: #FFFFFF; border-top: 1px solid #000000; flex-shrink: 0; align-items: center; justify-content: space-between; gap: 12px; box-sizing: border-box;"></div>
                     
-                    <div style="background:#fff; padding:12px 16px 28px; border-top:1px solid var(--color-border); display:flex; gap:10px; align-items:flex-end;">
-                        <button onclick="triggerPhotoAttach()" style="background:#FFFFFF; border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; margin-bottom: 2px;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        </button>
-                        <textarea id="chat-reply-input" placeholder="Üzenet írása..." maxlength="500" 
-                            style="flex:1; background:#FFFFFF; border:none; padding:8px 14px; border-radius: 16px; font-size:14px; outline:none; resize:none; height:36px; max-height:120px; overflow-y:auto; box-sizing:border-box; line-height:1.4; font-family:inherit;" 
-                            oninput="handleChatInput(this)"
-                            onfocus="setTimeout(() => { const c = document.getElementById('chat-detail-messages'); if(c) c.scrollTop = c.scrollHeight; }, 150);"
-                            onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessageNew(); }"></textarea>
-                        <button id="chat-send-btn" onclick="sendChatMessageNew()" disabled style="background:#FFFFFF; color:#000000; border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:not-allowed; flex-shrink:0; margin-bottom: 2px; transition: background-color 0.2s, color 0.2s;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                        </button>
-                    </div>
                 </div>
 
 
@@ -5029,11 +5016,11 @@
             if (role === 'worker') {
                 pWorker.classList.add('active');
                 pEmployer.classList.remove('active');
-                // if(addrGroup) addrGroup.style.display = 'none';
+                if(addrGroup) addrGroup.style.display = 'none';
             } else {
                 pEmployer.classList.add('active');
                 pWorker.classList.remove('active');
-                if(addrGroup && !isLoginMode) addrGroup.style.display = 'block';
+                if(addrGroup) addrGroup.style.display = 'block';
             }
         }
 
@@ -5058,7 +5045,7 @@
             if (rf) rf.style.display = 'none';
             if (lf) lf.style.display = 'flex';
             const addrGroup = document.getElementById('register-employer-address-group');
-            // if(addrGroup) addrGroup.style.display = 'none';
+            if(addrGroup) addrGroup.style.display = 'none';
             if (sub) sub.innerText = 'Lépj be a fiókodba';
             if (btn) btn.innerText = 'Bejelentkezem';
             if (sw) sw.innerHTML = 'Nincs még fiókod? <span style="color:#0A0F2E; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>';
@@ -5078,7 +5065,7 @@
             if (rf) rf.style.display = 'flex';
             if (lf) lf.style.display = 'none';
             const addrGroup = document.getElementById('register-employer-address-group');
-            if(addrGroup) addrGroup.style.display = 'block';
+            if(addrGroup && loginSelectedRole === 'employer') addrGroup.style.display = 'block';
             if (sub) sub.innerText = 'Hozd létre a fiókodat';
             if (btn) btn.innerText = 'Regisztrálok & Bejelentkezem';
             if (sw) sw.innerHTML = 'Van már fiókod? <span style="color:#0A0F2E; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>';
@@ -5271,7 +5258,7 @@
                     if (!hasError) showLoginError('A két jelszó nem egyezik meg!');
                     hasError = true;
                 }
-                if (!regConfirmedAddress) {
+                if (role === 'employer' && !regConfirmedAddress) {
                     highlightInputError('app-address', 'Kérjük add meg a lakcímedet!');
                     if (!hasError) showLoginError('Kérjük add meg a lakcímedet!');
                     hasError = true;
@@ -5482,6 +5469,9 @@
         function openEmployerFormOverlay() {
             document.getElementById('employer-form-overlay').classList.add('open');
             selectEmployerFormCat('Kert'); // load default options
+            if (currentUser && currentUser.role === 'employer' && currentUser.address) {
+                selectAddress(currentUser.address);
+            }
         }
         function closeEmployerFormOverlay() {
             document.getElementById('employer-form-overlay').classList.remove('open');
@@ -6312,9 +6302,20 @@ function filterWorkerByExactJob(jobName) {
             const badge = document.getElementById('app-msg-badge');
             if (badge) { badge.innerText = '1'; badge.style.display = 'flex'; }
 
-            const matchedJob = localEmployerJobs.find(j => j.title === gameState.jobTitle);
+            const matchedJob = mockJobs.find(j => j.title === gameState.jobTitle);
             const employerEmail = (matchedJob && matchedJob.ownerEmail) ? matchedJob.ownerEmail : 'employer@melogo.hu';
             const workerEmail = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : 'worker@melogo.hu';
+            const currentUid = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : 'NO_UID';
+
+            // Prevent applying to own job if ownerUid matches strictly
+            if (matchedJob && matchedJob.ownerUid && currentUid !== 'NO_UID' && matchedJob.ownerUid === currentUid) {
+                alert("Saját munkádra nem jelentkezhetsz!");
+                gameState.applied = false;
+                gameState.status = '';
+                const btn = document.querySelector('.emp-submit-btn');
+                if (btn) btn.disabled = false;
+                return;
+            }
 
             // REDESIGN: insert applying user to localChats
             const newChat = {
@@ -6358,13 +6359,8 @@ function filterWorkerByExactJob(jobName) {
             saveWorkerApplications();
             renderWorkerApplications();
 
-            // Keep matched job status as 'Keresés' until employer accepts
-            const matchedAdIndex = localEmployerJobs.findIndex(j => j.title === gameState.jobTitle);
-            if (matchedAdIndex !== -1) {
-                localEmployerJobs[matchedAdIndex].status = 'Keresés';
-                saveEmployerJobs();
-                renderEmployerHome();
-            }
+            // Removed client-side localEmployerJobs cache modification here to avoid G-1 bug
+            // Job status is now tracked via Firestore applications or mock tracking securely
 
             // Automatikus váltás a Megbízó nézetre és üzenetek megnyitása a könnyű teszteléshez
             setTimeout(() => {
@@ -9002,6 +8998,20 @@ let settingsConfirmedAddress = null;
             document.getElementById('emp-street').value = address.split(',')[0]?.trim() || address;
             const err = document.getElementById('err-loc');
             if (err) err.classList.remove('show');
+
+            if (!lat || !lon) {
+                fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`, {
+                    headers: { 'Accept-Language': 'hu' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        confirmedLat = parseFloat(data[0].lat);
+                        confirmedLon = parseFloat(data[0].lon);
+                    }
+                })
+                .catch(e => console.error("Geocoding error", e));
+            }
         }
 
         function resetAddressSearch() {
@@ -10123,8 +10133,8 @@ let settingsConfirmedAddress = null;
             const countLabel = document.getElementById('emp-active-count');
             if (!list) return;
 
-            const currentUserEmail = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : '';
-            const myJobs = localEmployerJobs.filter(j => !j.ownerEmail || j.ownerEmail === currentUserEmail);
+            const currentUserUid = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : 'NO_UID';
+            const myJobs = localEmployerJobs.filter(j => j.ownerUid === currentUserUid);
 
             // Calculate dynamic status counts for dashboard
             let countSeeking = 0;
@@ -10419,6 +10429,7 @@ let settingsConfirmedAddress = null;
                     category: empActiveCat,
                     datetime: dt,
                     ownerEmail: (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : 'employer@melogo.hu',
+                    ownerUid: (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : 'NO_UID',
                     createdAt: Date.now(),
                     urgent: document.getElementById('emp-urgent-toggle') ? document.getElementById('emp-urgent-toggle').checked : false,
                     toolsRequired: activeToolsRequired,

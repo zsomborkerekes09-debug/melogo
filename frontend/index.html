@@ -2887,9 +2887,26 @@
                 </div>
             </div>
             
+            <div style="display:flex; gap:12px; margin:0;">
+                <div class="floating-group" style="margin:0; flex:1;">
+                    <div class="auth-input-container">
+                        <input type="text" id="reg-zip" class="auth-input-field login-input" placeholder="Irányítószám">
+                    </div>
+                </div>
+                <div class="floating-group" style="margin:0; flex:2;">
+                    <div class="auth-input-container">
+                        <input type="text" id="reg-city" class="auth-input-field login-input" placeholder="Város">
+                    </div>
+                </div>
+            </div>
             <div class="floating-group" style="margin:0;">
                 <div class="auth-input-container">
-                    <input type="text" id="reg-address" class="auth-input-field login-input" placeholder="Lakcím (Irányítószám, Város, Utca, Házszám)">
+                    <input type="text" id="reg-street" class="auth-input-field login-input" placeholder="Utca, házszám">
+                </div>
+            </div>
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="text" id="reg-county" class="auth-input-field login-input" placeholder="Megye">
                 </div>
             </div>
 
@@ -4500,6 +4517,8 @@
                 
                 let role = localStorage.getItem('melogo_active_role') || 'worker';
                 if (typeof switchRole === 'function') switchRole(role);
+            }
+        });
         window.setupFirestoreListeners = function(role) {
             if (!auth.currentUser) {
                 console.log('[DEBUG] setupFirestoreListeners skipped: user not logged in.');
@@ -5241,13 +5260,23 @@
                 var emailInput = document.getElementById('app-email');
                 var pwInput = document.getElementById('app-pw');
                 var pw2Input = document.getElementById('app-pw2');
-                var addressInput = document.getElementById('reg-address');
                 
                 var name = ((nameInput || {}).value || '').trim();
                 var email = ((emailInput || {}).value || '').trim();
                 var pw = ((pwInput || {}).value || '');
                 var pw2 = ((pw2Input || {}).value || '');
-                var address = ((addressInput || {}).value || '').trim() || 'Kaposvár';
+                
+                var zip = ((document.getElementById('reg-zip') || {}).value || '').trim();
+                var city = ((document.getElementById('reg-city') || {}).value || '').trim();
+                var street = ((document.getElementById('reg-street') || {}).value || '').trim();
+                var county = ((document.getElementById('reg-county') || {}).value || '').trim();
+                
+                var addressArr = [];
+                if(zip) addressArr.push(zip);
+                if(city) addressArr.push(city);
+                if(street) addressArr.push(street);
+                var address = addressArr.join(' ') || 'Kaposvár';
+                if(county && address !== 'Kaposvár') address += ' (' + county + ')';
                 
                 let hasError = false;
                 if (!name || name.length < 2) {

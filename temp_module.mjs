@@ -89,8 +89,6 @@
                 
                 let role = localStorage.getItem('melogo_active_role') || 'worker';
                 if (typeof switchRole === 'function') switchRole(role);
-            }
-        });
         window.setupFirestoreListeners = function(role) {
             if (!auth.currentUser) {
                 console.log('[DEBUG] setupFirestoreListeners skipped: user not logged in.');

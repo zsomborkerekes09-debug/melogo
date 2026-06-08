@@ -8481,12 +8481,12 @@ let settingsConfirmedAddress = null;
                 }
             }
 
-            msgContainer.innerHTML = '<div style="font-size: 12px; font-weight: 700; color: #000000; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px; text-align: center;">MA</div>';
+            msgContainer.innerHTML = '<div style="font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px; text-align: center;">MA</div>';
 
             msgs.forEach(msg => {
                 const bubble = document.createElement('div');
                 if (msg.from === 'system') {
-                    bubble.style.cssText = 'background: #FFFFFF; border: 1px solid #D1D5DB; color: #000000; padding: 10px 14px; border-radius: 16px; font-size: 12px; font-weight: 600; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
+                    bubble.style.cssText = 'background: #F8F9FB; border: 1px solid #D1D5DB; color: #080C1E; padding: 10px 14px; border-radius: 16px; font-size: 12px; font-weight: 600; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
                     bubble.innerHTML = msg.text;
                 } else {
                     let isMe = false;
@@ -8499,8 +8499,8 @@ let settingsConfirmedAddress = null;
                     }
                     bubble.style.cssText = `
                         max-width:80%; padding:10px 14px; border-radius:${isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px'};
-                        background:${isMe ? '#000000' : '#fff'};
-                        color:${isMe ? '#fff' : '#000000'};
+                        background:${isMe ? 'var(--color-navy)' : '#fff'};
+                        color:${isMe ? '#fff' : 'var(--color-navy)'};
                         font-size:14px; align-self:${isMe ? 'flex-end' : 'flex-start'};
                         
                     `;
@@ -8532,13 +8532,13 @@ let settingsConfirmedAddress = null;
             if (btn) {
                 const text = el.value.trim();
                 if (text.length > 0) {
-                    btn.style.background = '#000000';
+                    btn.style.background = 'var(--color-green)';
                     btn.style.color = '#fff';
                     btn.style.cursor = 'pointer';
                     btn.disabled = false;
                 } else {
-                    btn.style.background = '#FFFFFF';
-                    btn.style.color = '#000000';
+                    btn.style.background = '#E5E7EB';
+                    btn.style.color = '#9CA3AF';
                     btn.style.cursor = 'not-allowed';
                     btn.disabled = true;
                 }
@@ -8576,17 +8576,11 @@ let settingsConfirmedAddress = null;
 
             bubble.style.cssText = `
                 max-width:80%; padding:10px 14px; border-radius: 18px 18px 4px 18px;
-                background:#000000; color:#FFFFFF; font-size:14px;
+                background:var(--color-navy); color:#fff; font-size:14px;
                 align-self:flex-end; 
             `;
-            const seenId = 'seen-' + Date.now();
-            bubble.innerHTML = text + `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${t} <span id="${seenId}" style="margin-left: 4px; display: none;">✓ Látta</span></div>`;
+            bubble.innerHTML = text + `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${t}</div>`;
             msgContainer.appendChild(bubble);
-            
-            setTimeout(() => {
-                const s = document.getElementById(seenId);
-                if (s) s.style.display = 'inline';
-            }, 1000);
             
             // Reset input and its height/send button state
             input.value = '';
@@ -8622,71 +8616,17 @@ let settingsConfirmedAddress = null;
                     
                     saveLocalChats();
                     renderChatList();
-
-                    // --- NEW: Simulated Delivery Reply ---
-                    const isEmployer = (currentRole === 'employer');
-                    const partnerName = isEmployer ? (chat.workerName || 'Diák') : (chat.employerName || 'Megbízó');
-                    
-                    // After 1.5 seconds, start typing
-                    setTimeout(() => {
-                        showTypingIndicator(partnerName, 2500);
-                        
-                        // After 4 seconds from initial send, reply arrives
-                        setTimeout(() => {
-                            const replyBubble = document.createElement('div');
-                            const rt = new Date();
-                            const replyTime = rt.getHours() + ':' + String(rt.getMinutes()).padStart(2, '0');
-                            
-                            replyBubble.style.cssText = `
-                                max-width:80%; padding:10px 14px; border-radius: 18px 18px 18px 4px;
-                                background:#fff; color:#000000; font-size:14px;
-                                align-self:flex-start; border: 1px solid #000000;
-                            `;
-                            const cannedReplies = [
-                                'Rendben van, köszönöm az infót!',
-                                'Nagyszerű, értettem.',
-                                'Köszi, megkaptam az üzenetet.',
-                                'Szuper, így lesz!',
-                                'Rendben, majd egyeztetünk.',
-                                'Tökéletes.'
-                            ];
-                            const randomReply = cannedReplies[Math.floor(Math.random() * cannedReplies.length)];
-                            replyBubble.innerHTML = randomReply + `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${replyTime}</div>`;
-                            
-                            // Insert before typing indicator if it's still there
-                            const indicator = document.getElementById('chat-typing-indicator');
-                            if (indicator && indicator.parentNode === msgContainer) {
-                                msgContainer.insertBefore(replyBubble, indicator);
-                            } else {
-                                msgContainer.appendChild(replyBubble);
-                            }
-                            
-                            msgContainer.scrollTop = msgContainer.scrollHeight;
-                            
-                            // Save simulated reply
-                            chat.messages.push({ from: (isEmployer ? 'worker' : 'employer'), text: randomReply, time: replyTime });
-                            chat.lastMsg = randomReply;
-                            chat.time = 'Most';
-                            chat.isUnread = true;
-                            chat.unreadCount = (chat.unreadCount || 0) + 1;
-                            saveLocalChats();
-                            renderChatList();
-
-                            // Trigger notification
-                            showPushNotification('💬 Új üzenet - ' + partnerName, randomReply, '#000000');
-                        }, 2500);
-                    }, 1500);
                 }
             }
         }
 
         function triggerPhotoAttach() {
-            showPushNotification('📷 Fotó feltöltve', 'A munka fotója el lett küldve a munkáltatónak!', '#000000');
+            showPushNotification('📷 Fotó feltöltve', 'A munka fotója el lett küldve a munkáltatónak!', '#22C55E');
             const msgContainer = document.getElementById('chat-detail-messages');
             const bubble = document.createElement('div');
             bubble.style.cssText = `
                 max-width:85%; padding:10px 14px; border-radius: 18px 18px 4px 18px;
-                background:#000000; color:#fff; font-size:14px;
+                background:var(--color-navy); color:#fff; font-size:14px;
                 align-self:flex-end; 
             `;
             const photoHtml = '<div style="width:100%; height:80px; background:rgba(255,255,255,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:24px;">📷</div><div style="font-size:11px; margin-top:6px; opacity:0.7;">Munka fotója elküldve</div>';
@@ -8723,11 +8663,7 @@ let settingsConfirmedAddress = null;
                 }
             }
         }
-
-        // ===================================================================
-        // PUSH NOTIFICATION BANNER
-        // ===================================================================
-        function showPushNotification(title, msg, color) {
+\n\n        function showPushNotification(title, msg, color) {
             const banner = document.getElementById('push-banner');
             const icon = document.getElementById('push-banner-icon');
             document.getElementById('push-banner-title').innerText = title;

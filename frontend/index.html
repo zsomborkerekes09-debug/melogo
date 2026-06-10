@@ -4475,6 +4475,10 @@
             uploadString,
             getDownloadURL
         };
+        // Also expose query/orderBy/onSnapshot globally for non-module scripts
+        window._fsQuery = query;
+        window._fsOrderBy = orderBy;
+        window._fsOnSnapshot = onSnapshot;
         
         console.log("Firebase initialized successfully");
         
@@ -4526,15 +4530,17 @@
             }
             const user = auth.currentUser;
             const email = user.email || '';
+            const uid = user.uid || '';
 
             // Clean up existing listeners
             if (window.jobsUnsubscribe) { window.jobsUnsubscribe(); window.jobsUnsubscribe = null; }
             if (window.appsUnsubscribe) { window.appsUnsubscribe(); window.appsUnsubscribe = null; }
             if (window.chatsUnsubscribe) { window.chatsUnsubscribe(); window.chatsUnsubscribe = null; }
+            if (window.chatsUnsubscribe2) { window.chatsUnsubscribe2(); window.chatsUnsubscribe2 = null; }
 
-            console.log('[DEBUG] Setting up role-based Firestore listeners for:', role, 'User email:', email);
+            console.log('[DEBUG] Setting up role-based Firestore listeners for:', role, 'UID:', uid);
 
-            // 1. Jobs listener:
+            // 1. Jobs listener – uses docChanges() for correct delete handling
             let jobsQuery;
             if (role === 'worker') {
                 jobsQuery = query(collection(db, "jobs"), where("status", "==", "Keresés"));
@@ -4542,133 +4548,130 @@
                 jobsQuery = query(collection(db, "jobs"), where("ownerEmail", "==", email));
             }
 
-            window.jobsUnsubscribe = onSnapshot(jobsQuery, (snapshot) => {
-                let allJobs = [];
-                snapshot.forEach(d => {
-                    let jobData = d.data();
-                    jobData.id = d.id;
-                    allJobs.push(jobData);
-                });
-                console.log('[Firestore] Jobs snapshot received:', allJobs.length, 'jobs');
-                
-                if (!window.mockJobs) window.mockJobs = [];
+            function haversineLocal(lat1, lon1, lat2, lon2) {
+                const R = 6371;
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+                return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 10) / 10;
+            }
+
+            function normalizeFirestoreJob(fJob) {
                 const userCoords = window.userCoords || { lat: 46.3593, lon: 17.7967 };
-                
-                function haversine(lat1, lon1, lat2, lon2) {
-                    const R = 6371;
-                    const dLat = (lat2 - lat1) * Math.PI / 180;
-                    const dLon = (lon2 - lon1) * Math.PI / 180;
-                    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-                    return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 10) / 10;
-                }
-                
-                // Remove existing Firestore jobs from mockJobs if they are not in the current snapshot
-                const activeJobIds = new Set(allJobs.map(j => j.id));
-                window.mockJobs = window.mockJobs.filter(m => !m.isFirestore || activeJobIds.has(m.id));
+                let dist = (fJob.lat && fJob.lon) ? haversineLocal(userCoords.lat, userCoords.lon, fJob.lat, fJob.lon) : Math.round(Math.random() * 4 * 10) / 10;
+                return {
+                    id: fJob.id,
+                    title: fJob.title,
+                    employer: fJob.ownerName || (fJob.ownerEmail ? fJob.ownerEmail.split('@')[0] : 'Megbízó'),
+                    ownerEmail: fJob.ownerEmail || '',
+                    ownerUid: fJob.ownerUid || '',
+                    price: parseInt(fJob.price) || 10000,
+                    distance: dist,
+                    lat: fJob.lat || 46.36,
+                    lon: fJob.lon || 17.79,
+                    category: fJob.category || 'Kert',
+                    location: fJob.location || 'Kaposvár',
+                    time: fJob.datetime ? fJob.datetime.slice(0, 10) : new Date().toISOString().slice(0, 10),
+                    urgent: fJob.urgent || false,
+                    timeOffset: fJob.createdAt ? -(Number(fJob.createdAt)) : -Date.now(),
+                    desc: fJob.details || fJob.desc || '',
+                    toolsRequired: fJob.toolsRequired || 'employer',
+                    status: fJob.status || 'Keresés',
+                    isFirestore: true
+                };
+            }
 
-                allJobs.forEach(fJob => {
-                    if (!fJob.id || !fJob.title) return;
-                    
-                    let dist = null;
-                    if (fJob.lat && fJob.lon) {
-                        dist = haversine(userCoords.lat, userCoords.lon, fJob.lat, fJob.lon);
-                    } else {
-                        dist = Math.round(Math.random() * 4 * 10) / 10;
-                    }
-                    
-                    const normalized = {
-                        id: fJob.id,
-                        title: fJob.title,
-                        employer: fJob.ownerName || (fJob.ownerEmail ? fJob.ownerEmail.split('@')[0] : 'Megbízó'),
-                        price: parseInt(fJob.price) || 10000,
-                        distance: dist,
-                        lat: fJob.lat || 46.36,
-                        lon: fJob.lon || 17.79,
-                        category: fJob.category || 'Kert',
-                        location: fJob.location || 'Kaposvár',
-                        time: fJob.datetime ? fJob.datetime.slice(0, 10) : new Date().toISOString().slice(0, 10),
-                        urgent: fJob.urgent || false,
-                        timeOffset: fJob.createdAt ? -(Number(fJob.createdAt)) : -Date.now(),
-                        desc: fJob.details || fJob.desc || '',
-                        toolsRequired: fJob.toolsRequired || 'employer',
-                        status: fJob.status || 'Keresés',
-                        isFirestore: true
-                    };
-                    
-                    const existing = window.mockJobs.findIndex(m => m.id === fJob.id);
-                    if (existing !== -1) {
-                        window.mockJobs[existing] = normalized;
-                    } else {
-                        window.mockJobs.unshift(normalized);
+            if (!window.mockJobs) window.mockJobs = [];
+
+            window.jobsUnsubscribe = onSnapshot(jobsQuery, (snapshot) => {
+                snapshot.docChanges().forEach(change => {
+                    const fJob = { ...change.doc.data(), id: change.doc.id };
+                    if (change.type === 'added' || change.type === 'modified') {
+                        if (!fJob.title) return;
+                        const normalized = normalizeFirestoreJob(fJob);
+                        const existing = window.mockJobs.findIndex(m => m.id === fJob.id);
+                        if (existing !== -1) {
+                            window.mockJobs[existing] = normalized;
+                        } else {
+                            window.mockJobs.unshift(normalized);
+                        }
+                    } else if (change.type === 'removed') {
+                        window.mockJobs = window.mockJobs.filter(m => m.id !== fJob.id);
+                        console.log('[Firestore] Job removed from list:', fJob.id);
                     }
                 });
-
                 mockJobs = window.mockJobs;
-                
+
                 if (role === 'employer') {
+                    // For employer, rebuild from scratch from snapshot
+                    let allJobs = [];
+                    snapshot.forEach(d => { const j = d.data(); j.id = d.id; allJobs.push(j); });
                     window.localEmployerJobs = allJobs.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
                     localStorage.setItem('melogo_employer_jobs', JSON.stringify(window.localEmployerJobs));
                 }
-                
-                // Debounced UI Refresh
+
                 if (!window._jobRefreshTimer) {
                     window._jobRefreshTimer = setTimeout(() => {
                         window._jobRefreshTimer = null;
                         if (typeof window.renderEmployerHome === 'function') window.renderEmployerHome();
                         if (typeof window.refreshJobList === 'function') window.refreshJobList(true);
                         if (typeof window.renderMapPins === 'function') window.renderMapPins();
-                    }, 500);
+                    }, 300);
                 }
-            });
+            }, err => console.error('[Firestore] Jobs listener error:', err));
 
-            // 2. Applications listener:
+            // 2. Applications listener
             let appsQuery = query(
                 collection(db, "applications"),
                 where(role === 'worker' ? "workerEmail" : "employerEmail", "==", email)
             );
-
             window.appsUnsubscribe = onSnapshot(appsQuery, (snapshot) => {
                 let apps = [];
-                snapshot.forEach(d => {
-                    apps.push(d.data());
-                });
+                snapshot.forEach(d => { const a = d.data(); a.id = d.id; apps.push(a); });
                 localWorkerApplications = apps.sort((a,b) => b.createdAt - a.createdAt);
                 localStorage.setItem('melogo_worker_applications', JSON.stringify(localWorkerApplications));
-                
                 if (typeof updateAllUserUI === 'function') updateAllUserUI();
                 if (typeof updateGreetings === 'function') updateGreetings();
                 if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
-            });
+            }, err => console.error('[Firestore] Apps listener error:', err));
 
-            // 3. Chats listener:
-            let chatsQuery = query(
-                collection(db, "chats"),
-                where(role === 'worker' ? "workerEmail" : "employerEmail", "==", email)
-            );
-
-            window.chatsUnsubscribe = onSnapshot(chatsQuery, (snapshot) => {
-                let chats = [];
-                snapshot.forEach(d => {
-                    const chat = d.data();
-                    chats.push(chat);
+            // 3. Chats listeners – UID-based dual query (worker OR employer)
+            //    Firestore does not support OR across different fields, so we use TWO listeners
+            function mergeFirestoreChats(newChats) {
+                newChats.forEach(c => c.isFirestore = true);
+                // Remove stale Firestore chats that are not in the new set
+                const newIds = new Set(newChats.map(c => c.id));
+                localChats = localChats.filter(c => !c.isFirestore || newIds.has(c.id));
+                // Upsert
+                newChats.forEach(nc => {
+                    const idx = localChats.findIndex(c => c.id === nc.id);
+                    if (idx !== -1) localChats[idx] = nc; else localChats.unshift(nc);
                 });
-                let existingMockChats = localChats.filter(c => !c.isFirestore);
-                chats.forEach(c => c.isFirestore = true);
-                localChats = [...chats, ...existingMockChats];
                 localChats.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-                
                 localStorage.setItem('melogo_local_chats', JSON.stringify(localChats));
                 if (typeof renderChatList === 'function') renderChatList();
-                
+                // Re-sync active chat if open
                 if (window.selectedChatId) {
                     const activeChat = localChats.find(c => c.id === window.selectedChatId);
-                    if (activeChat && typeof openChat === 'function') {
-                        const activeRole = localStorage.getItem('melogo_active_role') || 'worker';
-                        const partnerName = (activeRole === 'worker') ? (activeChat.employerName || 'Megbízó') : (activeChat.workerName || activeChat.name || 'Diák');
-                        openChat(partnerName, activeChat.jobTitle, activeChat.lastMsg, activeChat.time, false, activeChat.id);
-                    }
+                    if (activeChat && typeof renderActiveChatMessages === 'function') renderActiveChatMessages(activeChat.id);
                 }
-            });
+            }
+
+            // Worker-side chats (where current user is the worker)
+            const chatsAsWorkerQuery = query(collection(db, "chats"), where("workerId", "==", uid));
+            window.chatsUnsubscribe = onSnapshot(chatsAsWorkerQuery, (snapshot) => {
+                let chats = [];
+                snapshot.forEach(d => { const c = d.data(); c.id = d.id; chats.push(c); });
+                mergeFirestoreChats(chats);
+            }, err => console.error('[Firestore] Chats(worker) listener error:', err));
+
+            // Employer-side chats (where current user is the employer)
+            const chatsAsEmployerQuery = query(collection(db, "chats"), where("employerId", "==", uid));
+            window.chatsUnsubscribe2 = onSnapshot(chatsAsEmployerQuery, (snapshot) => {
+                let chats = [];
+                snapshot.forEach(d => { const c = d.data(); c.id = d.id; chats.push(c); });
+                mergeFirestoreChats(chats);
+            }, err => console.error('[Firestore] Chats(employer) listener error:', err));
         };
 
         // Global Helper for cloud sync
@@ -6052,6 +6055,8 @@ function filterWorkerByExactJob(jobName) {
                 // MENTÉS FIRESTORE-BA: Létrehozás
                 if (window.firebaseAuth && window.firebaseAuth.currentUser && window.firebaseAPI && window.firebaseDb) {
                     try {
+                        const _posterSession = JSON.parse(localStorage.getItem('melogo_employer_session') || '{}');
+                        const _posterName = _posterSession.name || window.firebaseAuth.currentUser.displayName || window.firebaseAuth.currentUser.email.split('@')[0];
                         const newDocRef = await window.firebaseAPI.addDoc(window.firebaseAPI.collection(window.firebaseDb, "jobs"), {
                             title: specificJob,
                             details: details,
@@ -6064,6 +6069,7 @@ function filterWorkerByExactJob(jobName) {
                             datetime: document.getElementById('emp-datetime')?.value || 'Holnap, 14:00',
                             ownerEmail: window.firebaseAuth.currentUser.email,
                             ownerUid: window.firebaseAuth.currentUser.uid,
+                            ownerName: _posterName,
                             createdAt: window.firebaseAPI.serverTimestamp()
                         });
                         console.log("Job successfully added to Firestore:", newDocRef.id);
@@ -6338,7 +6344,7 @@ function filterWorkerByExactJob(jobName) {
         }
 
         // C. DIÁK JELENTKEZIK A MUNKÁRA
-        function workerApplyToJob() {
+        async function workerApplyToJob() {
             gameState.status = 'Keresés';
             gameState.applied = true; 
             
@@ -6347,11 +6353,12 @@ function filterWorkerByExactJob(jobName) {
 
             const matchedJob = mockJobs.find(j => j.title === gameState.jobTitle);
             const employerEmail = (matchedJob && matchedJob.ownerEmail) ? matchedJob.ownerEmail : 'employer@melogo.hu';
+            const employerId = (matchedJob && matchedJob.ownerUid) ? matchedJob.ownerUid : '';
             const workerEmail = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : 'worker@melogo.hu';
-            const currentUid = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : 'NO_UID';
+            const workerId = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : 'NO_UID';
 
             // Prevent applying to own job if ownerUid matches strictly
-            if (matchedJob && matchedJob.ownerUid && currentUid !== 'NO_UID' && matchedJob.ownerUid === currentUid) {
+            if (matchedJob && matchedJob.ownerUid && workerId !== 'NO_UID' && matchedJob.ownerUid === workerId) {
                 alert("Saját munkádra nem jelentkezhetsz!");
                 gameState.applied = false;
                 gameState.status = '';
@@ -6360,14 +6367,25 @@ function filterWorkerByExactJob(jobName) {
                 return;
             }
 
-            // REDESIGN: insert applying user to localChats
-            const newChat = {
-                id: 'chat_' + Date.now(),
-                name: currentUser ? currentUser.name : "Diák",
-                workerName: currentUser ? currentUser.name : "Diák",
-                employerName: (matchedJob ? matchedJob.employer || matchedJob.ownerName : 'Megbízó'),
-                jobTitle: gameState.jobTitle || 'Fűnyírás',
-                lastMsg: 'Szia! Jelentkeztem a munkádra, szívesen elvállalom. Mikor és hogyan egyezünk meg a részletekről?',
+            const _workerSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
+            const workerName = _workerSession.name || (currentUser ? currentUser.name : 'Diák');
+            const employerName = (matchedJob ? matchedJob.employer || matchedJob.ownerName : 'Megbízó');
+            const jobTitle = gameState.jobTitle || 'Fűnyírás';
+            const jobId = (matchedJob && matchedJob.id) ? matchedJob.id : '';
+
+            // Create Firestore chat document with correct UID fields
+            let chatDocId = 'chat_' + Date.now();
+            const chatData = {
+                id: chatDocId,
+                jobId: jobId,
+                workerId: workerId,
+                employerId: employerId,
+                workerEmail: workerEmail,
+                employerEmail: employerEmail,
+                workerName: workerName,
+                employerName: employerName,
+                jobTitle: jobTitle,
+                lastMsg: 'A munkás jelentkezett a munkára',
                 time: 'Most',
                 isUnread: true,
                 unreadCount: 1,
@@ -6375,15 +6393,40 @@ function filterWorkerByExactJob(jobName) {
                 role: 'worker',
                 active: true,
                 archived: false,
-                workerEmail: workerEmail,
-                employerEmail: employerEmail,
-                messages: [
-                    { from: 'me', text: 'Szia! Jelentkeztem a munkádra, szívesen elvállalom.<br>Mikor és hogyan egyezünk meg a részletekről?', time: '14:00' }
-                ]
+                status: 'pending',
+                createdAt: Date.now(),
+                messages: []
             };
-            
-            // Unshift and save
-            localChats.unshift(newChat);
+
+            // Save to Firestore if connected, otherwise just local
+            if (window.firebaseAuth && window.firebaseAuth.currentUser && window.firebaseAPI && window.firebaseDb) {
+                try {
+                    const chatRef = await window.firebaseAPI.addDoc(
+                        window.firebaseAPI.collection(window.firebaseDb, "chats"),
+                        { ...chatData, createdAt: window.firebaseAPI.serverTimestamp() }
+                    );
+                    chatDocId = chatRef.id;
+                    chatData.id = chatDocId;
+                    chatData.isFirestore = true;
+                    console.log('[Apply] Chat created in Firestore:', chatDocId);
+
+                    // Save system message to subcollection
+                    await window.firebaseAPI.addDoc(
+                        window.firebaseAPI.collection(window.firebaseDb, "chats", chatDocId, "messages"),
+                        {
+                            senderId: 'system',
+                            text: 'A munkás jelentkezett a munkára',
+                            timestamp: window.firebaseAPI.serverTimestamp(),
+                            type: 'system'
+                        }
+                    );
+                } catch(e) {
+                    console.error('[Apply] Firestore chat creation failed:', e);
+                }
+            }
+
+            // Unshift and save locally
+            localChats.unshift(chatData);
             saveLocalChats();
             renderChatList();
 
@@ -8381,6 +8424,46 @@ let settingsConfirmedAddress = null;
         // ===================================================================
         let currentChatMessages = [];
 
+        // Active chat messages listener (Firestore subcollection)
+        window._chatMsgsUnsubscribe = null;
+        function renderActiveChatMessages(chatId) {
+            if (!chatId || !window.firebaseAPI || !window.firebaseDb) return;
+            // Unsubscribe from previous listener
+            if (window._chatMsgsUnsubscribe) { window._chatMsgsUnsubscribe(); window._chatMsgsUnsubscribe = null; }
+            const msgsQuery = window.firebaseAPI.query(
+                window.firebaseAPI.collection(window.firebaseDb, 'chats', chatId, 'messages'),
+                window.firebaseAPI.orderBy('timestamp', 'asc')
+            );
+            window._chatMsgsUnsubscribe = window.firebaseAPI.onSnapshot(msgsQuery, (snapshot) => {
+                const msgContainer = document.getElementById('chat-detail-messages');
+                if (!msgContainer) return;
+                // Only re-render if this is still the selected chat
+                if (window.selectedChatId !== chatId) return;
+                msgContainer.innerHTML = '';
+                const curUid = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : null;
+                snapshot.forEach(d => {
+                    const msg = d.data();
+                    if (msg.type === 'system') {
+                        const pill = document.createElement('div');
+                        pill.style.cssText = 'background:#f3f4f6;color:#6b7280;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;text-align:center;margin:8px auto;max-width:80%;display:block;';
+                        pill.innerText = msg.text;
+                        msgContainer.appendChild(pill);
+                    } else {
+                        const isMine = curUid ? (msg.senderId === curUid) : false;
+                        const bubble = document.createElement('div');
+                        const now = msg.timestamp ? new Date(msg.timestamp.toDate ? msg.timestamp.toDate() : msg.timestamp) : new Date();
+                        const t = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+                        bubble.style.cssText = isMine
+                            ? 'max-width:80%;padding:10px 14px;border-radius:18px 18px 4px 18px;background:#000;color:#fff;font-size:14px;align-self:flex-end;'
+                            : 'max-width:80%;padding:10px 14px;border-radius:18px 18px 18px 4px;background:#f3f4f6;color:#000;font-size:14px;align-self:flex-start;';
+                        bubble.innerHTML = msg.text + `<div style="font-size:10px;opacity:0.5;margin-top:4px;text-align:${isMine?'right':'left'}">${t}</div>`;
+                        msgContainer.appendChild(bubble);
+                    }
+                });
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+            }, err => console.error('[Firestore] Messages listener error:', err));
+        }
+
         function openChat(name, jobTitle, lastMsg, time, isUnread, chatId) {
             selectedChatId = chatId;
             window.selectedChatId = chatId;
@@ -8560,6 +8643,12 @@ let settingsConfirmedAddress = null;
                 input.value = '';
                 handleChatInput(input);
             }
+
+            // Start real-time Firestore messages subcollection listener
+            const _activatedChat = localChats.find(c => c.id === chatId);
+            if (_activatedChat && _activatedChat.isFirestore && typeof renderActiveChatMessages === 'function') {
+                renderActiveChatMessages(chatId);
+            }
         }
 
         function handleChatInput(el) {
@@ -8634,29 +8723,23 @@ let settingsConfirmedAddress = null;
                 if (chat) {
                     if (!chat.messages) chat.messages = [];
                     const senderRole = currentRole || localStorage.getItem('melogo_active_role') || 'worker';
-                    chat.messages.push({ from: senderRole, text: text, time: t });
+                    const senderId = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : senderRole;
+                    chat.messages.push({ from: senderRole, senderId: senderId, text: text, time: t });
                     chat.lastMsg = text;
                     chat.time = 'Most';
-                    
-                    // Update Firestore directly if it is a Firestore chat
+
                     if (chat.isFirestore && window.firebaseAPI && window.firebaseDb) {
-                        try {
-                            const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chat.id);
-                            window.firebaseAPI.updateDoc(chatRef, {
-                                messages: chat.messages,
-                                lastMsg: chat.lastMsg,
-                                time: chat.time
-                            });
-                            saveLocalChats();
-                            renderChatList();
-                        } catch(e) {
-                            console.error("Firestore chat update error:", e);
-                        }
-                    } else {
-                        saveLocalChats();
-                        renderChatList();
+                        // Write to subcollection for real-time sync
+                        window.firebaseAPI.addDoc(
+                            window.firebaseAPI.collection(window.firebaseDb, "chats", chat.id, "messages"),
+                            { senderId: senderId, text: text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'user' }
+                        ).catch(e => console.error("Firestore message add error:", e));
+                        // Update lastMsg on parent doc
+                        window.firebaseAPI.updateDoc(
+                            window.firebaseAPI.doc(window.firebaseDb, "chats", chat.id),
+                            { lastMsg: text, time: 'Most' }
+                        ).catch(e => console.error("Firestore chat lastMsg update error:", e));
                     }
-                    
                     saveLocalChats();
                     renderChatList();
                 }
@@ -9987,7 +10070,7 @@ let settingsConfirmedAddress = null;
             });
         }
 
-        function employerAcceptWorker(jobTitle, event) {
+        async function employerAcceptWorker(jobTitle, event) {
             if (event && event.currentTarget) {
                 const btn = event.currentTarget;
                 if (btn.disabled) return;
@@ -10001,29 +10084,49 @@ let settingsConfirmedAddress = null;
                 saveWorkerApplications();
             }
 
-            // 2. Update job status
+            // 2. Update job status locally and in Firestore
             const jobIndex = localEmployerJobs.findIndex(j => j.title === jobTitle);
             if (jobIndex !== -1) {
-                localEmployerJobs[jobIndex].status = 'Aktív';
+                localEmployerJobs[jobIndex].status = 'accepted';
                 saveEmployerJobs();
+            }
+            // Also update the Firestore job document so workers' screens update instantly
+            const acceptedMockJob = window.mockJobs ? window.mockJobs.find(j => j.title === jobTitle && j.isFirestore) : null;
+            if (acceptedMockJob && acceptedMockJob.id && window.firebaseAPI && window.firebaseDb) {
+                window.firebaseAPI.updateDoc(
+                    window.firebaseAPI.doc(window.firebaseDb, "jobs", acceptedMockJob.id),
+                    { status: 'accepted' }
+                ).then(() => console.log('[Accept] Job status updated to accepted in Firestore'))
+                .catch(e => console.error('[Accept] Firestore job status update failed:', e));
             }
 
             gameState.applied = true;
             gameState.status = 'Fizetve';
 
-            // 3. Append system message in the chat
-            const msgContainer = document.getElementById('chat-detail-messages');
-            if (msgContainer) {
-                const bubble = document.createElement('div');
-                bubble.style.cssText = 'background: #FFFFFF; border: 1px solid #D1D5DB; color: #000000; padding: 10px 14px; border-radius: 16px; font-size: 12px; font-weight: 600; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
-                bubble.innerText = 'A munkáltató elfogadta a jelentkezést! A munka aktívvá vált.';
-                msgContainer.appendChild(bubble);
-                msgContainer.scrollTop = msgContainer.scrollHeight;
+            // 3. Save system message to Firestore messages subcollection
+            const _acceptChat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
+            if (_acceptChat && _acceptChat.isFirestore && window.firebaseAPI && window.firebaseDb) {
+                window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", _acceptChat.id, "messages"),
+                    { senderId: 'system', text: 'A megbízó elfogadta a munkást', timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
+                ).catch(e => console.error('[Accept] System message write failed:', e));
+                window.firebaseAPI.updateDoc(
+                    window.firebaseAPI.doc(window.firebaseDb, "chats", _acceptChat.id),
+                    { status: 'active', lastMsg: 'A megbízó elfogadta a munkást' }
+                ).catch(e => console.error('[Accept] Chat status update failed:', e));
+            } else {
+                // Local fallback
+                const msgContainer = document.getElementById('chat-detail-messages');
+                if (msgContainer) {
+                    const bubble = document.createElement('div');
+                    bubble.style.cssText = 'background:#f3f4f6;color:#6b7280;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;text-align:center;margin:8px auto;max-width:80%;display:block;';
+                    bubble.innerText = 'A megbízó elfogadta a munkást';
+                    msgContainer.appendChild(bubble);
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                }
             }
 
             showGreenBanner('Jelentkezés elfogadva! A diák értesítést kapott.');
-            
-            // 4. Update UI
             updateChatActionBar(jobTitle);
             renderWorkerApplications();
             renderEmployerHome();
@@ -10038,28 +10141,46 @@ let settingsConfirmedAddress = null;
                 saveWorkerApplications();
             }
 
-            // 2. Update job status
+            // 2. Update job status locally + Firestore
             const jobIndex = localEmployerJobs.findIndex(j => j.title === jobTitle);
             if (jobIndex !== -1) {
-                localEmployerJobs[jobIndex].status = 'Befejezett';
+                localEmployerJobs[jobIndex].status = 'pending_confirmation';
                 saveEmployerJobs();
+            }
+            const finishedMockJob = window.mockJobs ? window.mockJobs.find(j => j.title === jobTitle && j.isFirestore) : null;
+            if (finishedMockJob && finishedMockJob.id && window.firebaseAPI && window.firebaseDb) {
+                window.firebaseAPI.updateDoc(
+                    window.firebaseAPI.doc(window.firebaseDb, "jobs", finishedMockJob.id),
+                    { status: 'pending_confirmation' }
+                ).catch(e => console.error('[Finish] Firestore job status update failed:', e));
             }
 
             gameState.status = 'Befejezve';
 
-            // 3. Append system message in the chat
-            const msgContainer = document.getElementById('chat-detail-messages');
-            if (msgContainer) {
-                const bubble = document.createElement('div');
-                bubble.style.cssText = 'background: #FFFFFF; border: 1px solid #D1D5DB; color: #000000; padding: 10px 14px; border-radius: 16px; font-size: 12px; font-weight: 600; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
-                bubble.innerText = '${currentUser ? currentUser.name : "Diák"} befejezte a munkát. Várakozás a jóváhagyásra és értékelésre.';
-                msgContainer.appendChild(bubble);
-                msgContainer.scrollTop = msgContainer.scrollHeight;
+            // 3. System message to subcollection
+            const _finishChat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
+            const _wName = currentUser ? currentUser.name : 'A munkás';
+            if (_finishChat && _finishChat.isFirestore && window.firebaseAPI && window.firebaseDb) {
+                window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", _finishChat.id, "messages"),
+                    { senderId: 'system', text: 'A munkás késznek jelölte a munkát', timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
+                ).catch(e => console.error('[Finish] System message write failed:', e));
+                window.firebaseAPI.updateDoc(
+                    window.firebaseAPI.doc(window.firebaseDb, "chats", _finishChat.id),
+                    { status: 'pending_confirmation', lastMsg: 'A munkás késznek jelölte a munkát' }
+                ).catch(e => console.error('[Finish] Chat status update failed:', e));
+            } else {
+                const msgContainer = document.getElementById('chat-detail-messages');
+                if (msgContainer) {
+                    const bubble = document.createElement('div');
+                    bubble.style.cssText = 'background:#f3f4f6;color:#6b7280;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;text-align:center;margin:8px auto;max-width:80%;display:block;';
+                    bubble.innerText = 'A munkás késznek jelölte a munkát';
+                    msgContainer.appendChild(bubble);
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                }
             }
 
             showGreenBanner('Jelentés elküldve! A munkáltató értesítést kapott.');
-
-            // 4. Update UI
             updateChatActionBar(jobTitle);
             renderWorkerApplications();
             renderEmployerHome();
@@ -10075,11 +10196,31 @@ let settingsConfirmedAddress = null;
                 saveWorkerApplications();
             }
 
-            // 2. Update job status
+            // 2. Update job status locally + Firestore
             const jobIndex = localEmployerJobs.findIndex(j => j.title === jobTitle);
             if (jobIndex !== -1) {
-                localEmployerJobs[jobIndex].status = 'Befejezett';
+                localEmployerJobs[jobIndex].status = 'completed';
                 saveEmployerJobs();
+            }
+            const completedMockJob = window.mockJobs ? window.mockJobs.find(j => j.title === jobTitle && j.isFirestore) : null;
+            if (completedMockJob && completedMockJob.id && window.firebaseAPI && window.firebaseDb) {
+                window.firebaseAPI.updateDoc(
+                    window.firebaseAPI.doc(window.firebaseDb, "jobs", completedMockJob.id),
+                    { status: 'completed' }
+                ).catch(e => console.error('[Complete] Firestore job status update failed:', e));
+            }
+
+            // Write system message to subcollection
+            const _completeChat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
+            if (_completeChat && _completeChat.isFirestore && window.firebaseAPI && window.firebaseDb) {
+                window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", _completeChat.id, "messages"),
+                    { senderId: 'system', text: 'A munka sikeresen befejezve', timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
+                ).catch(e => console.error('[Complete] System message write failed:', e));
+                window.firebaseAPI.updateDoc(
+                    window.firebaseAPI.doc(window.firebaseDb, "chats", _completeChat.id),
+                    { status: 'completed', lastMsg: 'A munka sikeresen befejezve' }
+                ).catch(e => console.error('[Complete] Chat status update failed:', e));
             }
 
             gameState.status = 'Kifizetve';

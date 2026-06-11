@@ -8,7 +8,7 @@ service cloud.firestore {
     match /jobs/{jobId} {
       // Anyone authenticated can read open jobs (worker home screen filter)
       allow read: if request.auth != null;
-      // Only the owner (employer) can write their own job
+      // Only the owner (employer) can create their own job and the ownerUid must match
       allow create: if request.auth != null && request.resource.data.ownerUid == request.auth.uid;
       allow update, delete: if request.auth != null && resource.data.ownerUid == request.auth.uid;
     }
@@ -17,26 +17,42 @@ service cloud.firestore {
     // APPLICATIONS collection
     // ===========================
     match /applications/{appId} {
-      allow read, write: if request.auth != null && (
-        resource == null ||
+      // Workers can create applications — but workerUid MUST match their own UID (no spoofing)
+      allow create: if request.auth != null
+        && request.resource.data.workerUid == request.auth.uid;
+
+      // Read: only the worker or the employer of this application can read it
+      allow read: if request.auth != null && (
         request.auth.uid == resource.data.workerUid ||
-        request.auth.uid == resource.data.employerUid ||
-        request.auth.email == resource.data.workerEmail ||
-        request.auth.email == resource.data.employerEmail
+        request.auth.uid == resource.data.employerUid
       );
+
+      // Update: only the involved parties can update (e.g. employer accepts/rejects)
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.workerUid ||
+        request.auth.uid == resource.data.employerUid
+      );
+
+      // Delete: only the worker who created it can delete their own application
+      allow delete: if request.auth != null && request.auth.uid == resource.data.workerUid;
     }
 
     // ===========================
     // CHATS collection + messages subcollection
     // ===========================
     match /chats/{chatId} {
-      // Only the worker and employer of the chat can access it
-      allow read, write: if request.auth != null && (
+      // Allow chat creation by the worker (workerId must be their own UID)
+      allow create: if request.auth != null
+        && request.resource.data.workerId == request.auth.uid;
+
+      // Only the worker and employer of the chat can read or update it
+      allow read, update: if request.auth != null && (
         request.auth.uid == resource.data.workerId ||
         request.auth.uid == resource.data.employerId
       );
-      // Allow chat creation by the worker (workerId == their UID)
-      allow create: if request.auth != null && request.resource.data.workerId == request.auth.uid;
+
+      // No one can delete chat documents
+      allow delete: if false;
 
       // Messages subcollection – same access as parent chat
       match /messages/{messageId} {
@@ -48,8 +64,8 @@ service cloud.firestore {
           get(/databases/$(database)/documents/chats/$(chatId)).data.workerId == request.auth.uid ||
           get(/databases/$(database)/documents/chats/$(chatId)).data.employerId == request.auth.uid
         );
-        // System messages can be created by any party (senderId == 'system')
-        allow update, delete: if false; // messages are immutable
+        // Messages are immutable once created
+        allow update, delete: if false;
       }
     }
 
@@ -57,7 +73,10 @@ service cloud.firestore {
     // USERS collection
     // ===========================
     match /users/{userId} {
-      allow read: if request.auth != null;
+      // Users can only read their own full profile
+      // Other authenticated users can read limited public fields (name, avatar)
+      // via the app's chat/job features — but we restrict to own UID for full access
+      allow read: if request.auth != null && request.auth.uid == userId;
       allow write: if request.auth != null && request.auth.uid == userId;
     }
   }

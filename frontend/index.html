@@ -3767,7 +3767,7 @@
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                     </button>
                                 </div>
-                                <div style="width:100%; height:120px; border-radius: 16px; background-color:#FFFFFF; background-image:url('https://maps.googleapis.com/maps/api/staticmap?center=Kaposv%C3%A1r,Hungary&zoom=14&size=400x120&maptype=roadmap&markers=color:red%7CKaposv%C3%A1r,Hungary&key=YOUR_API_KEY'); background-size:cover; background-position:center; position:relative;">
+                                <div id="emp-form-map-preview" style="width:100%; height:120px; border-radius: 16px; background-color:#FFFFFF; position:relative; z-index: 1;">
                                 </div>
                             </div>
                             
@@ -5718,6 +5718,9 @@
             selectEmployerFormCat('Kert'); // load default options
             if (currentUser && currentUser.role === 'employer' && currentUser.address) {
                 selectAddress(currentUser.address);
+            }
+            if (typeof empFormMap !== 'undefined' && empFormMap) {
+                setTimeout(() => empFormMap.invalidateSize(), 200);
             }
         }
         function closeEmployerFormOverlay() {
@@ -9498,6 +9501,30 @@ let settingsConfirmedAddress = null;
             suggList.style.display = 'block';
         }
 
+        let empFormMap = null;
+        let empFormMarker = null;
+        function updateMapPreview(lat, lon) {
+            if (!lat || !lon) return;
+            const container = document.getElementById('emp-form-map-preview');
+            if (!container) return;
+            if (!empFormMap) {
+                empFormMap = L.map('emp-form-map-preview', {
+                    zoomControl: false,
+                    attributionControl: false
+                }).setView([lat, lon], 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19
+                }).addTo(empFormMap);
+                empFormMarker = L.marker([lat, lon]).addTo(empFormMap);
+            } else {
+                empFormMap.setView([lat, lon], 14);
+                empFormMarker.setLatLng([lat, lon]);
+                setTimeout(() => {
+                    if (empFormMap) empFormMap.invalidateSize();
+                }, 100);
+            }
+        }
+
         function selectAddress(address, lat = null, lon = null) {
             confirmedAddress = address;
             confirmedLat = lat;
@@ -9519,9 +9546,12 @@ let settingsConfirmedAddress = null;
                     if (data && data.length > 0) {
                         confirmedLat = parseFloat(data[0].lat);
                         confirmedLon = parseFloat(data[0].lon);
+                        updateMapPreview(confirmedLat, confirmedLon);
                     }
                 })
                 .catch(e => console.error("Geocoding error", e));
+            } else {
+                updateMapPreview(lat, lon);
             }
         }
 

@@ -11,7 +11,25 @@
     <meta name="description" content="MeloGo: Find one-day student jobs near you in minutes. Keress kÃƒÂ¶zeli egynapos diÃƒÂ¡kmunkÃƒÂ¡t percek alatt MagyarorszÃƒÂ¡g bÃƒÂ¡rmely pontjÃƒÂ¡n.">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">        function sendChatLocation() {
+            const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposvár') : 'Kaposv%C3%A1r';
+            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">📍 Helyszín megnyitása</a>;
+            const input = document.getElementById('chat-reply-input');
+            if (input) {
+                input.value = link;
+                sendChatMessageNew(true);
+            }
+        }
+        function sendWorkerChatLocation() {
+            const dest = 'Kaposv%C3%A1r';
+            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">📍 Helyszín megnyitása</a>;
+            const input = document.getElementById('worker-chat-reply-input');
+            if (input) {
+                input.value = link;
+                sendWorkerChatMessageNew(true);
+            }
+        }
+</script>
     <style>
         html, body { background-color: var(--color-text); }
         :root {
@@ -4143,7 +4161,7 @@
                     <!-- Chat Input Bar -->
                     <div id="chat-input-bar" style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--color-surface); border-top: 1px solid var(--color-text); flex-shrink: 0; padding-bottom: calc(40px + env(safe-area-inset-bottom));">
                         <input type="text" id="chat-reply-input" placeholder="ÃƒÂrj ÃƒÂ¼zenetet..." oninput="handleChatInput(this)" onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessageNew(); }" style="flex: 1; height: 44px; border: 1px solid var(--color-text); border-radius: 22px; padding: 0 16px; font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none; background: var(--color-surface); color: var(--color-text);">
-                        <button id="chat-send-btn" onclick="sendChatMessageNew()" style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-text); border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;">
+                        <button id="chat-loc-btn" onclick="sendChatLocation()" style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-surface); border: 1px solid var(--color-text); color: var(--color-text); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></button><button id="chat-send-btn" onclick="sendChatMessageNew()" style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-text); border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                         </button>
                     </div>
@@ -4652,7 +4670,25 @@
 
         // Window.saveToCloud removed to avoid batch overwrites of Firestore collections
 
-    </script>
+            function sendChatLocation() {
+            const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposvár') : 'Kaposv%C3%A1r';
+            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">📍 Helyszín megnyitása</a>;
+            const input = document.getElementById('chat-reply-input');
+            if (input) {
+                input.value = link;
+                sendChatMessageNew(true);
+            }
+        }
+        function sendWorkerChatLocation() {
+            const dest = 'Kaposv%C3%A1r';
+            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">📍 Helyszín megnyitása</a>;
+            const input = document.getElementById('worker-chat-reply-input');
+            if (input) {
+                input.value = link;
+                sendWorkerChatMessageNew(true);
+            }
+        }
+</script>
 <script>
         // Global getter to evaluate currentUser dynamically safely anywhere in JS
         Object.defineProperty(window, 'currentUser', {
@@ -5111,8 +5147,14 @@
                                 createdAt: window.firebaseAPI.serverTimestamp(),
                                 bio: '',
                                 skills: [],
-                                location: 'KaposvÃƒÂ¡r'
+                                location: 'Kaposvár'
                             };
+                            if (role === 'employer') {
+                                let loc = prompt('Regisztrációhoz kérjük, adja meg a lakcímét (Irányítószám, Város, Utca, Házszám):');
+                                if (loc && loc.trim() !== '') {
+                                    newUserData.location = loc.trim();
+                                }
+                            }
                             await window.firebaseAPI.setDoc(userRef, newUserData);
                             
                             // Initialize empty local profile for new user
@@ -6356,10 +6398,42 @@ function filterWorkerByExactJob(jobName) {
             if (badge) { badge.innerText = '1'; badge.style.display = 'flex'; }
 
             const matchedJob = mockJobs.find(j => j.title === gameState.jobTitle);
-            const employerEmail = (matchedJob && matchedJob.ownerEmail) ? matchedJob.ownerEmail : 'employer@melogo.hu';
-            const employerId = (matchedJob && matchedJob.ownerUid) ? matchedJob.ownerUid : '';
-            const workerEmail = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : 'worker@melogo.hu';
-            const workerId = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : 'NO_UID';
+
+            if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
+                alert('Kérjük jelentkezz be a jelentkezéshez!');
+                gameState.applied = false;
+                gameState.status = '';
+                return;
+            }
+            if (!matchedJob || !matchedJob.ownerUid) {
+                alert('Hiba: a munkáltató nem található.');
+                gameState.applied = false;
+                gameState.status = '';
+                return;
+            }
+
+            const employerEmail = matchedJob.ownerEmail || 'ismeretlen@employer.hu';
+            const employerId = matchedJob.ownerUid;
+            const workerEmail = window.firebaseAuth.currentUser.email;
+            const workerId = window.firebaseAuth.currentUser.uid;
+
+            // Check for duplicate application
+            try {
+                if (window.firebaseAPI && window.firebaseDb) {
+                    const appsRef = window.firebaseAPI.collection(window.firebaseDb, 'applications');
+                    const q = window.firebaseAPI.query(appsRef, 
+                        window.firebaseAPI.where('jobId', '==', matchedJob.id || ''),
+                        window.firebaseAPI.where('workerUid', '==', workerId)
+                    );
+                    const snap = await window.firebaseAPI.getDocs(q);
+                    if (!snap.empty) {
+                        alert('Már jelentkeztél erre a munkára!');
+                        gameState.applied = false;
+                        gameState.status = '';
+                        return;
+                    }
+                }
+            } catch(e) { console.warn('Duplicate check error', e); }
 
             // Prevent applying to own job if ownerUid matches strictly
             if (matchedJob && matchedJob.ownerUid && workerId !== 'NO_UID' && matchedJob.ownerUid === workerId) {
@@ -9662,6 +9736,20 @@ let settingsConfirmedAddress = null;
                                 const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", jobId);
                                 await window.firebaseAPI.deleteDoc(jobRef);
                                 
+                                // Cascade delete applications
+                                const appsQuery = window.firebaseAPI.query(window.firebaseAPI.collection(window.firebaseDb, "applications"), window.firebaseAPI.where("jobId", "==", jobId));
+                                const appsSnap = await window.firebaseAPI.getDocs(appsQuery);
+                                appsSnap.forEach(async (docSnap) => {
+                                    await window.firebaseAPI.deleteDoc(docSnap.ref);
+                                });
+                                
+                                // Cascade delete chats
+                                const chatsQuery = window.firebaseAPI.query(window.firebaseAPI.collection(window.firebaseDb, "chats"), window.firebaseAPI.where("jobId", "==", jobId));
+                                const chatsSnap = await window.firebaseAPI.getDocs(chatsQuery);
+                                chatsSnap.forEach(async (docSnap) => {
+                                    await window.firebaseAPI.deleteDoc(docSnap.ref);
+                                });
+
                                 // Audit read-back
                                 const checkSnap = await window.firebaseAPI.getDoc(jobRef);
                                 if (!checkSnap.exists()) {
@@ -11399,7 +11487,25 @@ let settingsConfirmedAddress = null;
         // Pull to refresh logic removed
         window.renderWorkerHome = renderWorkerHome;
 
-        </script>
+                function sendChatLocation() {
+            const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposvár') : 'Kaposv%C3%A1r';
+            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">📍 Helyszín megnyitása</a>;
+            const input = document.getElementById('chat-reply-input');
+            if (input) {
+                input.value = link;
+                sendChatMessageNew(true);
+            }
+        }
+        function sendWorkerChatLocation() {
+            const dest = 'Kaposv%C3%A1r';
+            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">📍 Helyszín megnyitása</a>;
+            const input = document.getElementById('worker-chat-reply-input');
+            if (input) {
+                input.value = link;
+                sendWorkerChatMessageNew(true);
+            }
+        }
+</script>
 </body>
 </html>
 <!-- MOVED OVERLAYS -->
@@ -11434,6 +11540,7 @@ let settingsConfirmedAddress = null;
                         </div>
                         <div id="worker-chat-input-bar" style="display: none; align-items: center; gap: 10px; padding: 12px 0 0 0; background: var(--color-surface); border-top: 1px solid var(--color-border); flex-shrink: 0; margin-top: 8px;">
                             <input type="text" id="worker-chat-reply-input" placeholder="ÃƒÂrj ÃƒÂ¼zenetet..." onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendWorkerChatMessageNew(); }" style="flex: 1; height: 44px; border: 1px solid var(--color-border); border-radius: 22px; padding: 0 16px; font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none; background: var(--color-surface); color: var(--color-text);">
+                            <button onclick="sendWorkerChatLocation()" style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></button>
                             <button onclick="sendWorkerChatMessageNew()" style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-text); border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                             </button>
@@ -11475,6 +11582,13 @@ let settingsConfirmedAddress = null;
 
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 

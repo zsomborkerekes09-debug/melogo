@@ -2185,22 +2185,25 @@
 
         /* Employer Chat Overlay - Full Screen Redesign */
         #employer-action-overlay {
-            position: absolute;
+            position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             width: 100%; height: 100%;
+            max-width: 500px;
+            margin: 0 auto;
             background-color: #FFFFFF;
-            z-index: 2500;
+            z-index: 9999 !important;
             transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0.3s;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             border-radius: 40px; /* Keep it inside the phone container borders */
             max-height: 100%;
-            
+            visibility: hidden;
         }
         #employer-action-overlay.active {
             transform: translateX(0);
+            visibility: visible;
         }
 
         /* High-fidelity premium iOS-style chat bubbles */
@@ -7509,6 +7512,9 @@ let settingsConfirmedAddress = null;
 
 
         // Local alias for backward compatibility with all existing code
+        if (!window.mockJobs) {
+            window.mockJobs = [];
+        }
         let mockJobs = window.mockJobs;
 
         // recalculateJobDistances stub (no rounding) removed — real implementation with gameState.gpsActive check below
@@ -7588,7 +7594,7 @@ let settingsConfirmedAddress = null;
         let activeSortMode = 'newest';
         let currentMapCategory = 'all';
         let selectedMapJob = null;
-        let userCoords = { lat: 47.4979, lon: 19.0402 }; // Central Kaposvár coordinates
+        var userCoords = { lat: 47.4979, lon: 19.0402 }; // Central Kaposvár coordinates
 
         function calculateHaversine(lat1, lon1, lat2, lon2) {
             const R = 6371; // Earth radius in km
@@ -11584,7 +11590,7 @@ let settingsConfirmedAddress = null;
         window.renderMapPins = renderMapPins;
 
         // Pull to refresh logic removed
-        window.renderWorkerHome = renderWorkerHome;
+        // window.renderWorkerHome = renderWorkerHome;
 
                 function sendChatLocation() {
             const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposv�r') : 'Kaposv%C3%A1r';
@@ -11605,8 +11611,6 @@ let settingsConfirmedAddress = null;
             }
         }
 </script>
-</body>
-</html>
 <!-- MOVED OVERLAYS -->
         <div class="overlay-backdrop" id="global-overlay-backdrop" onclick="closeAllActionOverlays()"></div>
         

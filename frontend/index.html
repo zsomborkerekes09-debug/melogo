@@ -2465,6 +2465,7 @@
             pointer-events: auto;
         }
         .action-sheet {
+            padding-bottom: env(safe-area-inset-bottom);
             position: absolute;
             bottom: 0; left: 0; right: 0;
             background-color: #FFFFFF;
@@ -3525,6 +3526,7 @@
                     <div style="display:flex; flex-direction:column; gap:12px;">
                         <button style="width:100%; min-height:52px; border-radius:14px; border: 1.5px solid var(--color-text); background: var(--color-surface); color: var(--color-text); font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;" onclick="closeLogoutConfirm()">MÃƒÂ©gsem</button>
                         <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#DC2626; color:#fff; font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;" onclick="logoutWorker()">KijelentkezÃƒÂ©s</button>
+                        <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#7F1D1D; color:#fff; font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top: 8px;" onclick="deleteAccount()">Fiók végleges törlése</button>
                     </div>
                 </div>
 
@@ -4551,7 +4553,7 @@
             }
 
             function normalizeFirestoreJob(fJob) {
-                const userCoords = window.userCoords || { lat: 46.3593, lon: 17.7967 };
+                const userCoords = window.userCoords || { lat: 47.4979, lon: 19.0402 };
                 let dist = (fJob.lat && fJob.lon) ? haversineLocal(userCoords.lat, userCoords.lon, fJob.lat, fJob.lon) : Math.round(Math.random() * 4 * 10) / 10;
                 return {
                     id: fJob.id,
@@ -4690,6 +4692,115 @@
         }
 </script>
 <script>
+
+        function compressImage(dataUrl, maxWidth, quality, callback) {
+            const img = new Image();
+            img.onload = function() {
+                let w = img.width;
+                let h = img.height;
+                if (w > maxWidth) {
+                    h = Math.round((maxWidth / w) * h);
+                    w = maxWidth;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                callback(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.src = dataUrl;
+        }
+
+
+        async function deleteAccount() {
+            if(confirm("Biztosan véglegesen törölni szeretnéd a fiókodat? Ez a művelet nem visszavonható!")) {
+                if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                    try {
+                        await window.firebaseAuth.currentUser.delete();
+                        alert("Fiók sikeresen törölve.");
+                        logoutApp();
+                        window.location.reload();
+                    } catch(e) {
+                        console.error(e);
+                        if (e.code === 'auth/requires-recent-login') {
+                            alert("A fiók törléséhez kérjük jelentkezz be újra frissen!");
+                            logoutApp();
+                        } else {
+                            alert("Hiba a fiók törlésekor.");
+                        }
+                    }
+                }
+            }
+        }
+
+
+        async function forgotPassword() {
+            const emailInput = document.getElementById('login-email');
+            const email = emailInput ? emailInput.value : '';
+            if (!email || !email.includes('@')) {
+                highlightInputError('login-email', 'A jelszó visszaállításához add meg az email címedet!');
+                showLoginError('A jelszó visszaállításához add meg az email címedet!');
+                return;
+            }
+            if (window.firebaseAuth) {
+                try {
+                    await window.firebaseAPI.sendPasswordResetEmail(window.firebaseAuth, email);
+                    alert('Jelszó-visszaállítási link elküldve a(z) ' + email + ' címre!');
+                } catch(e) {
+                    console.error(e);
+                    showLoginError('Hiba történt a levél küldésekor. Ellenőrizd a címet!');
+                }
+            } else {
+                alert('Firebase nincs inicializálva!');
+            }
+        }
+
+
+        window.addEventListener('popstate', (e) => {
+            const openModals = document.querySelectorAll('.bottom-sheet.active, .action-sheet.active, .settings-overlay.active, .action-overlay.active');
+            if (openModals.length > 0) {
+                if (typeof closeWorkerJobDetail === 'function') closeWorkerJobDetail();
+                if (typeof closeEmployerAdDetailNew === 'function') closeEmployerAdDetailNew();
+                if (typeof closeEmployerChatRoom === 'function') closeEmployerChatRoom();
+                if (typeof closeWorkerChatRoom === 'function') closeWorkerChatRoom();
+                if (typeof closeMsgActionSheet === 'function') closeMsgActionSheet();
+                if (typeof closeProfileOverlay === 'function') closeProfileOverlay();
+            }
+        });
+        function pushModalState() {
+            history.pushState({ modal: true }, '');
+        }
+
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            let s = str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag));
+            // Restore safe location links if matched perfectly
+            s = s.replace(/&lt;a href=&quot;(https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=[^&]+)&quot; target=&quot;_blank&quot; style=&quot;color:#2563EB; text-decoration:underline;&quot;&gt;📍 Helyszín megnyitása&lt;\/a&gt;/g, '<a href="$1" target="_blank" style="color:#2563EB; text-decoration:underline;">📍 Helyszín megnyitása</a>');
+            return s;
+        }
+
+
+        function safeSetItem(key, value) {
+            try {
+                localStorage.setItem(key, value);
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    console.warn('Local storage full, clearing non-essential caches');
+                    localStorage.removeItem('melogo_local_chats');
+                    localStorage.removeItem('melogo_worker_applications');
+                    try { localStorage.setItem(key, value); } catch (e2) { console.error('Still full', e2); }
+                }
+            }
+        }
+
         // Global getter to evaluate currentUser dynamically safely anywhere in JS
         Object.defineProperty(window, 'currentUser', {
             get: function() {
@@ -7493,7 +7604,7 @@ let settingsConfirmedAddress = null;
         let activeSortMode = 'newest';
         let currentMapCategory = 'all';
         let selectedMapJob = null;
-        let userCoords = { lat: 46.3593, lon: 17.7967 }; // Central KaposvÃƒÂ¡r coordinates
+        let userCoords = { lat: 47.4979, lon: 19.0402 }; // Central KaposvÃƒÂ¡r coordinates
 
         function calculateHaversine(lat1, lon1, lat2, lon2) {
             const R = 6371; // Earth radius in km
@@ -8532,7 +8643,7 @@ let settingsConfirmedAddress = null;
                         bubble.style.cssText = isMine
                             ? 'max-width:80%;padding:10px 14px;border-radius:18px 18px 4px 18px;background:var(--color-text);color:#fff;font-size:14px;align-self:flex-end;'
                             : 'max-width:80%;padding:10px 14px;border-radius:18px 18px 18px 4px;background:#f3f4f6;color:var(--color-text);font-size:14px;align-self:flex-start;';
-                        bubble.innerHTML = msg.text + `<div style="font-size:10px;opacity:0.5;margin-top:4px;text-align:${isMine?'right':'left'}">${t}</div>`;
+                        bubble.innerHTML = escapeHTML(msg.text) + `<div style="font-size:10px;opacity:0.5;margin-top:4px;text-align:${isMine?'right':'left'}">${t}</div>`;
                         msgContainer.appendChild(bubble);
                     }
                 });
@@ -8687,7 +8798,7 @@ let settingsConfirmedAddress = null;
                 const bubble = document.createElement('div');
                 if (msg.from === 'system') {
                     bubble.style.cssText = 'background: #F8F9FB; border: 1px solid #D1D5DB; color: #080C1E; padding: 10px 14px; border-radius: 16px; font-size: 12px; font-weight: 600; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
-                    bubble.innerHTML = msg.text;
+                    bubble.innerHTML = escapeHTML(msg.text);
                 } else {
                     let isMe = false;
                     if (msg.from === 'me') {
@@ -8704,7 +8815,7 @@ let settingsConfirmedAddress = null;
                         font-size:14px; align-self:${isMe ? 'flex-end' : 'flex-start'};
                         
                     `;
-                    bubble.innerHTML = msg.text + (msg.time ? `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time}</div>` : '');
+                    bubble.innerHTML = escapeHTML(msg.text) + (msg.time ? `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time}</div>` : '');
                 }
                 msgContainer.appendChild(bubble);
             });
@@ -9629,7 +9740,7 @@ let settingsConfirmedAddress = null;
             }, 300);
         }
 
-        let currentMapCoords = { lat: 46.3593, lon: 17.7967 };
+        let currentMapCoords = { lat: 47.4979, lon: 19.0402 };
 
         function getCoordinatesForAddress(address) {
             const ADDRESS_COORDS = {
@@ -9643,7 +9754,7 @@ let settingsConfirmedAddress = null;
                 return ADDRESS_COORDS[address];
             }
             if (!address || address === 'KaposvÃƒÂ¡r') {
-                return { lat: 46.3593, lon: 17.7967 };
+                return { lat: 47.4979, lon: 19.0402 };
             }
             // Deterministic random close to KaposvÃƒÂ¡r center
             let hash = 0;

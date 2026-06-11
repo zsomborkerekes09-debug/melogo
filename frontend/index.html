@@ -4554,6 +4554,9 @@
                             localStorage.setItem('melogo_active_role', data.defaultRole);
                         }
                         
+                        const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || '', reviews: data.reviews || [], address: data.address || '' };
+                        localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+
                         // Sync names into worker and employer sessions if they are missing
                         const workerSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
                         workerSession.name = data.name || workerSession.name || 'Felhasználó';
@@ -4564,9 +4567,6 @@
                         employerSession.name = data.name || employerSession.name || 'Felhasználó';
                         employerSession.email = user.email;
                         localStorage.setItem('melogo_employer_session', JSON.stringify(employerSession));
-
-                        const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || '', reviews: data.reviews || [] };
-                        localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     }
                 } catch(e) { console.error("Error fetching user doc", e); }
                 
@@ -4697,7 +4697,7 @@
             // 2. Applications listener
             let appsQuery = query(
                 collection(db, "applications"),
-                where(role === 'worker' ? "workerEmail" : "employerEmail", "==", email)
+                where(role === 'worker' ? "workerUid" : "employerUid", "==", uid)
             );
             window.appsUnsubscribe = onSnapshot(appsQuery, (snapshot) => {
                 let apps = [];
@@ -4990,6 +4990,10 @@
         // ==========================================
         let currentRole = 'worker';
         let loginSelectedRole = 'worker';
+        Object.defineProperty(window, 'activeRole', {
+            get() { return currentRole || localStorage.getItem('melogo_active_role') || 'worker'; },
+            configurable: true
+        });
 
         
         function getGreeting(name) {
@@ -5336,10 +5340,10 @@
                                 createdAt: window.firebaseAPI.serverTimestamp(),
                                 bio: '',
                                 skills: [],
-                                location: 'Kaposv�r'
+                                location: 'Kaposvár'
                             };
                             if (role === 'employer') {
-                                let loc = prompt('Regisztr�ci�hoz k�rj�k, adja meg a lakc�m�t (Ir�ny�t�sz�m, V�ros, Utca, H�zsz�m):');
+                                let loc = prompt('Regisztrációhoz kérjük, adja meg a lakcímét (Irányítószám, Város, Utca, Házszám):');
                                 if (loc && loc.trim() !== '') {
                                     newUserData.location = loc.trim();
                                 }
@@ -5362,7 +5366,7 @@
                             else if (data.role) role = data.role;
                             
                             // Sync profile to localStorage
-                            const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || user.photoURL || '', reviews: data.reviews || [] };
+                            const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || user.photoURL || '', reviews: data.reviews || [], address: data.address || '' };
                             localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                         }
                     } catch (e) {
@@ -5443,6 +5447,7 @@
                     userData.skills = skills;
                     userData.photoURL = photoURL;
                     userData.reviews = userDoc.exists() ? (userDoc.data().reviews || []) : [];
+                    userData.address = userDoc.exists() ? (userDoc.data().address || '') : '';
                     localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     
                     doEnterApp(name, email, defaultRole);
@@ -11233,6 +11238,7 @@ let settingsConfirmedAddress = null;
                 reviewCount: userData.reviewCount || 0,
                 reviews: userData.reviews || [],
                 location: userData.location || 'Magyarország',
+                address: userData.address || '',
                 trustLevel: calcTrustLevel(dynamicJobCount, dynamicRating),
                 initials: getInitials(session.name || 'Felhasználó'),
                 darkMode: localStorage.getItem('melogo_dark_mode') === 'true',

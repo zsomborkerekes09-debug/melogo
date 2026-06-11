@@ -4154,7 +4154,7 @@
                     position: absolute;
                     top: 0; left: 0; right: 0; bottom: 0;
                     width: 100%; height: 100%;
-                    background: rgba(128,128,128,0.2);
+                    background: var(--color-surface);
                     z-index: 9999;
                     transform: translateX(100%);
                     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -4209,7 +4209,7 @@
                             <span style="font-size: 11px; color: var(--color-text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="chat-pinned-job">Munka...</span>
                         </div>
                     </div>
-                    <div id="chat-detail-messages" style="flex:1; background: rgba(128,128,128,0.2); padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+                    <div id="chat-detail-messages" style="flex:1; background: rgba(128,128,128,0.05); padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
                         <!-- Populated dynamically -->
                         <div id="chat-typing-indicator" style="display:none; max-width:80%; padding:10px 14px; border-radius:18px 18px 18px 4px; background: var(--color-surface); color: var(--color-text); font-size:14px; align-self:flex-start;  align-items:center; gap:6px;">
                             <span id="chat-typing-name" style="font-weight:700;"></span>
@@ -7898,7 +7898,8 @@ let settingsConfirmedAddress = null;
             // Allow jobs with null/undefined distance, OR if they are within radius. 
             // DEBUG: Bypass distance filter completely for Firestore jobs to guarantee visibility.
             let jobs = mockJobs.filter(j => {
-                if (j.status && j.status !== 'Keresés' && j.status !== 'Kereses') return false;
+                const s = j.status || 'Keresés';
+                if (s !== 'Keresés' && s !== 'Kereses') return false;
                 return j.isFirestore || j.distance === null || j.distance === undefined || j.distance <= activeRadius;
             });
 
@@ -8401,11 +8402,8 @@ let settingsConfirmedAddress = null;
 
             const currentWorkerName = window.currentUser ? window.currentUser.name : '';
             const visibleJobs = mockJobs.filter(j => {
-                if (j.status === 'deleted') return false;
-                if (j.status === 'filled') {
-                    if (j.assignedTo && j.assignedTo === currentWorkerName) return true;
-                    return false;
-                }
+                const s = j.status || 'Keresés';
+                if (s !== 'Keresés' && s !== 'Kereses') return false;
                 const matchesDistance = (j.distance === null || j.distance <= activeRadius);
                 const matchesCategory = (currentMapCategory === 'all' || j.category === currentMapCategory);
                 return matchesDistance && matchesCategory;
@@ -9205,7 +9203,8 @@ let settingsConfirmedAddress = null;
 
             // Show welcome push notification after 2.5 seconds
             setTimeout(() => {
-                showPushNotification('🏠 Üdv a MeloGo-ban!', '8 munka a közeledben · ' + activeRadius + ' km körzetben', 'var(--color-text)');
+                const activeJobsCount = (typeof getFilteredAndSortedJobs === 'function') ? getFilteredAndSortedJobs().length : mockJobs.length;
+                showPushNotification('🏠 Üdv a MeloGo-ban!', activeJobsCount + ' munka a közeledben · ' + activeRadius + ' km körzetben', 'var(--color-text)');
             }, 2500);
         };
 
@@ -10364,14 +10363,23 @@ let settingsConfirmedAddress = null;
             const bar = document.getElementById('chat-action-bar');
             if (!bar) return;
 
-            // Find ${currentUser ? currentUser.name : "Diák"}'s application for this jobTitle
-            const app = localWorkerApplications.find(a => a.title === jobTitle);
-            if (!app) {
+            const chat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
+            if (!chat) {
                 bar.style.display = 'none';
                 return;
             }
 
             const isEmployer = (currentRole === 'employer');
+
+            // Find the correct application matching this chat's worker
+            const app = localWorkerApplications.find(a => 
+                a.title === jobTitle && 
+                (a.workerUid === chat.workerId || a.workerEmail === chat.workerEmail)
+            );
+            if (!app) {
+                bar.style.display = 'none';
+                return;
+            }
 
             if (app.status === 'Függőben' && isEmployer) {
                 // Case A: Employer's view, job is Pending (Függőben)
@@ -10460,11 +10468,27 @@ let settingsConfirmedAddress = null;
                 btn.disabled = true;
                 btn.innerHTML = '<span class="spinner-small" style="display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite; margin-right: 4px;"></span>...';
             }
+            
+            const chat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
+            if (!chat) return;
+
             // 1. Update application status
-            const appIndex = localWorkerApplications.findIndex(a => a.title === jobTitle);
+            const appIndex = localWorkerApplications.findIndex(a => 
+                a.title === jobTitle && 
+                (a.workerUid === chat.workerId || a.workerEmail === chat.workerEmail)
+            );
             if (appIndex !== -1) {
                 localWorkerApplications[appIndex].status = 'Aktív';
                 saveWorkerApplications();
+
+                // Persist status to Firestore
+                if (window.firebaseAPI && window.firebaseDb) {
+                    const appDocId = localWorkerApplications[appIndex].id;
+                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
+                    window.firebaseAPI.updateDoc(appRef, { status: 'Aktív' })
+                        .then(() => console.log('[Accept] Application status updated to Aktív in Firestore'))
+                        .catch(e => console.error('[Accept] Firestore application status update failed:', e));
+                }
             }
 
             // 2. Update job status locally and in Firestore
@@ -10517,11 +10541,26 @@ let settingsConfirmedAddress = null;
         }
 
         function workerFinishJob(jobTitle) {
+            const chat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
+            if (!chat) return;
+
             // 1. Update application status
-            const appIndex = localWorkerApplications.findIndex(a => a.title === jobTitle);
+            const appIndex = localWorkerApplications.findIndex(a => 
+                a.title === jobTitle && 
+                (a.workerUid === chat.workerId || a.workerEmail === chat.workerEmail)
+            );
             if (appIndex !== -1) {
                 localWorkerApplications[appIndex].status = 'Értékelésre vár';
                 saveWorkerApplications();
+
+                // Persist status to Firestore
+                if (window.firebaseAPI && window.firebaseDb) {
+                    const appDocId = localWorkerApplications[appIndex].id;
+                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
+                    window.firebaseAPI.updateDoc(appRef, { status: 'Értékelésre vár' })
+                        .then(() => console.log('[Finish] Application status updated to Értékelésre vár in Firestore'))
+                        .catch(e => console.error('[Finish] Firestore application status update failed:', e));
+                }
             }
 
             // 2. Update job status locally + Firestore
@@ -10571,12 +10610,27 @@ let settingsConfirmedAddress = null;
         }
 
         function employerRateWorkerFromChat(jobTitle, stars) {
+            const chat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
+            if (!chat) return;
+
             // 1. Update application status & rating
-            const appIndex = localWorkerApplications.findIndex(a => a.title === jobTitle);
+            const appIndex = localWorkerApplications.findIndex(a => 
+                a.title === jobTitle && 
+                (a.workerUid === chat.workerId || a.workerEmail === chat.workerEmail)
+            );
             if (appIndex !== -1) {
                 localWorkerApplications[appIndex].status = 'Befejezett';
                 localWorkerApplications[appIndex].rating = stars;
                 saveWorkerApplications();
+
+                // Persist status to Firestore
+                if (window.firebaseAPI && window.firebaseDb) {
+                    const appDocId = localWorkerApplications[appIndex].id;
+                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
+                    window.firebaseAPI.updateDoc(appRef, { status: 'Befejezett', rating: stars })
+                        .then(() => console.log('[Complete] Application status updated to Befejezett in Firestore'))
+                        .catch(e => console.error('[Complete] Firestore application status update failed:', e));
+                }
             }
 
             // 2. Update job status locally + Firestore

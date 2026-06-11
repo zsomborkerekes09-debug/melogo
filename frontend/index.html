@@ -11,34 +11,16 @@
     <meta name="description" content="MeloGo: Find one-day student jobs near you in minutes. Keress közeli egynapos diákmunkát percek alatt Magyarország bármely pontján.">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">        function sendChatLocation() {
-            const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposv�r') : 'Kaposv%C3%A1r';
-            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">=� Helysz�n megnyit�sa</a>;
-            const input = document.getElementById('chat-reply-input');
-            if (input) {
-                input.value = link;
-                sendChatMessageNew(true);
-            }
-        }
-        function sendWorkerChatLocation() {
-            const dest = 'Kaposv%C3%A1r';
-            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">=� Helysz�n megnyit�sa</a>;
-            const input = document.getElementById('worker-chat-reply-input');
-            if (input) {
-                input.value = link;
-                sendWorkerChatMessageNew(true);
-            }
-        }
-</script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         html, body { background-color: var(--color-text); }
         :root {
-            --color-navy: var(--color-text);
+            --color-navy: #0A0F2E;
             --color-green: #c0fc2a;
             --color-bg: #FFFFFF;
-            --color-text: var(--color-text);
-            --color-text-light: var(--color-text);
-            --color-border: var(--color-text);
+            --color-text: #0A0F2E;
+            --color-text-light: #4A5568;
+            --color-border: #E2E8F0;
         }
 
         .animate-card-fade-out {
@@ -2466,6 +2448,7 @@
         }
         .action-sheet {
             padding-bottom: env(safe-area-inset-bottom);
+            padding-bottom: env(safe-area-inset-bottom);
             position: absolute;
             bottom: 0; left: 0; right: 0;
             background-color: #FFFFFF;
@@ -3526,6 +3509,7 @@
                     <div style="display:flex; flex-direction:column; gap:12px;">
                         <button style="width:100%; min-height:52px; border-radius:14px; border: 1.5px solid var(--color-text); background: var(--color-surface); color: var(--color-text); font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;" onclick="closeLogoutConfirm()">Mégsem</button>
                         <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#DC2626; color:#fff; font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;" onclick="logoutWorker()">Kijelentkezés</button>
+                        <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#7F1D1D; color:#fff; font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top: 8px;" onclick="deleteAccount()">Fiók végleges törlése</button>
                         <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#7F1D1D; color:#fff; font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top: 8px;" onclick="deleteAccount()">Fi�k v�gleges t�rl�se</button>
                     </div>
                 </div>
@@ -4674,7 +4658,7 @@
 
             function sendChatLocation() {
             const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposv�r') : 'Kaposv%C3%A1r';
-            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">=� Helysz�n megnyit�sa</a>;
+            const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
             const input = document.getElementById('chat-reply-input');
             if (input) {
                 input.value = link;
@@ -4683,7 +4667,7 @@
         }
         function sendWorkerChatLocation() {
             const dest = 'Kaposv%C3%A1r';
-            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">=� Helysz�n megnyit�sa</a>;
+            const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
             const input = document.getElementById('worker-chat-reply-input');
             if (input) {
                 input.value = link;
@@ -4714,7 +4698,7 @@
 
 
         async function deleteAccount() {
-            if(confirm("Biztosan v�glegesen t�r�lni szeretn�d a fi�kodat? Ez a mqvelet nem visszavonhat�!")) {
+            if(confirm("Biztosan v�glegesen t�r�lni szeretn�d a fi�kodat? Ez a mqvelet nem visszavonható�!")) {
                 if (window.firebaseAuth && window.firebaseAuth.currentUser) {
                     try {
                         await window.firebaseAuth.currentUser.delete();
@@ -8943,7 +8927,7 @@ let settingsConfirmedAddress = null;
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const dataUrl = e.target.result;
-                    showPushNotification('Fot� felt�ltve', 'A munka fot�ja el lett k�ldve a munk�ltat�nak!', '#22C55E');
+                    showPushNotification('Fotó feltöltve', 'A munka fotója el lett küldve a munkáltatónak!', '#22C55E');
                     const msgContainer = document.getElementById('chat-detail-messages');
                     const bubble = document.createElement('div');
                     bubble.style.cssText = `
@@ -8951,7 +8935,7 @@ let settingsConfirmedAddress = null;
                         background:var(--color-navy); color:#fff; font-size:14px;
                         align-self:flex-end; 
                     `;
-                    const photoHtml = `<img src="${dataUrl}" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; display:block;"><div style="font-size:11px; margin-top:6px; opacity:0.7;">Munka fot�ja elk�ldve</div>`;
+                    const photoHtml = `<img src="${dataUrl}" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; display:block;"><div style="font-size:11px; margin-top:6px; opacity:0.7;">Munka fotója elküldve</div>`;
                     bubble.innerHTML = photoHtml;
                     msgContainer.appendChild(bubble);
                     msgContainer.scrollTop = msgContainer.scrollHeight;
@@ -8964,9 +8948,13 @@ let settingsConfirmedAddress = null;
                             const senderRole = currentRole || localStorage.getItem('melogo_active_role') || 'worker';
                             chat.messages.push({ from: senderRole, text: photoHtml, time: 'Most' });
                             saveLocalChats();
-                    renderChatList();
-                }
-            }
+                            renderChatList();
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            };
+            input.click();
         }
         function showPushNotification(title, msg, color) {
             const banner = document.getElementById('push-banner');
@@ -11600,7 +11588,7 @@ let settingsConfirmedAddress = null;
 
                 function sendChatLocation() {
             const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposv�r') : 'Kaposv%C3%A1r';
-            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">=� Helysz�n megnyit�sa</a>;
+            const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
             const input = document.getElementById('chat-reply-input');
             if (input) {
                 input.value = link;
@@ -11609,7 +11597,7 @@ let settingsConfirmedAddress = null;
         }
         function sendWorkerChatLocation() {
             const dest = 'Kaposv%C3%A1r';
-            const link = <a href="https://www.google.com/maps/dir/?api=1&destination= + dest + " target="_blank" style="color:#2563EB; text-decoration:underline;">=� Helysz�n megnyit�sa</a>;
+            const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
             const input = document.getElementById('worker-chat-reply-input');
             if (input) {
                 input.value = link;

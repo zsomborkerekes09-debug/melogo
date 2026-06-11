@@ -849,10 +849,11 @@
         .gps-dot {
             width: 7px; height: 7px;
             border-radius: 50%;
-            background: var(--color-text);
+            background: var(--color-green);
             flex-shrink: 0;
         }
-        .gps-dot.off { background: var(--color-text); }
+        .gps-dot.off { background: rgba(255,255,255,0.3); }
+        .gps-dot.manual { background: #3B82F6; }
         .distance-pill-btn {
             background: rgba(255,255,255,0.12);
             border: 1px solid rgba(255,255,255,0.15);
@@ -921,6 +922,33 @@
             transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         #distance-sheet.open { transform: translateY(0); }
+
+        /* ===== LOCATION BOTTOM SHEET ===== */
+        #location-sheet-backdrop {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 4000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        #location-sheet-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #location-sheet {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: var(--color-surface);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 20px 24px 40px 24px;
+            z-index: 4001;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        #location-sheet.open { transform: translateY(0); }
         .distance-sheet-handle {
             width: 36px; height: 4px;
             background: rgba(128,128,128,0.2);
@@ -3032,7 +3060,7 @@
                     </div>
 
                     <div class="gps-bar">
-                        <div class="gps-location" id="gps-location-text">
+                        <div class="gps-location" id="gps-location-text" style="cursor: pointer;" onclick="openLocationSheet()">
                             <div class="gps-dot" id="gps-dot"></div>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             <span id="gps-city-label">Helyzet keresése...</span>
@@ -3943,6 +3971,43 @@
                         <span>1 km</span><span>50 km</span>
                     </div>
                     <button class="distance-confirm-btn" onclick="confirmDistance()">Beállítás</button>
+                </div>
+
+                <!-- ===== LOCATION SHEET ===== -->
+                <div id="location-sheet-backdrop" onclick="closeLocationSheet()"></div>
+                <div id="location-sheet">
+                    <div class="distance-sheet-handle"></div>
+                    <div class="distance-sheet-title">Tartózkodási hely</div>
+                    <div style="font-size: 13px; color: var(--color-text-light); text-align:center; margin-bottom: 20px;">Add meg manuálisan vagy engedélyezd a GPS-t</div>
+                    
+                    <button class="location-gps-btn" onclick="useGpsFromLocationSheet()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #22C55E; color: #fff; border: none; border-radius: 16px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 16px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                        GPS helyzet észlelése
+                    </button>
+                    
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; color: var(--color-text-light); margin-bottom: 8px;">Manuális városválasztás:</div>
+                    <div class="location-cities-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding-right: 4px;">
+                        <button class="city-select-item" onclick="selectManualCity('Kaposvár', 46.3667, 17.7833)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🌳 Kaposvár (Központ)</span>
+                            <span style="font-size: 11px; opacity: 0.7;">Ajánlott</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Budapest', 47.4979, 19.0402)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🏢 Budapest</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Pécs', 46.0727, 18.2322)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>⛪ Pécs</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Győr', 47.6875, 17.6350)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🏭 Győr</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Szeged', 46.2530, 20.1414)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>☀️ Szeged</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Debrecen', 47.5316, 21.6273)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🎭 Debrecen</span>
+                        </button>
+                    </div>
+                    <button class="distance-confirm-btn" onclick="closeLocationSheet()" style="background: rgba(128,128,128,0.2); color: var(--color-text); border: 1.5px solid var(--color-text);">Mégse</button>
                 </div>
 
                 <!-- ===== PUSH NOTIFICATION BANNER ===== -->
@@ -8450,6 +8515,55 @@ let settingsConfirmedAddress = null;
             recalculateJobDistances();
             refreshJobList();
             renderMapPins();
+        }
+
+        function openLocationSheet() {
+            document.getElementById('location-sheet-backdrop').classList.add('open');
+            document.getElementById('location-sheet').classList.add('open');
+        }
+
+        function closeLocationSheet() {
+            document.getElementById('location-sheet-backdrop').classList.remove('open');
+            document.getElementById('location-sheet').classList.remove('open');
+        }
+
+        function selectManualCity(cityName, lat, lon) {
+            // Stop watching GPS
+            if (window.gpsWatchId) {
+                navigator.geolocation.clearWatch(window.gpsWatchId);
+                window.gpsWatchId = null;
+            }
+            
+            userCoords = { lat: lat, lon: lon };
+            setManualLocationStatus(cityName);
+            closeLocationSheet();
+            recalculateJobDistances();
+            if (typeof updateJobCardsDistances === 'function') {
+                updateJobCardsDistances();
+            }
+            if (typeof renderMapPins === 'function') {
+                renderMapPins();
+            }
+            refreshJobList();
+            showPushNotification('📍 Helyszín módosítva', 'Új helyszín: ' + cityName, 'var(--color-text)');
+        }
+
+        function setManualLocationStatus(cityName) {
+            gameState.gpsActive = true;
+            const dot = document.getElementById('gps-dot');
+            const label = document.getElementById('gps-city-label');
+            const locText = document.getElementById('gps-location-text');
+            if (!dot || !label) return;
+
+            dot.className = 'gps-dot manual';
+            label.innerText = cityName + ' (Kézi)';
+            locText.className = 'gps-location';
+        }
+
+        function useGpsFromLocationSheet() {
+            closeLocationSheet();
+            initGPS();
+            showPushNotification('🛰️ GPS bekapcsolva', 'Keresünk GPS jel alapján...', 'var(--color-text)');
         }
 
 

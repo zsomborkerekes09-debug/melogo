@@ -6226,6 +6226,29 @@ function filterWorkerByExactJob(jobName) {
                 </div>
             `;
             
+            const chatObj = localChats.find(c => c.jobTitle === gameState.jobTitle);
+            if (chatObj && chatObj.messages) {
+                chatObj.messages.forEach(m => {
+                    if (m.type === 'system') return;
+                    const isMine = (m.from === 'worker');
+                    if (isMine) {
+                        html += `
+                            <div style="max-width:80%; padding:10px 14px; border-radius: 18px 18px 4px 18px; background:var(--color-navy); color:#fff; font-size:14px; align-self:flex-end; margin-top: 4px;">
+                                ${m.text}
+                                <div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${m.time || ''}</div>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div style="max-width:80%; padding:10px 14px; border-radius: 18px 18px 18px 4px; background:#F3F4F6; color:#000; font-size:14px; align-self:flex-start; margin-top: 4px; border: 1px solid #E5E7EB;">
+                                ${m.text}
+                                <div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:left;">${m.time || ''}</div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
             if (gameState.status !== 'Keresés') {
                 html += `
                     <div style="text-align:center; margin: 16px 0;">
@@ -6276,21 +6299,40 @@ function filterWorkerByExactJob(jobName) {
             const text = input.value.trim();
             if (!text) return;
 
-            const msgContainer = document.getElementById('worker-chat-messages');
-            const bubble = document.createElement('div');
             const now = new Date();
             const t = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
 
-            bubble.style.cssText = `
-                max-width:80%; padding:10px 14px; border-radius: 18px 18px 4px 18px;
-                background:var(--color-navy); color:#fff; font-size:14px;
-                align-self:flex-end; 
-            `;
-            bubble.innerHTML = text + `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${t}</div>`;
-            msgContainer.appendChild(bubble);
-            
+            // Persist to Firebase and localChats
+            const chat = localChats.find(c => c.jobTitle === gameState.jobTitle);
+            if (chat) {
+                if (!chat.messages) chat.messages = [];
+                const senderRole = 'worker';
+                const senderId = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : senderRole;
+                chat.messages.push({ from: senderRole, senderId: senderId, text: text, time: t });
+                chat.lastMsg = text;
+                chat.time = 'Most';
+
+                if (chat.isFirestore && window.firebaseAPI && window.firebaseDb) {
+                    window.firebaseAPI.addDoc(
+                        window.firebaseAPI.collection(window.firebaseDb, "chats", chat.id, "messages"),
+                        { senderId: senderId, text: text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'user' }
+                    ).catch(e => console.error("Firestore message add error:", e));
+                    
+                    window.firebaseAPI.updateDoc(
+                        window.firebaseAPI.doc(window.firebaseDb, "chats", chat.id),
+                        { lastMsg: text, time: 'Most' }
+                    ).catch(e => console.error("Firestore chat lastMsg update error:", e));
+                }
+                saveLocalChats();
+                if (typeof renderChatList === 'function') renderChatList();
+            }
+
             input.value = '';
-            msgContainer.scrollTop = msgContainer.scrollHeight;
+            
+            // Re-render to show the new message and maintain system bubbles
+            renderWorkerChatMessages();
+            const msgContainer = document.getElementById('worker-chat-messages');
+            if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
         }
 
         function updateWorkerStatusUI() {

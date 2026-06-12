@@ -56,23 +56,21 @@
             background-color: var(--color-text); /* Force black for status bar gap */
             margin: 0;
             padding: 0;
+            width: 100%;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden;
         }
 
         
         .phone-container {
-            width: 100%;
-            max-width: 100%;
+            width: 100vw;
+            max-width: 100vw;
             height: 100vh;
             height: 100dvh;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             /* Handle iOS notch properly by pushing content down, and black background for the gap */
             padding-top: env(safe-area-inset-top);
             background-color: var(--color-text);

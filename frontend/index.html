@@ -9696,8 +9696,10 @@ let settingsConfirmedAddress = null;
             document.getElementById('ad-detail-header-title').innerText = job.title;
             const statusEl = document.getElementById('ad-detail-header-status');
             if (statusEl) {
-                statusEl.innerText = job.status;
-                statusEl.className = 'emp-ad-pill ' + (job.status === 'Aktív' ? 'active' : job.status === 'Befejezett' ? 'completed' : 'seeking');
+                let dispStatus = job.status;
+                if (job.status === 'accepted' || job.status === 'Aktív') dispStatus = 'Aktív';
+                statusEl.innerText = dispStatus;
+                statusEl.className = 'emp-ad-pill ' + ((job.status === 'Aktív' || job.status === 'accepted') ? 'active' : job.status === 'Befejezett' ? 'completed' : 'seeking');
             }
 
             // Fill details card values
@@ -10830,7 +10832,7 @@ let settingsConfirmedAddress = null;
             myJobs.forEach(job => {
                 if (job.status === 'Befejezett') {
                     countCompleted++;
-                } else if (job.status === 'Aktív') {
+                } else if (job.status === 'Aktív' || job.status === 'accepted') {
                     countActive++;
                 } else if (job.status === 'Keresés') {
                     const hasPendingApps = localWorkerApplications.some(a => a.jobId === job.id && a.status === 'Függőben');
@@ -10882,7 +10884,7 @@ let settingsConfirmedAddress = null;
                     statusClass = 'completed';
                     statusText = 'Befejezve';
                     cardClass = 'status-completed';
-                } else if (job.status === 'Aktív') {
+                } else if (job.status === 'Aktív' || job.status === 'accepted') {
                     statusClass = 'active';
                     statusText = 'Folyamatban';
                     cardClass = 'status-active';

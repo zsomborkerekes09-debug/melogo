@@ -310,7 +310,6 @@
             height: 100%;
             transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-
         .screen {
             width: 25%;
             height: 100%;
@@ -591,22 +590,23 @@
         }
 
         /* OVERLAYS CSS RESTORED */
-        .action-overlay, .settings-overlay, .overlay-success, .confirm-sheet {
-            position: fixed;
-            left: 0;
-            right: 0;
-            margin: 0 auto;
-            max-width: 100%;
-            width: 100%;
-            background-color: var(--color-surface);
-            z-index: 9999 !important;
-            pointer-events: auto !important;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
+.action-overlay, .settings-overlay, .overlay-success, .confirm-sheet {
+position: fixed;
+left: 0;
+right: 0;
+margin: 0 auto;
+max-width: 100%;
+width: 100%;
+background-color: var(--color-surface);
+z-index: 9999 !important;
+pointer-events: none !important;
+transform: translateY(100%);
+transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0.4s;
+display: flex;
+flex-direction: column;
+overflow-y: auto;
+visibility: hidden;
+}
 
         .action-overlay {
             bottom: 0;
@@ -615,11 +615,13 @@
             
             height: 65%;
         }
-        .action-overlay.active {
-            transform: translateY(0) !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
+.action-overlay.active {
+transform: translateY(0) !important;
+visibility: visible !important;
+opacity: 1 !important;
+pointer-events: auto !important;
+transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s;
+}
 
         .action-header {
             display: flex;
@@ -632,27 +634,31 @@
             border-top-right-radius: 24px;
         }
 
-        .settings-overlay {
-            max-width: 480px;
-            margin: 0 auto;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--color-bg); /* fallback */
-            z-index: 3000;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            display: flex !important;
+.settings-overlay {
+max-width: 480px;
+margin: 0 auto;
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+width: 100%;
+height: 100%;
+background-color: var(--color-bg); /* fallback */
+z-index: 3000;
+transform: translateY(100%);
+transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0.3s;
+display: flex !important;
 flex-direction: column !important;
-/* overflow-y removed */
-        }
-        .settings-overlay.open {
-            transform: translateY(0) !important;
-        }
+visibility: hidden;
+pointer-events: none;
+}
+.settings-overlay.open {
+transform: translateY(0) !important;
+visibility: visible !important;
+pointer-events: auto !important;
+transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0s;
+}
         /* Chat detail overlay open state */
         #chat-detail-overlay.open {
             transform: translateX(0) !important;
@@ -671,9 +677,12 @@ flex-direction: column !important;
             justify-content: center;
             background-color: var(--color-bg);
         }
-        .overlay-success.active {
-            transform: translateY(0);
-        }
+.overlay-success.active, .overlay-success.open {
+transform: translateY(0) !important;
+visibility: visible !important;
+pointer-events: auto !important;
+transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s;
+}
 
         .confirm-sheet {
             bottom: 0;
@@ -684,10 +693,12 @@ flex-direction: column !important;
             z-index: 3001;
             max-height: 80%;
         }
-        .confirm-sheet.open {
-            transform: translateY(0);
-            
-        }
+.confirm-sheet.open {
+transform: translateY(0) !important;
+visibility: visible !important;
+pointer-events: auto !important;
+transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s;
+}
         
         .overlay-backdrop {
             position: fixed;

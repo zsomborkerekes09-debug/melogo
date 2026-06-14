@@ -3071,7 +3071,7 @@ flex-direction: column !important;
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </div>
                 <div style="font-size:12px; color: var(--color-text); line-height:1.4; user-select:none; margin-top:-1px;">
-                    Elfogadom az <span style="color:#000000; font-weight:600; text-decoration:underline;" onclick="event.stopPropagation(); alert('MeloGo ÁSZF megnyitása...')">ÁSZF</span>-et és az <span style="color:#000000; font-weight:600; text-decoration:underline;" onclick="event.stopPropagation(); alert('MeloGo Adatkezelési Tájékoztató megnyitása...')">Adatkezelési Tájékoztatót</span>.
+                    Elfogadom az <span style="color:var(--color-text); font-weight:600; text-decoration:underline;" onclick="event.stopPropagation(); alert('MeloGo ÁSZF megnyitása...')">ÁSZF</span>-et és az <span style="color:var(--color-text); font-weight:600; text-decoration:underline;" onclick="event.stopPropagation(); alert('MeloGo Adatkezelési Tájékoztató megnyitása...')">Adatkezelési Tájékoztatót</span>.
                 </div>
             </div>
         </div>
@@ -3092,7 +3092,7 @@ flex-direction: column !important;
                 </div>
             </div>
             <div style="text-align:right; margin:4px 4px 0 0;">
-                <span style="color:#000000; font-size:12px; font-weight:500; cursor:pointer;" onclick="alert('Jelszó emlékeztetőt elküldtük a megadott email címre!')">Elfelejtett jelszó?</span>
+                <span style="color:var(--color-text); font-size:12px; font-weight:500; cursor:pointer;" onclick="alert('Jelszó emlékeztetőt elküldtük a megadott email címre!')">Elfelejtett jelszó?</span>
             </div>
         </div>
 
@@ -3113,7 +3113,7 @@ flex-direction: column !important;
         <!-- Dynamic Login/Register Toggle Underline Link -->
         <div style="margin-top:16px; text-align:center;">
             <span id="auth-switch-text" style="font-size:13px; color: var(--color-text); font-family:'DM Sans',sans-serif; user-select:none;">
-                Van már fiókod? <span style="color:#000000; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>
+                Van már fiókod? <span style="color:var(--color-text); font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>
             </span>
         </div>
     </div>
@@ -5458,7 +5458,7 @@ flex-direction: column !important;
             if(addrGroup) addrGroup.style.display = 'none';
             if (sub) sub.innerText = 'Lépj be a fiókodba';
             if (btn) btn.innerText = 'Bejelentkezem';
-            if (sw) sw.innerHTML = 'Nincs még fiókod? <span style="color:#000000; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>';
+            if (sw) sw.innerHTML = 'Nincs még fiókod? <span style="color:var(--color-text); font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>';
             
             clearAllInputErrors();
             clearLoginError();
@@ -5478,7 +5478,7 @@ flex-direction: column !important;
             if(addrGroup && loginSelectedRole === 'employer') addrGroup.style.display = 'block';
             if (sub) sub.innerText = 'Hozd létre a fiókodat';
             if (btn) btn.innerText = 'Regisztrálok & Bejelentkezem';
-            if (sw) sw.innerHTML = 'Van már fiókod? <span style="color:#000000; font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>';
+            if (sw) sw.innerHTML = 'Van már fiókod? <span style="color:var(--color-text); font-weight:600; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>';
             
             clearAllInputErrors();
             clearLoginError();

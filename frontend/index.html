@@ -1239,7 +1239,7 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
         /* ===== BOTTOM NAV APPLE CAPSULE ===== */
         .bottom-nav {
             position: absolute;
-            bottom: max(24px, env(safe-area-inset-bottom));
+            bottom: max(36px, env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 24px);
@@ -3187,8 +3187,8 @@ flex-direction: column !important;
                         <div id="worker-job-filter-display" style="display:inline-flex; align-items:center; background:#000; color:#fff; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer;" onclick="openJobPicker('filter')">Összes <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
                     </div>
 
-                    <!-- 14-napos dátumszűrő (rejtett) -->
-                    <div id="date-filter-row" style="display:none; gap:6px; overflow-x:auto; padding:0 16px 8px 16px; scrollbar-width:none; -ms-overflow-style:none;"></div>
+                    <!-- 14-napos dátumszűrő -->
+                    <div id="date-filter-row" style="display:flex; gap:8px; overflow-x:auto; padding:0 16px 10px 16px; scrollbar-width:none; -ms-overflow-style:none; -webkit-overflow-scrolling:touch;"></div>
 
                     <!-- Category Chips — szöveg, ikon nélkül -->
                     <div class="categories-row" style="display:flex; gap:6px; overflow-x:auto; padding:0 16px 8px 16px; scrollbar-width:none; -ms-overflow-style:none;">
@@ -3208,13 +3208,11 @@ flex-direction: column !important;
                         <div class="category-btn" onclick="filterWorkerJobs('Autó')">Autó</div>
                     </div>
 
-                    <!-- Sort/Filter Pills -->
                     <div class="sort-row" style="padding:0 16px; margin-bottom:12px;">
                         <div class="sort-pill" id="sort-dist" onclick="sortWorkerJobs('distance')">Távolság</div>
                         <div class="sort-pill active" id="sort-new" onclick="sortWorkerJobs('newest')">Legfrissebb</div>
                         <div class="sort-pill" id="sort-price" onclick="sortWorkerJobs('price')">Ár ↑</div>
                         <div class="sort-pill" id="sort-urg" onclick="sortWorkerJobs('urgent')">⚡ Sürgős</div>
-                        <div class="sort-pill" id="sort-date" onclick="sortWorkerJobs('date')">Dátum</div>
                     </div>
 
                     <!-- Magántanár: Tárgy sor (csak Magántanár kategóriánál látható) -->
@@ -5260,6 +5258,8 @@ flex-direction: column !important;
             let initialCatLabel = 'Minden feladat';
             document.getElementById('worker-job-filter-display').innerHTML = initialCatLabel + ' <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
             // filterWorkerJobs is now handled by refreshJobList() in the new engine
+            // Init date filter slider
+            if (typeof renderDateFilter === 'function') renderDateFilter();
 
             if (localStorage.getItem('melogo_app_session')) {
                 const screen = document.getElementById('app-login-screen');
@@ -8570,6 +8570,7 @@ let settingsConfirmedAddress = null;
             }
             
             container.innerHTML = html;
+            container.style.display = 'flex';
         }
 
         let ptrStartY = 0;

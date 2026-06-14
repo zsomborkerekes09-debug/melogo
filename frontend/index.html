@@ -556,9 +556,9 @@
             transition: all 0.2s;
         }
         .role-btn.active {
-            background-color: #fff;
-            color: var(--color-text);
-            
+            background-color: var(--color-text);
+            color: var(--color-bg);
+            border-radius: 20px;
         }
 
         /* Common utilities */
@@ -1222,7 +1222,7 @@
         /* ===== BOTTOM NAV APPLE CAPSULE ===== */
         .bottom-nav {
             position: absolute;
-            bottom: max(16px, env(safe-area-inset-bottom));
+            bottom: max(24px, env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 24px);
@@ -1460,11 +1460,15 @@
             padding-bottom: 100px;
         }
         .emp-form-section {
-            background: var(--color-surface);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid #FFFFFF;
+            background: transparent;
+            border-radius: 0;
+            padding: 24px 0;
+            margin-bottom: 0;
+            border: none;
+            border-bottom: 1px solid var(--color-text);
+        }
+        .emp-form-section:last-child {
+            border-bottom: none;
         }
         .emp-section-label {
             font-size: 12px !important;
@@ -3159,7 +3163,7 @@
                 <div id="home-worker-view" class="job-list fade-view">
                     <div class="flex-between" style="margin-bottom: 12px; padding: 0 16px;">
                         <h2 style="font-size: 18px; font-weight: 700; color: var(--color-text);">Közeli munkák</h2>
-                        <span id="worker-job-filter-display" style="font-size: 13px; color: var(--color-green); font-weight: 500; cursor:pointer;" onclick="openJobPicker('filter')">Összes ▾</span>
+                        <div id="worker-job-filter-display" style="display:inline-flex; align-items:center; background:#000; color:#fff; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer;" onclick="openJobPicker('filter')">Összes <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
                     </div>
 
                     <!-- 14-napos dátumszűrő (rejtett) -->
@@ -3184,7 +3188,7 @@
                     </div>
 
                     <!-- Sort/Filter Pills -->
-                    <div class="sort-row" style="padding:0 16px; margin-bottom:0;">
+                    <div class="sort-row" style="padding:0 16px; margin-bottom:12px;">
                         <div class="sort-pill" id="sort-dist" onclick="sortWorkerJobs('distance')">Távolság</div>
                         <div class="sort-pill active" id="sort-new" onclick="sortWorkerJobs('newest')">Legfrissebb</div>
                         <div class="sort-pill" id="sort-price" onclick="sortWorkerJobs('price')">Ár ↑</div>
@@ -3268,7 +3272,7 @@
             </div>
 
             <!-- SCREEN 2: MESSAGES -->
-            <div class="screen" id="app-messages-screen" style="background: rgba(128,128,128,0.2); padding-bottom: 96px; display: flex; flex-direction: column; overflow: hidden;">
+            <div class="screen" id="app-messages-screen" style="padding-bottom: 96px; display: flex; flex-direction: column; overflow: hidden;">
                 <!-- Midnight Navy Header -->
                 <div class="msg-midnight-header">
                     <div class="brand-logo" style="font-size: 24px; font-weight: 700; color: #fff; margin: 0;  text-align: left; width: 100%;">Melo<span style="color:var(--color-green)">Go</span></div>
@@ -3342,8 +3346,8 @@
                                 <div style="font-size: 12px; font-weight: 700; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">SZEREPEM</div>
                                 <div style="background-color: white; border-radius: 16px; border: 1px solid var(--color-text); padding: 16px;">
                                     <div class="role-switcher-container" style="max-width: 100%; margin-bottom: 8px; background-color: #FFFFFF;">
-                                        <button class="role-btn active" id="role-btn-worker" onclick="switchRole('worker')" style="color: var(--color-text);">Munkás</button>
-                                        <button class="role-btn" id="role-btn-employer" onclick="switchRole('employer')" style="color: var(--color-text);">Megbízó</button>
+                                        <button class="role-btn active" id="role-btn-worker" onclick="switchRole('worker')">Munkás</button>
+                                        <button class="role-btn" id="role-btn-employer" onclick="switchRole('employer')">Megbízó</button>
                                     </div>
                                     <div id="role-description-text" style="font-size: 11px; color: var(--color-text); text-align: center; font-style: italic;">
                                         Közeli munkákat keresel és vállalsz.
@@ -3860,8 +3864,8 @@
                         <div class="emp-form-section">
                             <div class="emp-section-label">Szükséges eszközök</div>
                             <div style="display:flex; gap:8px; margin-top:10px;">
-                                <button type="button" id="tools-btn-employer" onclick="selectToolsRequired('employer')" style="flex:1; padding:13px 8px; border-radius:12px; border: 2px solid var(--color-text); background:var(--color-text); color:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif;">✅ Mi biztosítjuk</button>
-                                <button type="button" id="tools-btn-worker" onclick="selectToolsRequired('worker')" style="flex:1; padding:13px 8px; border-radius:12px; border: 2px solid var(--color-text); background: rgba(128,128,128,0.2); color: var(--color-text); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif;">🔧 A munkásnak kell hoznia</button>
+                                <button type="button" id="tools-btn-employer" onclick="selectToolsRequired('employer')" style="flex:1; padding:13px 8px; border-radius:12px; border: 2px solid var(--color-text); background:var(--color-text); color:#fff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif;">📦 Mi biztosítjuk</button>
+                                <button type="button" id="tools-btn-worker" onclick="selectToolsRequired('worker')" style="flex:1; padding:13px 8px; border-radius:12px; border: 2px solid var(--color-text); background: rgba(128,128,128,0.2); color: var(--color-text); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif;">🔧 Munkás hozza</button>
                             </div>
                         </div>
 
@@ -5232,7 +5236,7 @@
 
         window.onload = function() {
             let initialCatLabel = 'Minden feladat';
-            document.getElementById('worker-job-filter-display').innerText = initialCatLabel;
+            document.getElementById('worker-job-filter-display').innerHTML = initialCatLabel + ' <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
             // filterWorkerJobs is now handled by refreshJobList() in the new engine
 
             if (localStorage.getItem('melogo_app_session')) {
@@ -6095,7 +6099,7 @@
             jobPickerDrillCat = null;
 
             if (currentJobPickerMode === 'filter') {
-                document.getElementById('worker-job-filter-display').innerText = label;
+                document.getElementById('worker-job-filter-display').innerHTML = label + ' <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
                 filterWorkerByExactJob(value);
             } else {
                 document.getElementById('worker-search-job-display').innerText = label;
@@ -8699,12 +8703,12 @@ let settingsConfirmedAddress = null;
             
             let locText = '📍 ' + job.location + ' (' + job.distance + ' km)';
             if (job.urgent) {
-                locText += ' • 🔴 SÜRGŐS!';
+                locText += ' • 🚨 Sürgős!';
             }
             if (job.toolsRequired === 'worker') {
-                locText += ' • 🧰 Munkás hozza az eszközt';
+                locText += ' • 🔧 Munkás hozza';
             } else {
-                locText += ' • 🛠️ Megbízó adja az eszközt';
+                locText += ' • 📦 Megbízó biztosítja';
             }
             document.getElementById('worker-job-detail-loc').innerText = locText;
             

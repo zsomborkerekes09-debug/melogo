@@ -1330,23 +1330,59 @@
 
         /* ===== CATEGORY FILTER BUTTONS ===== */
         .category-btn {
+            display: inline-flex;
+            align-items: center;
             padding: 6px 16px;
-            border-radius: 16px;
+            border-radius: 20px;
             font-size: 13px;
             font-weight: 500;
             white-space: nowrap;
             cursor: pointer;
             background-color: #fff;
-            border: 1px solid var(--color-border);
-            color: var(--color-text);
+            border: 1.5px solid #000;
+            color: #000;
             transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
             box-sizing: border-box;
+            flex-shrink: 0;
+            user-select: none;
         }
         .category-btn.active {
-            background-color: var(--color-text) !important;
+            background-color: #000 !important;
             color: #fff !important;
-            border-color: transparent !important;
+            border-color: #000 !important;
         }
+        /* ===== TUTOR SUB-ROW CHIPS ===== */
+        .tutor-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1.5px solid #000;
+            color: #000;
+            transition: background-color 120ms ease, color 120ms ease;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .tutor-chip.active {
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+        .tutor-row {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 0 16px 6px 16px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            margin-bottom: 0;
+        }
+        .tutor-row::-webkit-scrollbar { display: none; }
 
         /* ===== APPLY BUTTON ===== */
         .apply-btn-main {
@@ -3083,39 +3119,41 @@
                         <span id="worker-job-filter-display" style="font-size: 13px; color: var(--color-green); font-weight: 500; cursor:pointer;" onclick="openJobPicker('filter')">Összes ▾</span>
                     </div>
 
-                    <!-- 14-napos dátumszűrő -->
-                    <div id="date-filter-row" style="display:flex; gap:6px; overflow-x:auto; padding:0 16px 8px 16px; scrollbar-width:none; -ms-overflow-style:none;"></div>
+                    <!-- 14-napos dátumszűrő (rejtett) -->
+                    <div id="date-filter-row" style="display:none; gap:6px; overflow-x:auto; padding:0 16px 8px 16px; scrollbar-width:none; -ms-overflow-style:none;"></div>
 
-                    <!-- Category Pills -->
-                    <!-- Category Pills -->
-                    <div class="categories-row" style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 10px; padding: 0 16px 4px 16px; scrollbar-width: none;">
+                    <!-- Category Chips — szöveg, ikon nélkül -->
+                    <div class="categories-row" style="display:flex; gap:6px; overflow-x:auto; padding:0 16px 8px 16px; scrollbar-width:none; -ms-overflow-style:none;">
                         <div class="category-btn active" onclick="filterWorkerJobs('Összes')">Minden</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Kert')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-9" /><path d="M12 13c-2-1-4-3-4-6a4 4 0 0 1 8 0c0 3-2 5-4 6z" /></svg> Kertészet</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Magántanár')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 9L12 5L2 9L12 13L22 9Z" /><path d="M6 10.6V16a6 3 0 0 0 12 0v-5.4" /></svg> Magántanár</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Takarítás')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 4l-4 4" /><path d="M11 11L4 18a2 2 0 1 0 3 3l7-7" /><path d="M8 10l6 6" /></svg> Takarítás</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Bébiszitter')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M18 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M2 5h2.5l2.5 8h11l1.5-5h-10.5" /></svg> Bébiszitter</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Festés')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21v-4a4 4 0 1 1 4 4H3z" /><path d="M6 18l12-12" /><path d="M16.5 4.5L19.5 7.5" /></svg> Festés</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Költöztetés')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M5 17h-2v-6l2-5h9l4 5h1v4h-2" /><path d="M5 12h14" /></svg> Költöztetés</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Kőműves')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.414 10l-7.383 7.414a2 2 0 1 0 2.829 2.828l7.414 -7.383" /><path d="M13.5 9.5l3 3" /></svg> Kőműves</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Asztalos')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11a2 2 0 0 1 2 2v2h10v-2a2 2 0 1 1 4 0v4a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-4a2 2 0 0 1 2 -2z" /><path d="M8 11V7a3 3 0 0 1 6 0v4" /></svg> Asztalos</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Állat')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18c-2.2 0 -4 -1.8 -4 -4c0 -1.5 1 -2.5 2 -3.5c1 -1 1.5 -1.5 2 -1.5s1 .5 2 1.5c1 1 2 2 2 3.5c0 2.2 -1.8 4 -4 4z" /><circle cx="7.5" cy="7.5" r="1.5" /><circle cx="11.5" cy="4.5" r="1.5" /><circle cx="16.5" cy="7.5" r="1.5" /></svg> Állat</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Bevásárlás')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M17 17h-11v-14h-2" /><path d="M6 5l14 1l-1 7h-13" /></svg> Bevásárlás</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Rendezvény')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M18 4a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M10 8l-2 2" /><path d="M16 12l2 -2" /></svg> Rendezvény</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Mező')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3" /><path d="M12 14a6 6 0 0 1 6 -6h3v2a6 6 0 0 1 -6 6h-3" /><path d="M12 5v17" /></svg> Mezőgazdaság</div>
-                        <div class="category-btn" onclick="filterWorkerJobs('Autó')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M5 17h-2v-6l2-5h9l4 5h1v4h-2" /><path d="M5 12h14" /></svg> Autó</div>
-                    </div>
-                    
-                    <!-- Sub-category Pills (hidden by default) -->
-                    <div id="sub-categories-row" style="display: none; gap: 8px; overflow-x: auto; margin-bottom: 10px; padding: 0 16px 4px 16px; scrollbar-width: none;">
+                        <div class="category-btn" onclick="filterWorkerJobs('Kertészet')">Kertészet</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Magántanár')">Magántanár</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Takarítás')">Takarítás</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Bébiszitter')">Bébiszitter</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Festés')">Festés</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Költöztetés')">Költöztetés</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Kőműves')">Kőműves</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Asztalos')">Asztalos</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Állat')">Állat</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Bevásárlás')">Bevásárlás</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Rendezvény')">Rendezvény</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Mezőgazdaság')">Mezőgazdaság</div>
+                        <div class="category-btn" onclick="filterWorkerJobs('Autó')">Autó</div>
                     </div>
 
-                    <!-- Sort Pills -->
-                    <div class="sort-row" style="padding: 0 16px;">
-                        <div class="sort-pill" id="sort-dist" onclick="sortWorkerJobs('distance')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Távolság</div>
-                        <div class="sort-pill" id="sort-price" onclick="sortWorkerJobs('price')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v1m0 6v1M9.5 10a2.5 2.5 0 1 1 3 4 2.5 2.5 0 1 1-3-4"/></svg> Ár</div>
-                        <div class="sort-pill active" id="sort-new" onclick="sortWorkerJobs('newest')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Legfrissebb</div>
-                        <div class="sort-pill" id="sort-urg" onclick="sortWorkerJobs('urgent')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Sürgős</div>
+                    <!-- Sort/Filter Pills -->
+                    <div class="sort-row" style="padding:0 16px; margin-bottom:0;">
+                        <div class="sort-pill" id="sort-dist" onclick="sortWorkerJobs('distance')">Távolság</div>
+                        <div class="sort-pill active" id="sort-new" onclick="sortWorkerJobs('newest')">Legfrissebb</div>
+                        <div class="sort-pill" id="sort-price" onclick="sortWorkerJobs('price')">Ár ↑</div>
+                        <div class="sort-pill" id="sort-urg" onclick="sortWorkerJobs('urgent')">⚡ Sürgős</div>
+                        <div class="sort-pill" id="sort-date" onclick="sortWorkerJobs('date')">Dátum</div>
                     </div>
+
+                    <!-- Magántanár: Tárgy sor (csak Magántanár kategóriánál látható) -->
+                    <div id="tutor-subject-row" class="tutor-row" style="display:none; margin-top:8px;"></div>
+
+                    <!-- Magántanár: Szint sor (csak ha tárgy is ki van választva) -->
+                    <div id="tutor-level-row" class="tutor-row" style="display:none; margin-top:4px; margin-bottom:8px;"></div>
                     <!-- Dynamic Job List -->
                     <div id="worker-jobs-list">
                         <!-- Populated by JS -->
@@ -3764,6 +3802,7 @@
                                 </select>
                                 <svg style="position:absolute; right:14px; top:50%; transform:translateY(-50%); pointer-events:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
                             </div>
+                            <div class="emp-field-error" id="err-tutor-level">Kérlek válassz oktatási szintet!</div>
                         </div>
 
                         <!-- Card 3: Leírás -->
@@ -8242,8 +8281,16 @@ let settingsConfirmedAddress = null;
                 jobs = jobs.filter(j => j.category === activeCategoryFilter);
             }
 
-            if (activeCategoryFilter === 'Magántanár' && activeSubcategoryFilter !== 'Minden') {
-                jobs = jobs.filter(j => j.subcategory === activeSubcategoryFilter || (j.title && j.title.toLowerCase().startsWith(activeSubcategoryFilter.toLowerCase())));
+            if (activeCategoryFilter === 'Magántanár') {
+                // Tárgy szűrő
+                if (activeTutorSubject && activeTutorSubject !== 'Minden') {
+                    jobs = jobs.filter(j => j.subcategory === activeTutorSubject ||
+                        (j.title && j.title.toLowerCase().startsWith(activeTutorSubject.toLowerCase())));
+                }
+                // Szint szűrő
+                if (activeTutorLevel) {
+                    jobs = jobs.filter(j => j.title && j.title.includes('(' + activeTutorLevel + ')'));
+                }
             }
 
             // Date filter
@@ -8253,7 +8300,11 @@ let settingsConfirmedAddress = null;
 
             if (activeSortMode === 'newest') {
                 jobs.sort((a, b) => a.timeOffset - b.timeOffset);
-                return jobs; // Strict time sort, overriding urgent grouping
+                return jobs;
+            }
+            if (activeSortMode === 'date') {
+                jobs.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+                return jobs;
             }
 
             // Sürgős jobs always on top for other modes
@@ -8287,84 +8338,88 @@ let settingsConfirmedAddress = null;
         // ===================================================================
         // NEW FILTER/SORT FUNCTIONS
         // ===================================================================
-        let activeSubcategoryFilter = 'Minden';
+        let activeSubcategoryFilter = 'Minden'; // legacy compat
+        let activeTutorSubject = 'Minden';
+        let activeTutorLevel = null;
+
+        const TUTOR_SUBJECTS = ['Angol','Magyar','Matek','Kémia','Fizika','Biológia','Történelem','Földrajz','Német','Francia','Spanyol','Olasz','Informatika','Programozás','Zene/Hangszer','Rajz/Vizuális'];
+        const TUTOR_LEVELS_DEFAULT = ['Alsó tagozat','Felső tagozat','Középszint','Emelt szint','Egyetemi szint'];
+        const TUTOR_LEVELS_ART = ['Kezdő','Középhaladó','Haladó'];
+
+        function getLevelsForSubjectFilter(subject) {
+            if (subject === 'Zene/Hangszer' || subject === 'Rajz/Vizuális') return TUTOR_LEVELS_ART;
+            return TUTOR_LEVELS_DEFAULT;
+        }
 
         function filterWorkerJobs(cat) {
             activeCategoryFilter = cat;
             if (cat !== 'Magántanár') {
-                activeSubcategoryFilter = 'Minden';
+                activeTutorSubject = 'Minden';
+                activeTutorLevel = null;
             }
-            const catMap = {
-                'Összes': 'Minden',
-                'all': 'Minden',
-                'Kert': 'Kertészet',
-                'Magántanár': 'Magántanár',
-                'Takarítás': 'Takarítás',
-                'Bébiszitter': 'Bébiszitter',
-                'Festés': 'Festés',
-                'Költöztetés': 'Költöztetés',
-                'Kőműves': 'Kőműves',
-                'Asztalos': 'Asztalos',
-                'Állat': 'Állat',
-                'Bevásárlás': 'Bevásárlás',
-                'Rendezvény': 'Rendezvény',
-                'Mező': 'Mezőgazdaság',
-                'Autó': 'Autó'
-            };
-            const btns = document.querySelectorAll('.category-btn');
-            btns.forEach(btn => {
-                const label = btn.innerText.trim();
-                const isActive = (catMap[cat] === label) || (cat === 'all' && label === 'Minden') || (cat === label);
-                if (isActive) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-                btn.style.backgroundColor = '';
-                btn.style.color = '';
-                btn.style.border = '';
+            // Update chip active state — text match only, no icon stripping needed
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                const label = btn.textContent.trim();
+                const isMinden = (cat === 'Összes' || cat === 'all') && label === 'Minden';
+                const isMatch = label === cat || isMinden;
+                btn.classList.toggle('active', isMatch);
             });
-            
-            const subCatRow = document.getElementById('sub-categories-row');
-            if (subCatRow) {
-                if (cat === 'Magántanár') {
-                    subCatRow.style.display = 'flex';
-                    populateWorkerSubcategoryRow();
-                } else {
-                    subCatRow.style.display = 'none';
-                }
+
+            const subjRow = document.getElementById('tutor-subject-row');
+            const lvlRow = document.getElementById('tutor-level-row');
+            if (cat === 'Magántanár') {
+                populateTutorSubjectRow();
+                if (subjRow) subjRow.style.display = 'flex';
+                // level row stays hidden until subject is picked
+                if (lvlRow) lvlRow.style.display = 'none';
+            } else {
+                if (subjRow) subjRow.style.display = 'none';
+                if (lvlRow) lvlRow.style.display = 'none';
             }
 
             refreshJobList();
         }
 
-        function populateWorkerSubcategoryRow() {
-            const row = document.getElementById('sub-categories-row');
+        function populateTutorSubjectRow() {
+            const row = document.getElementById('tutor-subject-row');
             if (!row) return;
-            const subjects = ['Minden', 'Angol', 'Magyar', 'Matek', 'Kémia', 'Fizika', 'Biológia', 'Történelem', 'Földrajz', 'Német', 'Francia', 'Spanyol', 'Olasz', 'Informatika', 'Programozás', 'Zene/Hangszer', 'Rajz/Vizuális'];
-            let html = '';
-            subjects.forEach(sub => {
-                const isActive = (sub === activeSubcategoryFilter);
-                html += `
-                    <div class="sub-category-btn ${isActive ? 'active' : ''}" 
-                         onclick="filterWorkerSubcategory('${sub}')" 
-                         style="padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; border: 1px solid var(--color-text); background: ${isActive ? 'var(--color-text)' : 'var(--color-surface)'}; color: ${isActive ? '#fff' : 'var(--color-text)'}; margin-right: 4px;">
-                         ${sub}
-                    </div>
-                `;
-            });
-            row.innerHTML = html;
+            row.innerHTML = TUTOR_SUBJECTS.map(sub => {
+                const active = sub === activeTutorSubject;
+                return `<div class="tutor-chip${active ? ' active' : ''}" onclick="filterTutorSubject('${sub.replace(/'/g,"\\'")}')">` + sub + `</div>`;
+            }).join('');
         }
 
-        function filterWorkerSubcategory(subCat) {
-            activeSubcategoryFilter = subCat;
-            populateWorkerSubcategoryRow();
+        function populateTutorLevelRow(subject) {
+            const row = document.getElementById('tutor-level-row');
+            if (!row) return;
+            const levels = getLevelsForSubjectFilter(subject);
+            row.innerHTML = levels.map(lvl => {
+                const active = lvl === activeTutorLevel;
+                return `<div class="tutor-chip${active ? ' active' : ''}" onclick="filterTutorLevel('${lvl.replace(/'/g,"\\'")}')">` + lvl + `</div>`;
+            }).join('');
+            row.style.display = 'flex';
+        }
+
+        function filterTutorSubject(subject) {
+            activeTutorSubject = subject;
+            activeTutorLevel = null;
+            populateTutorSubjectRow();
+            populateTutorLevelRow(subject);
             refreshJobList();
         }
 
-        function updateSubcategoryButtons() {
-            // Handled dynamically by populateWorkerSubcategoryRow
+        function filterTutorLevel(lvl) {
+            activeTutorLevel = (activeTutorLevel === lvl) ? null : lvl; // toggle
+            populateTutorLevelRow(activeTutorSubject);
+            refreshJobList();
         }
+
+        // Legacy subcategory filter compat
+        function filterWorkerSubcategory(subCat) {
+            filterTutorSubject(subCat);
+        }
+        function updateSubcategoryButtons() {}
+        function populateWorkerSubcategoryRow() { populateTutorSubjectRow(); }
 
         function setDateFilter(dateStr) {
             activeDateFilter = (activeDateFilter === dateStr) ? null : dateStr;
@@ -8513,7 +8568,7 @@ let settingsConfirmedAddress = null;
         function sortWorkerJobs(mode) {
             activeSortMode = mode;
             document.querySelectorAll('.sort-pill').forEach(p => p.classList.remove('active'));
-            const map = { distance: 'sort-dist', price: 'sort-price', newest: 'sort-new', urgent: 'sort-urg' };
+            const map = { distance: 'sort-dist', price: 'sort-price', newest: 'sort-new', urgent: 'sort-urg', date: 'sort-date' };
             const el = document.getElementById(map[mode]);
             if (el) el.classList.add('active');
             refreshJobList();
@@ -11373,6 +11428,16 @@ let settingsConfirmedAddress = null;
                 if (err) err.classList.add('show');
                 if (details) details.classList.add('error');
                 setTimeout(() => { if (details) details.classList.remove('error'); }, 2000);
+            }
+
+            // Magántanár: szint megadása kötelező
+            if (empActiveCat === 'Magántanár') {
+                const lvlSel = document.getElementById('emp-tutor-level-select');
+                if (!lvlSel || !lvlSel.value) {
+                    valid = false;
+                    const errLvl = document.getElementById('err-tutor-level');
+                    if (errLvl) errLvl.classList.add('show');
+                }
             }
 
             if (!confirmedAddress) {

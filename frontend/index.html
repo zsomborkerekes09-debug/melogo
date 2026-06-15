@@ -4749,7 +4749,7 @@ flex-direction: column !important;
                         await updateDoc(userRef, { lastLogin: serverTimestamp(), photoURL: user.photoURL || userSnap.data().photoURL || '' });
                         const data = userSnap.data();
                         if (data.name) userName = data.name;
-                        role = role || data.defaultRole || data.role || 'worker';
+                        role = data.defaultRole || data.role || 'worker';
                     }
                     localStorage.removeItem('melogo_pending_role');
                     window.doEnterApp(userName, user.email, role);
@@ -5035,7 +5035,10 @@ flex-direction: column !important;
                 alert('Jelszó emlékeztető elküldve (Demó mód).');
                 closeForgotPasswordModal();
             }
-        }
+        window.showForgotPasswordModal = showForgotPasswordModal;
+        window.loginWithApple = loginWithApple;
+        window.closeForgotPasswordModal = closeForgotPasswordModal;
+        window.submitForgotPassword = submitForgotPassword;
         
 </script>
 
@@ -5712,7 +5715,7 @@ flex-direction: column !important;
                         bio = data.bio || '';
                         skills = data.skills || [];
                         photoURL = data.photoURL || '';
-                        defaultRole = role || data.defaultRole || data.role || 'worker';
+                        defaultRole = data.defaultRole || data.role || 'worker';
                     }
                     
                     // Save to user_data - completely overwrite from Firestore to prevent stale local cache inheritance!

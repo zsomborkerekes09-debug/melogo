@@ -33,8 +33,8 @@ service cloud.firestore {
         request.auth.uid == resource.data.employerUid
       );
 
-      // Delete: only the worker who created it can delete their own application
-      allow delete: if request.auth != null && request.auth.uid == resource.data.workerUid;
+      // Delete: worker who created it can delete, or employer can delete (cascade delete)
+      allow delete: if request.auth != null && (request.auth.uid == resource.data.workerUid || request.auth.uid == resource.data.employerUid);
     }
 
     // ===========================
@@ -51,8 +51,8 @@ service cloud.firestore {
         request.auth.uid == resource.data.employerId
       );
 
-      // No one can delete chat documents
-      allow delete: if false;
+      // Allow deletion by either party (useful for cascade deletes when job is removed)
+      allow delete: if request.auth != null && (request.auth.uid == resource.data.workerId || request.auth.uid == resource.data.employerId);
 
       // Messages subcollection – same access as parent chat
       match /messages/{messageId} {

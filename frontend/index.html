@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/geofire-common@5.2.0/dist/geofire-common.min.js"></script>
     <style>
         html, body { background-color: var(--color-text); }
         :root {
@@ -4341,7 +4342,7 @@ flex-direction: column !important;
                 ">
                     <!-- Redesigned Centered Header -->
                     <div style="background: var(--color-surface); padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: center; color: var(--color-text); flex-shrink: 0; position: relative; border-bottom: 1px solid var(--color-border); min-height: 88px; box-sizing: border-box;">
-                        <button onclick="document.getElementById('chat-detail-overlay').classList.remove('open'); document.getElementById('chat-detail-overlay').style.transform = 'translateX(100%)';" style="position: absolute; left: 20px; bottom: 20px; background: none; border: none; color: var(--color-text); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">
+                        <button onclick="closeChatRoom()" style="position: absolute; left: 20px; bottom: 20px; background: none; border: none; color: var(--color-text); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -4664,7 +4665,7 @@ flex-direction: column !important;
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, OAuthProvider, signInWithRedirect, getRedirectResult, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, setDoc, updateDoc, deleteDoc, getDocs, getDoc, doc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, setDoc, updateDoc, deleteDoc, getDocs, getDoc, doc, query, where, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
         const firebaseConfig = {
@@ -4828,7 +4829,7 @@ flex-direction: column !important;
             // 1. Jobs listener – uses docChanges() for correct delete handling
             let jobsQuery;
             if (role === 'worker') {
-                jobsQuery = query(collection(db, "jobs"), where("status", "in", ["Keresés", "accepted"]));
+                jobsQuery = query(collection(db, "jobs"), where("status", "in", ["Keresés", "accepted"]), limit(100));
             } else {
                 jobsQuery = query(collection(db, "jobs"), where("ownerEmail", "==", email));
             }
@@ -4932,11 +4933,11 @@ flex-direction: column !important;
 
             // 3. Chats listeners – UID-based dual query (worker OR employer)
             //    Firestore does not support OR across different fields, so we use TWO listeners
-            function mergeFirestoreChats(newChats) {
-                newChats.forEach(c => c.isFirestore = true);
-                // Remove stale Firestore chats that are not in the new set
+            function mergeFirestoreChats(newChats, roleType) {
+                newChats.forEach(c => { c.isFirestore = true; c.roleType = roleType; });
+                // Remove stale Firestore chats that are not in the new set for THIS roleType
                 const newIds = new Set(newChats.map(c => c.id));
-                localChats = localChats.filter(c => !c.isFirestore || newIds.has(c.id));
+                localChats = localChats.filter(c => !c.isFirestore || c.roleType !== roleType || newIds.has(c.id));
                 // Upsert
                 newChats.forEach(nc => {
                     const idx = localChats.findIndex(c => c.id === nc.id);
@@ -4957,7 +4958,7 @@ flex-direction: column !important;
             window.chatsUnsubscribe = onSnapshot(chatsAsWorkerQuery, (snapshot) => {
                 let chats = [];
                 snapshot.forEach(d => { const c = d.data(); c.id = d.id; chats.push(c); });
-                mergeFirestoreChats(chats);
+                mergeFirestoreChats(chats, 'worker');
             }, err => console.error('[Firestore] Chats(worker) listener error:', err));
 
             // Employer-side chats (where current user is the employer)
@@ -4965,7 +4966,7 @@ flex-direction: column !important;
             window.chatsUnsubscribe2 = onSnapshot(chatsAsEmployerQuery, (snapshot) => {
                 let chats = [];
                 snapshot.forEach(d => { const c = d.data(); c.id = d.id; chats.push(c); });
-                mergeFirestoreChats(chats);
+                mergeFirestoreChats(chats, 'employer');
             }, err => console.error('[Firestore] Chats(employer) listener error:', err));
         };
 
@@ -6604,6 +6605,15 @@ function filterWorkerByExactJob(jobName) {
                     try {
                         const _posterSession = JSON.parse(localStorage.getItem('melogo_employer_session') || '{}');
                         const _posterName = _posterSession.name || window.firebaseAuth.currentUser.displayName || window.firebaseAuth.currentUser.email.split('@')[0];
+                        
+                        let jobLat = 47.4979; // Default Budapest
+                        let jobLon = 19.0402;
+                        if (window.userCoords && window.userCoords.lat) {
+                            jobLat = window.userCoords.lat;
+                            jobLon = window.userCoords.lon;
+                        }
+                        const hash = typeof geofire !== 'undefined' ? geofire.geohashForLocation([jobLat, jobLon]) : null;
+
                         const newDocRef = await window.firebaseAPI.addDoc(window.firebaseAPI.collection(window.firebaseDb, "jobs"), {
                             title: finalJobTitle,
                             details: details,
@@ -6614,6 +6624,9 @@ function filterWorkerByExactJob(jobName) {
                             status: 'Keresés',
                             urgent: document.getElementById('emp-urgent-job')?.checked || false,
                             datetime: document.getElementById('emp-datetime')?.value || 'Holnap, 14:00',
+                            lat: jobLat,
+                            lon: jobLon,
+                            geohash: hash,
                             ownerEmail: window.firebaseAuth.currentUser.email,
                             ownerUid: window.firebaseAuth.currentUser.uid,
                             ownerName: _posterName,
@@ -8330,16 +8343,22 @@ let settingsConfirmedAddress = null;
                 return cardId && !newIds.has(String(cardId));
             });
 
+            list._latestJobs = jobs; // store latest jobs for timeout to use
+
             if (deletedCards.length > 0 && !list._animatingDeletion) {
                 list._animatingDeletion = true;
                 deletedCards.forEach(card => {
                     card.classList.add('animate-card-fade-out');
                 });
-                setTimeout(() => {
+                if (list._deletionTimeout) clearTimeout(list._deletionTimeout);
+                list._deletionTimeout = setTimeout(() => {
                     list._animatingDeletion = false;
                     list._lastFingerprint = newFingerprint;
-                    executeRenderJobCards(jobs);
+                    executeRenderJobCards(list._latestJobs);
                 }, 350);
+                return;
+            } else if (list._animatingDeletion) {
+                // If currently animating, just wait for the timeout to render list._latestJobs
                 return;
             }
 
@@ -9424,6 +9443,17 @@ let settingsConfirmedAddress = null;
                 msgContainer.scrollTop = msgContainer.scrollHeight;
             }, err => console.error('[Firestore] Messages listener error:', err));
         }
+        
+        window.closeChatRoom = function() {
+            document.getElementById('chat-detail-overlay').classList.remove('open');
+            document.getElementById('chat-detail-overlay').style.transform = 'translateX(100%)';
+            window.selectedChatId = null;
+            selectedChatId = null;
+            if (window._chatMsgsUnsubscribe) {
+                window._chatMsgsUnsubscribe();
+                window._chatMsgsUnsubscribe = null;
+            }
+        };
 
         function openChat(name, jobTitle, lastMsg, time, isUnread, chatId) {
             selectedChatId = chatId;
@@ -10744,6 +10774,11 @@ let settingsConfirmedAddress = null;
                 if (chatId) {
                     openChatRoom(chatId);
                 } else {
+                    window.selectedChatId = null;
+                    if (window._chatMsgsUnsubscribe) {
+                        window._chatMsgsUnsubscribe();
+                        window._chatMsgsUnsubscribe = null;
+                    }
                     openEmployerChatRoom();
                 }
                 navigateApp(2); // navigate to messages tab

@@ -5035,6 +5035,7 @@ flex-direction: column !important;
                 alert('Jelszó emlékeztető elküldve (Demó mód).');
                 closeForgotPasswordModal();
             }
+        }
         window.showForgotPasswordModal = showForgotPasswordModal;
         window.loginWithApple = loginWithApple;
         window.closeForgotPasswordModal = closeForgotPasswordModal;
@@ -5582,6 +5583,7 @@ flex-direction: column !important;
             
             if (rf) rf.style.display = 'none';
             if (lf) lf.style.display = 'flex';
+            if (roleSel) roleSel.style.display = 'none';
             const addrGroup = document.getElementById('register-employer-address-group');
             if(addrGroup) addrGroup.style.display = 'none';
             if (sub) sub.innerText = 'Lépj be a fiókodba';

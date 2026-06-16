@@ -4972,7 +4972,7 @@ flex-direction: column !important;
 
         // Window.saveToCloud removed to avoid batch overwrites of Firestore collections
 
-            function sendChatLocation() {
+            function sendChatLocationOld() {
             const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposv�r') : 'Kaposv%C3%A1r';
             const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
             const input = document.getElementById('chat-reply-input');
@@ -4981,7 +4981,7 @@ flex-direction: column !important;
                 sendChatMessageNew(true);
             }
         }
-        function sendWorkerChatLocation() {
+        function sendWorkerChatLocationOld() {
             const dest = 'Kaposv%C3%A1r';
             const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
             const input = document.getElementById('worker-chat-reply-input');
@@ -8125,7 +8125,7 @@ let settingsConfirmedAddress = null;
         // ================================================
         // SORT PERSISTENCE (localStorage)
         // ================================================
-        function sortWorkerJobs(mode) {
+        function sortWorkerJobsOld(mode) {
             // Persist preference
             try { localStorage.setItem('melogo_sort', mode); } catch(e) {}
             // Update active button

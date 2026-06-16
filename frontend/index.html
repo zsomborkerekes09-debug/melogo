@@ -18,6 +18,7 @@
     <script src="https://unpkg.com/geofire-common@5.2.0/dist/geofire-common.min.js"></script>
     <style>
         html, body { background-color: var(--color-text); }
+        button, a { touch-action: manipulation; }
         :root {
             --color-navy: #000000;
             --color-green: #c0fc2a;
@@ -1284,17 +1285,21 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
         .nav-item.active svg {
             color: var(--color-text);
             stroke: var(--color-text);
+            stroke-width: 2.2px;
         }
         .nav-icon {
             width: 22px;
             height: 22px;
+            margin-bottom: 2px;
+            transition: stroke-width 0.2s ease, stroke 0.2s ease;
         }
         .nav-label {
             font-size: 10px;
             font-weight: 400;
+            transition: font-weight 0.2s ease;
         }
         .nav-item.active .nav-label {
-            font-weight: 300;
+            font-weight: 600;
             color: var(--color-text);
         }
         .nav-badge {
@@ -3949,6 +3954,10 @@ flex-direction: column !important;
                                         <input class="emp-input" id="emp-house" placeholder="Házszám" style="width:100%; border:1px solid var(--color-border); border-radius:12px; padding:12px; background:var(--color-surface); color:var(--color-text);">
                                     </div>
                                 </div>
+                                <button type="button" id="emp-gps-btn" onclick="useCurrentLocationForJobPost()" style="width:100%; padding:12px; margin-top:8px; border-radius:12px; border:1px dashed var(--color-green); background:rgba(16, 185, 129, 0.05); color:var(--color-green); font-size:14px; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    📍 Jelenlegi helyzetem használata
+                                </button>
+                                <div id="emp-address-suggestions" class="address-suggestions" style="display:none; margin-top:8px;"></div>
                                 <div class="emp-input-row" style="padding:0; border:none; background:transparent;">
                                     <input class="emp-input" id="emp-apartment" placeholder="Emelet, ajtó (opcionális)" style="flex:1; border:1px solid var(--color-border); border-radius:12px; padding:12px; background:var(--color-surface); color:var(--color-text);">
                                 </div>
@@ -4664,7 +4673,7 @@ flex-direction: column !important;
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, OAuthProvider, signInWithRedirect, getRedirectResult, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, OAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, addDoc, setDoc, updateDoc, deleteDoc, getDocs, getDoc, doc, query, where, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
@@ -4693,8 +4702,7 @@ flex-direction: column !important;
             onAuthStateChanged,
             GoogleAuthProvider,
             OAuthProvider,
-            signInWithRedirect,
-            getRedirectResult,
+            signInWithPopup,
             sendPasswordResetEmail,
             collection,
             addDoc,
@@ -4722,17 +4730,18 @@ flex-direction: column !important;
         console.log("Firebase initialized successfully");
         
         // Handle redirect login
-        getRedirectResult(auth).then(async (result) => {
-            if (result) {
-                const user = result.user;
-                console.log("Sikeres redirect bejelentkezés:", user.email);
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("Firebase User is logged in:", user.email);
                 let role = localStorage.getItem('melogo_pending_role') || 'worker';
                 let userName = user.displayName || user.email.split('@')[0] || 'Felhasználó';
                 
                 try {
                     const userRef = doc(db, "users", user.uid);
-                    const userSnap = await getDoc(userRef);
-                    if (!userSnap.exists()) {
+                    const userDoc = await getDoc(userRef);
+                    if (!userDoc.exists()) {
+                        // Create the document for new users
                         const newUserData = {
                             name: userName,
                             email: user.email,
@@ -4747,59 +4756,46 @@ flex-direction: column !important;
                         await setDoc(userRef, newUserData);
                         localStorage.setItem('melogo_user_data', JSON.stringify({ bio: '', skills: [], photoURL: user.photoURL || '', reviews: [] }));
                     } else {
-                        await updateDoc(userRef, { lastLogin: serverTimestamp(), photoURL: user.photoURL || userSnap.data().photoURL || '' });
-                        const data = userSnap.data();
+                        // Update existing user
+                        await updateDoc(userRef, { lastLogin: serverTimestamp(), photoURL: user.photoURL || userDoc.data().photoURL || '' });
+                        const data = userDoc.data();
                         if (data.name) userName = data.name;
                         role = data.defaultRole || data.role || 'worker';
-                    }
-                    localStorage.removeItem('melogo_pending_role');
-                    window.doEnterApp(userName, user.email, role);
-                } catch (e) {
-                    console.error("Hiba redirect feldolgozása közben:", e);
-                }
-            }
-        }).catch(error => {
-            console.error("Redirect login error:", error);
-        });
-        
-        // Listen for authentication state changes
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                console.log("Firebase User is logged in:", user.email);
-                // Fetch profile
-                try {
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    if (userDoc.exists()) {
-                        const data = userDoc.data();
-                        localStorage.setItem('melogo_name', data.name || 'Felhasználó');
-                        if (data.defaultRole) {
-                            localStorage.setItem('melogo_active_role', data.defaultRole);
-                        }
                         
                         const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || '', reviews: data.reviews || [], address: data.address || '' };
                         localStorage.setItem('melogo_user_data', JSON.stringify(userData));
-
-                        // Sync names into worker and employer sessions if they are missing
-                        const workerSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
-                        workerSession.name = data.name || workerSession.name || 'Felhasználó';
-                        workerSession.email = user.email;
-                        localStorage.setItem('melogo_worker_session', JSON.stringify(workerSession));
-                        
-                        const employerSession = JSON.parse(localStorage.getItem('melogo_employer_session') || '{}');
-                        employerSession.name = data.name || employerSession.name || 'Felhasználó';
-                        employerSession.email = user.email;
-                        localStorage.setItem('melogo_employer_session', JSON.stringify(employerSession));
                     }
-                } catch(e) { console.error("Error fetching user doc", e); }
+                    localStorage.removeItem('melogo_pending_role');
+
+                    localStorage.setItem('melogo_name', userName);
+                    localStorage.setItem('melogo_active_role', role);
+
+                    // Sync sessions
+                    const workerSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
+                    workerSession.name = userName;
+                    workerSession.email = user.email;
+                    localStorage.setItem('melogo_worker_session', JSON.stringify(workerSession));
+                    
+                    const employerSession = JSON.parse(localStorage.getItem('melogo_employer_session') || '{}');
+                    employerSession.name = userName;
+                    employerSession.email = user.email;
+                    localStorage.setItem('melogo_employer_session', JSON.stringify(employerSession));
+
+                } catch(e) { console.error("Error fetching/creating user doc", e); }
                 
                 localStorage.setItem('melogo_app_session', 'true');
                 var screen = document.getElementById('app-login-screen');
-                if (screen && !screen.classList.contains('hidden')) screen.classList.add('hidden');
+                if (screen && !screen.classList.contains('hidden')) {
+                    screen.style.transition = 'opacity 0.35s ease';
+                    screen.style.opacity = '0';
+                    setTimeout(() => {
+                        screen.classList.add('hidden');
+                        screen.style.opacity = '';
+                    }, 350);
+                }
                 
                 if (typeof updateAllUserUI === 'function') updateAllUserUI();
                 if (typeof updateGreetings === 'function') updateGreetings();
-                
-                let role = localStorage.getItem('melogo_active_role') || 'worker';
                 if (typeof switchRole === 'function') switchRole(role);
             }
         });
@@ -4934,7 +4930,24 @@ flex-direction: column !important;
             // 3. Chats listeners – UID-based dual query (worker OR employer)
             //    Firestore does not support OR across different fields, so we use TWO listeners
             function mergeFirestoreChats(newChats, roleType) {
-                newChats.forEach(c => { c.isFirestore = true; c.roleType = roleType; });
+                newChats.forEach(c => { 
+                    c.isFirestore = true; 
+                    c.roleType = roleType; 
+                    
+                    if (c.updatedAt) {
+                        const updatedTime = typeof c.updatedAt.toMillis === 'function' ? c.updatedAt.toMillis() : (c.updatedAt.seconds ? c.updatedAt.seconds * 1000 : c.updatedAt);
+                        const roleField = roleType === 'worker' ? 'workerLastRead' : 'employerLastRead';
+                        const lastReadObj = c[roleField];
+                        if (!lastReadObj) {
+                            c.isUnread = true;
+                            c.unreadCount = 1;
+                        } else {
+                            const readTime = typeof lastReadObj.toMillis === 'function' ? lastReadObj.toMillis() : (lastReadObj.seconds ? lastReadObj.seconds * 1000 : lastReadObj);
+                            c.isUnread = (updatedTime > readTime + 1000);
+                            c.unreadCount = c.isUnread ? 1 : 0;
+                        }
+                    }
+                });
                 // Remove stale Firestore chats that are not in the new set for THIS roleType
                 const newIds = new Set(newChats.map(c => c.id));
                 localChats = localChats.filter(c => !c.isFirestore || c.roleType !== roleType || newIds.has(c.id));
@@ -4943,7 +4956,11 @@ flex-direction: column !important;
                     const idx = localChats.findIndex(c => c.id === nc.id);
                     if (idx !== -1) localChats[idx] = nc; else localChats.unshift(nc);
                 });
-                localChats.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+                localChats.sort((a,b) => {
+                    const timeA = a.updatedAt || a.createdAt || 0;
+                    const timeB = b.updatedAt || b.createdAt || 0;
+                    return timeB - timeA;
+                });
                 localStorage.setItem('melogo_local_chats', JSON.stringify(localChats));
                 if (typeof renderChatList === 'function') renderChatList();
                 // Re-sync active chat if open
@@ -4953,24 +4970,40 @@ flex-direction: column !important;
                 }
             }
 
-            // Worker-side chats (where current user is the worker)
-            const chatsAsWorkerQuery = query(collection(db, "chats"), where("workerId", "==", uid));
-            window.chatsUnsubscribe = onSnapshot(chatsAsWorkerQuery, (snapshot) => {
-                let chats = [];
-                snapshot.forEach(d => { const c = d.data(); c.id = d.id; chats.push(c); });
-                mergeFirestoreChats(chats, 'worker');
-            }, err => console.error('[Firestore] Chats(worker) listener error:', err));
-
-            // Employer-side chats (where current user is the employer)
-            const chatsAsEmployerQuery = query(collection(db, "chats"), where("employerId", "==", uid));
-            window.chatsUnsubscribe2 = onSnapshot(chatsAsEmployerQuery, (snapshot) => {
-                let chats = [];
-                snapshot.forEach(d => { const c = d.data(); c.id = d.id; chats.push(c); });
-                mergeFirestoreChats(chats, 'employer');
-            }, err => console.error('[Firestore] Chats(employer) listener error:', err));
-        };
-
-        // Window.saveToCloud removed to avoid batch overwrites of Firestore collections
+            // Worker-side chats (where current user is the worker)            function sendChatLocationOld() {
+            const sendLoc = (lat, lng, fallbackStr) => {
+                const dest = (lat && lng) ? `${lat},${lng}` : fallbackStr;
+                const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
+                const input = document.getElementById('chat-reply-input');
+                if (input) {
+                    input.value = link;
+                    sendChatMessageNew(true);
+                }
+            };
+            const fallback = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposvár') : 'Kaposv%C3%A1r';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => sendLoc(pos.coords.latitude, pos.coords.longitude, fallback), err => sendLoc(null, null, fallback), { timeout: 10000 });
+            } else {
+                sendLoc(null, null, fallback);
+            }
+        }
+        function sendWorkerChatLocationOld() {
+            const sendLoc = (lat, lng, fallbackStr) => {
+                const dest = (lat && lng) ? `${lat},${lng}` : fallbackStr;
+                const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
+                const input = document.getElementById('worker-chat-reply-input');
+                if (input) {
+                    input.value = link;
+                    sendWorkerChatMessageNew(true);
+                }
+            };
+            const fallback = 'Kaposv%C3%A1r';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => sendLoc(pos.coords.latitude, pos.coords.longitude, fallback), err => sendLoc(null, null, fallback), { timeout: 10000 });
+            } else {
+                sendLoc(null, null, fallback);
+            }
+        }f Firestore collections
 
             function sendChatLocationOld() {
             const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposv�r') : 'Kaposv%C3%A1r';
@@ -4996,7 +5029,7 @@ flex-direction: column !important;
             document.getElementById('forgot-pw-modal').style.display = 'flex';
         }
         async function loginWithApple() {
-            if (!window.firebaseAuth || !window.firebaseAPI) {
+            if (!window.firebaseAuth || !window.firebaseAPI || !window.firebaseAPI.signInWithPopup) {
                 alert("Apple bejelentkezés jelenleg nem elérhető.");
                 return;
             }
@@ -5006,7 +5039,8 @@ flex-direction: column !important;
                 if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
                 
                 localStorage.setItem('melogo_pending_role', loginSelectedRole || 'worker');
-                await window.firebaseAPI.signInWithRedirect(window.firebaseAuth, provider);
+                await window.firebaseAPI.signInWithPopup(window.firebaseAuth, provider);
+                // onAuthStateChanged fogja kezelni a sikeres belépést
             } catch (error) {
                 console.error("Apple login error:", error);
                 alert("Hiba történt az Apple bejelentkezés során: " + error.message);
@@ -5652,7 +5686,7 @@ flex-direction: column !important;
         }
 
         async function loginWithGoogle() {
-            if (!window.firebaseAPI || !window.firebaseAPI.signInWithRedirect) {
+            if (!window.firebaseAPI || !window.firebaseAPI.signInWithPopup) {
                 alert("A rendszer és a Google azonosítás még betöltés alatt áll. Kérjük, várj pár másodpercet és próbáld újra.");
                 return;
             }
@@ -5663,7 +5697,8 @@ flex-direction: column !important;
             const provider = new window.firebaseAPI.GoogleAuthProvider();
             try {
                 localStorage.setItem('melogo_pending_role', loginSelectedRole || 'worker');
-                await window.firebaseAPI.signInWithRedirect(window.firebaseAuth, provider);
+                await window.firebaseAPI.signInWithPopup(window.firebaseAuth, provider);
+                // onAuthStateChanged fogja kezelni a sikeres belépést
             } catch (error) {
                 console.error("Google login error:", error);
                 alert('Hiba a Google bejelentkezés során: ' + (error.message || error.code));
@@ -5822,6 +5857,9 @@ flex-direction: column !important;
                     } else if (typeof address !== 'undefined' && address) {
                         userDataToSave.address = address;
                     }
+                    if (city) userDataToSave.addressCity = city;
+                    if (street) userDataToSave.addressStreet = street;
+                    if (county) userDataToSave.addressCounty = county;
 
                     // Save initial user profile to Firestore
                     await window.firebaseAPI.setDoc(window.firebaseAPI.doc(window.firebaseDb, "users", user.uid), userDataToSave);
@@ -5832,7 +5870,10 @@ flex-direction: column !important;
                         skills: [],
                         photoURL: '',
                         reviews: [],
-                        address: (regConfirmedAddress) ? regConfirmedAddress : (typeof address !== 'undefined' ? address : '')
+                        address: (regConfirmedAddress) ? regConfirmedAddress : (typeof address !== 'undefined' ? address : ''),
+                        addressCity: city || '',
+                        addressStreet: street || '',
+                        addressCounty: county || ''
                     };
                     localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     localStorage.setItem('melogo_worker_applications', '[]');
@@ -6896,6 +6937,7 @@ function filterWorkerByExactJob(jobName) {
                 chat.messages.push({ from: senderRole, senderId: senderId, text: text, time: t });
                 chat.lastMsg = text;
                 chat.time = 'Most';
+                chat.updatedAt = Date.now();
 
                 if (chat.isFirestore && window.firebaseAPI && window.firebaseDb) {
                     window.firebaseAPI.addDoc(
@@ -6905,7 +6947,7 @@ function filterWorkerByExactJob(jobName) {
                     
                     window.firebaseAPI.updateDoc(
                         window.firebaseAPI.doc(window.firebaseDb, "chats", chat.id),
-                        { lastMsg: text, time: 'Most' }
+                        { lastMsg: text, time: 'Most', updatedAt: window.firebaseAPI.serverTimestamp() }
                     ).catch(e => console.error("Firestore chat lastMsg update error:", e));
                 }
                 saveLocalChats();
@@ -6973,10 +7015,7 @@ function filterWorkerByExactJob(jobName) {
         // C. DIÁK JELENTKEZIK A MUNKÁRA
         async function workerApplyToJob() {
             gameState.status = 'Keresés';
-            gameState.applied = true; 
-            
-            const badge = document.getElementById('app-msg-badge');
-            if (badge) { badge.innerText = '1'; badge.style.display = 'flex'; }
+            gameState.applied = true;
 
             const matchedJob = mockJobs.find(j => j.title === gameState.jobTitle);
 
@@ -7032,8 +7071,21 @@ function filterWorkerByExactJob(jobName) {
             const jobTitle = gameState.jobTitle || 'Fűnyírás';
             const jobId = (matchedJob && matchedJob.id) ? matchedJob.id : '';
 
-            // Create Firestore chat document with correct UID fields
-            let chatDocId = 'chat_' + Date.now();
+            // Check if chat already exists
+            let existingChatId = null;
+            if (window.firebaseAPI && window.firebaseDb && jobId && workerId) {
+                try {
+                    const qChats = window.firebaseAPI.query(
+                        window.firebaseAPI.collection(window.firebaseDb, "chats"),
+                        window.firebaseAPI.where("jobId", "==", jobId),
+                        window.firebaseAPI.where("workerId", "==", workerId)
+                    );
+                    const snapChats = await window.firebaseAPI.getDocs(qChats);
+                    if (!snapChats.empty) existingChatId = snapChats.docs[0].id;
+                } catch(e) { console.warn("Chat check error", e); }
+            }
+
+            let chatDocId = existingChatId || ('chat_' + Date.now());
             const chatData = {
                 id: chatDocId,
                 jobId: jobId,
@@ -7057,17 +7109,22 @@ function filterWorkerByExactJob(jobName) {
                 messages: []
             };
 
-            // Save to Firestore if connected, otherwise just local
             if (window.firebaseAuth && window.firebaseAuth.currentUser && window.firebaseAPI && window.firebaseDb) {
                 try {
-                    const chatRef = await window.firebaseAPI.addDoc(
-                        window.firebaseAPI.collection(window.firebaseDb, "chats"),
-                        { ...chatData, createdAt: window.firebaseAPI.serverTimestamp() }
-                    );
-                    chatDocId = chatRef.id;
+                    if (existingChatId) {
+                        await window.firebaseAPI.updateDoc(
+                            window.firebaseAPI.doc(window.firebaseDb, "chats", chatDocId),
+                            { status: 'pending', lastMsg: chatData.lastMsg, time: 'Most', updatedAt: window.firebaseAPI.serverTimestamp() }
+                        );
+                    } else {
+                        const chatRef = await window.firebaseAPI.addDoc(
+                            window.firebaseAPI.collection(window.firebaseDb, "chats"),
+                            { ...chatData, createdAt: window.firebaseAPI.serverTimestamp(), updatedAt: window.firebaseAPI.serverTimestamp(), workerLastRead: window.firebaseAPI.serverTimestamp(), employerLastRead: window.firebaseAPI.serverTimestamp() }
+                        );
+                        chatDocId = chatRef.id;
+                    }
                     chatData.id = chatDocId;
                     chatData.isFirestore = true;
-                    console.log('[Apply] Chat created in Firestore:', chatDocId);
 
                     // Save system message to subcollection
                     await window.firebaseAPI.addDoc(
@@ -7125,15 +7182,8 @@ function filterWorkerByExactJob(jobName) {
             // Job status is now tracked via Firestore applications or mock tracking securely
 
             // Stays in worker view as a real user would
-            setTimeout(() => {
-                // Keep worker in their current view
-            }, 500);
-
-            document.getElementById('worker-success-title').innerText = 'Sikeres jelentkezés!';
-            document.getElementById('worker-success-desc').innerText = 'A Munkáltató értesítést kapott. Mutatjuk a nézetét...';
-            const wSuccess = document.getElementById('worker-success');
-            if (wSuccess) wSuccess.classList.add('active');
-
+            
+            showGreenBanner('Sikeres jelentkezés!');
             updateWorkerStatusUI();
         }
 
@@ -7181,9 +7231,7 @@ function filterWorkerByExactJob(jobName) {
             const subtitleEl = document.getElementById('employer-chat-job-subtitle');
             if (subtitleEl) subtitleEl.innerText = gameState.jobTitle || 'Fűnyírás';
 
-            // Töröljük a hirdető értesítési jelvényét, mert megnyitotta
-            const msgBadge = document.getElementById('app-msg-badge');
-            if (msgBadge) msgBadge.style.display = 'none';
+            if (subtitleEl) subtitleEl.innerText = gameState.jobTitle || 'Fűnyírás';
 
             const chatMessages = document.getElementById('employer-chat-messages');
             
@@ -8078,7 +8126,14 @@ let settingsConfirmedAddress = null;
                 
                 settingsConfirmedAddress = generatedAddress;
                 userData.address = generatedAddress;
+                userData.addressCity = city;
+                userData.addressStreet = street;
+                userData.addressCounty = county;
+
                 firestoreUpdateData.address = generatedAddress;
+                firestoreUpdateData.addressCity = city;
+                firestoreUpdateData.addressStreet = street;
+                firestoreUpdateData.addressCounty = county;
             }
             
             localStorage.setItem('melogo_user_data', JSON.stringify(userData));
@@ -9260,7 +9315,7 @@ let settingsConfirmedAddress = null;
         // ===================================================================
         // WORKER PROFILE OVERLAY FOR EMPLOYER
         // ===================================================================
-        async function openWorkerProfile(workerName) {
+        async function openWorkerProfile(workerName, workerUid) {
             const currentUser = loadCurrentUser();
             const currentUserName = currentUser ? currentUser.name : "Diák";
             const name = workerName || currentUserName;
@@ -9275,17 +9330,24 @@ let settingsConfirmedAddress = null;
             let trustBadge = "Megbízható Diák";
             let avatar = null;
             
-            // Try to fetch real profile data from Firestore by querying the name field
+            // Try to fetch real profile data from Firestore
             if (window.firebaseAPI && window.firebaseDb) {
                 try {
-                    const q = window.firebaseAPI.query(
-                        window.firebaseAPI.collection(window.firebaseDb, "users"), 
-                        window.firebaseAPI.where("name", "==", name)
-                    );
-                    const querySnapshot = await window.firebaseAPI.getDocs(q);
+                    let userDoc = null;
+                    if (workerUid) {
+                        const snap = await window.firebaseAPI.getDoc(window.firebaseAPI.doc(window.firebaseDb, "users", workerUid));
+                        if (snap.exists()) userDoc = snap;
+                    }
+                    if (!userDoc) {
+                        const q = window.firebaseAPI.query(
+                            window.firebaseAPI.collection(window.firebaseDb, "users"), 
+                            window.firebaseAPI.where("name", "==", name)
+                        );
+                        const querySnapshot = await window.firebaseAPI.getDocs(q);
+                        if (!querySnapshot.empty) userDoc = querySnapshot.docs[0];
+                    }
                     
-                    if (!querySnapshot.empty) {
-                        const userDoc = querySnapshot.docs[0];
+                    if (userDoc) {
                         const data = userDoc.data();
                         
                         bio = data.bio || bio;
@@ -9718,6 +9780,7 @@ let settingsConfirmedAddress = null;
                     chat.messages.push({ from: senderRole, senderId: senderId, text: text, time: t });
                     chat.lastMsg = text;
                     chat.time = 'Most';
+                    chat.updatedAt = Date.now();
 
                     if (chat.isFirestore && window.firebaseAPI && window.firebaseDb) {
                         // Write to subcollection for real-time sync
@@ -9725,10 +9788,9 @@ let settingsConfirmedAddress = null;
                             window.firebaseAPI.collection(window.firebaseDb, "chats", chat.id, "messages"),
                             { senderId: senderId, text: text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'user' }
                         ).catch(e => console.error("Firestore message add error:", e));
-                        // Update lastMsg on parent doc
                         window.firebaseAPI.updateDoc(
                             window.firebaseAPI.doc(window.firebaseDb, "chats", chat.id),
-                            { lastMsg: text, time: 'Most' }
+                            { lastMsg: text, time: 'Most', updatedAt: window.firebaseAPI.serverTimestamp() }
                         ).catch(e => console.error("Firestore chat lastMsg update error:", e));
                     }
                     saveLocalChats();
@@ -9897,7 +9959,7 @@ let settingsConfirmedAddress = null;
                 // Confirmed state
                 btn.classList.remove('loading');
                 btn.classList.add('confirmed');
-                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Jelentkezés elküldve';
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Jelentkezve ✓';
 
                 // Push notification
                 const _applyUser = loadCurrentUser(); 
@@ -9912,7 +9974,7 @@ let settingsConfirmedAddress = null;
                 btn.classList.add('applied');
                 btn.classList.remove('loading', 'confirmed');
                 if (gameState.status === 'Keresés') {
-                    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Már jelentkeztél';
+                    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Jelentkezve ✓';
                 } else if (gameState.status === 'Fizetve') {
                     btn.innerHTML = '📅 Indulás a munkára!';
                 }
@@ -10442,12 +10504,15 @@ let settingsConfirmedAddress = null;
         }
 
         function handleChatAvatarClick() {
-            const name = document.getElementById('chat-detail-name').innerText;
+            const chat = localChats.find(c => c.id === window.selectedChatId);
+            if (!chat) return;
             const role = currentRole || loginSelectedRole || localStorage.getItem('melogo_active_role') || 'worker';
             if (role === 'employer') {
-                if (typeof openWorkerProfile === 'function') openWorkerProfile(name);
+                const name = chat.workerName || chat.name || 'Diák';
+                if (typeof openWorkerProfile === 'function') openWorkerProfile(name, chat.workerId);
             } else {
-                openEmployerMiniModal(name);
+                const name = chat.employerName || 'Megbízó';
+                openEmployerMiniModal(name, chat.employerId);
             }
         }
         
@@ -10457,14 +10522,14 @@ let settingsConfirmedAddress = null;
             const role = currentRole || loginSelectedRole || localStorage.getItem('melogo_active_role') || 'worker';
             if (role === 'employer') {
                 const name = chat.workerName || chat.name || 'Diák';
-                if (typeof openWorkerProfile === 'function') openWorkerProfile(name);
+                if (typeof openWorkerProfile === 'function') openWorkerProfile(name, chat.workerId);
             } else {
                 const name = chat.employerName || 'Megbízó';
-                openEmployerMiniModal(name);
+                openEmployerMiniModal(name, chat.employerId);
             }
         }
 
-        function openEmployerMiniModal(name) {
+        function openEmployerMiniModal(name, uid) {
             const job = mockJobs.find(j => j.employer === name || j.ownerName === name);
             let locationText = "Kaposvár";
             if (job && job.location) {
@@ -10478,7 +10543,7 @@ let settingsConfirmedAddress = null;
             
             document.getElementById('mini-emp-view-btn').onclick = () => {
                 closeEmployerMiniModal();
-                if (typeof openEmployerProfile === 'function') openEmployerProfile(name);
+                if (typeof openEmployerProfile === 'function') openEmployerProfile(name, uid);
             };
             
             const modal = document.getElementById('employer-mini-modal');
@@ -10498,7 +10563,7 @@ let settingsConfirmedAddress = null;
             modal.style.transform = 'translate(-50%, -50%) scale(0.95)';
         }
         
-        function openEmployerProfile(name) {
+        async function openEmployerProfile(name, uid) {
             // Find a job associated with this employer to extract general location details
             const job = mockJobs.find(j => j.employer === name || j.ownerName === name);
             let locationText = "Kaposvár";
@@ -10529,24 +10594,53 @@ let settingsConfirmedAddress = null;
                 avatarFallback.style.backgroundColor = getAvatarColor(name || 'Megbízó');
             }
 
-            // Customize star/review/bio based on some predefined names, or assign realistic defaults
             let stars = "5.0";
             let revCount = "6 értékelés";
             let bio = "Megbízható házigazda. Rendszeresen keresek segítséget kerti munkákhoz és egyéb ház körüli teendőkhöz.";
             
-            const n = (name || '').toLowerCase();
-            if (n.includes("béla") || n.includes("kovács")) {
-                stars = "4.9";
-                revCount = "8 értékelés";
-                bio = "Rendszerető kaposvári lakos vagyok, kerti munkákban és pakolásban szoktam alkalmi segítséget kérni.";
-            } else if (n.includes("zsolt") || n.includes("nagy")) {
-                stars = "4.8";
-                revCount = "4 értékelés";
-                bio = "Autókozmetikai és kisebb javítási munkákhoz keresek megbízható diákokat Kaposváron.";
-            } else if (n.includes("erzsébet") || n.includes("tóth") || n.includes("erzsi")) {
-                stars = "5.0";
-                revCount = "12 értékelés";
-                bio = "Takarításban és kerti növények gondozásában kérnék segítséget. A pontosság és udvariasság számomra nagyon fontos.";
+            // Try to fetch real profile data from Firestore
+            if (window.firebaseAPI && window.firebaseDb) {
+                try {
+                    let userDoc = null;
+                    if (uid) {
+                        const snap = await window.firebaseAPI.getDoc(window.firebaseAPI.doc(window.firebaseDb, "users", uid));
+                        if (snap.exists()) userDoc = snap;
+                    }
+                    if (!userDoc) {
+                        const q = window.firebaseAPI.query(
+                            window.firebaseAPI.collection(window.firebaseDb, "users"), 
+                            window.firebaseAPI.where("name", "==", name)
+                        );
+                        const querySnapshot = await window.firebaseAPI.getDocs(q);
+                        if (!querySnapshot.empty) userDoc = querySnapshot.docs[0];
+                    }
+                    
+                    if (userDoc) {
+                        const data = userDoc.data();
+                        bio = data.bio || bio;
+                        stars = data.rating !== undefined ? parseFloat(data.rating).toFixed(1) : stars;
+                        if (data.photoURL) {
+                            avatarImg.src = data.photoURL;
+                            avatarImg.style.display = 'block';
+                            avatarFallback.style.display = 'none';
+                        }
+                    }
+                } catch(e) { console.warn("Employer profile fetch error:", e); }
+            } else {
+                const n = (name || '').toLowerCase();
+                if (n.includes("béla") || n.includes("kovács")) {
+                    stars = "4.9";
+                    revCount = "8 értékelés";
+                    bio = "Rendszerető kaposvári lakos vagyok, kerti munkákban és pakolásban szoktam alkalmi segítséget kérni.";
+                } else if (n.includes("zsolt") || n.includes("nagy")) {
+                    stars = "4.8";
+                    revCount = "4 értékelés";
+                    bio = "Autókozmetikai és kisebb javítási munkákhoz keresek megbízható diákokat Kaposváron.";
+                } else if (n.includes("erzsébet") || n.includes("tóth") || n.includes("erzsi")) {
+                    stars = "5.0";
+                    revCount = "12 értékelés";
+                    bio = "Takarításban és kerti növények gondozásában kérnék segítséget. A pontosság és udvariasság számomra nagyon fontos.";
+                }
             }
 
             const epStars = document.getElementById('ep-stars');
@@ -10877,6 +10971,19 @@ let settingsConfirmedAddress = null;
             list.innerHTML = '';
 
             let filtered = localChats.filter(c => !c.archived && c.active !== false);
+            
+            // Unread badge logic
+            let totalUnread = filtered.reduce((acc, c) => acc + (c.isUnread ? 1 : 0), 0);
+            const msgBadge = document.getElementById('app-msg-badge');
+            if (msgBadge) {
+                if (totalUnread > 0) {
+                    msgBadge.innerText = totalUnread;
+                    msgBadge.style.display = 'flex';
+                } else {
+                    msgBadge.style.display = 'none';
+                }
+            }
+
             if (currentMsgFilter === 'unread') {
                 filtered = filtered.filter(c => c.isUnread);
             }
@@ -11047,10 +11154,21 @@ let settingsConfirmedAddress = null;
         function openChatRoom(chatId) {
             const index = localChats.findIndex(c => c.id === chatId);
             if (index !== -1) {
-                // Set as read
+                // Set as read locally
                 localChats[index].isUnread = false;
                 localChats[index].unreadCount = 0;
                 saveLocalChats();
+                
+                // Sync to Firestore
+                const chat = localChats[index];
+                if (window.firebaseAPI && window.firebaseDb && chat.isFirestore) {
+                    const updateField = currentRole === 'worker' ? 'workerLastRead' : 'employerLastRead';
+                    window.firebaseAPI.updateDoc(
+                        window.firebaseAPI.doc(window.firebaseDb, "chats", chatId),
+                        { [updateField]: window.firebaseAPI.serverTimestamp() }
+                    ).catch(e => console.warn('lastRead sync error', e));
+                }
+
                 renderChatList();
                 
                 const chat = localChats[index];
@@ -11222,7 +11340,7 @@ let settingsConfirmedAddress = null;
                 ).catch(e => console.error('[Accept] System message write failed:', e));
                 window.firebaseAPI.updateDoc(
                     window.firebaseAPI.doc(window.firebaseDb, "chats", _acceptChat.id),
-                    { status: 'active', lastMsg: 'A megbízó elfogadta a munkást' }
+                    { status: 'active', lastMsg: 'A megbízó elfogadta a munkást', updatedAt: window.firebaseAPI.serverTimestamp() }
                 ).catch(e => console.error('[Accept] Chat status update failed:', e));
             } else {
                 // Local fallback
@@ -11292,7 +11410,7 @@ let settingsConfirmedAddress = null;
                 ).catch(e => console.error('[Finish] System message write failed:', e));
                 window.firebaseAPI.updateDoc(
                     window.firebaseAPI.doc(window.firebaseDb, "chats", _finishChat.id),
-                    { status: 'pending_confirmation', lastMsg: 'A munkás késznek jelölte a munkát' }
+                    { status: 'pending_confirmation', lastMsg: 'A munkás késznek jelölte a munkát', updatedAt: window.firebaseAPI.serverTimestamp() }
                 ).catch(e => console.error('[Finish] Chat status update failed:', e));
             } else {
                 const msgContainer = document.getElementById('chat-detail-messages');
@@ -11359,7 +11477,7 @@ let settingsConfirmedAddress = null;
                 ).catch(e => console.error('[Complete] System message write failed:', e));
                 window.firebaseAPI.updateDoc(
                     window.firebaseAPI.doc(window.firebaseDb, "chats", _completeChat.id),
-                    { status: 'completed', lastMsg: 'A munka sikeresen befejezve' }
+                    { status: 'completed', lastMsg: 'A munka sikeresen befejezve', updatedAt: window.firebaseAPI.serverTimestamp() }
                 ).catch(e => console.error('[Complete] Chat status update failed:', e));
             }
 
@@ -12334,7 +12452,7 @@ let settingsConfirmedAddress = null;
                 if (chat.isFirestore && window.firebaseAPI && window.firebaseDb) {
                     window.firebaseAPI.updateDoc(
                         window.firebaseAPI.doc(window.firebaseDb, "chats", chat.id),
-                        { status: 'completed', lastMsg: 'A munka sikeresen lezárva' }
+                        { status: 'completed', lastMsg: 'A munka sikeresen lezárva', updatedAt: window.firebaseAPI.serverTimestamp() }
                     ).catch(e => console.error("Firestore chat update error:", e));
                 }
             }
@@ -12664,6 +12782,41 @@ let settingsConfirmedAddress = null;
                 sendWorkerChatMessageNew(true);
             }
         }
+
+        // --- GLOBAL SWIPE-TO-GO-BACK ---
+        let swipeStartX = 0;
+        let swipeStartY = 0;
+        document.addEventListener('touchstart', e => {
+            swipeStartX = e.changedTouches[0].screenX;
+            swipeStartY = e.changedTouches[0].screenY;
+        }, {passive: true});
+        
+        document.addEventListener('touchend', e => {
+            let swipeEndX = e.changedTouches[0].screenX;
+            let swipeEndY = e.changedTouches[0].screenY;
+            
+            // Only trigger if starting near the left edge (< 40px)
+            if (swipeStartX > 40) return;
+            
+            let dx = swipeEndX - swipeStartX;
+            let dy = Math.abs(swipeEndY - swipeStartY);
+            
+            if (dx > 70 && dy < 50) { // Horizontal right swipe
+                if (document.getElementById('worker-job-detail-new') && document.getElementById('worker-job-detail-new').classList.contains('open')) {
+                    closeWorkerJobDetailNew();
+                } else if (document.getElementById('employer-job-detail-new') && document.getElementById('employer-job-detail-new').classList.contains('open')) {
+                    closeEmployerAdDetailNew();
+                } else if (document.getElementById('worker-chat-room') && document.getElementById('worker-chat-room').style.transform === 'translateX(0%)') {
+                    closeWorkerChatRoom();
+                } else if (document.getElementById('employer-chat-room') && document.getElementById('employer-chat-room').style.transform === 'translateX(0%)') {
+                    closeEmployerChatRoom();
+                } else if (document.getElementById('worker-profile-modal') && document.getElementById('worker-profile-modal').style.display === 'flex') {
+                    closeWorkerProfile();
+                } else if (document.getElementById('employer-profile-modal') && document.getElementById('employer-profile-modal').style.display === 'flex') {
+                    closeEmployerProfile();
+                }
+            }
+        }, {passive: true});
 </script>
 <!-- MOVED OVERLAYS -->
         <div class="overlay-backdrop" id="global-overlay-backdrop" onclick="closeAllActionOverlays()"></div>

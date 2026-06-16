@@ -11171,7 +11171,6 @@ let settingsConfirmedAddress = null;
 
                 renderChatList();
                 
-                const chat = localChats[index];
                 const partnerName = (currentRole === 'worker') ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
                 openChat(partnerName, chat.jobTitle, chat.lastMsg, chat.time, false, chat.id);
             }
@@ -12784,11 +12783,11 @@ let settingsConfirmedAddress = null;
         }
 
         // --- GLOBAL SWIPE-TO-GO-BACK ---
-        let swipeStartX = 0;
-        let swipeStartY = 0;
+        let globalSwipeStartX = 0;
+        let globalSwipeStartY = 0;
         document.addEventListener('touchstart', e => {
-            swipeStartX = e.changedTouches[0].screenX;
-            swipeStartY = e.changedTouches[0].screenY;
+            globalSwipeStartX = e.changedTouches[0].screenX;
+            globalSwipeStartY = e.changedTouches[0].screenY;
         }, {passive: true});
         
         document.addEventListener('touchend', e => {
@@ -12796,10 +12795,10 @@ let settingsConfirmedAddress = null;
             let swipeEndY = e.changedTouches[0].screenY;
             
             // Only trigger if starting near the left edge (< 40px)
-            if (swipeStartX > 40) return;
+            if (globalSwipeStartX > 40) return;
             
-            let dx = swipeEndX - swipeStartX;
-            let dy = Math.abs(swipeEndY - swipeStartY);
+            let dx = swipeEndX - globalSwipeStartX;
+            let dy = Math.abs(swipeEndY - globalSwipeStartY);
             
             if (dx > 70 && dy < 50) { // Horizontal right swipe
                 if (document.getElementById('worker-job-detail-new') && document.getElementById('worker-job-detail-new').classList.contains('open')) {

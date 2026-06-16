@@ -5003,7 +5003,7 @@ flex-direction: column !important;
             } else {
                 sendLoc(null, null, fallback);
             }
-        }f Firestore collections
+        }
 
             function sendChatLocationOld() {
             const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposv�r') : 'Kaposv%C3%A1r';
@@ -5014,15 +5014,7 @@ flex-direction: column !important;
                 sendChatMessageNew(true);
             }
         }
-        function sendWorkerChatLocationOld() {
-            const dest = 'Kaposv%C3%A1r';
-            const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
-            const input = document.getElementById('worker-chat-reply-input');
-            if (input) {
-                input.value = link;
-                sendWorkerChatMessageNew(true);
-            }
-        }
+
         
         // --- Forgot Password Modal ---
         function showForgotPasswordModal() {
@@ -11000,6 +10992,20 @@ let settingsConfirmedAddress = null;
                 `;
                 return;
             }
+
+            // Sort by most recent activity
+            filtered.sort((a, b) => {
+                const getMillis = (time) => {
+                    if (!time) return 0;
+                    if (typeof time === 'number') return time;
+                    if (typeof time.toMillis === 'function') return time.toMillis();
+                    if (time.seconds) return time.seconds * 1000;
+                    return 0;
+                };
+                const timeA = Math.max(getMillis(a.updatedAt), getMillis(a.createdAt));
+                const timeB = Math.max(getMillis(b.updatedAt), getMillis(b.createdAt));
+                return timeB - timeA;
+            });
 
             filtered.forEach(chat => {
                 const partnerName = (currentRole === 'worker') ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');

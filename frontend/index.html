@@ -9905,12 +9905,14 @@ let settingsConfirmedAddress = null;
         }
 
         async function loadChatHeaderAndStatus(chatId, chatData) {
-            const partnerUid = (currentRole === 'worker') ? chatData.employerId : chatData.workerId;
+            const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+            const isEmployerChat = chatData.employerId ? (myUid === chatData.employerId) : (currentRole === 'employer');
+            const partnerUid = !isEmployerChat ? chatData.employerId : chatData.workerId;
             const partnerData = await fetchUserDetails(partnerUid);
             const jobData = await fetchJobDetails(chatData.jobId);
             
             // 1. Partner Name & Avatar
-            const partnerName = partnerData ? (partnerData.name || partnerData.email) : ((currentRole === 'worker') ? chatData.employerName : chatData.workerName);
+            const partnerName = partnerData ? (partnerData.name || partnerData.email) : (!isEmployerChat ? chatData.employerName : chatData.workerName);
             const nameEl = document.getElementById('chat-header-partner-name');
             if (nameEl) {
                 nameEl.innerText = partnerName || 'Névtelen partner';
@@ -10244,7 +10246,14 @@ let settingsConfirmedAddress = null;
                     } else if (msg.from === 'other') {
                         isMe = false;
                     } else {
-                        isMe = (msg.from === currentRole);
+                        const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+                        if (msg.from === 'employer') {
+                            isMe = chat && chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
+                        } else if (msg.from === 'worker') {
+                            isMe = chat && chat.workerId ? (myUid === chat.workerId) : (currentRole === 'worker');
+                        } else {
+                            isMe = false;
+                        }
                     }
                     bubble.style.cssText = `
                         max-width:80%; padding:10px 14px; border-radius:${isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px'};
@@ -11762,7 +11771,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             const bar = document.getElementById('chat-action-bar');
             if (!bar) return;
             
-            const isEmployer = (currentRole === 'employer');
+            const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+            const isEmployer = chatData.employerId ? (myUid === chatData.employerId) : (currentRole === 'employer');
             const status = chatData.status || 'pending';
             
             bar.style.display = 'flex';
@@ -12023,7 +12033,9 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             });
 
             filtered.forEach(chat => {
-                const partnerName = (currentRole === 'worker') ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
+                const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+                const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
+                const partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
                 const initials = getInitials(partnerName);
                 const avatarBg = getAvatarGradient(partnerName);
                 const isUnreadClass = chat.isUnread ? 'unread' : '';
@@ -12183,7 +12195,9 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 // Sync to Firestore
                 const chat = localChats[index];
                 if (window.firebaseAPI && window.firebaseDb && chat.isFirestore) {
-                    const updateField = currentRole === 'worker' ? 'workerLastRead' : 'employerLastRead';
+                    const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+                    const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
+                    const updateField = !isEmployerChat ? 'workerLastRead' : 'employerLastRead';
                     window.firebaseAPI.updateDoc(
                         window.firebaseAPI.doc(window.firebaseDb, "chats", chatId),
                         { [updateField]: window.firebaseAPI.serverTimestamp() }
@@ -12192,7 +12206,9 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
                 renderChatList();
                 
-                const partnerName = (currentRole === 'worker') ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
+                const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+                const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
+                const partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
                 openChat(partnerName, chat.jobTitle, chat.lastMsg, chat.time, false, chat.id);
             }
         }
@@ -12210,7 +12226,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 return;
             }
 
-            const isEmployer = (currentRole === 'employer');
+            const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+            const isEmployer = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
 
             // Find the correct application matching this chat's worker
             const app = localWorkerApplications.find(a => 

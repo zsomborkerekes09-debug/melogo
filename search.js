@@ -1,0 +1,1 @@
+const fs=require('fs');const lines=fs.readFileSync('frontend/index.html','utf8').split('\n');lines.forEach((l,i)=>{if(l.includes('role')) { console.log('Line '+(i+1)+':'); for(let j=i-1;j<i+2;j++)console.log((j+1)+': '+lines[j]); } });

@@ -1,0 +1,1 @@
+const fs=require('fs');const html=fs.readFileSync('frontend/index.html','utf8');const start=html.indexOf('<script type="module">');const end=html.indexOf('</script>', start);const code=html.substring(start+22,end);fs.writeFileSync('test.js',code);

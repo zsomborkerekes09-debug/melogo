@@ -51,6 +51,36 @@
             overflow: hidden !important;
         }
 
+        /* Success checkmark animation */
+        @keyframes melogo-stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        .success-checkmark-wrapper {
+            box-shadow: 0 15px 35px rgba(34, 197, 94, 0.2);
+        }
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 4;
+            stroke-miterlimit: 10;
+            stroke: #22C55E;
+            fill: none;
+            animation: melogo-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke: #22C55E;
+            fill: none;
+            animation: melogo-stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -4450,7 +4480,7 @@ flex-direction: column !important;
                     </div>
                     
                     <!-- Chat Input Bar -->
-                    <div id="chat-input-bar" style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--color-surface); border-top: 1px solid var(--color-text); flex-shrink: 0; padding-bottom: calc(40px + env(safe-area-inset-bottom));">
+                    <div id="chat-input-bar" style="display: none !important; align-items: center; gap: 10px; padding: 12px 16px; background: var(--color-surface); border-top: 1px solid var(--color-text); flex-shrink: 0; padding-bottom: calc(40px + env(safe-area-inset-bottom));">
                         <input type="text" id="chat-reply-input" placeholder="Írj üzenetet..." enterkeyhint="send" oninput="handleChatInput(this)" onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessageNew(); }" style="flex: 1; height: 44px; border: 1px solid var(--color-text); border-radius: 22px; padding: 0 16px; font-size: 15px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; outline: none; background: var(--color-surface); color: var(--color-text);">
                         <button id="chat-loc-btn" onclick="sendChatLocation()" style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-surface); border: 1px solid var(--color-text); color: var(--color-text); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></button><button id="chat-send-btn" onclick="sendChatMessageNew()" style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-text); border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
@@ -7339,7 +7369,8 @@ function filterWorkerByExactJob(jobName) {
             gameState.status = 'Keresés';
             gameState.applied = true;
 
-            const matchedJob = mockJobs.find(j => j.title === gameState.jobTitle);
+            const allJobs = window.mockJobs && window.mockJobs.length ? window.mockJobs : mockJobs;
+            const matchedJob = allJobs.find(j => String(j.id) === String(gameState.jobId)) || allJobs.find(j => j.title === gameState.jobTitle);
 
             if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
                 alert('K�rj�k jelentkezz be a jelentkez�shez!');
@@ -7506,6 +7537,9 @@ function filterWorkerByExactJob(jobName) {
             // Stays in worker view as a real user would
             
             showGreenBanner('Sikeres jelentkezés!');
+            if (typeof triggerSuccessAnimation === 'function') {
+                triggerSuccessAnimation();
+            }
             updateWorkerStatusUI();
         }
 
@@ -9171,6 +9205,7 @@ let settingsConfirmedAddress = null;
             if (!job) return;
             
             // Update gameState details for the current active job context
+            gameState.jobId = jobId;
             gameState.jobTitle = job.title || '';
             gameState.jobPrice = job.price || 10000;
             gameState.jobDesc = job.desc || '';
@@ -11174,7 +11209,9 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
         function showChatJobOnMap() {
             const jobTitle = document.getElementById('chat-detail-job').innerText;
-            const job = mockJobs.find(j => j.title === jobTitle) || (window.localEmployerJobs && window.localEmployerJobs.find(j => j.title === jobTitle));
+            const activeChat = window.selectedChatId ? localChats.find(c => c.id === window.selectedChatId) : null;
+            const jobId = activeChat ? activeChat.jobId : null;
+            const job = (jobId ? (mockJobs.find(j => String(j.id) === String(jobId)) || (window.localEmployerJobs && window.localEmployerJobs.find(j => String(j.id) === String(jobId)))) : null) || mockJobs.find(j => j.title === jobTitle) || (window.localEmployerJobs && window.localEmployerJobs.find(j => j.title === jobTitle));
             
             if (!job) {
                 alert('A munka adatai nem találhatóak.');
@@ -11244,7 +11281,9 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             
             let coords = getCoordinatesForAddress(pinnedAddr);
             
-            const job = mockJobs.find(j => j.title === jobTitle) || (window.localEmployerJobs && window.localEmployerJobs.find(j => j.title === jobTitle));
+            const activeChat = window.selectedChatId ? localChats.find(c => c.id === window.selectedChatId) : null;
+            const jobId = activeChat ? activeChat.jobId : null;
+            const job = (jobId ? (mockJobs.find(j => String(j.id) === String(jobId)) || (window.localEmployerJobs && window.localEmployerJobs.find(j => String(j.id) === String(jobId)))) : null) || mockJobs.find(j => j.title === jobTitle) || (window.localEmployerJobs && window.localEmployerJobs.find(j => j.title === jobTitle));
             if (job && job.lat && job.lon) {
                 coords = { lat: job.lat, lon: job.lon };
             } else {
@@ -13259,6 +13298,55 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             setTimeout(() => { banner.style.top = '-60px'; }, 3000);
         }
 
+        function triggerSuccessAnimation() {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('apply-success-overlay');
+                if (!overlay) {
+                    resolve();
+                    return;
+                }
+                
+                // Show overlay
+                overlay.style.display = 'flex';
+                // Trigger reflow
+                overlay.offsetHeight;
+                
+                overlay.style.opacity = '1';
+                const wrapper = overlay.querySelector('.success-checkmark-wrapper');
+                const text = overlay.querySelector('.success-text');
+                
+                // Reset SVG innerHTML to re-trigger the CSS keyframe animations
+                if (wrapper) {
+                    wrapper.innerHTML = `
+                        <svg class="checkmark-svg" width="60" height="60" viewBox="0 0 52 52">
+                            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                    `;
+                    wrapper.style.transform = 'scale(1)';
+                }
+                
+                if (text) {
+                    text.style.opacity = '1';
+                    text.style.transform = 'translateY(0)';
+                }
+                
+                setTimeout(() => {
+                    overlay.style.opacity = '0';
+                    if (wrapper) wrapper.style.transform = 'scale(0.7)';
+                    if (text) {
+                        text.style.opacity = '0';
+                        text.style.transform = 'translateY(-15px)';
+                    }
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        resolve();
+                    }, 350);
+                }, 2000);
+            });
+        }
+        window.triggerSuccessAnimation = triggerSuccessAnimation;
+
         // ==========================================
         // DARK MODE
         // ==========================================
@@ -13859,6 +13947,18 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     <div style="background-color: var(--color-bg); padding: 16px 20px; border-top: none; flex-shrink: 0;" id="employer-action-footer"></div>
                 </div>
     
+    <!-- Apply Success Overlay -->
+    <div id="apply-success-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 10000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1); flex-direction: column;">
+        <div class="success-checkmark-wrapper" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; transform: scale(0.7); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <svg class="checkmark-svg" width="60" height="60" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+            </svg>
+        </div>
+        <div class="success-text" style="color: #fff; font-size: 18px; font-weight: 500; margin-top: 20px; opacity: 0; transform: translateY(15px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            Sikeres jelentkezés!
+        </div>
+    </div>
 
 </body>
 </html>

@@ -3062,29 +3062,6 @@ flex-direction: column !important;
                 </div>
             </div>
             
-            <div style="display:flex; gap:12px; margin:0;">
-                <div class="floating-group" style="margin:0; flex:1;">
-                    <div class="auth-input-container">
-                        <input type="text" id="reg-zip" class="auth-input-field login-input" placeholder="Irányítószám">
-                    </div>
-                </div>
-                <div class="floating-group" style="margin:0; flex:2;">
-                    <div class="auth-input-container">
-                        <input type="text" id="reg-city" class="auth-input-field login-input" placeholder="Város">
-                    </div>
-                </div>
-            </div>
-            <div class="floating-group" style="margin:0;">
-                <div class="auth-input-container">
-                    <input type="text" id="reg-street" class="auth-input-field login-input" placeholder="Utca, házszám">
-                </div>
-            </div>
-            <div class="floating-group" style="margin:0;">
-                <div class="auth-input-container">
-                    <input type="text" id="reg-county" class="auth-input-field login-input" placeholder="Megye">
-                </div>
-            </div>
-
             <!-- Custom ÁSZF checkbox group -->
             <div id="terms-group" class="floating-group" style="display:flex; gap:10px; align-items:flex-start; margin:16px 4px 0 4px; cursor:pointer;" onclick="toggleTermsCheckbox()">
                 <div id="terms-checkbox" style="width:16px; height:16px; border:1.5px solid var(--color-border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background: var(--color-surface); transition:all 0.2s;">
@@ -3095,6 +3072,31 @@ flex-direction: column !important;
                 </div>
             </div>
         </div>
+
+        <!-- STEP 2: Address fields -->
+        <div id="auth-step-2" style="display:none; flex-direction:column; gap:16px; margin-top:24px;">
+            <div style="font-size:18px; font-weight: 500; color:var(--color-text); text-align:center; margin-bottom:4px;">Hol laksz?</div>
+            <div style="font-size:13px; color:var(--color-text-muted); text-align:center; margin-top:-10px; margin-bottom:12px;">Add meg a lakcímedet a folytatáshoz (csak Magyarország).</div>
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="text" id="reg-address-autocomplete" class="auth-input-field login-input" placeholder="Kezdd el gépelni a címedet..." style="padding-left:16px;">
+                </div>
+            </div>
+            <button class="login-btn" id="btn-step-2-next" onclick="submitStep2Address()" style="margin-top:16px; width:100%; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius:14px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
+        </div>
+
+        <!-- STEP 3: Phone number fields -->
+        <div id="auth-step-3" style="display:none; flex-direction:column; gap:16px; margin-top:24px;">
+            <div style="font-size:18px; font-weight: 500; color:var(--color-text); text-align:center; margin-bottom:4px;">Telefonszámod</div>
+            <div style="font-size:13px; color:var(--color-text-muted); text-align:center; margin-top:-10px; margin-bottom:12px;">Kérlek add meg a telefonszámodat (+36 formátumban).</div>
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="tel" id="reg-phone-input" class="auth-input-field login-input" placeholder="+36 20 123 4567" style="padding-left:16px;">
+                </div>
+            </div>
+            <button class="login-btn" id="btn-step-3-next" onclick="submitStep3Phone()" style="margin-top:16px; width:100%; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius:14px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
+        </div>
+
 
         <!-- LOGIN fields (hidden by default) -->
         <div id="login-fields" style="display:none; margin-top:24px; flex-direction:column; gap:12px;">
@@ -4736,6 +4738,8 @@ flex-direction: column !important;
                 console.log("Firebase User is logged in:", user.email);
                 let role = localStorage.getItem('melogo_pending_role') || 'worker';
                 let userName = user.displayName || user.email.split('@')[0] || 'Felhasználó';
+                let address = '';
+                let phone = '';
                 
                 try {
                     const userRef = doc(db, "users", user.uid);
@@ -4751,18 +4755,21 @@ flex-direction: column !important;
                             createdAt: serverTimestamp(),
                             bio: '',
                             skills: [],
-                            location: ''
+                            address: '',
+                            phone: ''
                         };
                         await setDoc(userRef, newUserData);
-                        localStorage.setItem('melogo_user_data', JSON.stringify({ bio: '', skills: [], photoURL: user.photoURL || '', reviews: [] }));
+                        localStorage.setItem('melogo_user_data', JSON.stringify({ bio: '', skills: [], photoURL: user.photoURL || '', reviews: [], address: '', phone: '' }));
                     } else {
                         // Update existing user
                         await updateDoc(userRef, { lastLogin: serverTimestamp(), photoURL: user.photoURL || userDoc.data().photoURL || '' });
                         const data = userDoc.data();
                         if (data.name) userName = data.name;
                         role = data.defaultRole || data.role || 'worker';
+                        address = data.address || '';
+                        phone = data.phone || '';
                         
-                        const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || '', reviews: data.reviews || [], address: data.address || '' };
+                        const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || '', reviews: data.reviews || [], address: address, phone: phone };
                         localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     }
                     localStorage.removeItem('melogo_pending_role');
@@ -4783,6 +4790,20 @@ flex-direction: column !important;
 
                 } catch(e) { console.error("Error fetching/creating user doc", e); }
                 
+                // ROUTING: Check if registration steps are completed
+                if (!address) {
+                    if (typeof window.updateRegistrationStepUI === 'function') {
+                        window.updateRegistrationStepUI(2);
+                    }
+                    return;
+                }
+                if (!phone) {
+                    if (typeof window.updateRegistrationStepUI === 'function') {
+                        window.updateRegistrationStepUI(3);
+                    }
+                    return;
+                }
+                
                 localStorage.setItem('melogo_app_session', 'true');
                 var screen = document.getElementById('app-login-screen');
                 if (screen && !screen.classList.contains('hidden')) {
@@ -4797,8 +4818,240 @@ flex-direction: column !important;
                 if (typeof updateAllUserUI === 'function') updateAllUserUI();
                 if (typeof updateGreetings === 'function') updateGreetings();
                 if (typeof switchRole === 'function') switchRole(role);
+            } else {
+                // Not logged in, ensure step 1 is shown
+                if (typeof window.updateRegistrationStepUI === 'function') {
+                    window.updateRegistrationStepUI(1);
+                }
             }
         });
+
+        // Registration Step UI Updater
+        window.updateRegistrationStepUI = function(step) {
+            console.log('[AuthStep] Switching UI to step:', step);
+            
+            const rf = document.getElementById('register-fields');
+            const lf = document.getElementById('login-fields');
+            const btn = document.getElementById('main-auth-btn');
+            const googleBtn = document.getElementById('google-login-btn');
+            const appleBtn = document.getElementById('apple-login-btn');
+            const sw = document.getElementById('auth-switch-text');
+            const roleSel = document.getElementById('login-role-selector');
+            const sub = document.getElementById('login-mode-subtitle');
+            
+            const divider = googleBtn ? googleBtn.previousElementSibling : null;
+            
+            const step2Div = document.getElementById('auth-step-2');
+            const step3Div = document.getElementById('auth-step-3');
+            
+            if (step2Div) step2Div.style.display = 'none';
+            if (step3Div) step3Div.style.display = 'none';
+            
+            if (step === 1) {
+                if (sub) sub.style.display = 'block';
+                if (isLoginMode) {
+                    if (rf) rf.style.display = 'none';
+                    if (lf) lf.style.display = 'flex';
+                    if (roleSel) roleSel.style.display = 'none';
+                    if (btn) { btn.style.display = 'block'; btn.innerText = 'Bejelentkezem'; }
+                    if (sw) { sw.style.display = 'block'; sw.innerHTML = 'Nincs még fiókod? <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>'; }
+                } else {
+                    if (rf) rf.style.display = 'flex';
+                    if (lf) lf.style.display = 'none';
+                    if (roleSel) roleSel.style.display = 'flex';
+                    if (btn) { btn.style.display = 'block'; btn.innerText = 'Regisztrálok & Bejelentkezem'; }
+                    if (sw) { sw.style.display = 'block'; sw.innerHTML = 'Van már fiókod? <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>'; }
+                }
+                if (googleBtn) googleBtn.style.display = 'flex';
+                if (appleBtn) appleBtn.style.display = 'flex';
+                if (divider) divider.style.display = 'flex';
+                
+                const screen = document.getElementById('app-login-screen');
+                if (screen) screen.classList.remove('hidden');
+            } else if (step === 2) {
+                if (rf) rf.style.display = 'none';
+                if (lf) lf.style.display = 'none';
+                if (btn) btn.style.display = 'none';
+                if (googleBtn) googleBtn.style.display = 'none';
+                if (appleBtn) appleBtn.style.display = 'none';
+                if (sw) sw.style.display = 'none';
+                if (roleSel) roleSel.style.display = 'none';
+                if (sub) sub.style.display = 'none';
+                if (divider) divider.style.display = 'none';
+                
+                if (step2Div) step2Div.style.display = 'flex';
+                
+                if (typeof window.initGooglePlacesAutocomplete === 'function') {
+                    window.initGooglePlacesAutocomplete();
+                }
+                
+                const screen = document.getElementById('app-login-screen');
+                if (screen) screen.classList.remove('hidden');
+            } else if (step === 3) {
+                if (rf) rf.style.display = 'none';
+                if (lf) lf.style.display = 'none';
+                if (btn) btn.style.display = 'none';
+                if (googleBtn) googleBtn.style.display = 'none';
+                if (appleBtn) appleBtn.style.display = 'none';
+                if (sw) sw.style.display = 'none';
+                if (roleSel) roleSel.style.display = 'none';
+                if (sub) sub.style.display = 'none';
+                if (divider) divider.style.display = 'none';
+                
+                if (step3Div) step3Div.style.display = 'flex';
+                
+                const screen = document.getElementById('app-login-screen');
+                if (screen) screen.classList.remove('hidden');
+            }
+        };
+
+        let selectedAddress = null;
+        let googleAutocomplete = null;
+        
+        window.initGooglePlacesAutocomplete = function() {
+            const input = document.getElementById('reg-address-autocomplete');
+            if (!input) return;
+            if (googleAutocomplete) return;
+            
+            if (!window.google || !window.google.maps || !window.google.maps.places) {
+                console.warn("Google Maps Places API not ready. Retrying in 500ms...");
+                setTimeout(window.initGooglePlacesAutocomplete, 500);
+                return;
+            }
+            
+            googleAutocomplete = new window.google.maps.places.Autocomplete(input, {
+                componentRestrictions: { country: 'hu' },
+                fields: ['address_components', 'formatted_address', 'geometry']
+            });
+            
+            googleAutocomplete.addListener('place_changed', () => {
+                const place = googleAutocomplete.getPlace();
+                if (place && place.formatted_address) {
+                    selectedAddress = place.formatted_address;
+                    console.log("Selected address from autocomplete:", selectedAddress);
+                } else {
+                    selectedAddress = null;
+                }
+            });
+            
+            input.addEventListener('input', () => {
+                selectedAddress = null;
+            });
+        };
+
+        window.submitStep2Address = async function() {
+            if (!selectedAddress) {
+                alert("Kérlek, válassz egy valós lakcímet a listából!");
+                return;
+            }
+            
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Nincs bejelentkezett felhasználó.");
+                return;
+            }
+            
+            const btn = document.getElementById('btn-step-2-next');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = 'Mentés...';
+            }
+            
+            try {
+                const userRef = doc(db, "users", user.uid);
+                await updateDoc(userRef, {
+                    address: selectedAddress
+                });
+                
+                const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
+                userData.address = selectedAddress;
+                localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+                
+                const userDoc = await getDoc(userRef);
+                const phone = userDoc.exists() ? userDoc.data().phone : '';
+                if (!phone) {
+                    window.updateRegistrationStepUI(3);
+                } else {
+                    window.enterAppFromAuth();
+                }
+            } catch (e) {
+                console.error("Step 2 error:", e);
+                alert("Hiba történt a cím mentése során.");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = 'Tovább';
+                }
+            }
+        };
+
+        window.validateHungarianPhone = function(phoneStr) {
+            const cleaned = phoneStr.replace(/[\s\-\(\)]/g, '');
+            const huPhoneRegex = /^\+36\d{9}$/;
+            return huPhoneRegex.test(cleaned);
+        };
+
+        window.submitStep3Phone = async function() {
+            const phoneInput = document.getElementById('reg-phone-input');
+            const phoneVal = phoneInput ? phoneInput.value.trim() : '';
+            const cleanedPhone = phoneVal.replace(/[\s\-\(\)]/g, '');
+            
+            if (!window.validateHungarianPhone(phoneVal)) {
+                alert("Kérjük, érvényes magyar telefonszámot adj meg +36 formátumban (pl. +36201234567)!");
+                return;
+            }
+            
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Nincs bejelentkezett felhasználó.");
+                return;
+            }
+            
+            const btn = document.getElementById('btn-step-3-next');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = 'Mentés...';
+            }
+            
+            try {
+                const userRef = doc(db, "users", user.uid);
+                await updateDoc(userRef, {
+                    phone: cleanedPhone
+                });
+                
+                const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
+                userData.phone = cleanedPhone;
+                localStorage.setItem('melogo_user_data', JSON.stringify(userData));
+                
+                window.enterAppFromAuth();
+            } catch (e) {
+                console.error("Step 3 error:", e);
+                alert("Hiba történt a telefonszám mentése során.");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = 'Tovább';
+                }
+            }
+        };
+
+        window.enterAppFromAuth = function() {
+            localStorage.setItem('melogo_app_session', 'true');
+            const screen = document.getElementById('app-login-screen');
+            if (screen) {
+                screen.style.transition = 'opacity 0.35s ease';
+                screen.style.opacity = '0';
+                setTimeout(() => {
+                    screen.classList.add('hidden');
+                    screen.style.opacity = '';
+                    
+                    const activeRole = localStorage.getItem('melogo_active_role') || 'worker';
+                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                    if (typeof updateGreetings === 'function') updateGreetings();
+                    if (typeof switchRole === 'function') switchRole(activeRole);
+                }, 350);
+            }
+        };
         window.setupFirestoreListeners = function(role) {
             if (!auth.currentUser) {
                 console.log('[DEBUG] setupFirestoreListeners skipped: user not logged in.');
@@ -4970,52 +5223,28 @@ flex-direction: column !important;
                 }
             }
 
-            // Worker-side chats (where current user is the worker)            function sendChatLocationOld() {
-            const sendLoc = (lat, lng, fallbackStr) => {
-                const dest = (lat && lng) ? `${lat},${lng}` : fallbackStr;
-                const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
-                const input = document.getElementById('chat-reply-input');
-                if (input) {
-                    input.value = link;
-                    sendChatMessageNew(true);
-                }
-            };
-            const fallback = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposvár') : 'Kaposv%C3%A1r';
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => sendLoc(pos.coords.latitude, pos.coords.longitude, fallback), err => sendLoc(null, null, fallback), { timeout: 10000 });
-            } else {
-                sendLoc(null, null, fallback);
-            }
-        }
-        function sendWorkerChatLocationOld() {
-            const sendLoc = (lat, lng, fallbackStr) => {
-                const dest = (lat && lng) ? `${lat},${lng}` : fallbackStr;
-                const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
-                const input = document.getElementById('worker-chat-reply-input');
-                if (input) {
-                    input.value = link;
-                    sendWorkerChatMessageNew(true);
-                }
-            };
-            const fallback = 'Kaposv%C3%A1r';
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => sendLoc(pos.coords.latitude, pos.coords.longitude, fallback), err => sendLoc(null, null, fallback), { timeout: 10000 });
-            } else {
-                sendLoc(null, null, fallback);
-            }
-        }
+                        // Worker-side chats (where current user is the worker)
+            const chatsQuery1 = query(
+                collection(db, "chats"),
+                where("workerId", "==", uid)
+            );
+            window.chatsUnsubscribe = onSnapshot(chatsQuery1, (snapshot) => {
+                let chats = [];
+                snapshot.forEach(d => { const c = d.data(); c.id = d.id; chats.push(c); });
+                mergeFirestoreChats(chats, 'worker');
+            }, err => console.error('[Firestore] Worker chats listener error:', err));
 
-            function sendChatLocationOld() {
-            const dest = currentMapCoords ? encodeURIComponent(currentMapCoords.address || 'Kaposv�r') : 'Kaposv%C3%A1r';
-            const link = `\x3Ca href="https://www.google.com/maps/dir/?api=1&destination=${dest}" target="_blank" style="color:#2563EB; text-decoration:underline;"\x3E📍 Helyszín megnyitása\x3C/a\x3E`;
-            const input = document.getElementById('chat-reply-input');
-            if (input) {
-                input.value = link;
-                sendChatMessageNew(true);
-            }
-        }
-
-        
+            // Employer-side chats (where current user is the employer)
+            const chatsQuery2 = query(
+                collection(db, "chats"),
+                where("employerId", "==", uid)
+            );
+            window.chatsUnsubscribe2 = onSnapshot(chatsQuery2, (snapshot) => {
+                let chats = [];
+                snapshot.forEach(d => { const c = d.data(); c.id = d.id; chats.push(c); });
+                mergeFirestoreChats(chats, 'employer');
+            }, err => console.error('[Firestore] Employer chats listener error:', err));
+        };
         // --- Forgot Password Modal ---
         function showForgotPasswordModal() {
             document.getElementById('forgot-pw-modal').style.display = 'flex';
@@ -6959,14 +7188,9 @@ function filterWorkerByExactJob(jobName) {
             const chatBox = document.getElementById('worker-chat-messages');
             const chatInputBar = document.getElementById('worker-chat-input-bar');
             
-            if (gameState.applied) {
-                chatBox.style.display = 'flex';
-                if (chatInputBar) chatInputBar.style.display = 'flex';
-                renderWorkerChatMessages();
-            } else {
-                chatBox.style.display = 'none';
-                if (chatInputBar) chatInputBar.style.display = 'none';
-            }
+            // Legacy chat elements are always hidden
+            if (chatBox) chatBox.style.display = 'none';
+            if (chatInputBar) chatInputBar.style.display = 'none';
             
             if (!gameState.applied) {
                 container.innerHTML = `
@@ -6979,30 +7203,53 @@ function filterWorkerByExactJob(jobName) {
                     <div style="background-color: #f8fafc; border:1px solid #e2e8f0; color: var(--color-text-muted); padding: 12px; border-radius: 8px; font-size: 11px; text-align:center; font-weight: 400;">
                         ⌛ Jelentkezés elküldve. Várakozás a Munkáltató válaszára és a letét zárolására...
                     </div>
+                    <button class="emp-submit-btn" style="margin-top: 12px; background-color: var(--color-navy);" onclick="openWorkerChatFromOverlay()">
+                        Beszélgetés megnyitása
+                    </button>
                 `;
             } else if (gameState.status === 'Fizetve') {
                 container.innerHTML = `
-                    <div style="background-color: #eff6ff; color: #1d4ed8; padding: 12px; border-radius: 8px; font-size: 11px; font-weight: 400; text-align:center;">
+                    <div style="background-color: #eff6ff; color: #1d4ed8; padding: 12px; border-radius: 8px; font-size: 11px; font-weight: 400; text-align:center; margin-bottom: 8px;">
                         🔒 A megbízó elfogadta a jelentkezést. Megkezdheted a munkát!
                     </div>
-                    <button class="btn" style="background-color: var(--color-green);" onclick="workerSubmitWorkPhoto()">
-                        Kép feltöltése & AI Ellenőrzés 📸
+                    <button class="emp-submit-btn" style="background-color: var(--color-navy); margin-bottom: 8px;" onclick="openWorkerChatFromOverlay()">
+                        Beszélgetés megnyitása
                     </button>
                 `;
             } else if (gameState.status === 'Befejezve') {
                 container.innerHTML = `
-                    <div style="background-color: #f0fdf4; color: #166534; padding: 12px; border-radius: 8px; font-size: 11px; font-weight: 400; text-align:center;">
+                    <div style="background-color: #f0fdf4; color: #166534; padding: 12px; border-radius: 8px; font-size: 11px; font-weight: 400; text-align:center; margin-bottom: 8px;">
                         ⌛ Fotó feltöltve! A Gemini AI hitelesítette. Várakozás a Munkáltató jóváhagyására.
                     </div>
+                    <button class="emp-submit-btn" style="background-color: var(--color-navy); margin-bottom: 8px;" onclick="openWorkerChatFromOverlay()">
+                        Beszélgetés megnyitása
+                    </button>
                 `;
             } else if (gameState.status === 'Értékelve' || gameState.status === 'Kifizetve') {
                 container.innerHTML = `
-                    <div style="background-color: #f0fdf4; color: #166534; padding: 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align:center; ">
+                    <div style="background-color: #f0fdf4; color: #166534; padding: 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align:center; margin-bottom: 8px;">
                         🎉 A munka lezárult és értékelve lett!
                     </div>
+                    <button class="emp-submit-btn" style="background-color: var(--color-navy);" onclick="openWorkerChatFromOverlay()">
+                        Beszélgetés megnyitása
+                    </button>
                 `;
             }
         }
+
+        window.openWorkerChatFromOverlay = function() {
+            if (!auth.currentUser) return;
+            const jobTitle = document.getElementById('worker-job-detail-title').innerText;
+            const chat = localChats.find(c => c.jobTitle === jobTitle && c.workerId === auth.currentUser.uid);
+            if (chat) {
+                // Close the job detail overlay first
+                document.getElementById('worker-action-overlay').classList.remove('active');
+                // Open the real chat room
+                openChatRoom(chat.id);
+            } else {
+                alert("Nem található beszélgetés ehhez a munkához.");
+            }
+        };
 
         // C. DIÁK JELENTKEZIK A MUNKÁRA
         async function workerApplyToJob() {
@@ -9460,44 +9707,216 @@ let settingsConfirmedAddress = null;
 
         // Active chat messages listener (Firestore subcollection)
         window._chatMsgsUnsubscribe = null;
+        window.userCache = {};
+        async function fetchUserDetails(uid) {
+            if (!uid) return null;
+            if (window.userCache[uid]) return window.userCache[uid];
+            try {
+                if (window.firebaseAPI && window.firebaseDb) {
+                    const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", uid);
+                    const userSnap = await window.firebaseAPI.getDoc(userRef);
+                    if (userSnap.exists()) {
+                        const data = userSnap.data();
+                        window.userCache[uid] = data;
+                        return data;
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching user details:", e);
+            }
+            return null;
+        }
+
+        window.jobCache = {};
+        async function fetchJobDetails(jobId) {
+            if (!jobId) return null;
+            if (window.jobCache[jobId]) return window.jobCache[jobId];
+            try {
+                if (window.firebaseAPI && window.firebaseDb) {
+                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", jobId);
+                    const jobSnap = await window.firebaseAPI.getDoc(jobRef);
+                    if (jobSnap.exists()) {
+                        const data = jobSnap.data();
+                        window.jobCache[jobId] = data;
+                        return data;
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching job details:", e);
+            }
+            return null;
+        }
+
+        window._chatUnsubscribe = null;
         function renderActiveChatMessages(chatId) {
             if (!chatId || !window.firebaseAPI || !window.firebaseDb) return;
-            // Unsubscribe from previous listener
-            if (window._chatMsgsUnsubscribe) { window._chatMsgsUnsubscribe(); window._chatMsgsUnsubscribe = null; }
-            const msgsQuery = window.firebaseAPI.query(
-                window.firebaseAPI.collection(window.firebaseDb, 'chats', chatId, 'messages'),
-                window.firebaseAPI.orderBy('timestamp', 'asc')
-            );
-            window._chatMsgsUnsubscribe = window.firebaseAPI.onSnapshot(msgsQuery, (snapshot) => {
-                const msgContainer = document.getElementById('chat-detail-messages');
-                if (!msgContainer) return;
-                // Only re-render if this is still the selected chat
+            if (window._chatUnsubscribe) { window._chatUnsubscribe(); window._chatUnsubscribe = null; }
+            
+            const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
+            window._chatUnsubscribe = window.firebaseAPI.onSnapshot(chatRef, async (snapshot) => {
+                if (!snapshot.exists()) return;
+                const chatData = snapshot.data();
+                // Ensure this is still the selected chat
                 if (window.selectedChatId !== chatId) return;
-                msgContainer.innerHTML = '';
-                const curUid = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : null;
-                snapshot.forEach(d => {
-                    const msg = d.data();
-                    if (msg.type === 'system') {
-                        const pill = document.createElement('div');
-                        pill.style.cssText = 'background:#f3f4f6;color:#6b7280;padding:6px 14px;border-radius:99px;font-size:11px;font-weight: 400;text-align:center;margin:8px auto;max-width:80%;display:block;';
-                        pill.innerText = msg.text;
-                        msgContainer.appendChild(pill);
-                    } else {
-                        const isMine = curUid ? (msg.senderId === curUid) : false;
-                        const bubble = document.createElement('div');
-                        const now = msg.timestamp ? new Date(msg.timestamp.toDate ? msg.timestamp.toDate() : msg.timestamp) : new Date();
-                        const t = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-                        bubble.style.cssText = isMine
-                            ? 'max-width:80%;padding:10px 14px;border-radius:18px 18px 4px 18px;background:var(--color-text);color:#fff;font-size:14px;align-self:flex-end;'
-                            : 'max-width:80%;padding:10px 14px;border-radius:18px 18px 18px 4px;background:#f3f4f6;color:var(--color-text);font-size:14px;align-self:flex-start;';
-                        bubble.innerHTML = escapeHTML(msg.text) + `<div style="font-size:10px;opacity:0.5;margin-top:4px;text-align:${isMine?'right':'left'}">${t}</div>`;
-                        msgContainer.appendChild(bubble);
-                    }
-                });
-                msgContainer.scrollTop = msgContainer.scrollHeight;
-            }, err => console.error('[Firestore] Messages listener error:', err));
+                
+                // Load header info (partner details, job details)
+                await loadChatHeaderAndStatus(chatId, chatData);
+                
+                // Render status pills
+                renderChatStatusPills(chatData);
+                
+                // Update chat action bar
+                updateChatActionBarNew(chatData);
+            }, err => console.error('[Firestore] Chat listener error:', err));
         }
-        
+
+        async function loadChatHeaderAndStatus(chatId, chatData) {
+            const partnerUid = (currentRole === 'worker') ? chatData.employerId : chatData.workerId;
+            const partnerData = await fetchUserDetails(partnerUid);
+            const jobData = await fetchJobDetails(chatData.jobId);
+            
+            // 1. Partner Name & Avatar
+            const partnerName = partnerData ? (partnerData.name || partnerData.email) : ((currentRole === 'worker') ? chatData.employerName : chatData.workerName);
+            const nameEl = document.getElementById('chat-header-partner-name');
+            if (nameEl) {
+                nameEl.innerText = partnerName || 'Névtelen partner';
+            }
+            
+            const avatarImg = document.getElementById('chat-header-partner-avatar');
+            const avatarPlaceholder = document.getElementById('chat-header-avatar-placeholder');
+            const photoURL = partnerData ? partnerData.photoURL : null;
+            
+            if (avatarImg && avatarPlaceholder) {
+                if (photoURL && (photoURL.startsWith('http') || photoURL.startsWith('data:'))) {
+                    avatarImg.src = photoURL;
+                    avatarImg.style.display = 'block';
+                    avatarPlaceholder.style.display = 'none';
+                } else {
+                    avatarImg.style.display = 'none';
+                    avatarPlaceholder.style.display = 'block';
+                }
+            }
+            
+            // 2. Job details
+            const jobTitle = jobData ? jobData.title : chatData.jobTitle;
+            const jobLocation = jobData ? jobData.location : 'Nincs megadva';
+            const jobTime = jobData ? (jobData.datetime || jobData.time) : '';
+            
+            // Task Name
+            const taskEl = document.getElementById('chat-header-task-text');
+            if (taskEl) {
+                taskEl.innerText = jobTitle || 'Munka';
+            }
+            
+            // Address
+            const addrEl = document.getElementById('chat-header-address-text');
+            if (addrEl) {
+                addrEl.innerText = jobLocation || 'Nincs megadva';
+            }
+            
+            const addrRow = document.getElementById('chat-header-row-address');
+            if (addrRow) {
+                addrRow.onclick = function() {
+                    if (jobLocation) {
+                        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(jobLocation)}`, '_blank');
+                    }
+                };
+            }
+            
+            // Time formatting
+            let jobTimeStr = jobTime || '';
+            if (jobTimeStr && jobTimeStr.includes('T')) {
+                try {
+                    const parts = jobTimeStr.split('T');
+                    const dateParts = parts[0].split('-');
+                    const timeParts = parts[1].split(':');
+                    const year = dateParts[0];
+                    const month = parseInt(dateParts[1]);
+                    const day = dateParts[2];
+                    const hour = timeParts[0];
+                    const minute = timeParts[1];
+                    const monthNames = ['jan.', 'feb.', 'már.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+                    const monthName = monthNames[month - 1] || '';
+                    jobTimeStr = `${year}. ${monthName} ${day}. ${hour}:${minute}`;
+                } catch(e) {
+                    // fall back
+                }
+            }
+            const timeEl = document.getElementById('chat-header-time-text');
+            if (timeEl) {
+                timeEl.innerText = jobTimeStr || 'Nincs megadva';
+            }
+            
+            // Phone (Worker's phone number visible to employer ONLY after acceptance)
+            const phoneRow = document.getElementById('chat-header-row-phone');
+            const phoneEl = document.getElementById('chat-header-phone-text');
+            
+            const isAccepted = chatData.status !== 'pending';
+            const showPhone = (currentRole === 'employer' && isAccepted);
+            
+            if (phoneRow && phoneEl) {
+                if (showPhone) {
+                    const workerPhone = partnerData ? partnerData.phone : null;
+                    if (workerPhone) {
+                        phoneEl.innerText = workerPhone;
+                        phoneRow.style.display = 'flex';
+                        phoneRow.onclick = function() {
+                            window.location.href = `tel:${workerPhone}`;
+                        };
+                    } else {
+                        phoneRow.style.display = 'none';
+                    }
+                } else {
+                    phoneRow.style.display = 'none';
+                }
+            }
+        }
+
+        function renderChatStatusPills(chatData) {
+            const msgContainer = document.getElementById('chat-detail-messages');
+            if (!msgContainer) return;
+            msgContainer.innerHTML = '';
+            
+            const status = chatData.status || 'pending';
+            const rating = chatData.rating;
+            
+            const pills = [];
+            
+            // Pill 1: "A munkás jelentkezett a munkára"
+            pills.push("A munkás jelentkezett a munkára");
+            
+            // Pill 2: "A megbízó elfogadta a munkást"
+            if (['accepted', 'started', 'pending_confirmation', 'completed', 'rated'].includes(status)) {
+                pills.push("A megbízó elfogadta a munkást");
+            }
+            
+            // Pill 3: "A munka elkezdődött"
+            if (['started', 'pending_confirmation', 'completed', 'rated'].includes(status)) {
+                pills.push("A munka elkezdődött");
+            }
+            
+            // Pill 4: "A munka befejeződött"
+            if (['completed', 'rated'].includes(status)) {
+                pills.push("A munka befejeződött");
+            }
+            
+            // Pill 5: "Értékelés leadva ★★★★★"
+            if (status === 'rated') {
+                const starsCount = rating ? parseInt(rating) : 5;
+                const starsStr = "★".repeat(starsCount);
+                pills.push(`Értékelés leadva ${starsStr}`);
+            }
+            
+            pills.forEach(text => {
+                const pill = document.createElement('div');
+                pill.style.cssText = 'background:#f3f4f6;color:#6b7280;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:400;text-align:center;margin:8px auto;max-width:80%;display:block;border: 1px solid var(--color-border);';
+                pill.innerText = text;
+                msgContainer.appendChild(pill);
+            });
+            
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+        }
+
         window.closeChatRoom = function() {
             document.getElementById('chat-detail-overlay').classList.remove('open');
             document.getElementById('chat-detail-overlay').style.transform = 'translateX(100%)';
@@ -10404,6 +10823,8 @@ let settingsConfirmedAddress = null;
                             imgHtml = `<div style="width:36px; height:36px; border-radius:50%; background:${getAvatarColor(workerDisplayName)}; color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight: 500; border:1.5px solid #fff; ">${photoURL}</div>`;
                         }
                     }
+const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.workerId === acceptedApp.workerUid || c.workerEmail === acceptedApp.workerEmail));
+                    const chatIdArg = matchedChat ? `'${matchedChat.id}'` : 'null';
                     appContainer.innerHTML = `
                         <div style="display: flex; align-items: center; justify-content: space-between; background: #F0FDF4; padding: 12px; border-radius: 16px; border: 1px solid #DCFCE7;">
                             <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openWorkerProfile('${workerDisplayName}')">
@@ -10419,7 +10840,7 @@ let settingsConfirmedAddress = null;
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="openEmployerChatRoomFromAd(null)" style="background: var(--color-text); color: #fff; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 400; cursor: pointer;">Csevegés</button>
+                            <button onclick="openEmployerChatRoomFromAd(${chatIdArg})" style="background: var(--color-text); color: #fff; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 400; cursor: pointer;">Csevegés</button>
                         </div>
                     `;
                 } else if (pendingApps.length > 0) {
@@ -10865,6 +11286,10 @@ let settingsConfirmedAddress = null;
                         window._chatMsgsUnsubscribe();
                         window._chatMsgsUnsubscribe = null;
                     }
+                    if (window._chatUnsubscribe) {
+                        window._chatUnsubscribe();
+                        window._chatUnsubscribe = null;
+                    }
                     openEmployerChatRoom();
                 }
                 navigateApp(2); // navigate to messages tab
@@ -10880,12 +11305,470 @@ let settingsConfirmedAddress = null;
             if (chat) {
                 selectedChatId = chat.id;
                 window.selectedChatId = chat.id;
+                await executeEmployerAccept(chat.id);
+            } else {
+                console.error("Chat not found for application:", appId);
+                alert("Hiba: nem található chat ehhez a jelentkezéshez.");
             }
-            
-            await employerAcceptWorker(app.title);
             closeEmployerAdDetailNew();
             renderEmployerHome();
         }
+
+        window.executeEmployerAccept = async function(chatId) {
+            if (!window.firebaseAPI || !window.firebaseDb) return;
+            try {
+                const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
+                const chatSnap = await window.firebaseAPI.getDoc(chatRef);
+                if (!chatSnap.exists()) return;
+                const chatData = chatSnap.data();
+                
+                // 1. Update chat status
+                await window.firebaseAPI.updateDoc(chatRef, {
+                    status: 'accepted',
+                    lastMsg: 'A megbízó elfogadta a munkást',
+                    updatedAt: window.firebaseAPI.serverTimestamp()
+                });
+                
+                // 2. Update job status (if jobId exists)
+                if (chatData.jobId) {
+                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", chatData.jobId);
+                    await window.firebaseAPI.updateDoc(jobRef, {
+                        status: 'accepted'
+                    }).catch(e => console.warn("Job status update failed:", e));
+                }
+                
+                // 3. Write system message to messages subcollection for history
+                await window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
+                    {
+                        senderId: 'system',
+                        text: 'A megbízó elfogadta a munkást',
+                        timestamp: window.firebaseAPI.serverTimestamp(),
+                        type: 'system'
+                    }
+                ).catch(e => console.warn("Msg subcollection write failed:", e));
+                
+                // 4. Update local applications state
+                const appIndex = localWorkerApplications.findIndex(a => 
+                    a.jobId === chatData.jobId && 
+                    (a.workerUid === chatData.workerId || a.workerEmail === chatData.workerEmail)
+                );
+                if (appIndex !== -1) {
+                    localWorkerApplications[appIndex].status = 'Aktív';
+                    saveWorkerApplications();
+                    
+                    // Also update application document in Firestore
+                    const appDocId = localWorkerApplications[appIndex].id;
+                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
+                    await window.firebaseAPI.updateDoc(appRef, { status: 'Aktív' })
+                        .catch(e => console.warn("Firestore application update failed:", e));
+                }
+                
+                gameState.applied = true;
+                gameState.status = 'Fizetve';
+                
+                showGreenBanner('Jelentkezés elfogadva!');
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
+                if (typeof renderEmployerHome === 'function') renderEmployerHome();
+            } catch (e) {
+                console.error("executeEmployerAccept error:", e);
+                alert("Hiba történt az elfogadás során.");
+            }
+        };
+
+        window.executeEmployerStart = async function(chatId) {
+            if (!window.firebaseAPI || !window.firebaseDb) return;
+            try {
+                const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
+                const chatSnap = await window.firebaseAPI.getDoc(chatRef);
+                if (!chatSnap.exists()) return;
+                const chatData = chatSnap.data();
+                
+                // 1. Update chat status
+                await window.firebaseAPI.updateDoc(chatRef, {
+                    status: 'started',
+                    lastMsg: 'A munka elkezdődött',
+                    updatedAt: window.firebaseAPI.serverTimestamp()
+                });
+                
+                // 2. Update job status (if jobId exists)
+                if (chatData.jobId) {
+                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", chatData.jobId);
+                    await window.firebaseAPI.updateDoc(jobRef, {
+                        status: 'started'
+                    }).catch(e => console.warn("Job status update failed:", e));
+                }
+                
+                // 3. Write system message to messages subcollection
+                await window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
+                    {
+                        senderId: 'system',
+                        text: 'A munka elkezdődött',
+                        timestamp: window.firebaseAPI.serverTimestamp(),
+                        type: 'system'
+                    }
+                ).catch(e => console.warn("Msg subcollection write failed:", e));
+                
+                showGreenBanner('A munka elkezdődött!');
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
+                if (typeof renderEmployerHome === 'function') renderEmployerHome();
+            } catch (e) {
+                console.error("executeEmployerStart error:", e);
+                alert("Hiba történt a munka elindítása során.");
+            }
+        };
+
+        window.executeWorkerFinish = async function(chatId) {
+            if (!window.firebaseAPI || !window.firebaseDb) return;
+            try {
+                const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
+                const chatSnap = await window.firebaseAPI.getDoc(chatRef);
+                if (!chatSnap.exists()) return;
+                const chatData = chatSnap.data();
+                
+                // 1. Update chat status
+                await window.firebaseAPI.updateDoc(chatRef, {
+                    status: 'pending_confirmation',
+                    lastMsg: 'A munkás késznek jelölte a munkát',
+                    updatedAt: window.firebaseAPI.serverTimestamp()
+                });
+                
+                // 2. Update job status
+                if (chatData.jobId) {
+                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", chatData.jobId);
+                    await window.firebaseAPI.updateDoc(jobRef, {
+                        status: 'pending_confirmation'
+                    }).catch(e => console.warn("Job status update failed:", e));
+                }
+                
+                // 3. Update application status
+                const appIndex = localWorkerApplications.findIndex(a => 
+                    a.jobId === chatData.jobId && 
+                    (a.workerUid === chatData.workerId || a.workerEmail === chatData.workerEmail)
+                );
+                if (appIndex !== -1) {
+                    localWorkerApplications[appIndex].status = 'Értékelésre vár';
+                    saveWorkerApplications();
+                    
+                    const appDocId = localWorkerApplications[appIndex].id;
+                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
+                    await window.firebaseAPI.updateDoc(appRef, { status: 'Értékelésre vár' })
+                        .catch(e => console.warn("Firestore application update failed:", e));
+                }
+                
+                gameState.status = 'Befejezve';
+                
+                showGreenBanner('Munkavégzés bejelentve!');
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
+                if (typeof renderEmployerHome === 'function') renderEmployerHome();
+            } catch (e) {
+                console.error("executeWorkerFinish error:", e);
+                alert("Hiba történt a készre jelentés során.");
+            }
+        };
+
+        window.executeEmployerConfirmCompletion = async function(chatId) {
+            if (!window.firebaseAPI || !window.firebaseDb) return;
+            try {
+                const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
+                const chatSnap = await window.firebaseAPI.getDoc(chatRef);
+                if (!chatSnap.exists()) return;
+                const chatData = chatSnap.data();
+                
+                // 1. Update chat status
+                await window.firebaseAPI.updateDoc(chatRef, {
+                    status: 'completed',
+                    lastMsg: 'A munka befejeződött',
+                    updatedAt: window.firebaseAPI.serverTimestamp()
+                });
+                
+                // 2. Update job status
+                if (chatData.jobId) {
+                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", chatData.jobId);
+                    await window.firebaseAPI.updateDoc(jobRef, {
+                        status: 'completed'
+                    }).catch(e => console.warn("Job status update failed:", e));
+                }
+                
+                // 3. Write system message to messages subcollection
+                await window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
+                    {
+                        senderId: 'system',
+                        text: 'A munka befejeződött',
+                        timestamp: window.firebaseAPI.serverTimestamp(),
+                        type: 'system'
+                    }
+                ).catch(e => console.warn("Msg subcollection write failed:", e));
+                
+                // 4. Update application status
+                const appIndex = localWorkerApplications.findIndex(a => 
+                    a.jobId === chatData.jobId && 
+                    (a.workerUid === chatData.workerId || a.workerEmail === chatData.workerEmail)
+                );
+                if (appIndex !== -1) {
+                    localWorkerApplications[appIndex].status = 'Befejezett';
+                    saveWorkerApplications();
+                    
+                    const appDocId = localWorkerApplications[appIndex].id;
+                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
+                    await window.firebaseAPI.updateDoc(appRef, { status: 'Befejezett' })
+                        .catch(e => console.warn("Firestore application update failed:", e));
+                }
+                
+                gameState.status = 'Kifizetve';
+                
+                showGreenBanner('Befejezés megerősítve!');
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
+                if (typeof renderEmployerHome === 'function') renderEmployerHome();
+            } catch (e) {
+                console.error("executeEmployerConfirmCompletion error:", e);
+                alert("Hiba történt a jóváhagyás során.");
+            }
+        };
+
+        window.executeEmployerRate = async function(chatId, stars) {
+            if (!window.firebaseAPI || !window.firebaseDb) return;
+            try {
+                const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
+                const chatSnap = await window.firebaseAPI.getDoc(chatRef);
+                if (!chatSnap.exists()) return;
+                const chatData = chatSnap.data();
+                
+                // 1. Update chat status & rating
+                await window.firebaseAPI.updateDoc(chatRef, {
+                    status: 'rated',
+                    rating: stars,
+                    lastMsg: `Értékelés leadva ${"★".repeat(stars)}`,
+                    updatedAt: window.firebaseAPI.serverTimestamp()
+                });
+                
+                // 2. Update job status
+                if (chatData.jobId) {
+                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", chatData.jobId);
+                    await window.firebaseAPI.updateDoc(jobRef, {
+                        status: 'rated',
+                        rating: stars
+                    }).catch(e => console.warn("Job status update failed:", e));
+                }
+                
+                // 3. Write system message to messages subcollection
+                await window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
+                    {
+                        senderId: 'system',
+                        text: `Értékelés leadva ${"★".repeat(stars)}`,
+                        timestamp: window.firebaseAPI.serverTimestamp(),
+                        type: 'system'
+                    }
+                ).catch(e => console.warn("Msg subcollection write failed:", e));
+                
+                // 4. Update worker profile rating average
+                if (chatData.workerId) {
+                    const workerRef = window.firebaseAPI.doc(window.firebaseDb, "users", chatData.workerId);
+                    const workerSnap = await window.firebaseAPI.getDoc(workerRef);
+                    if (workerSnap.exists()) {
+                        const workerData = workerSnap.data();
+                        const currentRatings = workerData.ratings || [];
+                        currentRatings.push(stars);
+                        const ratingSum = currentRatings.reduce((a, b) => a + b, 0);
+                        const avgRating = parseFloat((ratingSum / currentRatings.length).toFixed(1));
+                        
+                        await window.firebaseAPI.updateDoc(workerRef, {
+                            ratings: currentRatings,
+                            rating: avgRating
+                        }).catch(e => console.warn("Worker profile rating update failed:", e));
+                    }
+                }
+                
+                // 5. Update application status & rating
+                const appIndex = localWorkerApplications.findIndex(a => 
+                    a.jobId === chatData.jobId && 
+                    (a.workerUid === chatData.workerId || a.workerEmail === chatData.workerEmail)
+                );
+                if (appIndex !== -1) {
+                    localWorkerApplications[appIndex].status = 'Befejezett';
+                    localWorkerApplications[appIndex].rating = stars;
+                    saveWorkerApplications();
+                    
+                    const appDocId = localWorkerApplications[appIndex].id;
+                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
+                    await window.firebaseAPI.updateDoc(appRef, { status: 'Befejezett', rating: stars })
+                        .catch(e => console.warn("Firestore application update failed:", e));
+                }
+                
+                gameState.status = 'Értékelve';
+                
+                showGreenBanner(`Értékelés leadva: ${stars} csillag!`);
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
+                if (typeof renderEmployerHome === 'function') renderEmployerHome();
+            } catch (e) {
+                console.error("executeEmployerRate error:", e);
+                alert("Hiba történt az értékelés során.");
+            }
+        };
+
+        function updateChatActionBar(jobTitle) {
+            const chat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
+            if (chat && chat.isFirestore) {
+                updateChatActionBarNew(chat);
+                return;
+            }
+            
+            const bar = document.getElementById('chat-action-bar');
+            if (!bar) return;
+            bar.style.display = 'none';
+        }
+
+        window.updateChatActionBarNew = function(chatData) {
+            const bar = document.getElementById('chat-action-bar');
+            if (!bar) return;
+            
+            const isEmployer = (currentRole === 'employer');
+            const status = chatData.status || 'pending';
+            
+            bar.style.display = 'flex';
+            bar.style.flexDirection = 'row';
+            bar.style.alignItems = 'center';
+            bar.style.justifyContent = 'space-between';
+            bar.style.width = '100%';
+            bar.style.gap = '12px';
+            bar.style.boxSizing = 'border-box';
+            
+            if (status === 'pending') {
+                if (isEmployer) {
+                    bar.style.backgroundColor = '#EFF6FF';
+                    bar.style.borderTop = '1px solid #DBEAFE';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #1E40AF; flex: 1;">
+                            <span style="font-size: 16px;">📩</span>
+                            <div style="font-size: 12px; font-weight: 400; line-height: 1.3;">
+                                ${chatData.workerName || "Diák"} jelentkezett a munkára.
+                            </div>
+                        </div>
+                        <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 500; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; " onclick="executeEmployerAccept('${chatData.id}')">
+                            Elfogadás
+                        </button>
+                    `;
+                } else {
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
+                            <span style="font-size: 14px; animation: pulse 1.5s infinite;">⌛ Várakozás a megbízó elfogadására...</span>
+                        </div>
+                    `;
+                }
+            } else if (status === 'accepted') {
+                if (isEmployer) {
+                    bar.style.backgroundColor = '#EFF6FF';
+                    bar.style.borderTop = '1px solid #DBEAFE';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #1E40AF; flex: 1;">
+                            <span style="font-size: 16px;">🔒</span>
+                            <div style="font-size: 12px; font-weight: 400; line-height: 1.3;">
+                                Elfogadtad a jelentkezést. Indítsd el a munkát!
+                            </div>
+                        </div>
+                        <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 500; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; " onclick="executeEmployerStart('${chatData.id}')">
+                            Munka indítása
+                        </button>
+                    `;
+                } else {
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
+                            <span style="font-size: 14px;">⌛ Várakozás a munka indítására...</span>
+                        </div>
+                    `;
+                }
+            } else if (status === 'started') {
+                if (!isEmployer) {
+                    bar.style.backgroundColor = '#F0FDF4';
+                    bar.style.borderTop = '1px solid #DCFCE7';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #15803D; flex: 1;">
+                            <span style="font-size: 16px; animation: pulse 1.5s infinite;">⚡</span>
+                            <div style="font-size: 12px; font-weight: 400; line-height: 1.3;">
+                                A munka aktív! Végeztél a feladattal?
+                            </div>
+                        </div>
+                        <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #16A34A; color: #fff; font-weight: 500; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; " onclick="executeWorkerFinish('${chatData.id}')">
+                            Végeztem a munkával
+                        </button>
+                    `;
+                } else {
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
+                            <span style="font-size: 14px;">⚡ A munka folyamatban van...</span>
+                        </div>
+                    `;
+                }
+            } else if (status === 'pending_confirmation') {
+                if (isEmployer) {
+                    bar.style.backgroundColor = '#EFF6FF';
+                    bar.style.borderTop = '1px solid #DBEAFE';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #1E40AF; flex: 1;">
+                            <span style="font-size: 16px;">📸</span>
+                            <div style="font-size: 12px; font-weight: 400; line-height: 1.3;">
+                                A diák befejezte a munkát. Igazold vissza!
+                            </div>
+                        </div>
+                        <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 500; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; " onclick="executeEmployerConfirmCompletion('${chatData.id}')">
+                            Befejezés megerősítése
+                        </button>
+                    `;
+                } else {
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
+                            <span style="font-size: 14px; animation: pulse 1.5s infinite;">⌛ Várakozás a megbízó jóváhagyására...</span>
+                        </div>
+                    `;
+                }
+            } else if (status === 'completed') {
+                if (isEmployer) {
+                    bar.style.backgroundColor = '#FFFBEB';
+                    bar.style.borderTop = '1px solid #FEF3C7';
+                    bar.style.flexDirection = 'column';
+                    bar.style.alignItems = 'center';
+                    bar.style.gap = '8px';
+                    bar.innerHTML = `
+                        <div style="font-size: 12px; font-weight: 500; color: #92400E; text-align: center;">
+                            A munka befejeződött! Értékeld a diákot:
+                        </div>
+                        <div style="display: flex; gap: 14px; font-size: 28px; justify-content: center;" id="chat-stars-container">
+                            <span style="cursor: pointer; transition: transform 0.1s;" onclick="executeEmployerRate('${chatData.id}', 1)" onmouseover="highlightChatStars(1)" onmouseout="resetChatStars()">⭐</span>
+                            <span style="cursor: pointer; transition: transform 0.1s;" onclick="executeEmployerRate('${chatData.id}', 2)" onmouseover="highlightChatStars(2)" onmouseout="resetChatStars()">⭐</span>
+                            <span style="cursor: pointer; transition: transform 0.1s;" onclick="executeEmployerRate('${chatData.id}', 3)" onmouseover="highlightChatStars(3)" onmouseout="resetChatStars()">⭐</span>
+                            <span style="cursor: pointer; transition: transform 0.1s;" onclick="executeEmployerRate('${chatData.id}', 4)" onmouseover="highlightChatStars(4)" onmouseout="resetChatStars()">⭐</span>
+                            <span style="cursor: pointer; transition: transform 0.1s;" onclick="executeEmployerRate('${chatData.id}', 5)" onmouseover="highlightChatStars(5)" onmouseout="resetChatStars()">⭐</span>
+                        </div>
+                    `;
+                } else {
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
+                    bar.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
+                            <span style="font-size: 14px; animation: pulse 1.5s infinite;">⌛ Várakozás az értékelésre...</span>
+                        </div>
+                    `;
+                }
+            } else {
+                bar.style.display = 'none';
+            }
+        };
 
         // Overwrite clickEmployerAdCard to open our redesigned details overlay
         function clickEmployerAdCard(jobId) {
@@ -11582,13 +12465,13 @@ let settingsConfirmedAddress = null;
             let countCompleted = 0;
 
             myJobs.forEach(job => {
-                if (job.status === 'Befejezett') {
+                if (['completed', 'rated', 'Befejezett'].includes(job.status)) {
                     countCompleted++;
-                } else if (job.status === 'Aktív' || job.status === 'accepted') {
+                } else if (['accepted', 'started', 'pending_confirmation', 'Aktív'].includes(job.status)) {
                     countActive++;
-                } else if (job.status === 'Keresés') {
+                } else if (job.status === 'Keresés' || job.status === 'pending') {
                     const hasPendingApps = localWorkerApplications.some(a => a.jobId === job.id && a.status === 'Függőben');
-                    if (hasPendingApps) {
+                    if (hasPendingApps || job.status === 'pending') {
                         countApplicants++;
                     } else {
                         countSeeking++;
@@ -11607,8 +12490,8 @@ let settingsConfirmedAddress = null;
             if (activeEl) activeEl.innerText = countActive;
             if (completedEl) completedEl.innerText = countCompleted;
 
-            // Count total active ads
-            const activeCount = myJobs.filter(j => j.status !== 'Befejezett').length;
+            // Count total active ads (exclude completed/rated/Befejezett)
+            const activeCount = myJobs.filter(j => !['completed', 'rated', 'Befejezett'].includes(j.status)).length;
             if (countLabel) {
                 countLabel.innerText = `${activeCount} aktív`;
             }
@@ -11632,19 +12515,19 @@ let settingsConfirmedAddress = null;
                 let statusText = 'Keresés';
                 let cardClass = 'status-seeking';
 
-                if (job.status === 'Befejezett') {
+                if (['completed', 'rated', 'Befejezett'].includes(job.status)) {
                     statusClass = 'completed';
                     statusText = 'Befejezve';
                     cardClass = 'status-completed';
-                } else if (job.status === 'Aktív' || job.status === 'accepted') {
+                } else if (['accepted', 'started', 'pending_confirmation', 'Aktív'].includes(job.status)) {
                     statusClass = 'active';
                     statusText = 'Folyamatban';
                     cardClass = 'status-active';
-                } else if (job.status === 'Keresés') {
+                } else if (job.status === 'Keresés' || job.status === 'pending') {
                     const jobApps = localWorkerApplications.filter(a => a.jobId === job.id && a.status === 'Függőben');
-                    if (jobApps.length > 0) {
+                    if (jobApps.length > 0 || job.status === 'pending') {
                         statusClass = 'applicants';
-                        statusText = `${jobApps.length} jelentkező`;
+                        statusText = job.status === 'pending' ? '1 jelentkező' : `${jobApps.length} jelentkező`;
                         cardClass = 'status-applicants';
                     } else {
                         statusClass = 'seeking';
@@ -11685,7 +12568,6 @@ let settingsConfirmedAddress = null;
             list.innerHTML = html;
         }
 
-        // openEditEmployerJob implementation to prefill post form for editing
         function openEditEmployerJob(jobId) {
             currentEditJobId = jobId;
             let job = localEmployerJobs.find(j => j.id === jobId);

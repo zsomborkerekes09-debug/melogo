@@ -3074,14 +3074,52 @@ flex-direction: column !important;
         </div>
 
         <!-- STEP 2: Address fields -->
-        <div id="auth-step-2" style="display:none; flex-direction:column; gap:16px; margin-top:24px;">
+        <div id="auth-step-2" style="display:none; flex-direction:column; gap:12px; margin-top:24px;">
             <div style="font-size:18px; font-weight: 500; color:var(--color-text); text-align:center; margin-bottom:4px;">Hol laksz?</div>
-            <div style="font-size:13px; color:var(--color-text-muted); text-align:center; margin-top:-10px; margin-bottom:12px;">Add meg a lakcímedet a folytatáshoz (csak Magyarország).</div>
+            <div style="font-size:13px; color:var(--color-text-muted); text-align:center; margin-top:-10px; margin-bottom:12px;">Kezdd el gépelni a címed, és a rendszer kitölti a mezőket!</div>
+            
+            <!-- Autocomplete search field -->
             <div class="floating-group" style="margin:0;">
                 <div class="auth-input-container">
-                    <input type="text" id="reg-address-autocomplete" class="auth-input-field login-input" placeholder="Kezdd el gépelni a címedet..." style="padding-left:16px;">
+                    <input type="text" id="reg-address-autocomplete" class="auth-input-field login-input" placeholder="Cím keresése (pl. Kaposvár Fő utca)..." style="padding-left:16px;">
                 </div>
             </div>
+            
+            <!-- Zip & City -->
+            <div style="display:flex; gap:10px;">
+                <div class="floating-group" style="margin:0; flex:1;">
+                    <div class="auth-input-container">
+                        <input type="text" id="reg-address-zip" class="auth-input-field login-input" placeholder="Irányítószám" style="padding-left:16px;">
+                    </div>
+                </div>
+                <div class="floating-group" style="margin:0; flex:2;">
+                    <div class="auth-input-container">
+                        <input type="text" id="reg-address-city" class="auth-input-field login-input" placeholder="Város" style="padding-left:16px;">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Street -->
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="text" id="reg-address-street" class="auth-input-field login-input" placeholder="Utca" style="padding-left:16px;">
+                </div>
+            </div>
+            
+            <!-- House number & County -->
+            <div style="display:flex; gap:10px;">
+                <div class="floating-group" style="margin:0; flex:1;">
+                    <div class="auth-input-container">
+                        <input type="text" id="reg-address-house" class="auth-input-field login-input" placeholder="Házszám / ajtó" style="padding-left:16px;">
+                    </div>
+                </div>
+                <div class="floating-group" style="margin:0; flex:1;">
+                    <div class="auth-input-container">
+                        <input type="text" id="reg-address-county" class="auth-input-field login-input" placeholder="Megye" style="padding-left:16px;">
+                    </div>
+                </div>
+            </div>
+            
             <button class="login-btn" id="btn-step-2-next" onclick="submitStep2Address()" style="margin-top:16px; width:100%; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius:14px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
         </div>
 
@@ -4926,23 +4964,68 @@ flex-direction: column !important;
             
             googleAutocomplete.addListener('place_changed', () => {
                 const place = googleAutocomplete.getPlace();
-                if (place && place.formatted_address) {
+                if (place && place.address_components) {
+                    let zip = '';
+                    let city = '';
+                    let street = '';
+                    let house = '';
+                    let county = '';
+                    
+                    place.address_components.forEach(comp => {
+                        const types = comp.types || [];
+                        if (types.includes('postal_code')) {
+                            zip = comp.long_name;
+                        } else if (types.includes('locality')) {
+                            city = comp.long_name;
+                        } else if (types.includes('route')) {
+                            street = comp.long_name;
+                        } else if (types.includes('street_number')) {
+                            house = comp.long_name;
+                        } else if (types.includes('administrative_area_level_1')) {
+                            county = comp.long_name;
+                        }
+                    });
+                    
+                    // Populate fields
+                    const zipEl = document.getElementById('reg-address-zip');
+                    const cityEl = document.getElementById('reg-address-city');
+                    const streetEl = document.getElementById('reg-address-street');
+                    const houseEl = document.getElementById('reg-address-house');
+                    const countyEl = document.getElementById('reg-address-county');
+                    
+                    if (zipEl && zip) zipEl.value = zip;
+                    if (cityEl && city) cityEl.value = city;
+                    if (streetEl && street) streetEl.value = street;
+                    if (houseEl && house) houseEl.value = house;
+                    if (countyEl && county) countyEl.value = county;
+                    
                     selectedAddress = place.formatted_address;
                     console.log("Selected address from autocomplete:", selectedAddress);
                 } else {
                     selectedAddress = null;
                 }
             });
-            
-            input.addEventListener('input', () => {
-                selectedAddress = null;
-            });
         };
 
         window.submitStep2Address = async function() {
-            if (!selectedAddress) {
-                alert("Kérlek, válassz egy valós lakcímet a listából!");
+            const zip = document.getElementById('reg-address-zip').value.trim();
+            const city = document.getElementById('reg-address-city').value.trim();
+            const street = document.getElementById('reg-address-street').value.trim();
+            const house = document.getElementById('reg-address-house').value.trim();
+            const county = document.getElementById('reg-address-county').value.trim();
+            
+            if (!zip || !city || !street) {
+                alert("Kérlek, töltsd ki legalább az irányítószámot, várost és az utcát!");
                 return;
+            }
+            
+            // Build full address string
+            let fullAddress = `${zip} ${city}, ${street}`;
+            if (house) {
+                fullAddress += ` ${house}`;
+            }
+            if (county) {
+                fullAddress += `, ${county}`;
             }
             
             const user = auth.currentUser;
@@ -4960,11 +5043,11 @@ flex-direction: column !important;
             try {
                 const userRef = doc(db, "users", user.uid);
                 await updateDoc(userRef, {
-                    address: selectedAddress
+                    address: fullAddress
                 });
                 
                 const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
-                userData.address = selectedAddress;
+                userData.address = fullAddress;
                 localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                 
                 const userDoc = await getDoc(userRef);

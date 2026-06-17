@@ -1,4 +1,4 @@
-﻿�
+�
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -4467,6 +4467,8 @@ flex-direction: column !important;
                             <span style="font-size: 11px; color: var(--color-text); font-weight: 300; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="chat-pinned-job">Munka...</span>
                         </div>
                     </div>
+                    <!-- DYNAMIC CHAT ACTION BAR MOVED HIGHER -->
+                    <div id="chat-action-bar" style="display: none; padding: 12px 16px; background-color: var(--color-bg); border-bottom: 1px solid var(--color-text); flex-shrink: 0; align-items: center; justify-content: space-between; gap: 12px; box-sizing: border-box;"></div>
                     <div id="chat-detail-messages" style="flex:1; background: var(--color-chat-bg, #F3F4F6); padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
                         <!-- Populated dynamically -->
                         <div id="chat-typing-indicator" style="display:none; max-width:80%; padding:10px 14px; border-radius:18px 18px 18px 4px; background: var(--color-surface); color: var(--color-text); font-size:14px; align-self:flex-start;  align-items:center; gap:6px;">
@@ -4488,8 +4490,6 @@ flex-direction: column !important;
                             Munka lezárása
                         </button>
                     </div>
-                    <!-- DYNAMIC CHAT ACTION BAR -->
-                    <div id="chat-action-bar" style="display: none; padding: 12px 16px; background-color: var(--color-bg); border-top: 1px solid var(--color-text); flex-shrink: 0; align-items: center; justify-content: space-between; gap: 12px; box-sizing: border-box;"></div>
                     
                 </div>
 
@@ -4793,6 +4793,22 @@ flex-direction: column !important;
         window._fsOrderBy = orderBy;
         window._fsOnSnapshot = onSnapshot;
         
+        // System-wide Firestore error wrapper added by Full System Sweep
+        const wrapFb = (fn, name) => async (...args) => {
+            try { return await fn(...args); } 
+            catch (e) {
+                console.error('[Firestore] ' + name + ' hiba:', e);
+                if (typeof showRedBanner === 'function') showRedBanner('Hálózati hiba: ' + name + ' sikertelen.');
+                throw e;
+            }
+        };
+        window.firebaseAPI.addDoc = wrapFb(addDoc, 'addDoc');
+        window.firebaseAPI.setDoc = wrapFb(setDoc, 'setDoc');
+        window.firebaseAPI.updateDoc = wrapFb(updateDoc, 'updateDoc');
+        window.firebaseAPI.deleteDoc = wrapFb(deleteDoc, 'deleteDoc');
+        window.firebaseAPI.getDocs = wrapFb(getDocs, 'getDocs');
+        window.firebaseAPI.getDoc = wrapFb(getDoc, 'getDoc');
+        
         console.log("Firebase initialized successfully");
         
         // Handle redirect login
@@ -5068,9 +5084,9 @@ flex-direction: column !important;
             
             try {
                 const userRef = doc(db, "users", user.uid);
-                await updateDoc(userRef, {
+                await setDoc(userRef, {
                     address: fullAddress
-                });
+                }, { merge: true });
                 
                 const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
                 userData.address = fullAddress;
@@ -5124,9 +5140,9 @@ flex-direction: column !important;
             
             try {
                 const userRef = doc(db, "users", user.uid);
-                await updateDoc(userRef, {
+                await setDoc(userRef, {
                     phone: cleanedPhone
-                });
+                }, { merge: true });
                 
                 const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
                 userData.phone = cleanedPhone;
@@ -5183,6 +5199,10 @@ flex-direction: column !important;
             if (typeof window.updateMockJobsReference === 'function') {
                 window.updateMockJobsReference(window.mockJobs);
             }
+            if (typeof localWorkerApplications !== 'undefined') localWorkerApplications = [];
+            if (typeof localEmployerJobs !== 'undefined') localEmployerJobs = [];
+            if (typeof localChats !== 'undefined') localChats = [];
+            if (typeof updateAllUserUI === 'function') updateAllUserUI();
 
             // 1. Jobs listener – uses docChanges() for correct delete handling
             let jobsQuery;
@@ -10048,6 +10068,33 @@ let settingsConfirmedAddress = null;
             document.getElementById('chat-detail-name').innerText = name || 'Ismeretlen';
             document.getElementById('chat-detail-job').innerText = jobTitle || '';
             
+            // Dynamically fetch other user's phone number
+            const phoneEl = document.getElementById('chat-detail-phone');
+            if (phoneEl) {
+                phoneEl.innerText = '';
+                if (chatId && window.firebaseAPI && window.firebaseDb && window.firebaseAPI.auth && window.firebaseAPI.auth.currentUser) {
+                    const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
+                    window.firebaseAPI.getDoc(chatRef).then(snap => {
+                        if (snap.exists()) {
+                            const data = snap.data();
+                            const myUid = window.firebaseAPI.auth.currentUser.uid;
+                            const otherUid = (data.employerId === myUid) ? data.workerId : data.employerId;
+                            if (otherUid) {
+                                const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", otherUid);
+                                window.firebaseAPI.getDoc(userRef).then(uSnap => {
+                                    if (uSnap.exists() && uSnap.data().phone) {
+                                        phoneEl.innerText = '📞 ' + uSnap.data().phone;
+                                        phoneEl.style.display = 'block';
+                                    } else {
+                                        phoneEl.style.display = 'none';
+                                    }
+                                });
+                            }
+                        }
+                    }).catch(e => console.warn('Hiba a telefon lekérésénél', e));
+                }
+            }
+            
             const avatarImg = document.getElementById('chat-detail-avatar');
             const avatarFallback = document.getElementById('chat-detail-avatar-fallback');
             if (avatarImg && avatarFallback && window.avatarCache && window.avatarCache[name]) {
@@ -11432,6 +11479,25 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             renderEmployerHome();
         }
 
+        async function updateApplicationStatusInFirestore(chatData, newStatus, extraFields = {}) {
+            if (!chatData || !chatData.jobId || !chatData.workerId) return;
+            try {
+                const appsQuery = window.firebaseAPI.query(
+                    window.firebaseAPI.collection(window.firebaseDb, "applications"),
+                    window.firebaseAPI.where("jobId", "==", chatData.jobId),
+                    window.firebaseAPI.where("workerUid", "==", chatData.workerId)
+                );
+                const snap = await window.firebaseAPI.getDocs(appsQuery);
+                if (!snap.empty) {
+                    snap.forEach(async (docSnap) => {
+                        await window.firebaseAPI.updateDoc(docSnap.ref, { status: newStatus, ...extraFields });
+                    });
+                }
+            } catch (e) {
+                console.error("Failed to update application status via query:", e);
+            }
+        }
+
         window.executeEmployerAccept = async function(chatId) {
             if (!window.firebaseAPI || !window.firebaseDb) return;
             try {
@@ -11466,21 +11532,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     }
                 ).catch(e => console.warn("Msg subcollection write failed:", e));
                 
-                // 4. Update local applications state
-                const appIndex = localWorkerApplications.findIndex(a => 
-                    a.jobId === chatData.jobId && 
-                    (a.workerUid === chatData.workerId || a.workerEmail === chatData.workerEmail)
-                );
-                if (appIndex !== -1) {
-                    localWorkerApplications[appIndex].status = 'Aktív';
-                    saveWorkerApplications();
-                    
-                    // Also update application document in Firestore
-                    const appDocId = localWorkerApplications[appIndex].id;
-                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
-                    await window.firebaseAPI.updateDoc(appRef, { status: 'Aktív' })
-                        .catch(e => console.warn("Firestore application update failed:", e));
-                }
+                await updateApplicationStatusInFirestore(chatData, 'Aktív');
                 
                 gameState.applied = true;
                 gameState.status = 'Fizetve';
@@ -11562,20 +11614,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     }).catch(e => console.warn("Job status update failed:", e));
                 }
                 
-                // 3. Update application status
-                const appIndex = localWorkerApplications.findIndex(a => 
-                    a.jobId === chatData.jobId && 
-                    (a.workerUid === chatData.workerId || a.workerEmail === chatData.workerEmail)
-                );
-                if (appIndex !== -1) {
-                    localWorkerApplications[appIndex].status = 'Értékelésre vár';
-                    saveWorkerApplications();
-                    
-                    const appDocId = localWorkerApplications[appIndex].id;
-                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
-                    await window.firebaseAPI.updateDoc(appRef, { status: 'Értékelésre vár' })
-                        .catch(e => console.warn("Firestore application update failed:", e));
-                }
+                await updateApplicationStatusInFirestore(chatData, 'Értékelésre vár');
                 
                 gameState.status = 'Befejezve';
                 
@@ -11624,19 +11663,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 ).catch(e => console.warn("Msg subcollection write failed:", e));
                 
                 // 4. Update application status
-                const appIndex = localWorkerApplications.findIndex(a => 
-                    a.jobId === chatData.jobId && 
-                    (a.workerUid === chatData.workerId || a.workerEmail === chatData.workerEmail)
-                );
-                if (appIndex !== -1) {
-                    localWorkerApplications[appIndex].status = 'Befejezett';
-                    saveWorkerApplications();
-                    
-                    const appDocId = localWorkerApplications[appIndex].id;
-                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
-                    await window.firebaseAPI.updateDoc(appRef, { status: 'Befejezett' })
-                        .catch(e => console.warn("Firestore application update failed:", e));
-                }
+                await updateApplicationStatusInFirestore(chatData, 'Befejezett');
                 
                 gameState.status = 'Kifizetve';
                 
@@ -11705,20 +11732,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 }
                 
                 // 5. Update application status & rating
-                const appIndex = localWorkerApplications.findIndex(a => 
-                    a.jobId === chatData.jobId && 
-                    (a.workerUid === chatData.workerId || a.workerEmail === chatData.workerEmail)
-                );
-                if (appIndex !== -1) {
-                    localWorkerApplications[appIndex].status = 'Befejezett';
-                    localWorkerApplications[appIndex].rating = stars;
-                    saveWorkerApplications();
-                    
-                    const appDocId = localWorkerApplications[appIndex].id;
-                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
-                    await window.firebaseAPI.updateDoc(appRef, { status: 'Befejezett', rating: stars })
-                        .catch(e => console.warn("Firestore application update failed:", e));
-                }
+                await updateApplicationStatusInFirestore(chatData, 'Értékelve', { rating: stars });
                 
                 gameState.status = 'Értékelve';
                 

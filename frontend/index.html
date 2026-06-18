@@ -11593,7 +11593,13 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             if (!window.firebaseAPI || !window.firebaseDb) return;
             try {
                 const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
-                const chatSnap = await window.firebaseAPI.getDoc(chatRef);
+                let chatSnap;
+                try {
+                    chatSnap = await window.firebaseAPI.getDoc(chatRef);
+                } catch(e) {
+                    alert("Hiba: getDoc(chat) sikertelen. Kérlek szólj a fejlesztőnek!\n(Oka: " + e.message + ")");
+                    return;
+                }
                 if (!chatSnap.exists()) return;
                 const chatData = chatSnap.data();
                 
@@ -11605,29 +11611,45 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         updatedAt: window.firebaseAPI.serverTimestamp()
                     });
                 } catch (updateErr) {
-                    console.warn("Chat status update warning (permissions):", updateErr);
+                    alert("Hiba: updateDoc(chat) sikertelen.\n(Oka: " + updateErr.message + ")");
+                    return;
                 }
                 
                 // 2. Update job status (if jobId exists)
                 if (chatData.jobId) {
                     const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", chatData.jobId);
-                    await window.firebaseAPI.updateDoc(jobRef, {
-                        status: 'accepted'
-                    }).catch(e => console.warn("Job status update failed:", e));
+                    try {
+                        await window.firebaseAPI.updateDoc(jobRef, {
+                            status: 'accepted'
+                        });
+                    } catch (e) {
+                        alert("Hiba: updateDoc(job) sikertelen.\n(Oka: " + e.message + ")");
+                        return;
+                    }
                 }
                 
                 // 3. Write system message to messages subcollection for history
-                await window.firebaseAPI.addDoc(
-                    window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
-                    {
-                        senderId: 'system',
-                        text: 'A megbízó elfogadta a munkást',
-                        timestamp: window.firebaseAPI.serverTimestamp(),
-                        type: 'system'
-                    }
-                ).catch(e => console.warn("Msg subcollection write failed:", e));
+                try {
+                    await window.firebaseAPI.addDoc(
+                        window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
+                        {
+                            senderId: 'system',
+                            text: 'A megbízó elfogadta a munkást',
+                            timestamp: window.firebaseAPI.serverTimestamp(),
+                            type: 'system'
+                        }
+                    );
+                } catch (e) {
+                    alert("Hiba: addDoc(messages) sikertelen.\n(Oka: " + e.message + ")");
+                    return;
+                }
                 
-                await updateApplicationStatusInFirestore(chatData, 'Aktív');
+                try {
+                    await updateApplicationStatusInFirestore(chatData, 'Aktív');
+                } catch (e) {
+                    alert("Hiba: updateApplicationStatusInFirestore sikertelen.\n(Oka: " + e.message + ")");
+                    return;
+                }
                 
                 gameState.applied = true;
                 gameState.status = 'Fizetve';
@@ -11638,7 +11660,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 if (typeof renderEmployerHome === 'function') renderEmployerHome();
             } catch (e) {
                 console.error("executeEmployerAccept error:", e);
-                alert("Hiba történt az elfogadás során. Kérlek próbáld egy teljesen új munkával!\n(Fejlesztői infó: " + e.message + ")");
+                alert("Ismeretlen hiba történt az elfogadás során. Kérlek próbáld egy teljesen új munkával!\n(Fejlesztői infó: " + e.message + ")");
             }
         };
 

@@ -3665,7 +3665,7 @@ flex-direction: column !important;
                                         <div class="settings-row-icon">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                                         </div>
-                                        <span class="settings-row-label">Cím adatok (Munkáltatóknak)</span>
+                                        <span class="settings-row-label">Lakcím</span>
                                     </div>
                                     <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
                                         <input type="text" id="set-country" placeholder="Ország" value="Magyarország" style="width: 100%; border: 1px solid var(--color-border); background: var(--color-surface); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 300; color: var(--color-text); box-sizing: border-box;">
@@ -6193,38 +6193,21 @@ flex-direction: column !important;
                     btn.innerText = 'Bejelentkezem';
                 }
             } else {
-                // REGISTER flow
-                var nameInput = document.getElementById('app-name');
+                // REGISTER flow — Step 0 only creates the Firebase Auth account.
+                // Name / Phone / Address are collected in subsequent steps (Step 1, 2, 3)
+                // via onAuthStateChanged routing.
                 var emailInput = document.getElementById('app-email');
                 var pwInput = document.getElementById('app-pw');
                 var pw2Input = document.getElementById('app-pw2');
                 
-                var name = ((nameInput || {}).value || '').trim();
                 var email = ((emailInput || {}).value || '').trim();
                 var pw = ((pwInput || {}).value || '');
                 var pw2 = ((pw2Input || {}).value || '');
                 
-                var zip = ((document.getElementById('reg-zip') || {}).value || '').trim();
-                var city = ((document.getElementById('reg-city') || {}).value || '').trim();
-                var street = ((document.getElementById('reg-street') || {}).value || '').trim();
-                var county = ((document.getElementById('reg-county') || {}).value || '').trim();
-                
-                var addressArr = [];
-                if(zip) addressArr.push(zip);
-                if(city) addressArr.push(city);
-                if(street) addressArr.push(street);
-                var address = addressArr.join(' ') || 'Kaposvár';
-                if(county && address !== 'Kaposvár') address += ' (' + county + ')';
-                
                 let hasError = false;
-                if (!name || name.length < 2) {
-                    highlightInputError('app-name', 'Kérlek add meg a teljes neved!');
-                    showLoginError('Kérlek add meg a teljes neved!');
-                    hasError = true;
-                }
                 if (!email || !email.includes('@')) {
                     highlightInputError('app-email', 'Kérlek adj meg érvényes email címet!');
-                    if (!hasError) showLoginError('Kérlek adj meg érvényes email címet!');
+                    showLoginError('Kérlek adj meg érvényes email címet!');
                     hasError = true;
                 }
                 if (!pw || pw.length < 6) {
@@ -6237,21 +6220,10 @@ flex-direction: column !important;
                     if (!hasError) showLoginError('A két jelszó nem egyezik meg!');
                     hasError = true;
                 }
-                if (zip && city && street) {
-                    regConfirmedAddress = address;
-                }
-                if (role === 'employer' && !regConfirmedAddress) {
-                    if (!zip) highlightInputError('reg-zip', 'Kötelező!');
-                    if (!city) highlightInputError('reg-city', 'Kötelező!');
-                    if (!street) highlightInputError('reg-street', 'Kötelező!');
-                    if (!hasError) showLoginError('Megbízóként kötelező megadni a pontos lakcímedet!');
-                    hasError = true;
-                }
                 if (!termsAccepted) {
                     const termsBox = document.getElementById('terms-checkbox');
                     if (termsBox) {
                         termsBox.style.borderColor = '#EF4444';
-                        termsBox.closest('.floating-group').classList.add('has-error');
                     }
                     if (!hasError) showLoginError('Regisztráció előtt el kell fogadnod az ÁSZF-et!');
                     hasError = true;
@@ -6262,43 +6234,11 @@ flex-direction: column !important;
                     btn.disabled = true;
                     btn.innerText = 'Regisztráció...';
                     
-                    const userCredential = await window.firebaseAPI.createUserWithEmailAndPassword(window.firebaseAuth, email, pw);
-                    const user = userCredential.user;
+                    // Only create the Auth account here — onAuthStateChanged will handle
+                    // creating the Firestore user document and routing to Step 1 (name).
+                    await window.firebaseAPI.createUserWithEmailAndPassword(window.firebaseAuth, email, pw);
+                    // onAuthStateChanged fires automatically after this and takes over.
                     
-                    const userDataToSave = {
-                        name: name,
-                        email: email,
-                        defaultRole: role,
-                        createdAt: window.firebaseAPI.serverTimestamp()
-                    };
-                    if (regConfirmedAddress) {
-                        userDataToSave.address = regConfirmedAddress;
-                    } else if (typeof address !== 'undefined' && address) {
-                        userDataToSave.address = address;
-                    }
-                    if (city) userDataToSave.addressCity = city;
-                    if (street) userDataToSave.addressStreet = street;
-                    if (county) userDataToSave.addressCounty = county;
-
-                    // Save initial user profile to Firestore
-                    await window.firebaseAPI.setDoc(window.firebaseAPI.doc(window.firebaseDb, "users", user.uid), userDataToSave);
-                    
-                    // Initialize a brand new, empty local profile to prevent stale local cache inheritance!
-                    const userData = {
-                        bio: '',
-                        skills: [],
-                        photoURL: '',
-                        reviews: [],
-                        address: (regConfirmedAddress) ? regConfirmedAddress : (typeof address !== 'undefined' ? address : ''),
-                        addressCity: city || '',
-                        addressStreet: street || '',
-                        addressCounty: county || ''
-                    };
-                    localStorage.setItem('melogo_user_data', JSON.stringify(userData));
-                    localStorage.setItem('melogo_worker_applications', '[]');
-                    localStorage.setItem('melogo_chats', '[]');
-                    
-                    doEnterApp(name, email, role);
                 } catch (error) {
                     let errMsg = 'Sikertelen regisztráció!';
                     if (error.code === 'auth/email-already-in-use') {
@@ -8024,26 +7964,22 @@ let settingsConfirmedAddress = null;
             }
 
             const addrContainer = document.getElementById('settings-address-container');
-            if (activeRole === 'employer') {
-                if (addrContainer) addrContainer.style.display = 'block';
-                if (userData.address) {
-                    settingsConfirmedAddress = userData.address;
-                    const parts = userData.address.split(',');
-                    if (parts.length >= 2) {
-                        const zipCity = parts[0].trim().split(' ');
-                        if (document.getElementById('set-zip')) document.getElementById('set-zip').value = zipCity[0] || '';
-                        if (document.getElementById('set-city')) document.getElementById('set-city').value = zipCity.slice(1).join(' ') || '';
-                        
-                        const streetHouseApt = parts[1].trim().split(' ');
-                        const houseApt = streetHouseApt.pop();
-                        if (document.getElementById('set-street')) document.getElementById('set-street').value = streetHouseApt.join(' ') || '';
-                        if (document.getElementById('set-house')) document.getElementById('set-house').value = houseApt || '';
-                    } else {
-                        if (document.getElementById('set-city')) document.getElementById('set-city').value = userData.address;
-                    }
+            if (addrContainer) addrContainer.style.display = 'block';
+            if (userData.address) {
+                settingsConfirmedAddress = userData.address;
+                const parts = userData.address.split(',');
+                if (parts.length >= 2) {
+                    const zipCity = parts[0].trim().split(' ');
+                    if (document.getElementById('set-zip')) document.getElementById('set-zip').value = zipCity[0] || '';
+                    if (document.getElementById('set-city')) document.getElementById('set-city').value = zipCity.slice(1).join(' ') || '';
+                    
+                    const streetHouseApt = parts[1].trim().split(' ');
+                    const houseApt = streetHouseApt.pop();
+                    if (document.getElementById('set-street')) document.getElementById('set-street').value = streetHouseApt.join(' ') || '';
+                    if (document.getElementById('set-house')) document.getElementById('set-house').value = houseApt || '';
+                } else {
+                    if (document.getElementById('set-city')) document.getElementById('set-city').value = userData.address;
                 }
-            } else {
-                if (addrContainer) addrContainer.style.display = 'none';
             }
 
             // Sync from Firestore if possible
@@ -8059,10 +7995,23 @@ let settingsConfirmedAddress = null;
                             userData.bio = data.bio;
                             updated = true;
                         }
-                        if (data.address && addrField && activeRole === 'employer') {
-                            addrField.value = data.address;
+                        if (data.address) {
                             settingsConfirmedAddress = data.address;
                             userData.address = data.address;
+                            
+                            const parts = data.address.split(',');
+                            if (parts.length >= 2) {
+                                const zipCity = parts[0].trim().split(' ');
+                                if (document.getElementById('set-zip')) document.getElementById('set-zip').value = zipCity[0] || '';
+                                if (document.getElementById('set-city')) document.getElementById('set-city').value = zipCity.slice(1).join(' ') || '';
+                                
+                                const streetHouseApt = parts[1].trim().split(' ');
+                                const houseApt = streetHouseApt.pop();
+                                if (document.getElementById('set-street')) document.getElementById('set-street').value = streetHouseApt.join(' ') || '';
+                                if (document.getElementById('set-house')) document.getElementById('set-house').value = houseApt || '';
+                            } else {
+                                if (document.getElementById('set-city')) document.getElementById('set-city').value = data.address;
+                            }
                             updated = true;
                         }
                         if (updated) {
@@ -8554,36 +8503,34 @@ let settingsConfirmedAddress = null;
                 skills: skillsArr
             };
             
-            if (activeRole === 'employer') {
-                const zip = (document.getElementById('set-zip') || {}).value?.trim() || '';
-                const county = (document.getElementById('set-county') || {}).value?.trim() || '';
-                const city = (document.getElementById('set-city') || {}).value?.trim() || '';
-                const street = (document.getElementById('set-street') || {}).value?.trim() || '';
-                const house = (document.getElementById('set-house') || {}).value?.trim() || '';
-                const apt = (document.getElementById('set-apartment') || {}).value?.trim() || '';
-                
-                if (!zip || !county || !city || !street || !house) {
-                    const err = document.getElementById('err-set-structured');
-                    if (err) err.classList.add('show');
-                    return;
-                }
+            const zip = (document.getElementById('set-zip') || {}).value?.trim() || '';
+            const county = (document.getElementById('set-county') || {}).value?.trim() || '';
+            const city = (document.getElementById('set-city') || {}).value?.trim() || '';
+            const street = (document.getElementById('set-street') || {}).value?.trim() || '';
+            const house = (document.getElementById('set-house') || {}).value?.trim() || '';
+            const apt = (document.getElementById('set-apartment') || {}).value?.trim() || '';
+            
+            if (!zip || !county || !city || !street || !house) {
                 const err = document.getElementById('err-set-structured');
-                if (err) err.classList.remove('show');
-                
-                let generatedAddress = `${zip} ${city}, ${street} ${house}.`;
-                if (apt) generatedAddress += ` ${apt}`;
-                
-                settingsConfirmedAddress = generatedAddress;
-                userData.address = generatedAddress;
-                userData.addressCity = city;
-                userData.addressStreet = street;
-                userData.addressCounty = county;
-
-                firestoreUpdateData.address = generatedAddress;
-                firestoreUpdateData.addressCity = city;
-                firestoreUpdateData.addressStreet = street;
-                firestoreUpdateData.addressCounty = county;
+                if (err) err.classList.add('show');
+                return;
             }
+            const err = document.getElementById('err-set-structured');
+            if (err) err.classList.remove('show');
+            
+            let generatedAddress = `${zip} ${city}, ${street} ${house}.`;
+            if (apt) generatedAddress += ` ${apt}`;
+            
+            settingsConfirmedAddress = generatedAddress;
+            userData.address = generatedAddress;
+            userData.addressCity = city;
+            userData.addressStreet = street;
+            userData.addressCounty = county;
+
+            firestoreUpdateData.address = generatedAddress;
+            firestoreUpdateData.addressCity = city;
+            firestoreUpdateData.addressStreet = street;
+            firestoreUpdateData.addressCounty = county;
             
             localStorage.setItem('melogo_user_data', JSON.stringify(userData));
             

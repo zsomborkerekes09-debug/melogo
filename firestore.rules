@@ -45,11 +45,14 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.workerId == request.auth.uid;
 
-      // Only the worker and employer of the chat can read or update it
+      // Only the worker and employer of the chat can read or update it.
+      // Also allow by ownerUid of the related job as a safe fallback.
       allow read, update: if request.auth != null && (
         request.auth.uid == resource.data.workerId ||
         request.auth.uid == resource.data.employerId ||
-        (resource.data.jobId != null && request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.ownerUid)
+        (resource.data.jobId != null &&
+          exists(/databases/$(database)/documents/jobs/$(resource.data.jobId)) &&
+          request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.ownerUid)
       );
 
       // Allow deletion by either party (useful for cascade deletes when job is removed)
@@ -60,12 +63,16 @@ service cloud.firestore {
         allow read: if request.auth != null && (
           get(/databases/$(database)/documents/chats/$(chatId)).data.workerId == request.auth.uid ||
           get(/databases/$(database)/documents/chats/$(chatId)).data.employerId == request.auth.uid ||
-          (get(/databases/$(database)/documents/chats/$(chatId)).data.jobId != null && request.auth.uid == get(/databases/$(database)/documents/jobs/$(get(/databases/$(database)/documents/chats/$(chatId)).data.jobId)).data.ownerUid)
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.jobId != null &&
+            exists(/databases/$(database)/documents/jobs/$(get(/databases/$(database)/documents/chats/$(chatId)).data.jobId)) &&
+            request.auth.uid == get(/databases/$(database)/documents/jobs/$(get(/databases/$(database)/documents/chats/$(chatId)).data.jobId)).data.ownerUid)
         );
         allow create: if request.auth != null && (
           get(/databases/$(database)/documents/chats/$(chatId)).data.workerId == request.auth.uid ||
           get(/databases/$(database)/documents/chats/$(chatId)).data.employerId == request.auth.uid ||
-          (get(/databases/$(database)/documents/chats/$(chatId)).data.jobId != null && request.auth.uid == get(/databases/$(database)/documents/jobs/$(get(/databases/$(database)/documents/chats/$(chatId)).data.jobId)).data.ownerUid)
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.jobId != null &&
+            exists(/databases/$(database)/documents/jobs/$(get(/databases/$(database)/documents/chats/$(chatId)).data.jobId)) &&
+            request.auth.uid == get(/databases/$(database)/documents/jobs/$(get(/databases/$(database)/documents/chats/$(chatId)).data.jobId)).data.ownerUid)
         );
         // Messages are immutable once created
         allow update, delete: if false;
@@ -76,11 +83,12 @@ service cloud.firestore {
     // USERS collection
     // ===========================
     match /users/{userId} {
-      // Users can only read their own full profile
-      // Other authenticated users can read limited public fields (name, avatar)
-      // via the app's chat/job features — but we restrict to own UID for full access
-      allow read: if request.auth != null && request.auth.uid == userId;
+      // Any authenticated user can read user profiles.
+      // Phone numbers are only revealed post-acceptance in the app UI (enforced in JS).
+      allow read: if request.auth != null;
+      // Only the user themselves can write their own profile
       allow write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
+

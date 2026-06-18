@@ -3113,14 +3113,7 @@ flex-direction: column !important;
         <!-- STEP 3: Address fields (formerly step 2) -->
         <div id="auth-step-3" style="display:none; flex-direction:column; gap:12px; margin-top:24px;">
             <div style="font-size:18px; font-weight: 500; color:var(--color-text); text-align:center; margin-bottom:4px;">Hol laksz?</div>
-            <div style="font-size:13px; color:var(--color-text-muted); text-align:center; margin-top:-10px; margin-bottom:12px;">Kezdd el gépelni a címed, és a rendszer kitölti a mezőket!</div>
-            
-            <!-- Autocomplete search field -->
-            <div class="floating-group" style="margin:0;">
-                <div class="auth-input-container">
-                    <input type="text" id="reg-address-autocomplete" class="auth-input-field login-input" placeholder="Cím keresése (pl. Kaposvár Fő utca)..." style="padding-left:16px;">
-                </div>
-            </div>
+            <div style="font-size:13px; color:var(--color-text-muted); text-align:center; margin-top:-10px; margin-bottom:12px;">Add meg a lakcímedet a lenti mezők kitöltésével!</div>
             
             <!-- Zip & City -->
             <div style="display:flex; gap:10px;">
@@ -5125,7 +5118,10 @@ flex-direction: column !important;
         };
 
         window.validateHungarianPhone = function(phoneStr) {
-            const cleaned = phoneStr.replace(/[\s\-\(\)]/g, '');
+            let cleaned = phoneStr.replace(/[\s\-\(\)]/g, '');
+            if (cleaned.startsWith('06') && cleaned.length === 11) {
+                cleaned = '+36' + cleaned.substring(2);
+            }
             const huPhoneRegex = /^\+36\d{9}$/;
             return huPhoneRegex.test(cleaned);
         };
@@ -5133,10 +5129,13 @@ flex-direction: column !important;
         window.submitStep2Phone = async function() {
             const phoneInput = document.getElementById('reg-phone-input');
             const phoneVal = phoneInput ? phoneInput.value.trim() : '';
-            const cleanedPhone = phoneVal.replace(/[\s\-\(\)]/g, '');
+            let cleanedPhone = phoneVal.replace(/[\s\-\(\)]/g, '');
+            if (cleanedPhone.startsWith('06') && cleanedPhone.length === 11) {
+                cleanedPhone = '+36' + cleanedPhone.substring(2);
+            }
             
             if (!window.validateHungarianPhone(phoneVal)) {
-                alert("Kérjük, érvényes magyar telefonszámot adj meg +36 formátumban (pl. +36201234567)!");
+                alert("Kérjük, érvényes magyar telefonszámot adj meg (pl. +36201234567 vagy 06201234567)!");
                 return;
             }
             
@@ -5252,6 +5251,62 @@ flex-direction: column !important;
                 }, 350);
             }
         };
+
+        async function syncWorkerProfileStatsToFirestore(uid, apps) {
+            if (!window.firebaseAPI || !window.firebaseDb || !uid) return;
+            try {
+                const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", uid);
+                const userSnap = await window.firebaseAPI.getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    const completedApps = apps.filter(a => a.status === 'Befejezett' || a.status === 'Kifizetve');
+                    
+                    if (!userData.reviews) userData.reviews = [];
+                    
+                    let reviewsChanged = false;
+                    
+                    completedApps.forEach(app => {
+                        const hasReview = userData.reviews.some(r => r.job === app.title && r.date === app.date);
+                        if (!hasReview) {
+                            const stars = app.rating || 5;
+                            userData.reviews.unshift({
+                                name: app.employerName || 'Megbízó',
+                                initials: app.employerName ? getInitials(app.employerName) : 'M',
+                                stars: stars,
+                                date: app.date || new Date().toLocaleDateString('hu-HU'),
+                                text: 'Kiváló és megbízható munka! Köszönöm.',
+                                job: app.title
+                            });
+                            reviewsChanged = true;
+                        }
+                    });
+                    
+                    const dynamicJobCount = completedApps.length;
+                    let dynamicRating = 5.0;
+                    if (userData.reviews.length > 0) {
+                        const sum = userData.reviews.reduce((a, b) => a + b.stars, 0);
+                        dynamicRating = sum / userData.reviews.length;
+                    }
+                    
+                    const currentJobCount = userData.jobCount !== undefined ? userData.jobCount : -1;
+                    const currentRating = userData.rating !== undefined ? userData.rating : -1;
+                    const currentReviewCount = userData.reviewCount !== undefined ? userData.reviewCount : -1;
+                    
+                    if (reviewsChanged || dynamicJobCount !== currentJobCount || dynamicRating !== currentRating || userData.reviews.length !== currentReviewCount) {
+                        await window.firebaseAPI.updateDoc(userRef, {
+                            reviews: userData.reviews,
+                            rating: dynamicRating,
+                            reviewCount: userData.reviews.length,
+                            jobCount: dynamicJobCount
+                        });
+                        console.log("[Sync] Worker profile stats synced to Firestore for UID:", uid);
+                    }
+                }
+            } catch (e) {
+                console.error("Error syncing worker profile stats to Firestore:", e);
+            }
+        }
+
         window.setupFirestoreListeners = function(role) {
             if (!auth.currentUser) {
                 console.log('[DEBUG] setupFirestoreListeners skipped: user not logged in.');
@@ -5382,6 +5437,9 @@ flex-direction: column !important;
                 if (typeof updateAllUserUI === 'function') updateAllUserUI();
                 if (typeof updateGreetings === 'function') updateGreetings();
                 if (typeof renderWorkerApplications === 'function') renderWorkerApplications();
+                if (role === 'worker') {
+                    syncWorkerProfileStatsToFirestore(uid, apps);
+                }
             }, err => console.error('[Firestore] Apps listener error:', err));
 
             // 3. Chats listeners – UID-based dual query (worker OR employer)
@@ -8482,7 +8540,11 @@ let settingsConfirmedAddress = null;
 
         async function saveSettings() {
             const nameVal = document.getElementById('settings-name')?.value || '';
-            const phoneVal = document.getElementById('settings-phone')?.value || '';
+            let phoneVal = document.getElementById('settings-phone')?.value || '';
+            const cleanedPhone = phoneVal.replace(/[\s\-\(\)]/g, '');
+            if (cleanedPhone.startsWith('06') && cleanedPhone.length === 11) {
+                phoneVal = '+36' + cleanedPhone.substring(2);
+            }
             const bioVal = document.getElementById('settings-bio')?.value || '';
             const skillsArr = Array.from(selectedSkills);
             
@@ -9732,11 +9794,12 @@ let settingsConfirmedAddress = null;
             let skills = ['Kertészet', 'Autómosás', 'Takarítás'];
             let trustBadge = "Megbízható Diák";
             let avatar = null;
+            let firestoreReviews = null;
+            let userDoc = null;
             
             // Try to fetch real profile data from Firestore
             if (window.firebaseAPI && window.firebaseDb) {
                 try {
-                    let userDoc = null;
                     if (workerUid) {
                         const snap = await window.firebaseAPI.getDoc(window.firebaseAPI.doc(window.firebaseDb, "users", workerUid));
                         if (snap.exists()) userDoc = snap;
@@ -9757,8 +9820,9 @@ let settingsConfirmedAddress = null;
                         skills = data.skills || skills;
                         avatar = data.photoURL || avatar;
                         
-                        completedJobs = data.jobCount !== undefined ? data.jobCount : completedJobs;
-                        rating = data.rating !== undefined ? data.rating : rating;
+                        completedJobs = data.jobCount !== undefined ? data.jobCount : 0;
+                        rating = data.rating !== undefined ? data.rating : 5.0;
+                        firestoreReviews = data.reviews || [];
                         
                         if (completedJobs >= 15 && rating >= 4.7) trustBadge = "Prémium Diák";
                         else if (completedJobs >= 8 && rating >= 4.3) trustBadge = "Tapasztalt Diák";
@@ -9829,8 +9893,14 @@ let settingsConfirmedAddress = null;
             const reviewsContainer = document.getElementById('wp-reviews-container');
             if (reviewsContainer) {
                 let reviews = [];
-                if (name === currentUserName && currentUser.reviews && currentUser.reviews.length > 0) {
+                const isRealUser = (userDoc !== null) || (name === currentUserName && currentUser && currentUser.email);
+                
+                if (firestoreReviews && firestoreReviews.length > 0) {
+                    reviews = firestoreReviews.slice(0, 5);
+                } else if (name === currentUserName && currentUser.reviews && currentUser.reviews.length > 0) {
                     reviews = currentUser.reviews.slice(0, 5);
+                } else if (isRealUser) {
+                    reviews = [];
                 } else {
                     reviews = [
                         { name: 'Nagy Gábor (Megbízó)', stars: 5, date: '2026. máj. 24.', text: 'Nagyon pontosan érkezett, és a megbeszéltek szerint hihetetlenül precíz munkát végzett! Csak ajánlani tudom.' },
@@ -9841,24 +9911,34 @@ let settingsConfirmedAddress = null;
                     ];
                 }
                 
-                reviewsContainer.innerHTML = reviews.map((r, i) => {
-                    const activeStars = '⭐'.repeat(r.stars || r.rating || 5);
-                    const reviewerName = r.name || r.reviewer || 'Megbízó';
-                    const reviewDate = r.date || new Date().toLocaleDateString('hu-HU');
-                    const reviewText = r.text || 'Kiváló és megbízható munka! Köszönöm.';
-                    const isLast = i === reviews.length - 1;
-                    const borderStyle = isLast ? '' : 'border-bottom: 1px solid var(--color-border); padding-bottom: 14px; margin-bottom: 14px;';
-                    return `
-                        <div style="${borderStyle}">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
-                                <div style="font-size: 13px; font-weight: 500; color: var(--color-text);">${reviewerName}</div>
-                                <div style="font-size: 11px; color: var(--color-text);">${reviewDate}</div>
-                            </div>
-                            <div style="font-size: 12px; margin-bottom: 6px;">${activeStars}</div>
-                            <div style="font-size: 13px; color: var(--color-text); line-height:1.5;">${reviewText}</div>
+                if (reviews.length === 0) {
+                    reviewsContainer.innerHTML = `
+                        <div style="display:flex; flex-direction:column; align-items:center; padding:20px; text-align:center; box-sizing:border-box;">
+                            <span style="font-size:24px; margin-bottom:8px;">⭐</span>
+                            <div style="font-size:13px; color:var(--color-text);">Nincs még értékelés</div>
+                            <div style="font-size:11px; color:var(--color-text-muted); margin-top:4px;">A befejezett munkák után a munkaadók itt fogják értékelni a diákot.</div>
                         </div>
                     `;
-                }).join('');
+                } else {
+                    reviewsContainer.innerHTML = reviews.map((r, i) => {
+                        const activeStars = '⭐'.repeat(r.stars || r.rating || 5);
+                        const reviewerName = r.name || r.reviewer || 'Megbízó';
+                        const reviewDate = r.date || new Date().toLocaleDateString('hu-HU');
+                        const reviewText = r.text || 'Kiváló és megbízható munka! Köszönöm.';
+                        const isLast = i === reviews.length - 1;
+                        const borderStyle = isLast ? '' : 'border-bottom: 1px solid var(--color-border); padding-bottom: 14px; margin-bottom: 14px;';
+                        return `
+                            <div style="${borderStyle}">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                                    <div style="font-size: 13px; font-weight: 500; color: var(--color-text);">${reviewerName}</div>
+                                    <div style="font-size: 11px; color: var(--color-text);">${reviewDate}</div>
+                                </div>
+                                <div style="font-size: 12px; margin-bottom: 6px;">${activeStars}</div>
+                                <div style="font-size: 13px; color: var(--color-text); line-height:1.5;">${reviewText}</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
             }
             
             document.getElementById('worker-profile-overlay').classList.add('open');

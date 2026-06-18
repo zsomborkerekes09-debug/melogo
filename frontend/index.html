@@ -5282,7 +5282,7 @@ flex-direction: column !important;
             // 1. Jobs listener – uses docChanges() for correct delete handling
             let jobsQuery;
             if (role === 'worker') {
-                jobsQuery = query(collection(db, "jobs"), where("status", "in", ["Keresés", "accepted"]), limit(100));
+                jobsQuery = query(collection(db, "jobs"), where("status", "in", ["Keresés", "accepted"]), orderBy("createdAt", "desc"), limit(100));
             } else {
                 jobsQuery = query(collection(db, "jobs"), where("ownerEmail", "==", email));
             }
@@ -5705,7 +5705,7 @@ flex-direction: column !important;
                 { name: 'Bútor szétszerelése', price: 10000 },
                 { name: 'Csomagküldés segítése', price: 6000 }
             ],
-            Kőműves: [
+            Komuves: [
                 { name: 'Anyagcipelés', price: 10000 },
                 { name: 'Cementkeverés', price: 12000 },
                 { name: 'Törmelék takarítás', price: 8000 },
@@ -7495,13 +7495,14 @@ function filterWorkerByExactJob(jobName) {
                             { status: 'pending', lastMsg: chatData.lastMsg, time: 'Most', updatedAt: window.firebaseAPI.serverTimestamp() }
                         );
                     } else {
-                        const chatRef = await window.firebaseAPI.addDoc(
-                            window.firebaseAPI.collection(window.firebaseDb, "chats"),
+                        const chatRef = window.firebaseAPI.doc(window.firebaseAPI.collection(window.firebaseDb, "chats"));
+                        chatDocId = chatRef.id;
+                        chatData.id = chatDocId;
+                        await window.firebaseAPI.setDoc(
+                            chatRef,
                             { ...chatData, createdAt: window.firebaseAPI.serverTimestamp(), updatedAt: window.firebaseAPI.serverTimestamp(), workerLastRead: window.firebaseAPI.serverTimestamp(), employerLastRead: window.firebaseAPI.serverTimestamp() }
                         );
-                        chatDocId = chatRef.id;
                     }
-                    chatData.id = chatDocId;
                     chatData.isFirestore = true;
 
                     // Save system message to subcollection
@@ -7519,8 +7520,13 @@ function filterWorkerByExactJob(jobName) {
                 }
             }
 
-            // Unshift and save locally
-            localChats.unshift(chatData);
+            // Check if already added by firestore listener to avoid race condition duplication
+            const existingIdx = localChats.findIndex(c => c.id === chatData.id);
+            if (existingIdx !== -1) {
+                localChats[existingIdx] = chatData;
+            } else {
+                localChats.unshift(chatData);
+            }
             saveLocalChats();
             renderChatList();
 
@@ -9914,6 +9920,7 @@ let settingsConfirmedAddress = null;
             window._chatUnsubscribe = window.firebaseAPI.onSnapshot(chatRef, async (snapshot) => {
                 if (!snapshot.exists()) return;
                 const chatData = snapshot.data();
+                chatData.id = snapshot.id; // Align the data id with the Firestore document ID
                 // Ensure this is still the selected chat
                 if (window.selectedChatId !== chatId) return;
                 
@@ -10816,6 +10823,7 @@ let settingsConfirmedAddress = null;
                     const houseApt = streetHouseApt.pop();
                     if (document.getElementById('emp-street')) document.getElementById('emp-street').value = streetHouseApt.join(' ') || '';
                     if (document.getElementById('emp-house')) document.getElementById('emp-house').value = houseApt || '';
+                    if (parts.length >= 3 && document.getElementById('emp-county')) document.getElementById('emp-county').value = parts[2].trim() || '';
                 } else {
                     if (document.getElementById('emp-city')) document.getElementById('emp-city').value = address;
                 }
@@ -11574,6 +11582,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     return;
                 }
                 const chatData = chatSnap.data();
+                chatData.id = chatSnap.id; // Align with Firestore document ID
                 
                 // 1. Update chat status
                 try {
@@ -11643,6 +11652,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 const chatSnap = await window.firebaseAPI.getDoc(chatRef);
                 if (!chatSnap.exists()) return;
                 const chatData = chatSnap.data();
+                chatData.id = chatSnap.id; // Align with Firestore document ID
                 
                 // 1. Update chat status
                 await window.firebaseAPI.updateDoc(chatRef, {
@@ -11687,6 +11697,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 const chatSnap = await window.firebaseAPI.getDoc(chatRef);
                 if (!chatSnap.exists()) return;
                 const chatData = chatSnap.data();
+                chatData.id = chatSnap.id; // Align with Firestore document ID
                 
                 // 1. Update chat status
                 await window.firebaseAPI.updateDoc(chatRef, {
@@ -11724,6 +11735,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 const chatSnap = await window.firebaseAPI.getDoc(chatRef);
                 if (!chatSnap.exists()) return;
                 const chatData = chatSnap.data();
+                chatData.id = chatSnap.id; // Align with Firestore document ID
                 
                 // 1. Update chat status
                 await window.firebaseAPI.updateDoc(chatRef, {
@@ -11773,6 +11785,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 const chatSnap = await window.firebaseAPI.getDoc(chatRef);
                 if (!chatSnap.exists()) return;
                 const chatData = chatSnap.data();
+                chatData.id = chatSnap.id; // Align with Firestore document ID
                 
                 // 1. Update chat status & rating
                 await window.firebaseAPI.updateDoc(chatRef, {
@@ -13899,11 +13912,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     const pw = (document.getElementById('login-pw') || {}).value || '';
                     authBtn.disabled = !(email.includes('@') && pw.length > 0);
                 } else {
-                    const name = (document.getElementById('app-name') || {}).value || '';
                     const email = (document.getElementById('app-email') || {}).value || '';
                     const pw = (document.getElementById('app-pw') || {}).value || '';
                     const pw2 = (document.getElementById('app-pw2') || {}).value || '';
-                    authBtn.disabled = !(name.trim().length >= 2 && email.includes('@') && pw.length >= 6 && pw === pw2);
+                    authBtn.disabled = !(email.includes('@') && pw.length >= 6 && pw === pw2 && (typeof termsAccepted !== 'undefined' ? termsAccepted : true));
                 }
             }
 

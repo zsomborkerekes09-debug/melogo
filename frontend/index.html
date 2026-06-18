@@ -9905,7 +9905,7 @@ let settingsConfirmedAddress = null;
         }
 
         async function loadChatHeaderAndStatus(chatId, chatData) {
-            const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+            const myUid = window.firebaseAuth?.currentUser?.uid;
             const isEmployerChat = chatData.employerId ? (myUid === chatData.employerId) : (currentRole === 'employer');
             const partnerUid = !isEmployerChat ? chatData.employerId : chatData.workerId;
             const partnerData = await fetchUserDetails(partnerUid);
@@ -10074,12 +10074,12 @@ let settingsConfirmedAddress = null;
             const phoneEl = document.getElementById('chat-detail-phone');
             if (phoneEl) {
                 phoneEl.innerText = '';
-                if (chatId && window.firebaseAPI && window.firebaseDb && window.firebaseAPI.auth && window.firebaseAPI.auth.currentUser) {
+                if (chatId && window.firebaseAPI && window.firebaseDb && window.firebaseAuth && window.firebaseAuth.currentUser) {
                     const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
                     window.firebaseAPI.getDoc(chatRef).then(snap => {
                         if (snap.exists()) {
                             const data = snap.data();
-                            const myUid = window.firebaseAPI.auth.currentUser.uid;
+                            const myUid = window.firebaseAuth.currentUser.uid;
                             const otherUid = (data.employerId === myUid) ? data.workerId : data.employerId;
                             if (otherUid) {
                                 const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", otherUid);
@@ -10246,7 +10246,7 @@ let settingsConfirmedAddress = null;
                     } else if (msg.from === 'other') {
                         isMe = false;
                     } else {
-                        const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+                        const myUid = window.firebaseAuth?.currentUser?.uid;
                         if (msg.from === 'employer') {
                             isMe = chat && chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                         } else if (msg.from === 'worker') {
@@ -11771,7 +11771,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             const bar = document.getElementById('chat-action-bar');
             if (!bar) return;
             
-            const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+            const myUid = window.firebaseAuth?.currentUser?.uid;
             const isEmployer = chatData.employerId ? (myUid === chatData.employerId) : (currentRole === 'employer');
             const status = chatData.status || 'pending';
             
@@ -12033,7 +12033,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             });
 
             filtered.forEach(chat => {
-                const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+                const myUid = window.firebaseAuth?.currentUser?.uid;
                 const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                 const partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
                 const initials = getInitials(partnerName);
@@ -12195,7 +12195,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 // Sync to Firestore
                 const chat = localChats[index];
                 if (window.firebaseAPI && window.firebaseDb && chat.isFirestore) {
-                    const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+                    const myUid = window.firebaseAuth?.currentUser?.uid;
                     const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                     const updateField = !isEmployerChat ? 'workerLastRead' : 'employerLastRead';
                     window.firebaseAPI.updateDoc(
@@ -12206,7 +12206,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
                 renderChatList();
                 
-                const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+                const myUid = window.firebaseAuth?.currentUser?.uid;
                 const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                 const partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
                 openChat(partnerName, chat.jobTitle, chat.lastMsg, chat.time, false, chat.id);
@@ -12226,7 +12226,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 return;
             }
 
-            const myUid = window.firebaseAPI?.auth?.currentUser?.uid;
+            const myUid = window.firebaseAuth?.currentUser?.uid;
             const isEmployer = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
 
             // Find the correct application matching this chat's worker

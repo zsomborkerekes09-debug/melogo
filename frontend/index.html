@@ -11552,7 +11552,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 if (typeof renderEmployerHome === 'function') renderEmployerHome();
             } catch (e) {
                 console.error("executeEmployerAccept error:", e);
-                alert("Hiba történt az elfogadás során.");
+                alert("Hiba történt az elfogadás során. " + e.message + "\nKérlek próbáld egy teljesen új munkával!");
             }
         };
 

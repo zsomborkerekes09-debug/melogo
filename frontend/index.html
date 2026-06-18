@@ -11615,10 +11615,17 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 try {
                     chatSnap = await window.firebaseAPI.getDoc(chatRef);
                 } catch(e) {
-                    alert("Hiba: getDoc(chat) sikertelen. Kérlek szólj a fejlesztőnek!\n(Oka: " + e.message + ")");
+                    const myUid = window.firebaseAuth?.currentUser?.uid || 'N/A';
+                    const localChat = (window.localChats || []).find(c => c.id === chatId);
+                    const empId = localChat ? localChat.employerId : 'NOT_FOUND';
+                    const wrkId = localChat ? localChat.workerId : 'NOT_FOUND';
+                    alert("Hiba: getDoc(chat) sikertelen.\nChatID: " + chatId + "\nMyUID: " + myUid + "\nEmpID: " + empId + "\nWrkID: " + wrkId + "\nOka: " + e.message);
                     return;
                 }
-                if (!chatSnap.exists()) return;
+                if (!chatSnap.exists()) {
+                    alert("Hiba: A chat nem található az adatbázisban! (ID: " + chatId + ")");
+                    return;
+                }
                 const chatData = chatSnap.data();
                 
                 // 1. Update chat status

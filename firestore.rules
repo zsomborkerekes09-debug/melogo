@@ -48,7 +48,8 @@ service cloud.firestore {
       // Only the worker and employer of the chat can read or update it
       allow read, update: if request.auth != null && (
         request.auth.uid == resource.data.workerId ||
-        request.auth.uid == resource.data.employerId
+        request.auth.uid == resource.data.employerId ||
+        (resource.data.jobId != null && request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.ownerUid)
       );
 
       // Allow deletion by either party (useful for cascade deletes when job is removed)
@@ -58,11 +59,13 @@ service cloud.firestore {
       match /messages/{messageId} {
         allow read: if request.auth != null && (
           get(/databases/$(database)/documents/chats/$(chatId)).data.workerId == request.auth.uid ||
-          get(/databases/$(database)/documents/chats/$(chatId)).data.employerId == request.auth.uid
+          get(/databases/$(database)/documents/chats/$(chatId)).data.employerId == request.auth.uid ||
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.jobId != null && request.auth.uid == get(/databases/$(database)/documents/jobs/$(get(/databases/$(database)/documents/chats/$(chatId)).data.jobId)).data.ownerUid)
         );
         allow create: if request.auth != null && (
           get(/databases/$(database)/documents/chats/$(chatId)).data.workerId == request.auth.uid ||
-          get(/databases/$(database)/documents/chats/$(chatId)).data.employerId == request.auth.uid
+          get(/databases/$(database)/documents/chats/$(chatId)).data.employerId == request.auth.uid ||
+          (get(/databases/$(database)/documents/chats/$(chatId)).data.jobId != null && request.auth.uid == get(/databases/$(database)/documents/jobs/$(get(/databases/$(database)/documents/chats/$(chatId)).data.jobId)).data.ownerUid)
         );
         // Messages are immutable once created
         allow update, delete: if false;

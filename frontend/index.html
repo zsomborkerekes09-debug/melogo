@@ -5259,7 +5259,7 @@ flex-direction: column !important;
                 const userSnap = await window.firebaseAPI.getDoc(userRef);
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
-                    const completedApps = apps.filter(a => a.status === 'Befejezett' || a.status === 'Kifizetve');
+                    const completedApps = apps.filter(a => a.status === 'Befejezett' || a.status === 'Kifizetve' || a.status === 'Értékelve');
                     
                     if (!userData.reviews) userData.reviews = [];
                     
@@ -5468,8 +5468,19 @@ flex-direction: column !important;
                 localChats = localChats.filter(c => !c.isFirestore || c.roleType !== roleType || newIds.has(c.id));
                 // Upsert
                 newChats.forEach(nc => {
-                    const idx = localChats.findIndex(c => c.id === nc.id);
-                    if (idx !== -1) localChats[idx] = nc; else localChats.unshift(nc);
+                    const idx = localChats.findIndex(c => 
+                        c.id === nc.id || 
+                        (!c.isFirestore && String(c.jobId) === String(nc.jobId) && c.workerEmail === nc.workerEmail)
+                    );
+                    if (idx !== -1) {
+                        const oldId = localChats[idx].id;
+                        localChats[idx] = nc;
+                        if (window.selectedChatId === oldId) {
+                            window.selectedChatId = nc.id;
+                        }
+                    } else {
+                        localChats.unshift(nc);
+                    }
                 });
                 localChats.sort((a,b) => {
                     const timeA = a.updatedAt || a.createdAt || 0;
@@ -7203,7 +7214,7 @@ function filterWorkerByExactJob(jobName) {
                     gameState.status = 'Fizetve';
                 } else if (app.status === 'Értékelésre vár') {
                     gameState.status = 'Befejezve';
-                } else if (app.status === 'Befejezett') {
+                } else if (app.status === 'Befejezett' || app.status === 'Kifizetve' || app.status === 'Értékelve') {
                     gameState.status = 'Értékelve';
                 } else {
                     gameState.status = app.status;
@@ -9331,7 +9342,7 @@ let settingsConfirmedAddress = null;
                     gameState.status = 'Fizetve';
                 } else if (app.status === 'Értékelésre vár') {
                     gameState.status = 'Befejezve';
-                } else if (app.status === 'Befejezett') {
+                } else if (app.status === 'Befejezett' || app.status === 'Kifizetve' || app.status === 'Értékelve') {
                     gameState.status = 'Kifizetve';
                 } else {
                     gameState.status = app.status;
@@ -11077,8 +11088,10 @@ let settingsConfirmedAddress = null;
             if (statusEl) {
                 let dispStatus = job.status;
                 if (job.status === 'accepted' || job.status === 'Aktív') dispStatus = 'Aktív';
+                else if (job.status === 'completed' || job.status === 'Befejezett') dispStatus = 'Befejezett';
+                else if (job.status === 'rated') dispStatus = 'Értékelve';
                 statusEl.innerText = dispStatus;
-                statusEl.className = 'emp-ad-pill ' + ((job.status === 'Aktív' || job.status === 'accepted') ? 'active' : job.status === 'Befejezett' ? 'completed' : 'seeking');
+                statusEl.className = 'emp-ad-pill ' + ((job.status === 'Aktív' || job.status === 'accepted') ? 'active' : (job.status === 'Befejezett' || job.status === 'completed' || job.status === 'rated') ? 'completed' : 'seeking');
             }
 
             // Fill details card values
@@ -11090,9 +11103,43 @@ let settingsConfirmedAddress = null;
             // Fill applicants list card values
             const appContainer = document.getElementById('ad-detail-applicants-container');
             if (appContainer) {
-                const jobApps = localWorkerApplications.filter(a => a.jobId === job.id);
+                let jobApps = localWorkerApplications.filter(a => String(a.jobId) === String(job.id));
+
+                // Fallback: if no apps in localWorkerApplications, derive from localChats (employer-side Firestore sync)
+                if (jobApps.length === 0) {
+                    const pendingChats = localChats.filter(c => String(c.jobId) === String(job.id) && (c.status === 'pending' || !c.status || c.status === 'Függőben'));
+                    jobApps = pendingChats.map(c => ({
+                        id: c.id,
+                        jobId: c.jobId,
+                        status: 'Függőben',
+                        workerName: c.workerName || c.name || 'Diák',
+                        workerEmail: c.workerEmail,
+                        workerUid: c.workerId,
+                        employerUid: c.employerId,
+                        employerEmail: c.employerEmail,
+                        title: c.jobTitle || job.title,
+                        price: job.price,
+                        _fromChat: true
+                    }));
+                    // Also check for already-accepted chats
+                    const acceptedChats = localChats.filter(c => String(c.jobId) === String(job.id) && (c.status === 'accepted' || c.status === 'Aktív' || c.status === 'rated' || c.status === 'Értékelve'));
+                    acceptedChats.forEach(c => jobApps.push({
+                        id: c.id,
+                        jobId: c.jobId,
+                        status: c.status === 'accepted' ? 'Aktív' : c.status,
+                        workerName: c.workerName || c.name || 'Diák',
+                        workerEmail: c.workerEmail,
+                        workerUid: c.workerId,
+                        employerUid: c.employerId,
+                        employerEmail: c.employerEmail,
+                        title: c.jobTitle || job.title,
+                        price: job.price,
+                        _fromChat: true
+                    }));
+                }
+
                 const pendingApps = jobApps.filter(a => a.status === 'Függőben');
-                const acceptedApp = jobApps.find(a => a.status === 'Aktív' || a.status === 'Befejezett' || a.status === 'Értékelésre vár' || a.status === 'Kifizetve');
+                const acceptedApp = jobApps.find(a => a.status === 'Aktív' || a.status === 'Befejezett' || a.status === 'Értékelésre vár' || a.status === 'Kifizetve' || a.status === 'Értékelve');
 
                 if (acceptedApp) {
                     const workerDisplayName = acceptedApp.workerName || acceptedApp.workerEmail || 'Diák';
@@ -11583,11 +11630,18 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
         }
 
         async function acceptWorkerApplication(appId) {
+            // Try to find in localWorkerApplications first
             const app = localWorkerApplications.find(a => a.id === appId);
-            if (!app) return;
             
-            // Find corresponding chat
-            const chat = localChats.find(c => c.jobId === app.jobId && (c.workerId === app.workerUid || c.workerEmail === app.workerEmail));
+            let chat = null;
+            if (app) {
+                // Find corresponding chat via the application record
+                chat = localChats.find(c => String(c.jobId) === String(app.jobId) && (c.workerId === app.workerUid || c.workerEmail === app.workerEmail));
+            } else {
+                // The appId might be a chat ID directly (employer-side, _fromChat scenario)
+                chat = localChats.find(c => c.id === appId);
+            }
+
             if (chat) {
                 selectedChatId = chat.id;
                 window.selectedChatId = chat.id;
@@ -12644,24 +12698,21 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             const chat = selectedChatId ? localChats.find(c => c.id === selectedChatId) : null;
             if (!chat) return;
 
-            // 1. Update application status & rating
             const appIndex = localWorkerApplications.findIndex(a => 
-                String(a.jobId) === String(typeof chatData !== "undefined" ? chatData.jobId : (typeof chat !== "undefined" ? chat.jobId : (typeof jobId !== "undefined" ? jobId : ""))) && 
+                String(a.jobId) === String(chat.jobId) && 
                 (a.workerUid === chat.workerId || a.workerEmail === chat.workerEmail)
             );
             if (appIndex !== -1) {
                 localWorkerApplications[appIndex].status = 'Befejezett';
                 localWorkerApplications[appIndex].rating = stars;
                 saveWorkerApplications();
+            }
 
-                // Persist status to Firestore
-                if (window.firebaseAPI && window.firebaseDb) {
-                    const appDocId = localWorkerApplications[appIndex].id;
-                    const appRef = window.firebaseAPI.doc(window.firebaseDb, "applications", appDocId);
-                    window.firebaseAPI.updateDoc(appRef, { status: 'Befejezett', rating: stars })
-                        .then(() => console.log('[Complete] Application status updated to Befejezett in Firestore'))
-                        .catch(e => console.error('[Complete] Firestore application status update failed:', e));
-                }
+            // Persist status to Firestore directly
+            if (window.firebaseAPI && window.firebaseDb) {
+                updateApplicationStatusInFirestore(chat, 'Befejezett', { rating: stars })
+                    .then(() => console.log('[Complete] Application status updated to Befejezett in Firestore via query'))
+                    .catch(e => console.error('[Complete] Firestore application status update failed:', e));
             }
 
             // 2. Update job status locally + Firestore
@@ -13249,7 +13300,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 console.warn('[loadCurrentUser] Error parsing applications:', e);
             }
             
-            const completedApps = appsList.filter(a => a.status === 'Befejezett' || a.status === 'Kifizetve');
+            const completedApps = appsList.filter(a => a.status === 'Befejezett' || a.status === 'Kifizetve' || a.status === 'Értékelve');
             if (!userData.reviews) userData.reviews = [];
             
             completedApps.forEach(app => {
@@ -13859,7 +13910,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 } else if (app.status === 'Értékelésre vár') {
                     statusClass = 'seeking';
                     statusText = 'Értékelésre vár';
-                } else if (app.status === 'Befejezett' || app.status === 'Kifizetve') {
+                } else if (app.status === 'Befejezett' || app.status === 'Kifizetve' || app.status === 'Értékelve') {
                     statusClass = 'completed';
                     const starsVal = app.rating ? app.rating : 5;
                     statusText = 'Befejezett <span style="margin-left:4px;">' + starsHtml(starsVal) + '</span>';

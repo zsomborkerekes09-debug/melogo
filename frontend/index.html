@@ -8549,7 +8549,9 @@ let settingsConfirmedAddress = null;
                     // Show a toast or loading state could be added here
                     console.log("Uploading photo to Firebase Storage...");
                     
-                    await window.firebaseAPI.uploadString(storageRef, photoDataURL, 'data_url');
+                    const uploadPromise = window.firebaseAPI.uploadString(storageRef, photoDataURL, 'data_url');
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 8000));
+                    await Promise.race([uploadPromise, timeoutPromise]);
                     finalPhotoURL = await window.firebaseAPI.getDownloadURL(storageRef);
                     
                     console.log("Photo uploaded successfully. URL:", finalPhotoURL);
@@ -11085,6 +11087,52 @@ let settingsConfirmedAddress = null;
                 console.error("GPS error:", err);
                 alert("A helymeghatározás sikertelen (engedély megtagadva vagy hiba történt).");
                 resetGPSBtn(txt, btn);
+            });
+        }
+        function useCurrentLocationForJobPost() {
+            const btn = document.getElementById('emp-gps-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '📍 Kis türelmet...';
+            
+            if (!navigator.geolocation) {
+                alert("A böngésződ nem támogatja a helymeghatározást.");
+                btn.innerHTML = originalText;
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`, {
+                        headers: { 'Accept-Language': 'hu' }
+                    });
+                    const data = await response.json();
+                    
+                    if (data && data.address) {
+                        const a = data.address;
+                        document.getElementById('emp-zip').value = a.postcode || '';
+                        document.getElementById('emp-county').value = a.county || '';
+                        document.getElementById('emp-city').value = a.city || a.town || a.village || '';
+                        document.getElementById('emp-street').value = a.road || '';
+                        document.getElementById('emp-house').value = a.house_number || '';
+                        
+                        btn.innerHTML = '📍 Jelenlegi helyzet megadva';
+                        btn.style.background = 'rgba(34, 197, 94, 0.1)';
+                        btn.style.color = 'var(--color-green)';
+                    } else {
+                        alert("Nem sikerült meghatározni a pontos címet.");
+                        btn.innerHTML = originalText;
+                    }
+                } catch(e) {
+                    console.error("Geocoding failed:", e);
+                    alert("Nem sikerült lekérni a címet a koordinátákból.");
+                    btn.innerHTML = originalText;
+                }
+            }, (err) => {
+                console.error("GPS error:", err);
+                alert("A helymeghatározás sikertelen (engedély megtagadva vagy hiba történt).");
+                btn.innerHTML = originalText;
             });
         }
         

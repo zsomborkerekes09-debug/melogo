@@ -3321,22 +3321,22 @@ flex-direction: column !important;
                     <!-- Dashboard Summary Stat Cards Horizontally Scrollable -->
                     <div id="employer-summary-dashboard" style="display: flex; gap: 10px; padding: 12px 16px 8px 16px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; margin-bottom: 4px;">
                         <!-- Card 1: Keresés -->
-                        <div style="flex: 0 0 110px; background: var(--color-surface); border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid var(--color-text); box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text);">
+                        <div id="emp-tab-seeking" onclick="filterEmpJobs('seeking')" style="flex: 0 0 110px; background: var(--color-surface); border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid var(--color-text); box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text); cursor: pointer; transition: all 0.2s;">
                             <div id="stat-count-seeking" style="font-size: 18px; font-weight: 500; color: var(--color-text);">0</div>
                             <div style="font-size: 10px; color: var(--color-text); font-weight: 400; text-transform: uppercase; margin-top: 2px;">Keresés</div>
                         </div>
                         <!-- Card 2: Jelentkező -->
-                        <div style="flex: 0 0 110px; background: var(--color-surface); border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid #F59E0B; box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text);">
+                        <div id="emp-tab-applicants" onclick="filterEmpJobs('applicants')" style="flex: 0 0 110px; background: var(--color-surface); border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid #F59E0B; box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text); cursor: pointer; transition: all 0.2s;">
                             <div id="stat-count-applicants" style="font-size: 18px; font-weight: 500; color: #F59E0B;">0</div>
                             <div style="font-size: 10px; color: var(--color-text); font-weight: 400; text-transform: uppercase; margin-top: 2px;">Jelentkező</div>
                         </div>
                         <!-- Card 3: Aktív -->
-                        <div style="flex: 0 0 110px; background: var(--color-surface); border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid var(--color-text); box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text);">
+                        <div id="emp-tab-active" onclick="filterEmpJobs('active')" style="flex: 0 0 110px; background: var(--color-surface); border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid var(--color-text); box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text); cursor: pointer; transition: all 0.2s;">
                             <div id="stat-count-active" style="font-size: 18px; font-weight: 500; color: var(--color-text);">0</div>
                             <div style="font-size: 10px; color: var(--color-text); font-weight: 400; text-transform: uppercase; margin-top: 2px;">Aktív</div>
                         </div>
                         <!-- Card 4: Befejezett -->
-                        <div style="flex: 0 0 110px; background: var(--color-surface); border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid var(--color-text); box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text);">
+                        <div id="emp-tab-completed" onclick="filterEmpJobs('completed')" style="flex: 0 0 110px; background: var(--color-surface); border-radius: 16px; padding: 12px 14px; border-left: 3.5px solid var(--color-text); box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text); cursor: pointer; transition: all 0.2s;">
                             <div id="stat-count-completed" style="font-size: 18px; font-weight: 500; color: var(--color-text);">0</div>
                             <div style="font-size: 10px; color: var(--color-text); font-weight: 400; text-transform: uppercase; margin-top: 2px;">Befejezve</div>
                         </div>
@@ -3431,10 +3431,6 @@ flex-direction: column !important;
                             <div style="flex: 1; text-align: center; border-right: 1px solid var(--color-text);">
                                 <div style="font-size: 20px; font-weight: 400; color: var(--color-text);" class="user-job-count">0</div>
                                 <div style="font-size: 11px; color: var(--color-text); margin-top: 4px;">Meló</div>
-                            </div>
-                            <div style="flex: 1; text-align: center; border-right: 1px solid var(--color-text);">
-                                <div style="font-size: 20px; font-weight: 400; color: var(--color-text);" id="profile-loyalty">100%</div>
-                                <div style="font-size: 11px; color: var(--color-text); margin-top: 4px;">Hűség</div>
                             </div>
                             <div style="flex: 1; text-align: center;">
                                 <div style="font-size: 20px; font-weight: 400; color: var(--color-text);" class="user-rating-display">5.0</div>
@@ -3773,7 +3769,6 @@ flex-direction: column !important;
                         <button style="width:100%; min-height:52px; border-radius:14px; border: 1.5px solid var(--color-text); background: var(--color-surface); color: var(--color-text); font-size:15px; font-weight: 400; cursor:pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;" onclick="closeLogoutConfirm()">Mégsem</button>
                         <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#DC2626; color:#fff; font-size:15px; font-weight: 400; cursor:pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;" onclick="logoutWorker()">Kijelentkezés</button>
                         <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#7F1D1D; color:#fff; font-size:15px; font-weight: 400; cursor:pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin-top: 8px;" onclick="deleteAccount()">Fiók végleges törlése</button>
-                        <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#7F1D1D; color:#fff; font-size:15px; font-weight: 400; cursor:pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin-top: 8px;" onclick="deleteAccount()">Fi�k v�gleges t�rl�se</button>
                     </div>
                 </div>
 
@@ -4283,6 +4278,45 @@ flex-direction: column !important;
                         <button class="city-select-item" onclick="selectManualCity('Debrecen', 47.5316, 21.6273)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
                             <span>🎭 Debrecen</span>
                         </button>
+                        <button class="city-select-item" onclick="selectManualCity('Miskolc', 48.1039, 20.7897)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🏰 Miskolc</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Nyíregyháza', 47.9495, 21.7244)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🏺 Nyíregyháza</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Kecskemét', 46.9154, 19.6902)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🍑 Kecskemét</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Székesfehérvár', 47.1860, 18.4220)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>👑 Székesfehérvár</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Szombathely', 47.2307, 16.6218)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🏛️ Szombathely</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Szolnok', 47.1750, 20.1833)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🌊 Szolnok</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Tatabánya', 47.5850, 18.4020)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🦅 Tatabánya</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Békéscsaba', 46.6833, 21.0833)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🌭 Békéscsaba</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Zalaegerszeg', 46.8400, 16.8433)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🌳 Zalaegerszeg</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Eger', 47.9025, 20.3772)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🍷 Eger</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Veszprém', 47.0933, 17.9075)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🏰 Veszprém</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Sopron', 47.6850, 16.5900)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🌲 Sopron</span>
+                        </button>
+                        <button class="city-select-item" onclick="selectManualCity('Érd', 47.3800, 18.9167)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
+                            <span>🏠 Érd</span>
+                        </button>
                     </div>
                     <button class="distance-confirm-btn" onclick="closeLocationSheet()" style="background: var(--color-surface); color: var(--color-text); border: 1.5px solid var(--color-text);">Mégse</button>
                 </div>
@@ -4647,13 +4681,7 @@ flex-direction: column !important;
                     </div>
                 </div>
 
-                <div style="height: 0.5px; background: var(--color-surface);"></div>
-                <div>
-                    <div style="font-weight: 500; color: var(--color-text); font-size: 13px; margin-bottom: 6px;">Mit jelent a Hűség pontszám?</div>
-                    <div style="font-size: 12px; color: var(--color-text); line-height: 1.4;">
-                        A Hűség pontszám a megbízhatóságod mérőszáma. Azt mutatja, hogy az elvállalt munkák mekkora részét végezted el sikeresen visszamondás vagy késés nélkül. A magas (95%+) hűségpontszámmal rendelkező diákokat kiemelt helyen ajánlja a rendszer a munkaadóknak!
-                    </div>
-                </div>
+
                 <div style="height: 0.5px; background: var(--color-surface);"></div>
                 <div>
                     <div style="font-weight: 500; color: var(--color-text); font-size: 13px; margin-bottom: 6px;">Hogyan lehetek Megbízó?</div>
@@ -4720,7 +4748,7 @@ flex-direction: column !important;
                 <div style="height: 0.5px; background: var(--color-surface); margin: 4px 0;"></div>
                 <div style="font-weight: 500; color: var(--color-text); font-size: 13px;">3. Visszamondási szabályok</div>
                 <p style="font-size: 12px; color: var(--color-text); line-height: 1.4; margin: 0;">
-                    Elfogadott munkát a kezdési időpont előtt legalább 12 órával lehet díjmentesen lemondani. Későbbi lemondás vagy meg nem jelenés esetén a hűségpontszám csökken, ami korlátozhatja a jövőbeni munkavállalást a platformon.
+                    Elfogadott munkát a kezdési időpont előtt legalább 12 órával lehet díjmentesen lemondani. Későbbi lemondás vagy meg nem jelenés negatív értékelést vagy fiókkorlátozást eredményezhet.
                 </p>
             </div>
         </div>
@@ -4847,7 +4875,9 @@ flex-direction: column !important;
                             bio: '',
                             skills: [],
                             address: '',
-                            phone: ''
+                            phone: '',
+                            termsAccepted: true,
+                            gdprAccepted: true
                         };
                         await setDoc(userRef, newUserData);
                         localStorage.setItem('melogo_user_data', JSON.stringify({ bio: '', skills: [], photoURL: user.photoURL || '', reviews: [], address: '', phone: '' }));
@@ -5527,6 +5557,14 @@ flex-direction: column !important;
                 alert("Apple bejelentkezés jelenleg nem elérhető.");
                 return;
             }
+            if (!isLoginMode && !termsAccepted) {
+                const termsBox = document.getElementById('terms-checkbox');
+                if (termsBox) {
+                    termsBox.style.borderColor = '#EF4444';
+                }
+                showLoginError('Regisztráció előtt el kell fogadnod az ÁSZF-et!');
+                return;
+            }    
             try {
                 const provider = new window.firebaseAPI.OAuthProvider('apple.com');
                 const btn = document.getElementById('apple-login-btn');
@@ -5606,25 +5644,38 @@ flex-direction: column !important;
             img.src = dataUrl;
         }
 
-
         async function deleteAccount() {
-            if(confirm("Biztosan v�glegesen t�r�lni szeretn�d a fi�kodat? Ez a mqvelet nem visszavonható�!")) {
+            const confirmed = confirm("Biztosan véglegesen törölni szeretnéd a fiókodat? Ez a művelet nem visszavonható!");
+            if (confirmed) {
                 if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                    const currentUser = window.firebaseAuth.currentUser;
                     try {
-                        await window.firebaseAuth.currentUser.delete();
-                        alert("Fi�k sikeresen t�r�lve.");
+                        // 1. Delete user document from Firestore (users collection)
+                        if (window.firebaseDb && window.firebaseAPI) {
+                            const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", currentUser.uid);
+                            await window.firebaseAPI.deleteDoc(userRef);
+                        }
+                        // 2. Delete user in Firebase Auth
+                        await currentUser.delete();
+                        
+                        alert("Fiókod sikeresen törlésre került.");
+                        closeLogoutConfirm();
                         logoutApp();
                         window.location.reload();
                     } catch(e) {
                         console.error(e);
                         if (e.code === 'auth/requires-recent-login') {
-                            alert("A fi�k t�rl�s�hez k�rj�k jelentkezz be �jra frissen!");
+                            alert("A fiók törléséhez kérjük jelentkezz be újra frissen!");
+                            closeLogoutConfirm();
                             logoutApp();
                         } else {
-                            alert("Hiba a fi�k t�rl�sekor.");
+                            alert("Hiba a fiók törlésekor.");
+                            closeLogoutConfirm();
                         }
                     }
                 }
+            } else {
+                closeLogoutConfirm();
             }
         }
 
@@ -6178,6 +6229,14 @@ flex-direction: column !important;
                 alert("A rendszer és a Google azonosítás még betöltés alatt áll. Kérjük, várj pár másodpercet és próbáld újra.");
                 return;
             }
+            if (!isLoginMode && !termsAccepted) {
+                const termsBox = document.getElementById('terms-checkbox');
+                if (termsBox) {
+                    termsBox.style.borderColor = '#EF4444';
+                }
+                showLoginError('Regisztráció előtt el kell fogadnod az ÁSZF-et!');
+                return;
+            }    
             
             const googleBtn = document.getElementById('google-login-btn');
             if (googleBtn) { googleBtn.disabled = true; googleBtn.style.opacity = '0.6'; }
@@ -7446,8 +7505,12 @@ function filterWorkerByExactJob(jobName) {
 
         window.openWorkerChatFromOverlay = function() {
             if (!auth.currentUser) return;
+            const jobId = gameState.jobId;
             const jobTitle = document.getElementById('worker-job-detail-title').innerText;
-            const chat = localChats.find(c => c.jobTitle === jobTitle && c.workerId === auth.currentUser.uid);
+            let chat = localChats.find(c => String(c.jobId) === String(jobId) && (c.workerId === auth.currentUser.uid || c.workerEmail === auth.currentUser.email));
+            if (!chat) {
+                chat = localChats.find(c => c.jobTitle === jobTitle && (c.workerId === auth.currentUser.uid || c.workerEmail === auth.currentUser.email));
+            }
             if (chat) {
                 // Close the job detail overlay first
                 document.getElementById('worker-action-overlay').classList.remove('active');
@@ -8995,7 +9058,7 @@ let settingsConfirmedAddress = null;
                     }
                     return false;
                 }
-                return j.isFirestore || j.distance === null || j.distance === undefined || j.distance <= activeRadius;
+                return j.distance === null || j.distance === undefined || j.distance <= activeRadius;
             });
 
             if (activeCategoryFilter !== 'Összes' && activeCategoryFilter !== 'all') {
@@ -9622,9 +9685,6 @@ let settingsConfirmedAddress = null;
             document.getElementById('map-preview-card').classList.add('visible');
         }
 
-        // ===================================================================
-        // GPS & LOCATION
-        // ===================================================================
         function initGPS() {
             if (!navigator.geolocation) {
                 setGPSStatus(false, 'GPS nem elérhető');
@@ -9633,23 +9693,17 @@ let settingsConfirmedAddress = null;
             if (window.gpsWatchId) {
                 navigator.geolocation.clearWatch(window.gpsWatchId);
             }
+            // Set mode to gps to allow status updating
+            gameState.locationMode = 'gps';
+            
             window.gpsWatchId = navigator.geolocation.watchPosition(
                 async (pos) => {
                     userCoords = {
                         lat: pos.coords.latitude,
                         lon: pos.coords.longitude
                     };
-                    if (!gameState.gpsActive) {
-                        setGPSStatus(true, 'GPS Aktív');
-                    } else {
-                        recalculateJobDistances();
-                        if (typeof updateJobCardsDistances === 'function') {
-                            updateJobCardsDistances();
-                        }
-                        if (typeof renderMapPins === 'function') {
-                            renderMapPins();
-                        }
-                    }
+                    // Force update GPS status if we switched to GPS mode
+                    setGPSStatus(true, 'GPS Aktív');
                 },
                 (err) => {
                     userCoords = null;
@@ -9660,8 +9714,20 @@ let settingsConfirmedAddress = null;
         }
 
         function setGPSStatus(active, cityName) {
-            if (gameState.gpsActive === active) return;
+            if (gameState.gpsActive === active && gameState.locationMode === 'gps') {
+                // If already active and in GPS mode, just update distances
+                recalculateJobDistances();
+                if (typeof updateJobCardsDistances === 'function') {
+                    updateJobCardsDistances();
+                }
+                if (typeof renderMapPins === 'function') {
+                    renderMapPins();
+                }
+                return;
+            }
+            
             gameState.gpsActive = active;
+            gameState.locationMode = active ? 'gps' : 'none';
             const dot = document.getElementById('gps-dot');
             const label = document.getElementById('gps-city-label');
             const locText = document.getElementById('gps-location-text');
@@ -9716,6 +9782,7 @@ let settingsConfirmedAddress = null;
 
         function setManualLocationStatus(cityName) {
             gameState.gpsActive = true;
+            gameState.locationMode = 'manual';
             const dot = document.getElementById('gps-dot');
             const label = document.getElementById('gps-city-label');
             const locText = document.getElementById('gps-location-text');
@@ -12823,6 +12890,37 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             list.innerHTML = html;
         }
 
+        let currentEmpJobFilter = 'all';
+
+        function filterEmpJobs(filter) {
+            currentEmpJobFilter = (currentEmpJobFilter === filter) ? 'all' : filter;
+            
+            // Update visual states
+            const tabs = {
+                'seeking': document.getElementById('emp-tab-seeking'),
+                'applicants': document.getElementById('emp-tab-applicants'),
+                'active': document.getElementById('emp-tab-active'),
+                'completed': document.getElementById('emp-tab-completed')
+            };
+            
+            for (const [key, el] of Object.entries(tabs)) {
+                if (el) {
+                    if (currentEmpJobFilter === 'all') {
+                        el.style.opacity = '1';
+                        el.style.transform = 'scale(1)';
+                    } else if (currentEmpJobFilter === key) {
+                        el.style.opacity = '1';
+                        el.style.transform = 'scale(1.03)';
+                    } else {
+                        el.style.opacity = '0.5';
+                        el.style.transform = 'scale(0.97)';
+                    }
+                }
+            }
+            
+            renderEmployerHome();
+        }
+
         function renderEmployerHome() {
             const list = document.getElementById('employer-active-jobs-list');
             const countLabel = document.getElementById('emp-active-count');
@@ -12882,8 +12980,48 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 return;
             }
 
+            let displayedJobs = [...myJobs];
+            if (typeof currentEmpJobFilter !== 'undefined' && currentEmpJobFilter !== 'all') {
+                displayedJobs = displayedJobs.filter(job => {
+                    const isCompleted = ['completed', 'rated', 'Befejezett'].includes(job.status);
+                    const isActive = ['accepted', 'started', 'pending_confirmation', 'Aktív'].includes(job.status);
+                    const isSeekingOrPending = job.status === 'Keresés' || job.status === 'pending';
+                    
+                    if (currentEmpJobFilter === 'completed') {
+                        return isCompleted;
+                    }
+                    if (currentEmpJobFilter === 'active') {
+                        return isActive;
+                    }
+                    if (currentEmpJobFilter === 'seeking') {
+                        if (!isSeekingOrPending) return false;
+                        const hasPendingApps = localWorkerApplications.some(a => a.jobId === job.id && a.status === 'Függőben');
+                        return !hasPendingApps && job.status !== 'pending';
+                    }
+                    if (currentEmpJobFilter === 'applicants') {
+                        if (!isSeekingOrPending) return false;
+                        const hasPendingApps = localWorkerApplications.some(a => a.jobId === job.id && a.status === 'Függőben');
+                        return hasPendingApps || job.status === 'pending';
+                    }
+                    return true;
+                });
+            }
+
+            if (displayedJobs.length === 0) {
+                list.innerHTML = `
+                    <div class="emp-empty-state">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" style="margin-bottom:8px;">
+                            <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        <h3 style="font-size: 13px; font-weight: 400; color: var(--color-text); margin-bottom: 4px;">Nincs ilyen státuszú hirdetésed</h3>
+                        <p style="font-size: 11px; color: var(--color-text-light); max-width: 260px;">Válassz másik kategóriát vagy szűrést a listázáshoz.</p>
+                    </div>
+                `;
+                return;
+            }
+
             let html = '';
-            myJobs.forEach(job => {
+            displayedJobs.forEach(job => {
                 let statusClass = 'seeking';
                 let statusText = 'Keresés';
                 let cardClass = 'status-seeking';

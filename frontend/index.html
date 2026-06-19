@@ -1,4 +1,4 @@
-�
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -14,8 +14,8 @@
     <meta property="og:image" content="logo_new.jpg">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/geofire-common@5.2.0/dist/geofire-common.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <script src="https://unpkg.com/geofire-common@5.2.0/dist/geofire-common.min.js" defer></script>
     <style>
         html, body { background-color: var(--color-text); }
         button, a { touch-action: manipulation; }
@@ -318,7 +318,7 @@
             width: 100%;
             background-color: transparent;
             color: var(--color-text);
-            border: 1px solid var(--color-text);
+            border: 1px solid #E5E7EB;
             border-radius: 16px;
             padding: 14px;
             font-size: 15px;
@@ -357,18 +357,18 @@
         /* Home Header */
         .header-midnight {
             background-color: var(--color-text);
-            padding: 64px 20px 36px 20px;
+            padding: 24px 20px 20px 20px;
             border-bottom-left-radius: 30px;
             border-bottom-right-radius: 30px;
         }
 
         .brand-logo {
-            font-size: 44px;
+            font-size: 32px;
             font-weight: 600;
             
             color: #fff;
             text-align: center;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             letter-spacing: -0.5px;
         }
         .brand-logo span { color: var(--color-green); }
@@ -378,16 +378,18 @@
             font-weight: 400;
             color: rgba(255,255,255,0.75);
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .search-bar {
-            background-color: rgba(255,255,255,0.1);
+            background-color: rgba(255,255,255,0.08);
             border-radius: 16px;
-            padding: 14px 16px;
+            height: 48px;
+            padding: 0 16px;
             display: flex;
             align-items: center;
             gap: 12px;
+            box-sizing: border-box;
         }
         .search-bar input {
             background: none;
@@ -406,8 +408,8 @@
             background: var(--color-surface);
             border-radius: 16px !important;
             padding: 24px !important;
-            margin: 0 16px 16px 16px !important;
-            border: 1px solid var(--color-text) !important;
+            margin: 0 16px 12px 16px !important;
+            border: 1px solid #E5E7EB !important;
             
         }
 
@@ -891,7 +893,7 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 14px;
+            margin-top: 16px;
         }
         .gps-location {
             display: flex;
@@ -937,16 +939,21 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
         }
         .sort-row::-webkit-scrollbar { display: none; }
         .sort-pill {
-            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            height: 34px;
+            padding: 0 12px;
             border-radius: 16px;
             font-size: 12px;
-            font-weight: 300;
+            font-weight: 500;
             white-space: nowrap;
             cursor: pointer;
             background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            color: var(--color-text-light);
+            border: 1px solid #E5E7EB;
+            color: var(--color-text);
             transition: all 0.15s;
+            flex-shrink: 0;
         }
         .sort-pill.active {
             background: var(--color-text);
@@ -1228,7 +1235,7 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
             background: var(--color-surface);
             border-radius: 24px;
             padding: 24px;
-            border: 1.5px solid var(--color-text);
+            border: 1px solid #E5E7EB;
             
             transform: translateY(150%);
             transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms;
@@ -1282,7 +1289,8 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--color-text);
+            border: 1px solid #E5E7EB;
+            box-shadow: 0px 2px 12px rgba(0,0,0,0.08);
             border-radius: 28px;
             height: 64px;
             display: grid;
@@ -1367,11 +1375,11 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
             padding: 0 12px;
             border-radius: 16px;
             font-size: 12px;
-            font-weight: 300;
+            font-weight: 500;
             white-space: nowrap;
             cursor: pointer;
             background: var(--color-surface);
-            border: 1px solid var(--color-text);
+            border: 1px solid #E5E7EB;
             color: var(--color-text);
             transition: all 0.15s;
             flex-shrink: 0;
@@ -1391,11 +1399,11 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
             padding: 6px 16px;
             border-radius: 20px;
             font-size: 13px;
-            font-weight: 300;
+            font-weight: 500;
             white-space: nowrap;
             cursor: pointer;
             background-color: var(--color-bg);
-            border: 1.5px solid #000;
+            border: 1px solid #E5E7EB;
             color: #000;
             transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
             box-sizing: border-box;
@@ -1542,7 +1550,7 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
         }
         .emp-cat-card {
             background: var(--color-surface);
-            border: 1.5px solid var(--color-text);
+            border: 1px solid #E5E7EB;
             border-radius: 16px;
             height: 72px;
             display: flex;
@@ -1887,7 +1895,7 @@ flex-direction: column !important;
             margin: 0 16px 16px 16px !important;
             border-radius: 16px !important;
             overflow: hidden;
-            border: 1px solid var(--color-text) !important;
+            border: 1px solid #E5E7EB !important;
             
             padding: 4px 0 !important;
         }
@@ -2199,7 +2207,7 @@ flex-direction: column !important;
         .job-tag {
             height: 22px;
             font-size: 10px;
-            border: 1px solid var(--color-text);
+            border: 1px solid #E5E7EB;
             border-radius: 16px;
             padding: 0 8px;
             display: inline-flex;
@@ -2447,12 +2455,12 @@ flex-direction: column !important;
         .msg-filter-pill.active {
             background-color: var(--color-text);
             color: #fff;
-            border: 1px solid var(--color-text);
+            border: 1px solid #E5E7EB;
         }
         .msg-filter-pill.inactive {
             background-color: var(--color-bg);
             color: var(--color-text);
-            border: 1px solid var(--color-text);
+            border: 1px solid #E5E7EB;
         }
         
         .chat-list-container {
@@ -2750,7 +2758,7 @@ flex-direction: column !important;
         .emp-ad-card {
             height: 80px;
             background-color: var(--color-bg);
-            border: 1px solid var(--color-text);
+            border: 1px solid #E5E7EB;
             border-radius: 16px;
             display: flex;
             align-items: center;
@@ -2941,7 +2949,7 @@ flex-direction: column !important;
             flex: 1;
             height: 56px;
             background: var(--color-surface);
-            border: 1px solid var(--color-text);
+            border: 1px solid #E5E7EB;
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -2962,7 +2970,7 @@ flex-direction: column !important;
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="assets/logo_new.jpg" type="image/jpeg">
     <link rel="apple-touch-icon" href="assets/logo_new.jpg">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script></head>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script></head>
 <body>
 <div id="phone-app" class="phone-container">
     <!-- Hidden inputs for photo and camera pickers -->
@@ -3269,7 +3277,7 @@ flex-direction: column !important;
                 <div id="home-worker-view" class="job-list fade-view">
                     <div class="flex-between" style="margin-bottom: 12px; padding: 0 16px;">
                         <h2 style="font-size: 18px; font-weight: 500; color: var(--color-text);">Közeli munkák</h2>
-                        <div id="worker-job-filter-display" style="display:inline-flex; align-items:center; background:#000; color:#fff; padding:6px 14px; border-radius:20px; font-size:13px; font-weight: 400; cursor:pointer;" onclick="openJobPicker('filter')">Összes <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+                        <div id="worker-job-filter-display" style="display:inline-flex; align-items:center; background:#fff; color:var(--color-text); padding:6px 12px; border:1px solid #E5E7EB; border-radius:20px; font-size:13px; font-weight: 500; cursor:pointer; box-sizing: border-box;" onclick="openJobPicker('filter')">Összes <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
                     </div>
 
                     <!-- 14-napos dátumszűrő -->
@@ -3297,7 +3305,7 @@ flex-direction: column !important;
                         <div class="sort-pill" id="sort-dist" onclick="sortWorkerJobs('distance')">Távolság</div>
                         <div class="sort-pill active" id="sort-new" onclick="sortWorkerJobs('newest')">Legfrissebb</div>
                         <div class="sort-pill" id="sort-price" onclick="sortWorkerJobs('price')">Ár ↑</div>
-                        <div class="sort-pill" id="sort-urg" onclick="sortWorkerJobs('urgent')">⚡ Sürgős</div>
+                        <div class="sort-pill" id="sort-urg" onclick="sortWorkerJobs('urgent')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Sürgős</div>
                     </div>
 
                     <!-- Magántanár: Tárgy sor (csak Magántanár kategóriánál látható) -->
@@ -3427,7 +3435,7 @@ flex-direction: column !important;
                         </div>
 
                         <!-- Stats bar floating card -->
-                        <div style="margin: -35px 20px 20px 20px; background-color: white; border-radius: 16px; border: 1px solid var(--color-text);  display: flex; position: relative; z-index: 2; padding: 16px 0;">
+                        <div style="margin: -35px 20px 20px 20px; background-color: white; border-radius: 16px; border: 1px solid #E5E7EB;  display: flex; position: relative; z-index: 2; padding: 16px 0;">
                             <div style="flex: 1; text-align: center; border-right: 1px solid var(--color-text);">
                                 <div style="font-size: 20px; font-weight: 400; color: var(--color-text);" class="user-job-count">0</div>
                                 <div style="font-size: 11px; color: var(--color-text); margin-top: 4px;">Meló</div>
@@ -3444,7 +3452,7 @@ flex-direction: column !important;
                             <!-- Section 1: SZEREPEM -->
                             <div>
                                 <div style="font-size: 12px; font-weight: 500; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">SZEREPEM</div>
-                                <div style="background-color: white; border-radius: 16px; border: 1px solid var(--color-text); padding: 16px;">
+                                <div style="background-color: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 16px;">
                                     <div class="role-switcher-container" style="max-width: 100%; margin-bottom: 8px; background-color: var(--color-bg);">
                                         <button class="role-btn active" id="role-btn-worker" onclick="switchRole('worker')">Munkás</button>
                                         <button class="role-btn" id="role-btn-employer" onclick="switchRole('employer')">Megbízó</button>
@@ -3458,7 +3466,7 @@ flex-direction: column !important;
                             <!-- Section: BEMUTATKOZÁS & SZAKTUDÁS -->
                             <div id="profile-bio-skills-card" style="display: block;">
                                 <div style="font-size: 12px; font-weight: 500; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">BEMUTATKOZÁS & SZAKTUDÁS</div>
-                                <div style="background-color: white; border-radius: 16px; border: 1px solid var(--color-text); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                                <div style="background-color: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
                                     <div>
                                         <div style="font-size: 11px; font-weight: 500; color: var(--color-text); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Bemutatkozás</div>
                                         <div id="profile-bio-display" style="font-size: 14px; color: var(--color-text); line-height: 1.5; font-style: italic;">"Nincs bemutatkozás megadva."</div>
@@ -3484,7 +3492,7 @@ flex-direction: column !important;
                             <!-- Section 2: FIÓKOM -->
                             <div>
                                 <div style="font-size: 12px; font-weight: 500; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">FIÓKOM</div>
-                                <div style="background-color: white; border-radius: 16px; border: 1px solid var(--color-text);">
+                                <div style="background-color: white; border-radius: 16px; border: 1px solid #E5E7EB;">
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="openSettings()">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" style="margin-right: 12px; flex-shrink: 0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                         <span style="font-size: 15px; color: var(--color-text); flex-grow: 1;">Bemutatkozás szerkesztése</span>
@@ -3519,7 +3527,7 @@ flex-direction: column !important;
                             <!-- Section 4: TÁMOGATÁS -->
                             <div>
                                 <div style="font-size: 12px; font-weight: 500; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">TÁMOGATÁS</div>
-                                <div style="background-color: white; border-radius: 16px; border: 1px solid var(--color-text);">
+                                <div style="background-color: white; border-radius: 16px; border: 1px solid #E5E7EB;">
                                     <div style="height: 52px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;" onclick="document.getElementById('help-overlay').classList.add('open')">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" style="margin-right: 12px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                                         <span style="font-size: 15px; color: var(--color-text); flex-grow: 1;">Súgó és GYIK</span>
@@ -3766,7 +3774,7 @@ flex-direction: column !important;
                     <div class="confirm-sheet-title" style="margin-bottom:8px;">Kijelentkezés</div>
                     <div class="confirm-sheet-desc" style="margin-bottom:28px;">Biztosan ki szeretnél jelentkezni a MeloGo-ból?</div>
                     <div style="display:flex; flex-direction:column; gap:12px;">
-                        <button style="width:100%; min-height:52px; border-radius:14px; border: 1.5px solid var(--color-text); background: var(--color-surface); color: var(--color-text); font-size:15px; font-weight: 400; cursor:pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;" onclick="closeLogoutConfirm()">Mégsem</button>
+                        <button style="width:100%; min-height:52px; border-radius:14px; border: 1px solid #E5E7EB; background: var(--color-surface); color: var(--color-text); font-size:15px; font-weight: 400; cursor:pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;" onclick="closeLogoutConfirm()">Mégsem</button>
                         <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#DC2626; color:#fff; font-size:15px; font-weight: 400; cursor:pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;" onclick="logoutWorker()">Kijelentkezés</button>
                         <button style="width:100%; min-height:52px; border-radius:14px; border:none; background:#7F1D1D; color:#fff; font-size:15px; font-weight: 400; cursor:pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin-top: 8px;" onclick="deleteAccount()">Fiók végleges törlése</button>
                     </div>
@@ -3923,7 +3931,7 @@ flex-direction: column !important;
                                         appearance: none;
                                         -webkit-appearance: none;
                                         background: var(--color-surface);
-                                        border: 1.5px solid var(--color-text);
+                                        border: 1px solid #E5E7EB;
                                         border-radius: 16px;
                                         padding: 14px 40px 14px 14px;
                                         font-size: 14px;
@@ -3954,7 +3962,7 @@ flex-direction: column !important;
                                         appearance: none;
                                         -webkit-appearance: none;
                                         background: var(--color-surface);
-                                        border: 1.5px solid var(--color-text);
+                                        border: 1px solid #E5E7EB;
                                         border-radius: 16px;
                                         padding: 14px 40px 14px 14px;
                                         font-size: 14px;
@@ -4318,7 +4326,7 @@ flex-direction: column !important;
                             <span>🏠 Érd</span>
                         </button>
                     </div>
-                    <button class="distance-confirm-btn" onclick="closeLocationSheet()" style="background: var(--color-surface); color: var(--color-text); border: 1.5px solid var(--color-text);">Mégse</button>
+                    <button class="distance-confirm-btn" onclick="closeLocationSheet()" style="background: var(--color-surface); color: var(--color-text); border: 1px solid #E5E7EB;">Mégse</button>
                 </div>
 
                 <!-- ===== PUSH NOTIFICATION BANNER ===== -->
@@ -4407,13 +4415,13 @@ flex-direction: column !important;
         <!-- ===== EMPLOYER PROFILE OVERLAY FOR WORKER ===== -->
         <!-- MINI EMPLOYER PROFILE MODAL -->
         <div id="employer-mini-modal-backdrop" class="overlay-backdrop" style="z-index: 2100; transition: opacity 0.2s ease;" onclick="closeEmployerMiniModal()"></div>
-        <div id="employer-mini-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); width: 85%; max-width: 320px; background: var(--color-surface); border: 1px solid var(--color-text); border-radius: 20px; padding: 24px; z-index: 2101; opacity: 0; pointer-events: none; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);">
+        <div id="employer-mini-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); width: 85%; max-width: 320px; background: var(--color-surface); border: 1px solid #E5E7EB; border-radius: 20px; padding: 24px; z-index: 2101; opacity: 0; pointer-events: none; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);">
             <div id="mini-emp-avatar" style="width: 64px; height: 64px; border-radius: 50%; background: var(--color-text); color: #FFFFFF; font-size: 24px; font-weight: 500; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">M</div>
             <div id="mini-emp-name" style="font-size: 18px; font-weight: 500; color: var(--color-text); margin-bottom: 4px;">Megbízó Neve</div>
             <div id="mini-emp-location" style="font-size: 13px; color: var(--color-text); margin-bottom: 24px;">Kaposvár</div>
             
             <button id="mini-emp-view-btn" style="width: 100%; height: 44px; background: var(--color-text); color: #FFFFFF; border: none; border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer;">Teljes profil megtekintése</button>
-            <button onclick="closeEmployerMiniModal()" style="width: 100%; height: 44px; background: rgba(128,128,128,0.1); color: var(--color-text); border: 1px solid var(--color-text); border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px;">Bezárás</button>
+            <button onclick="closeEmployerMiniModal()" style="width: 100%; height: 44px; background: rgba(128,128,128,0.1); color: var(--color-text); border: 1px solid #E5E7EB; border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px;">Bezárás</button>
         </div>
 
         <div class="settings-overlay" id="employer-profile-overlay" style="z-index: 3000;">
@@ -4564,7 +4572,7 @@ flex-direction: column !important;
         <div style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px;" class="settings-scroll">
             
             <!-- Card 1: Részletek -->
-            <div style="background: var(--color-surface); border-radius: 16px; padding: 16px; border: 1px solid var(--color-text);">
+            <div style="background: var(--color-surface); border-radius: 16px; padding: 16px; border: 1px solid #E5E7EB;">
                 <div style="font-size: 12px; font-weight: 500; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">RÉSZLETEK</div>
                 <div style="font-size: 16px; font-weight: 500; color: var(--color-text); margin-bottom: 4px;" id="ad-detail-address">Helyszín betöltése...</div>
                 <div style="font-size: 13px; color: var(--color-text); margin-bottom: 16px;" id="ad-detail-datetime">Időpont betöltése...</div>
@@ -4578,7 +4586,7 @@ flex-direction: column !important;
             </div>
             
             <!-- Card 2: Jelentkezők -->
-            <div style="background: var(--color-surface); border-radius: 16px; padding: 16px; border: 1px solid var(--color-text);">
+            <div style="background: var(--color-surface); border-radius: 16px; padding: 16px; border: 1px solid #E5E7EB;">
                 <div style="font-size: 12px; font-weight: 500; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">JELENTKEZŐK</div>
                 <div id="ad-detail-applicants-container">
                     <!-- Populated dynamically -->
@@ -4646,7 +4654,7 @@ flex-direction: column !important;
     <div class="confirm-sheet" id="last-job-sheet" style="padding: 20px 20px 32px 20px; box-sizing: border-box;">
         <div class="confirm-sheet-handle" style="margin: 0 auto 16px auto;"></div>
         <div class="confirm-sheet-title" style="text-align: center; font-size: 18px; font-weight: 500; color: var(--color-text);">Legutóbbi visszajelzés</div>
-        <div style="background: var(--color-surface); border-radius: 16px; padding: 16px; margin-top: 16px; border: 1px solid var(--color-text);">
+        <div style="background: var(--color-surface); border-radius: 16px; padding: 16px; margin-top: 16px; border: 1px solid #E5E7EB;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span style="font-weight: 500; color: var(--color-text); font-size: 15px;">Fűnyírás és szegélynyírás</span>
                 <span style="font-weight: 500; color: var(--color-text); font-size: 15px;">12 000 Ft</span>
@@ -5457,7 +5465,8 @@ flex-direction: column !important;
             // 2. Applications listener
             let appsQuery = query(
                 collection(db, "applications"),
-                where(role === 'worker' ? "workerUid" : "employerUid", "==", uid)
+                where(role === 'worker' ? "workerUid" : "employerUid", "==", uid),
+                limit(100)
             );
             window.appsUnsubscribe = onSnapshot(appsQuery, (snapshot) => {
                 let apps = [];
@@ -5529,7 +5538,8 @@ flex-direction: column !important;
                         // Worker-side chats (where current user is the worker)
             const chatsQuery1 = query(
                 collection(db, "chats"),
-                where("workerId", "==", uid)
+                where("workerId", "==", uid),
+                limit(100)
             );
             window.chatsUnsubscribe = onSnapshot(chatsQuery1, (snapshot) => {
                 let chats = [];
@@ -5540,7 +5550,8 @@ flex-direction: column !important;
             // Employer-side chats (where current user is the employer)
             const chatsQuery2 = query(
                 collection(db, "chats"),
-                where("employerId", "==", uid)
+                where("employerId", "==", uid),
+                limit(100)
             );
             window.chatsUnsubscribe2 = onSnapshot(chatsQuery2, (snapshot) => {
                 let chats = [];
@@ -5954,6 +5965,7 @@ flex-direction: column !important;
         }
 
         window.onload = function() {
+            if (typeof initAvatarCache === 'function') initAvatarCache();
             let initialCatLabel = 'Minden feladat';
             document.getElementById('worker-job-filter-display').innerHTML = initialCatLabel + ' <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
             // filterWorkerJobs is now handled by refreshJobList() in the new engine
@@ -8907,7 +8919,7 @@ let settingsConfirmedAddress = null;
             let html = '';
             for (let i = 0; i < count; i++) {
                 html += `
-                    <div class="job-card shimmer" style="min-height: 96px; margin-bottom: 16px; border-radius: 16px; border: 1px solid var(--color-text); background: var(--color-surface); overflow: hidden; position: relative;">
+                    <div class="job-card shimmer" style="min-height: 96px; margin-bottom: 12px; border-radius: 16px; border: 1px solid #E5E7EB; background: var(--color-surface); overflow: hidden; position: relative;">
                         <div style="padding: 24px;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
                                 <div style="width: 60%; height: 20px; background: var(--color-surface); border-radius: 6px;"></div>
@@ -9245,7 +9257,7 @@ let settingsConfirmedAddress = null;
                 const isActive = (activeDateFilter === isoDate);
                 
                 html += `
-                    <div onclick="setDateFilter('${isoDate}')" style="min-width: 52px; padding: 6px 0; border-radius: 12px; border: 1.5px solid ${isActive ? 'var(--color-text)' : 'var(--color-text)'}; background: ${isActive ? 'var(--color-text)' : '#fff'}; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;">
+                    <div onclick="setDateFilter('${isoDate}')" style="min-width: 52px; height: 64px; border-radius: 12px; border: 1px solid ${isActive ? 'var(--color-text)' : '#E5E7EB'}; background: ${isActive ? 'var(--color-text)' : '#fff'}; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; box-sizing: border-box;">
                         <span style="font-size: 11px; font-weight: 500; color: ${isActive ? '#fff' : 'var(--color-text)'}; margin-bottom: 2px;">${dayName}</span>
                         <span style="font-size: 16px; font-weight: 600; color: ${isActive ? '#fff' : 'var(--color-text)'};">${num}</span>
                     </div>
@@ -9675,7 +9687,7 @@ let settingsConfirmedAddress = null;
                 </div>
                 <div class="job-card-badges" style="margin-bottom: 12px; display: flex; gap: 6px;">
                     <span class="job-badge-cat" style="background:var(--color-text); color:#fff; font-size:10px; padding:4px 8px; border-radius:12px;">${job.category || 'Egyéb'}</span>
-                    ${job.urgent ? '<span class="job-badge-urgent" style="border: 1px solid var(--color-text); color: var(--color-text); font-size:10px; padding:4px 8px; border-radius:12px;">Sürgős</span>' : ''}
+                    ${job.urgent ? '<span class="job-badge-urgent" style="border: 1px solid #E5E7EB; color: var(--color-text); font-size:10px; padding:4px 8px; border-radius:12px;">Sürgős</span>' : ''}
                 </div>
                 <div class="job-meta" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px;">
                     <div class="job-meta-item" style="display:flex; align-items:center; gap:6px; font-size:12px; color: var(--color-text);">
@@ -9692,7 +9704,7 @@ let settingsConfirmedAddress = null;
                     </div>
                 </div>
                 <div style="display: flex; gap: 12px; margin-top: 16px;">
-                    <button class="job-apply-btn" onclick="openJobDetailById('${job.id}')" style="flex: 1; height: 48px; background: var(--color-surface); color: var(--color-text); border: 1.5px solid var(--color-text); border-radius: 16px; font-size: 14px; font-weight: 500; cursor: pointer;">Részletek</button>
+                    <button class="job-apply-btn" onclick="openJobDetailById('${job.id}')" style="flex: 1; height: 48px; background: var(--color-surface); color: var(--color-text); border: 1px solid #E5E7EB; border-radius: 16px; font-size: 14px; font-weight: 500; cursor: pointer;">Részletek</button>
                     <button class="job-apply-btn" onclick="openJobDetailById('${job.id}'); setTimeout(() => document.getElementById('action-apply-btn').click(), 300);" style="flex: 1.5; height: 48px; background: var(--color-text); color: #FFFFFF; border: none; border-radius: 16px; font-size: 14px; font-weight: 500; cursor: pointer;">Jelentkezés →</button>
                 </div>
             `;
@@ -9711,20 +9723,45 @@ let settingsConfirmedAddress = null;
             // Set mode to gps to allow status updating
             gameState.locationMode = 'gps';
             
+            // Instantly load last known location from cache
+            try {
+                const cached = localStorage.getItem('melogo_last_gps_location');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.lat && parsed.lon) {
+                        userCoords = { lat: parsed.lat, lon: parsed.lon };
+                        setGPSStatus(true, parsed.name || 'GPS Aktív');
+                    }
+                }
+            } catch (e) {
+                console.warn("Failed to load cached GPS location:", e);
+            }
+            
             window.gpsWatchId = navigator.geolocation.watchPosition(
                 async (pos) => {
                     userCoords = {
                         lat: pos.coords.latitude,
                         lon: pos.coords.longitude
                     };
+                    // Cache the location locally
+                    try {
+                        localStorage.setItem('melogo_last_gps_location', JSON.stringify({
+                            lat: pos.coords.latitude,
+                            lon: pos.coords.longitude,
+                            name: 'GPS Aktív'
+                        }));
+                    } catch (e) {}
                     // Force update GPS status if we switched to GPS mode
                     setGPSStatus(true, 'GPS Aktív');
                 },
                 (err) => {
-                    userCoords = null;
-                    setGPSStatus(false, 'GPS letiltva');
+                    // Do not clear userCoords if we have a cached fallback loaded
+                    if (!userCoords) {
+                        userCoords = null;
+                        setGPSStatus(false, 'GPS letiltva');
+                    }
                 },
-                { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+                { enableHighAccuracy: false, maximumAge: 300000, timeout: 5000 }
             );
         }
 
@@ -11319,7 +11356,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         const chatIdArg = matchedChat ? `'${matchedChat.id}'` : 'null';
 
                         appsHtml += `
-                            <div style="display: flex; align-items: center; justify-content: space-between; background: var(--color-surface); padding: 12px; border-radius: 16px; border: 1px solid var(--color-text); margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; background: var(--color-surface); padding: 12px; border-radius: 16px; border: 1px solid #E5E7EB; margin-bottom: 8px;">
                                 <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openWorkerProfile('${workerDisplayName}')">
                                     ${imgHtml}
                                     <div>
@@ -12936,7 +12973,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             let html = '';
             for (let i = 0; i < count; i++) {
                 html += `
-                    <div class="emp-ad-card shimmer" style="border: 1px solid var(--color-text); background: var(--color-surface)">
+                    <div class="emp-ad-card shimmer" style="border: 1px solid #E5E7EB; background: var(--color-surface)">
                         <div class="emp-ad-icon-circle" style="background: var(--color-surface); border:none;"></div>
                         <div class="emp-ad-middle">
                             <div style="width:60%; height:14px; background: var(--color-surface); border-radius:4px; margin-bottom:6px;"></div>
@@ -14001,7 +14038,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             }
             const last5 = reviews.slice(0, 5);
             container.innerHTML = last5.map(function(r) {
-                return '<div style="background: var(--color-surface);border: 1px solid var(--color-text);border-radius: 16px;padding:14px 16px;margin-bottom:10px;">' +
+                return '<div style="background: var(--color-surface);border: 1px solid #E5E7EB;border-radius: 16px;padding:14px 16px;margin-bottom:10px;">' +
                     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
                     '<div style="width:36px;height:36px;border-radius:50%;background-color: var(--color-text);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight: 500;color:#fff;flex-shrink:0;">' + (r.initials || '?') + '</div>' +
                     '<div style="flex:1;"><div style="font-size:13px;font-weight: 500;color: var(--color-text);">' + r.name + '</div><div style="font-size:11px;color: var(--color-text);">' + r.date + '</div></div>' +
@@ -14024,7 +14061,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     list.innerHTML = '<div style="text-align:center;padding:40px;color: var(--color-text);">Még nincs egyetlen véleményed sem.</div>';
                 } else {
                     list.innerHTML = reviews.map(function(r) {
-                        return '<div style="background: var(--color-surface);border: 1px solid var(--color-text);border-radius: 16px;padding:14px 16px;margin-bottom:10px;">' +
+                        return '<div style="background: var(--color-surface);border: 1px solid #E5E7EB;border-radius: 16px;padding:14px 16px;margin-bottom:10px;">' +
                             '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
                             '<div style="width:36px;height:36px;border-radius:50%;background-color: var(--color-text);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight: 500;color:#fff;flex-shrink:0;">' + (r.initials || '?') + '</div>' +
                             '<div style="flex:1;"><div style="font-size:13px;font-weight: 500;color: var(--color-text);">' + r.name + '</div><div style="font-size:11px;color: var(--color-text);">' + r.date + '</div></div>' +
@@ -14091,7 +14128,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             
             if (localWorkerApplications.length === 0) {
                 list.innerHTML = `
-                    <div style="background: white; border-radius: 16px; border: 1px solid var(--color-text); padding: 20px; text-align: center; box-sizing: border-box;">
+                    <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 20px; text-align: center; box-sizing: border-box;">
                         <div style="font-size: 24px; margin-bottom: 8px;">💼</div>
                         <div style="font-size: 13px; font-weight: 400; color: var(--color-text);">Nincs még aktív jelentkezésed</div>
                         <div style="font-size: 11px; color: var(--color-text); margin-top: 4px; line-height: 1.3;">Keress egy neked tetsző munkát a Főlapon, és jelentkezz rá!</div>
@@ -14116,7 +14153,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 }
                 
                 return `
-                    <div style="background: white; border-radius: 16px; border: 1px solid var(--color-text); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box; gap: 8px;">
+                    <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box; gap: 8px;">
                         <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1;">
                             <span style="font-size: 14px; font-weight: 500; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${app.title}</span>
                             <span style="font-size: 11px; color: var(--color-text);">${app.date} · <span style="font-weight: 400; color: var(--color-text);">${app.price.toLocaleString('hu-HU')} Ft</span></span>
@@ -14149,7 +14186,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
                 list.innerHTML = notifications.map(function(n) {
                     return `
-                        <div style="background: white; border-radius: 16px; border: 1px solid var(--color-text); padding: 14px 16px; margin-bottom: 10px; position: relative; box-sizing: border-box;">
+                        <div style="background: white; border-radius: 16px; border: 1px solid #E5E7EB; padding: 14px 16px; margin-bottom: 10px; position: relative; box-sizing: border-box;">
                             ${n.isNew ? '<div style="position: absolute; top: 16px; right: 16px; width: 8px; height: 8px; background-color: #EF4444; border-radius: 50%;"></div>' : ''}
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <div style="width: 8px; height: 8px; background: ${n.color}; border-radius: 50%;"></div>
@@ -14176,7 +14213,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 
                 list.innerHTML = earnings.map(function(e) {
                     return `
-                        <div style="background: var(--color-surface); border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--color-text); box-sizing: border-box;">
+                        <div style="background: var(--color-surface); border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #E5E7EB; box-sizing: border-box;">
                             <div style="min-width: 0; flex: 1;">
                                 <div style="font-size: 13px; font-weight: 500; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.title}</div>
                                 <div style="font-size: 10px; color: var(--color-text); margin-top: 2px;">${e.date}</div>

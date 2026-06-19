@@ -3790,7 +3790,7 @@ flex-direction: column !important;
                 </div>
 
                 <!-- Avatar Crop Overlay -->
-                <div id="avatar-crop-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 12, 46, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                <div id="avatar-crop-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 12, 46, 0.98); z-index: 10005; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                     <div style="font-size: 18px; font-weight: 500; color: white; margin-bottom: 24px; text-align: center;">Profilkép igazítása</div>
                     
                     <!-- Circular Crop Area -->
@@ -3812,7 +3812,7 @@ flex-direction: column !important;
                     <!-- Buttons -->
                     <div style="width: 100%; display: flex; gap: 12px; max-width: 260px;">
                         <button type="button" onclick="cancelCrop()" style="flex: 1; height: 48px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.25); background: none; color: white; font-weight: 400; font-size: 14px; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">Mégse</button>
-                        <button type="button" onclick="confirmCrop()" style="flex: 1; height: 48px; border-radius: 12px; border: none; background: var(--color-text); color: white; font-weight: 500; font-size: 14px; cursor: pointer;  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">Mentés</button>
+                        <button type="button" id="crop-save-btn" onclick="confirmCrop()" style="flex: 1; height: 48px; border-radius: 12px; border: none; background: var(--color-text); color: white; font-weight: 500; font-size: 14px; cursor: pointer;  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">Mentés</button>
                     </div>
                 </div>
 
@@ -8435,32 +8435,45 @@ let settingsConfirmedAddress = null;
             const img = document.getElementById('crop-preview-image');
             if (!img || !img.src) return;
             
-            const canvas = document.createElement('canvas');
-            canvas.width = 200;
-            canvas.height = 200;
-            const ctx = canvas.getContext('2d');
+            const saveBtn = document.getElementById('crop-save-btn');
+            if (saveBtn) {
+                saveBtn.innerText = 'Mentés...';
+                saveBtn.disabled = true;
+            }
             
-            const displayedW = img.width || 260;
-            const displayedH = img.height || 260;
-            
-            ctx.beginPath();
-            ctx.arc(100, 100, 100, 0, Math.PI * 2);
-            ctx.clip();
-            
-            const multiplier = 200 / 260;
-            
-            const destW = displayedW * cropState.scale * multiplier;
-            const destH = displayedH * cropState.scale * multiplier;
-            
-            const destX = 100 + (cropState.currentX * multiplier) - (destW / 2);
-            const destY = 100 + (cropState.currentY * multiplier) - (destH / 2);
-            
-            ctx.drawImage(img, destX, destY, destW, destH);
-            
-            const croppedBase64 = canvas.toDataURL('image/jpeg', 0.60);
-            
-            await saveProfilePhoto(croppedBase64);
-            cancelCrop();
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 200;
+                canvas.height = 200;
+                const ctx = canvas.getContext('2d');
+                
+                const displayedW = img.width || 260;
+                const displayedH = img.height || 260;
+                
+                ctx.beginPath();
+                ctx.arc(100, 100, 100, 0, Math.PI * 2);
+                ctx.clip();
+                
+                const multiplier = 200 / 260;
+                
+                const destW = displayedW * cropState.scale * multiplier;
+                const destH = displayedH * cropState.scale * multiplier;
+                
+                const destX = 100 + (cropState.currentX * multiplier) - (destW / 2);
+                const destY = 100 + (cropState.currentY * multiplier) - (destH / 2);
+                
+                ctx.drawImage(img, destX, destY, destW, destH);
+                
+                const croppedBase64 = canvas.toDataURL('image/jpeg', 0.60);
+                
+                await saveProfilePhoto(croppedBase64);
+            } finally {
+                if (saveBtn) {
+                    saveBtn.innerText = 'Mentés';
+                    saveBtn.disabled = false;
+                }
+                cancelCrop();
+            }
         }
 
         let cropState = {

@@ -2966,8 +2966,8 @@ flex-direction: column !important;
 <body>
 <div id="phone-app" class="phone-container">
     <!-- Hidden inputs for photo and camera pickers -->
-    <input type="file" id="avatar-gallery-picker" accept="image/*" style="display:none;" onchange="handleAvatarFileSelected(event, 'gallery')">
-    <input type="file" id="avatar-camera-picker" accept="image/*" capture="user" style="display:none;" onchange="handleAvatarFileSelected(event, 'camera')">
+    <input type="file" id="avatar-gallery-picker" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; z-index:-1;" onchange="handleAvatarFileSelected(event, 'gallery')">
+    <input type="file" id="avatar-camera-picker" accept="image/*" capture="user" style="position:absolute; width:1px; height:1px; opacity:0; z-index:-1;" onchange="handleAvatarFileSelected(event, 'camera')">
 
 
 <!-- Splash Screen -->
@@ -5338,7 +5338,7 @@ flex-direction: column !important;
         }
 
         window.setupFirestoreListeners = function(role) {
-            if (!auth.currentUser) {
+            if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
                 console.log('[DEBUG] setupFirestoreListeners skipped: user not logged in.');
                 return;
             }
@@ -7504,12 +7504,12 @@ function filterWorkerByExactJob(jobName) {
         }
 
         window.openWorkerChatFromOverlay = function() {
-            if (!auth.currentUser) return;
+            if (!window.firebaseAuth || !window.firebaseAuth.currentUser) return;
             const jobId = gameState.jobId;
             const jobTitle = document.getElementById('worker-job-detail-title').innerText;
-            let chat = localChats.find(c => String(c.jobId) === String(jobId) && (c.workerId === auth.currentUser.uid || c.workerEmail === auth.currentUser.email));
+            let chat = localChats.find(c => String(c.jobId) === String(jobId) && (c.workerId === window.firebaseAuth.currentUser.uid || c.workerEmail === window.firebaseAuth.currentUser.email));
             if (!chat) {
-                chat = localChats.find(c => c.jobTitle === jobTitle && (c.workerId === auth.currentUser.uid || c.workerEmail === auth.currentUser.email));
+                chat = localChats.find(c => c.jobTitle === jobTitle && (c.workerId === window.firebaseAuth.currentUser.uid || c.workerEmail === window.firebaseAuth.currentUser.email));
             }
             if (chat) {
                 // Close the job detail overlay first

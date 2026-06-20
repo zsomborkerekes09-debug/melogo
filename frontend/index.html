@@ -52,6 +52,10 @@
         }
 
         /* Success checkmark animation */
+        @keyframes modal-pop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
         @keyframes melogo-stroke {
             100% {
                 stroke-dashoffset: 0;
@@ -5593,6 +5597,11 @@ flex-direction: column !important;
         }
         function closeForgotPasswordModal() {
             document.getElementById('forgot-pw-modal').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('forgot-pw-form').style.display = 'flex';
+                document.getElementById('forgot-pw-success').style.display = 'none';
+                document.getElementById('forgot-pw-email').value = '';
+            }, 300);
         }
         async function submitForgotPassword() {
             const email = document.getElementById('forgot-pw-email').value;
@@ -5600,37 +5609,118 @@ flex-direction: column !important;
                 alert('Kérlek adj meg egy érvényes email címet!');
                 return;
             }
-            if (window.firebaseAuth && window.firebaseAPI) {
-                try {
+            
+            const btn = document.getElementById('forgot-pw-submit-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span style="opacity:0.7">Küldés...</span>';
+            btn.disabled = true;
+
+            try {
+                if (window.firebaseAuth && window.firebaseAPI) {
                     await window.firebaseAPI.sendPasswordResetEmail(window.firebaseAuth, email);
-                    alert('Jelszó visszaállító link elküldve! Ellenőrizd a beérkező leveleidet (és a Spam mappát is).');
-                    closeForgotPasswordModal();
-                } catch (error) {
-                    console.error("Forgot password error:", error);
-                    alert('Hiba történt: ' + error.message);
                 }
-            } else {
-                alert('Jelszó emlékeztető elküldve (Demó mód).');
-                closeForgotPasswordModal();
+                
+                // Show success state
+                document.getElementById('forgot-pw-form').style.display = 'none';
+                document.getElementById('forgot-pw-success').style.display = 'flex';
+                
+            } catch (error) {
+                console.error("Forgot password error:", error);
+                alert('Hiba történt: ' + error.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
+        
+        function showConfirmModal(title, text, confirmText, onConfirm) {
+            const modal = document.getElementById('melogo-confirm-modal');
+            document.getElementById('melogo-confirm-title').innerText = title;
+            document.getElementById('melogo-confirm-text').innerText = text;
+            document.getElementById('melogo-confirm-ok').innerText = confirmText;
+            
+            document.getElementById('melogo-confirm-cancel').onclick = function() {
+                modal.style.display = 'none';
+            };
+            document.getElementById('melogo-confirm-ok').onclick = function() {
+                modal.style.display = 'none';
+                if (onConfirm) onConfirm();
+            };
+            modal.style.display = 'flex';
+        }
+        
+        function showSuccessModal(title, text) {
+            document.getElementById('melogo-success-title').innerText = title;
+            document.getElementById('melogo-success-text').innerText = text;
+            const modal = document.getElementById('melogo-success-modal');
+            modal.style.display = 'flex';
+        }
+
         window.showForgotPasswordModal = showForgotPasswordModal;
         window.loginWithApple = loginWithApple;
         window.closeForgotPasswordModal = closeForgotPasswordModal;
         window.submitForgotPassword = submitForgotPassword;
+        window.showConfirmModal = showConfirmModal;
+        window.showSuccessModal = showSuccessModal;
         
 </script>
 
 <!-- FORGOT PASSWORD MODAL -->
 <div id="forgot-pw-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);">
-    <div style="background:#fff; border-radius:24px; padding:24px; width:100%; max-width:400px; display:flex; flex-direction:column; gap:16px;">
-        <h3 style="font-size:18px; font-weight:600; margin:0; text-align:center;">Elfelejtett jelszó</h3>
-        <p style="font-size:14px; font-weight:300; color:#666; text-align:center; margin:0;">Add meg a regisztrált email címedet, és küldünk egy linket a jelszó visszaállításához.</p>
-        <input type="email" id="forgot-pw-email" placeholder="Email címed" style="height:50px; border-radius:12px; border:1px solid #ccc; padding:0 16px; font-size:15px; outline:none; font-family:inherit;">
-        <div style="display:flex; gap:12px; margin-top:8px;">
-            <button onclick="closeForgotPasswordModal()" style="flex:1; height:48px; border-radius:12px; border:1px solid #ccc; background:none; font-weight:500; font-size:15px; cursor:pointer;">Mégse</button>
-            <button onclick="submitForgotPassword()" style="flex:1; height:48px; border-radius:12px; border:none; background:#000; color:#fff; font-weight:500; font-size:15px; cursor:pointer;">Küldés</button>
+    <div style="background:#fff; border-radius:24px; padding:24px; width:100%; max-width:400px; display:flex; flex-direction:column; position:relative; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        
+        <div id="forgot-pw-form" style="display:flex; flex-direction:column; gap:16px;">
+            <h3 style="font-size:18px; font-weight:600; margin:0; text-align:center;">Elfelejtett jelszó</h3>
+            <p style="font-size:14px; font-weight:300; color:#666; text-align:center; margin:0;">Add meg a regisztrált email címedet, és küldünk egy linket a jelszó visszaállításához.</p>
+            <input type="email" id="forgot-pw-email" placeholder="Email címed" style="height:50px; border-radius:12px; border:1px solid #ccc; padding:0 16px; font-size:15px; outline:none; font-family:inherit;">
+            <div style="display:flex; gap:12px; margin-top:8px;">
+                <button onclick="closeForgotPasswordModal()" style="flex:1; height:48px; border-radius:12px; border:1px solid #ccc; background:none; font-weight:500; font-size:15px; cursor:pointer;">Mégse</button>
+                <button id="forgot-pw-submit-btn" onclick="submitForgotPassword()" style="flex:1; height:48px; border-radius:12px; border:none; background:#000; color:#fff; font-weight:500; font-size:15px; cursor:pointer; transition: opacity 0.2s;">Küldés</button>
+            </div>
         </div>
+
+        <div id="forgot-pw-success" style="display:none; flex-direction:column; align-items:center; gap:16px; padding:8px 0;">
+            <div class="success-checkmark-wrapper" style="width:64px; height:64px; border-radius:50%; background:#ECFDF5; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
+                <svg style="width:32px; height:32px;" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            <h3 style="font-size:18px; font-weight:600; margin:0; text-align:center;">Email elküldve!</h3>
+            <p style="font-size:14px; font-weight:300; color:#666; text-align:center; margin:0; line-height:1.5;">Elküldtük a jelszó visszaállító linket a megadott címre. Kérlek ellenőrizd a Spam mappát is.</p>
+            <button onclick="closeForgotPasswordModal()" style="margin-top:16px; width:100%; height:48px; border-radius:12px; border:none; background:#000; color:#fff; font-weight:500; font-size:15px; cursor:pointer;">Rendben</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- GLOBAL CONFIRM MODAL -->
+<div id="melogo-confirm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);">
+    <div style="background:#fff; border-radius:24px; padding:24px; width:100%; max-width:320px; display:flex; flex-direction:column; align-items:center; gap:16px; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div style="width:56px; height:56px; border-radius:50%; background:#FEF2F2; display:flex; align-items:center; justify-content:center; color:#DC2626;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </div>
+        <h3 id="melogo-confirm-title" style="font-size:18px; font-weight:600; margin:0; text-align:center;">Biztosan törlöd?</h3>
+        <p id="melogo-confirm-text" style="font-size:14px; font-weight:300; color:#666; text-align:center; margin:0; line-height:1.4;">A művelet nem visszavonható.</p>
+        <div style="display:flex; gap:12px; width:100%; margin-top:8px;">
+            <button id="melogo-confirm-cancel" style="flex:1; height:44px; border-radius:12px; border:1px solid #ccc; background:none; font-weight:500; font-size:14px; cursor:pointer;">Mégse</button>
+            <button id="melogo-confirm-ok" style="flex:1; height:44px; border-radius:12px; border:none; background:#DC2626; color:#fff; font-weight:500; font-size:14px; cursor:pointer; transition: opacity 0.2s;">Törlés</button>
+        </div>
+    </div>
+</div>
+
+<!-- GLOBAL SUCCESS MODAL -->
+<div id="melogo-success-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);">
+    <div style="background:#fff; border-radius:24px; padding:32px 24px; width:100%; max-width:320px; display:flex; flex-direction:column; align-items:center; gap:16px; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div class="success-checkmark-wrapper" style="width:72px; height:72px; border-radius:50%; background:#ECFDF5; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
+            <svg style="width:36px; height:36px;" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <h3 id="melogo-success-title" style="font-size:20px; font-weight:600; margin:0; text-align:center;">Sikeres művelet</h3>
+        <p id="melogo-success-text" style="font-size:15px; font-weight:300; color:#666; text-align:center; margin:0; line-height:1.4;">A művelet sikeresen befejeződött.</p>
+        <button onclick="document.getElementById('melogo-success-modal').style.display='none';" style="margin-top:16px; width:100%; height:48px; border-radius:12px; border:none; background:#000; color:#fff; font-weight:500; font-size:15px; cursor:pointer;">Rendben</button>
     </div>
 </div>
 
@@ -11092,8 +11182,15 @@ let settingsConfirmedAddress = null;
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
+                
+                // AZONNAL frissítjük a UI-t, nem várunk a Nominatim API-ra
+                selectAddress("Helyzet észlelve...", lat, lon);
+                txt.innerText = 'Helyzet megadva';
+                btn.style.background = 'rgba(34, 197, 94, 0.1)';
+                btn.style.color = 'var(--color-green)';
+                
                 try {
-                    // Use Nominatim API for reverse geocoding
+                    // Háttérben lekérjük a pontos címet
                     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`, {
                         headers: {
                             'Accept-Language': 'hu'
@@ -11110,21 +11207,19 @@ let settingsConfirmedAddress = null;
                         addressString = `${street} ${hnr}, ${city}`.replace(/ ,/, ',');
                     }
                     
-                    selectAddress(addressString, lat, lon);
-                    
-                    txt.innerText = 'Helyzet megadva';
-                    btn.style.background = 'rgba(34, 197, 94, 0.1)';
-                    btn.style.color = 'var(--color-green)';
+                    // Csendben frissítjük a feliratokat, miután megérkezett a válasz
+                    const label = document.getElementById('gps-city-label');
+                    if (label && label.innerText === "Helyzet észlelve...") {
+                        label.innerText = addressString;
+                    }
                 } catch(e) {
-                    console.error("Geocoding failed:", e);
-                    alert("Nem sikerült lekérni a címet a koordinátákból.");
-                    resetGPSBtn(txt, btn);
+                    console.error("Geocoding failed in background:", e);
                 }
             }, (err) => {
                 console.error("GPS error:", err);
                 alert("A helymeghatározás sikertelen (engedély megtagadva vagy hiba történt).");
                 resetGPSBtn(txt, btn);
-            });
+            }, { enableHighAccuracy: false, maximumAge: 60000, timeout: 5000 });
         }
         function useCurrentLocationForJobPost() {
             const btn = document.getElementById('emp-gps-btn');
@@ -11170,7 +11265,7 @@ let settingsConfirmedAddress = null;
                 console.error("GPS error:", err);
                 alert("A helymeghatározás sikertelen (engedély megtagadva vagy hiba történt).");
                 btn.innerHTML = originalText;
-            });
+            }, { enableHighAccuracy: false, maximumAge: 60000, timeout: 5000 });
         }
         
         function resetGPSBtn(txt, btn) {
@@ -11706,7 +11801,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
         }
 
         async function deleteEmployerAdFromDetail() {
-            if (confirm('Biztosan törölni szeretnéd ezt a hirdetést?')) {
+            showConfirmModal('Törlöd a hirdetést?', 'Ezt a műveletet később nem tudod visszavonni.', 'Törlés', () => {
                 const jobId = currentEmployerDetailJobId;
                 const card = document.getElementById('emp-ad-card-' + jobId);
                 if (card) {
@@ -11768,9 +11863,9 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                             gameState.status = 'Keresés';
                         }
                     }
-                    showGreenBanner('Hirdetés sikeresen törölve.');
+                    showSuccessModal('Sikeres törlés', 'A hirdetést sikeresen eltávolítottuk.');
                 }, 350);
-            }
+            });
         }
 
         function openEmployerChatRoomFromAd(chatId) {

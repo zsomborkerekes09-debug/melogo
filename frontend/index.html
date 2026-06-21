@@ -8958,7 +8958,7 @@ let settingsConfirmedAddress = null;
                     lon: fJob.lon || (17.79 + (Math.random() - 0.5) * 0.05),
                     category: fJob.category || 'Kert',
                     location: fJob.location || 'Kaposvár',
-                    time: fJob.datetime ? fJob.datetime.slice(0, 10) : new Date().toISOString().slice(0, 10),
+                    time: fJob.datetime ? fJob.datetime : new Date().toISOString().slice(0, 16),
                     urgent: fJob.urgent || false,
                     timeOffset: fJob.createdAt ? -(Number(fJob.createdAt)) : -Date.now(),
                     desc: fJob.details || fJob.desc || '',
@@ -10291,13 +10291,13 @@ let settingsConfirmedAddress = null;
             
             // 1. Partner Name & Avatar
             const partnerName = partnerData ? (partnerData.name || partnerData.email) : (!isEmployerChat ? chatData.employerName : chatData.workerName);
-            const nameEl = document.getElementById('chat-header-partner-name');
+            const nameEl = document.getElementById('chat-detail-name');
             if (nameEl) {
                 nameEl.innerText = partnerName || 'Névtelen partner';
             }
             
-            const avatarImg = document.getElementById('chat-header-partner-avatar');
-            const avatarPlaceholder = document.getElementById('chat-header-avatar-placeholder');
+            const avatarImg = document.getElementById('chat-detail-avatar');
+            const avatarPlaceholder = document.getElementById('chat-detail-avatar-fallback');
             const photoURL = partnerData ? partnerData.photoURL : null;
             
             if (avatarImg && avatarPlaceholder) {
@@ -10317,25 +10317,22 @@ let settingsConfirmedAddress = null;
             const jobTime = jobData ? (jobData.datetime || jobData.time) : '';
             
             // Task Name
-            const taskEl = document.getElementById('chat-header-task-text');
+            const taskEl = document.getElementById('chat-detail-job');
             if (taskEl) {
                 taskEl.innerText = jobTitle || 'Munka';
             }
             
             // Address
-            const addrEl = document.getElementById('chat-header-address-text');
+            const addrEl = document.getElementById('chat-pinned-address');
             if (addrEl) {
                 addrEl.innerText = jobLocation || 'Nincs megadva';
             }
             
-            const addrRow = document.getElementById('chat-header-row-address');
-            if (addrRow) {
-                addrRow.onclick = function() {
-                    if (jobLocation) {
-                        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(jobLocation)}`, '_blank');
-                    }
-                };
-            }
+            window.handleAddressClick = function() {
+                if (jobLocation) {
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(jobLocation)}`, '_blank');
+                }
+            };
             
             // Time formatting
             let jobTimeStr = jobTime || '';
@@ -10356,32 +10353,41 @@ let settingsConfirmedAddress = null;
                     // fall back
                 }
             }
-            const timeEl = document.getElementById('chat-header-time-text');
+            const timeEl = document.getElementById('chat-detail-datetime');
             if (timeEl) {
                 timeEl.innerText = jobTimeStr || 'Nincs megadva';
             }
             
+            const pinnedPrice = document.getElementById('chat-pinned-price');
+            if (pinnedPrice && jobData && jobData.price !== undefined) {
+                pinnedPrice.innerText = parseInt(jobData.price).toLocaleString('hu-HU') + ' Ft';
+            }
+            const pinnedJob = document.getElementById('chat-pinned-job');
+            if (pinnedJob && jobTitle) {
+                pinnedJob.innerText = jobTitle;
+            }
+            
             // Phone (Visible to both parties after acceptance)
-            const phoneRow = document.getElementById('chat-header-row-phone');
-            const phoneEl = document.getElementById('chat-header-phone-text');
+            const phoneEl = document.getElementById('chat-detail-phone');
             
             const isAccepted = chatData.status !== 'pending';
             const showPhone = isAccepted;
             
-            if (phoneRow && phoneEl) {
+            if (phoneEl) {
                 if (showPhone) {
                     const partnerPhone = partnerData ? partnerData.phone : null;
                     if (partnerPhone) {
-                        phoneEl.innerText = partnerPhone;
-                        phoneRow.style.display = 'flex';
-                        phoneRow.onclick = function() {
+                        phoneEl.innerText = '📞 ' + partnerPhone;
+                        phoneEl.style.display = 'block';
+                        phoneEl.onclick = function(e) {
+                            e.stopPropagation();
                             window.location.href = `tel:${partnerPhone}`;
                         };
                     } else {
-                        phoneRow.style.display = 'none';
+                        phoneEl.style.display = 'none';
                     }
                 } else {
-                    phoneRow.style.display = 'none';
+                    phoneEl.style.display = 'none';
                 }
             }
         }

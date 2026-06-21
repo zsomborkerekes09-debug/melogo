@@ -4283,8 +4283,7 @@ flex-direction: column !important;
                     <div style="font-size: 11px; text-transform: uppercase; font-weight: 400; letter-spacing: 0.5px; color: var(--color-text-light); margin-bottom: 8px;">Manuális városválasztás:</div>
                     <div class="location-cities-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding-right: 4px;">
                         <button class="city-select-item" onclick="selectManualCity('Kaposvár', 46.3667, 17.7833)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
-                            <span>🌳 Kaposvár (Központ)</span>
-                            <span style="font-size: 11px; opacity: 0.7;">Ajánlott</span>
+                            <span>📍 Kaposvár</span>
                         </button>
                         <button class="city-select-item" onclick="selectManualCity('Budapest', 47.4979, 19.0402)" style="display: flex; justify-content: space-between; align-items: center; background: rgba(128,128,128,0.1); border: 1.5px solid var(--color-border); border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 400; color: var(--color-text); cursor: pointer; text-align: left;">
                             <span>🏢 Budapest</span>
@@ -9880,6 +9879,7 @@ let settingsConfirmedAddress = null;
             gameState.locationMode = 'gps';
             
             // Instantly load last known location from cache
+            let cachedLoaded = false;
             try {
                 const cached = localStorage.getItem('melogo_last_gps_location');
                 if (cached) {
@@ -9887,10 +9887,17 @@ let settingsConfirmedAddress = null;
                     if (parsed && parsed.lat && parsed.lon) {
                         userCoords = { lat: parsed.lat, lon: parsed.lon };
                         setGPSStatus(true, parsed.name || 'GPS Aktív');
+                        cachedLoaded = true;
                     }
                 }
             } catch (e) {
                 console.warn("Failed to load cached GPS location:", e);
+            }
+            
+            if (!cachedLoaded) {
+                // Immediately update UI to show we are switching to GPS
+                gameState.gpsActive = false; // ensure it updates UI
+                setGPSStatus(true, 'Keresés...');
             }
             
             window.gpsWatchId = navigator.geolocation.watchPosition(

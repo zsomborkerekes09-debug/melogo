@@ -5487,6 +5487,14 @@ flex-direction: column !important;
                 } catch(e) { console.error('Geofire error', e); }
 
                 window.mockJobs = []; // clear memory
+                
+                // Fallback query for jobs without geohash (older jobs) or if geofire failed
+                const fallbackQuery = query(collection(db, "jobs"), where("status", "in", ["Keresés", "accepted"]), limit(50));
+                const fallbackUnsub = onSnapshot(fallbackQuery, (snapshot) => {
+                    snapshot.docChanges().forEach(change => processJobChange(change, null));
+                }, err => console.error('[Firestore] Fallback listener error:', err));
+                window.workerJobsListeners.push(fallbackUnsub);
+
                 bounds.forEach((b) => {
                     const q = query(
                         collection(db, "jobs"), 

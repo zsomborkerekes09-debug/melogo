@@ -740,8 +740,16 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
 .confirm-sheet.open {
 transform: translateY(0) !important;
 visibility: visible !important;
+opacity: 1 !important;
 pointer-events: auto !important;
 transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s;
+}
+
+#job-picker-sheet.open {
+transform: translateY(0) !important;
+visibility: visible !important;
+opacity: 1 !important;
+display: flex !important;
 }
         
         .overlay-backdrop {
@@ -6852,16 +6860,24 @@ flex-direction: column !important;
         let selectedExactJob = 'all';
 
         function openJobPicker(mode) {
-            currentJobPickerMode = mode;
-            jobPickerDrillCat = null; // always start at grid view
-            document.getElementById('job-picker-backdrop').classList.add('open');
-            document.getElementById('job-picker-sheet').classList.add('open');
-            renderJobPickerList();
+            try {
+                currentJobPickerMode = mode;
+                jobPickerDrillCat = null; // always start at grid view
+                document.getElementById('job-picker-backdrop').classList.add('open');
+                const sheet = document.getElementById('job-picker-sheet');
+                sheet.classList.add('open');
+                sheet.style.transform = 'translateY(0)'; // Force inline
+                sheet.style.visibility = 'visible';
+                renderJobPickerList();
+            } catch(e) { console.error("Error opening job picker:", e); }
         }
 
         function closeJobPicker() {
             document.getElementById('job-picker-backdrop').classList.remove('open');
-            document.getElementById('job-picker-sheet').classList.remove('open');
+            const sheet = document.getElementById('job-picker-sheet');
+            sheet.classList.remove('open');
+            sheet.style.transform = '';
+            sheet.style.visibility = '';
         }
 
         function selectJobPickerItem(value, label) {
@@ -9912,7 +9928,8 @@ let settingsConfirmedAddress = null;
                 setGPSStatus(true, 'Keresés...');
             }
             
-            window.gpsWatchId = navigator.geolocation.watchPosition(
+            window.gpsWatchId = 'manual'; // Placeholder so clearWatch works safely if called
+            navigator.geolocation.getCurrentPosition(
                 async (pos) => {
                     userCoords = {
                         lat: pos.coords.latitude,
@@ -9928,6 +9945,13 @@ let settingsConfirmedAddress = null;
                     } catch (e) {}
                     // Force update GPS status if we switched to GPS mode
                     setGPSStatus(true, 'GPS Aktív');
+                    
+                    // Frissítjük a távolságokat az új koordináták alapján
+                    if (typeof recalculateDistances === 'function') recalculateDistances();
+                    // Ha a worker nézeten vagyunk, rendereljünk újra mindent
+                    if (typeof currentRole !== 'undefined' && currentRole === 'worker' && typeof refreshJobList === 'function') {
+                        refreshJobList(true);
+                    }
                 },
                 (err) => {
                     // Do not clear userCoords if we have a cached fallback loaded

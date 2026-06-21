@@ -6871,7 +6871,14 @@ flex-direction: column !important;
 
             if (currentJobPickerMode === 'filter') {
                 document.getElementById('worker-job-filter-display').innerHTML = label + ' <svg style="margin-left:4px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
-                filterWorkerByExactJob(value);
+                
+                // Reset category pills when using the specific job picker
+                activeCategoryFilter = 'Összes';
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.textContent.trim() === 'Minden');
+                });
+
+                refreshJobList();
             } else {
                 document.getElementById('worker-search-job-display').innerText = label;
                 applyTextSearchTag(value === 'all' ? '' : value);
@@ -9242,6 +9249,11 @@ let settingsConfirmedAddress = null;
 
             if (activeCategoryFilter !== 'Összes' && activeCategoryFilter !== 'all') {
                 jobs = jobs.filter(j => j.category === activeCategoryFilter);
+            }
+
+            if (typeof selectedExactJob !== 'undefined' && selectedExactJob !== 'all') {
+                const coreWord = selectedExactJob.split(' ')[0].toLowerCase().replace(',', '').replace('(', '');
+                jobs = jobs.filter(j => j.title && j.title.toLowerCase().includes(coreWord));
             }
 
             if (activeCategoryFilter === 'Magántanár') {

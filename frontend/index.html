@@ -631,23 +631,24 @@
         }
 
         /* OVERLAYS CSS RESTORED */
-.action-overlay, .settings-overlay, .overlay-success, .confirm-sheet {
-position: fixed;
-left: 0;
-right: 0;
-margin: 0 auto;
-max-width: 100%;
-width: 100%;
-background-color: var(--color-surface);
-z-index: 9999 !important;
-pointer-events: none !important;
-transform: translateY(100%);
-transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0.4s;
-display: flex;
-flex-direction: column;
-overflow-y: auto;
-visibility: hidden;
-}
+        .action-overlay, .settings-overlay, .overlay-success, .confirm-sheet {
+            position: fixed;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            max-width: 100%;
+            width: 100%;
+            background-color: var(--color-surface);
+            z-index: 9999 !important;
+            pointer-events: none !important;
+            transform: translateY(100%);
+            visibility: hidden;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0.4s, opacity 0.4s linear;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
 
         .action-overlay {
             bottom: 0;
@@ -697,8 +698,9 @@ pointer-events: none;
 .settings-overlay.open {
 transform: translateY(0) !important;
 visibility: visible !important;
+opacity: 1 !important;
 pointer-events: auto !important;
-transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0s;
+transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0s, opacity 0.3s linear;
 }
         /* Chat detail overlay open state */
         #chat-detail-overlay.open {
@@ -721,8 +723,9 @@ transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linea
 .overlay-success.active, .overlay-success.open {
 transform: translateY(0) !important;
 visibility: visible !important;
+opacity: 1 !important;
 pointer-events: auto !important;
-transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s;
+transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s, opacity 0.3s linear;
 }
 
         .confirm-sheet {
@@ -5385,10 +5388,14 @@ flex-direction: column !important;
             if (typeof updateAllUserUI === 'function') updateAllUserUI();
 
             // 1. Jobs listener – uses docChanges() for correct delete handling
-            let jobsQuery;
-            if (role === 'worker') {
-                jobsQuery = query(collection(db, "jobs"), where("status", "in", ["Keresés", "accepted"]), orderBy("createdAt", "desc"), limit(100));
-            } else {
+            if (window.workerJobsListeners) {
+                window.workerJobsListeners.forEach(u => u());
+            }
+            window.workerJobsListeners = [];
+            
+            // Employer listener is single
+            let jobsQuery = null;
+            if (role === 'employer') {
                 jobsQuery = query(collection(db, "jobs"), where("ownerEmail", "==", email));
             }
 
@@ -5427,37 +5434,30 @@ flex-direction: column !important;
 
             if (!window.mockJobs) {
                 window.mockJobs = [];
-                if (typeof window.updateMockJobsReference === 'function') {
-                    window.updateMockJobsReference(window.mockJobs);
-                }
             }
 
-            window.jobsUnsubscribe = onSnapshot(jobsQuery, (snapshot) => {
-                snapshot.docChanges().forEach(change => {
-                    const fJob = { ...change.doc.data(), id: change.doc.id };
-                    if (change.type === 'added' || change.type === 'modified') {
-                        if (!fJob.title) return;
-                        const normalized = normalizeFirestoreJob(fJob);
-                        const existing = window.mockJobs.findIndex(m => m.id === fJob.id);
-                        if (existing !== -1) {
-                            window.mockJobs[existing] = normalized;
-                        } else {
-                            window.mockJobs.unshift(normalized);
-                        }
-                    } else if (change.type === 'removed') {
-                        window.mockJobs = window.mockJobs.filter(m => m.id !== fJob.id);
-                        if (typeof window.updateMockJobsReference === 'function') {
-                            window.updateMockJobsReference(window.mockJobs);
-                        }
-                        console.log('[Firestore] Job removed from list:', fJob.id);
+            function processJobChange(change, snapshot) {
+                const fJob = { ...change.doc.data(), id: change.doc.id };
+                if (change.type === 'added' || change.type === 'modified') {
+                    if (!fJob.title) return;
+                    if (role === 'worker' && fJob.status !== 'Keresés' && fJob.status !== 'accepted') return; // Filter locally for workers
+                    
+                    const normalized = normalizeFirestoreJob(fJob);
+                    const existing = window.mockJobs.findIndex(m => m.id === fJob.id);
+                    if (existing !== -1) {
+                        window.mockJobs[existing] = normalized;
+                    } else {
+                        window.mockJobs.unshift(normalized);
                     }
-                });
+                } else if (change.type === 'removed') {
+                    window.mockJobs = window.mockJobs.filter(m => m.id !== fJob.id);
+                }
+                
                 if (typeof window.updateMockJobsReference === 'function') {
                     window.updateMockJobsReference(window.mockJobs);
                 }
 
-                if (role === 'employer') {
-                    // For employer, rebuild from scratch from snapshot
+                if (role === 'employer' && snapshot) {
                     let allJobs = [];
                     snapshot.forEach(d => { const j = d.data(); j.id = d.id; allJobs.push(j); });
                     window.localEmployerJobs = allJobs.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -5472,7 +5472,39 @@ flex-direction: column !important;
                         if (typeof window.renderMapPins === 'function') window.renderMapPins();
                     }, 300);
                 }
-            }, err => console.error('[Firestore] Jobs listener error:', err));
+            }
+
+            if (role === 'worker') {
+                // Skálázható Geohash alapú query a diákoknak
+                const userCoords = window.userCoords || { lat: 47.4979, lon: 19.0402 };
+                const radiusInM = (window.activeRadius || window.currentFilterRadius || 10) * 1000;
+                
+                let bounds = [];
+                try {
+                    if (window.geofire) {
+                        bounds = window.geofire.geohashQueryBounds([userCoords.lat, userCoords.lon], radiusInM);
+                    }
+                } catch(e) { console.error('Geofire error', e); }
+
+                window.mockJobs = []; // clear memory
+                bounds.forEach((b) => {
+                    const q = query(
+                        collection(db, "jobs"), 
+                        where("geohash", ">=", b[0]), 
+                        where("geohash", "<=", b[1])
+                    );
+                    const unsub = onSnapshot(q, (snapshot) => {
+                        snapshot.docChanges().forEach(change => processJobChange(change, null));
+                    }, err => console.error('[Firestore] Geohash listener error:', err));
+                    window.workerJobsListeners.push(unsub);
+                });
+            } else if (jobsQuery) {
+                // Sima query a munkáltatónak
+                const unsub = onSnapshot(jobsQuery, (snapshot) => {
+                    snapshot.docChanges().forEach(change => processJobChange(change, snapshot));
+                }, err => console.error('[Firestore] Employer jobs listener error:', err));
+                window.workerJobsListeners.push(unsub);
+            }
 
             // 2. Applications listener
             let appsQuery = query(
@@ -9655,10 +9687,13 @@ let settingsConfirmedAddress = null;
 
         function confirmDistance() {
             const val = parseInt(document.getElementById('distance-slider').value);
-            activeRadius = val;
+            window.activeRadius = val;
             localStorage.setItem('melogo_radius', val);
             document.getElementById('distance-pill-text').innerText = val + ' km';
             closeDistanceSheet();
+            if (typeof window.setupFirestoreListeners === 'function') {
+                window.setupFirestoreListeners('worker');
+            }
             refreshJobList();
             renderMapPins();
             showPushNotification('🗺️ Hatótáv frissítve', val + ' km körzetben keresünk munkákat!', 'var(--color-text)');
@@ -13579,7 +13614,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     urgent: document.getElementById('emp-urgent-toggle') ? document.getElementById('emp-urgent-toggle').checked : false,
                     toolsRequired: activeToolsRequired,
                     lat: confirmedLat || 46.3667,
-                    lon: confirmedLon || 17.7833
+                    lon: confirmedLon || 17.7833,
+                    geohash: window.geofire ? window.geofire.geohashForLocation([confirmedLat || 46.3667, confirmedLon || 17.7833]) : ''
                 };
 
                 localEmployerJobs.unshift(newJob);
@@ -14481,7 +14517,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     const job = (document.getElementById('emp-job-select') || {}).value || '';
                     const desc = (document.getElementById('emp-details') || {}).value || '';
                     const city = (document.getElementById('emp-city') || {}).value || '';
-                    empBtn.disabled = !(cat && job && desc.length >= 10 && city);
+                    const mapLockedEl = document.getElementById('emp-loc-locked-state');
+                    const isMapUsed = mapLockedEl && mapLockedEl.style.display === 'flex';
+                    const locValid = isMapUsed ? !!window.confirmedAddress : !!city;
+                    empBtn.disabled = !(cat && job && desc.length >= 10 && locValid);
                 }
             }
         }, 300);

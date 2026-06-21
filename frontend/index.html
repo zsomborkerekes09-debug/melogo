@@ -10531,7 +10531,6 @@ let settingsConfirmedAddress = null;
 
             // Build simulated conversation dynamically based on job status or load persisted messages
             let msgs = [];
-            const chat = localChats.find(c => c.id === chatId);
             
             if (chat && chat.messages) {
                 msgs = [...chat.messages]; // Use copy to avoid side-effects
@@ -11077,6 +11076,16 @@ let settingsConfirmedAddress = null;
 
         function handleAddressInput(val) {
             const suggList = document.getElementById('emp-address-suggestions');
+            
+            // JAVÍTÁS: Ha a felhasználó elkezd gépelni egy új címet, azonnal töröljük a rejtett/strukturált mezőket,
+            // hogy véletlenül se a régi alapértelmezett lakcímmel jöjjön létre a munka!
+            if (val && val.trim().length > 0) {
+                ['emp-zip', 'emp-county', 'emp-city', 'emp-street', 'emp-house', 'emp-apartment'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+            }
+
             if (!val || val.trim().length < 2) {
                 suggList.style.display = 'none';
                 return;
@@ -13447,30 +13456,34 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 }
             }
 
-                    const zipVal = (document.getElementById('emp-zip') ? document.getElementById('emp-zip').value.trim() : '');
+        const zipVal = (document.getElementById('emp-zip') ? document.getElementById('emp-zip').value.trim() : '');
         const countyVal = (document.getElementById('emp-county') ? document.getElementById('emp-county').value.trim() : '');
         const cityVal = (document.getElementById('emp-city') ? document.getElementById('emp-city').value.trim() : '');
         const streetVal = (document.getElementById('emp-street') ? document.getElementById('emp-street').value.trim() : '');
         const houseVal = (document.getElementById('emp-house') ? document.getElementById('emp-house').value.trim() : '');
         const aptVal = document.getElementById('emp-apartment') ? document.getElementById('emp-apartment').value.trim() : '';
         
-        if (!zipVal || !countyVal || !cityVal || !streetVal || !houseVal) {
-            valid = false;
-            const err = document.getElementById('err-loc-structured');
-            if (err) { err.innerText = 'Kérjük tölts ki minden kötelező címadatot!'; err.classList.add('show'); }
-            ['emp-zip', 'emp-county', 'emp-city', 'emp-street', 'emp-house'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el && !el.value.trim()) {
-                    el.style.border = '1px solid #EF4444';
-                    setTimeout(() => el.style.border = '1px solid var(--color-border)', 2500);
-                }
-            });
-        }
+        const mapLockedEl = document.getElementById('emp-loc-locked-state');
+        const isMapUsed = mapLockedEl && mapLockedEl.style.display === 'flex';
 
-        let generatedAddress = `${zipVal} ${cityVal}, ${streetVal} ${houseVal}.`;
-        if (aptVal) generatedAddress += ` ${aptVal}`;
-        let finalConfirmedAddress = generatedAddress;
-        window.confirmedAddress = finalConfirmedAddress;
+        if (!isMapUsed) {
+            if (!zipVal || !countyVal || !cityVal || !streetVal || !houseVal) {
+                valid = false;
+                const err = document.getElementById('err-loc-structured');
+                if (err) { err.innerText = 'Kérjük tölts ki minden kötelező címadatot!'; err.classList.add('show'); }
+                ['emp-zip', 'emp-county', 'emp-city', 'emp-street', 'emp-house'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el && !el.value.trim()) {
+                        el.style.border = '1px solid #EF4444';
+                        setTimeout(() => el.style.border = '1px solid var(--color-border)', 2500);
+                    }
+                });
+            }
+
+            let generatedAddress = `${zipVal} ${cityVal}, ${streetVal} ${houseVal}.`;
+            if (aptVal) generatedAddress += ` ${aptVal}`;
+            window.confirmedAddress = generatedAddress;
+        }
 
         if (!valid) {
                 const firstErr = document.querySelector('.emp-field-error.show');

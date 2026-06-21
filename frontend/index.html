@@ -12522,10 +12522,41 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             filtered.forEach(chat => {
                 const myUid = window.firebaseAuth?.currentUser?.uid;
                 const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
-                const partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
+                let partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
+                const partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
+                
+                let avatarHtml = '';
+                
+                if (partnerId) {
+                    if (!window.chatUserCache) window.chatUserCache = {};
+                    const cachedData = window.chatUserCache[partnerId];
+                    if (cachedData && cachedData !== 'loading' && cachedData !== 'not_found') {
+                        if (cachedData.name) partnerName = cachedData.name;
+                        if (cachedData.photoURL && (cachedData.photoURL.startsWith('http') || cachedData.photoURL.startsWith('data:'))) {
+                            avatarHtml = `<img src="${cachedData.photoURL}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Avatar">`;
+                        }
+                    } else if (!cachedData) {
+                        window.chatUserCache[partnerId] = 'loading';
+                        if (window.firebaseAPI && window.firebaseDb) {
+                            window.firebaseAPI.getDoc(window.firebaseAPI.doc(window.firebaseDb, "users", partnerId)).then(docSnap => {
+                                if (docSnap.exists()) {
+                                    window.chatUserCache[partnerId] = docSnap.data();
+                                    renderChatList();
+                                } else {
+                                    window.chatUserCache[partnerId] = 'not_found';
+                                }
+                            }).catch(e => console.warn("Failed to fetch chat user", e));
+                        }
+                    }
+                }
+
                 const initials = getInitials(partnerName);
                 const avatarBg = getAvatarGradient(partnerName);
                 const isUnreadClass = chat.isUnread ? 'unread' : '';
+                
+                if (!avatarHtml) {
+                    avatarHtml = `${initials}`;
+                }
                 
                 const item = document.createElement('div');
                 item.className = `chat-item-wrapper ${isUnreadClass}`;
@@ -12539,7 +12570,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                          oncontextmenu="event.preventDefault(); openMsgActionSheet('${chat.id}');">
                         
                         <div class="chat-item-avatar-container" onclick="event.stopPropagation(); handleListAvatarClick('${chat.id}')">
-                            <div class="chat-item-avatar" style="background:${avatarBg};">${initials}</div>
+                            <div class="chat-item-avatar" style="background:${avatarBg};">${avatarHtml}</div>
                             ${chat.isOnline ? '<div class="chat-item-online"></div>' : ''}
                         </div>
                         
@@ -12695,7 +12726,13 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 
                 const myUid = window.firebaseAuth?.currentUser?.uid;
                 const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
-                const partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
+                let partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
+                const partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
+                
+                if (partnerId && window.chatUserCache && window.chatUserCache[partnerId] && window.chatUserCache[partnerId] !== 'loading' && window.chatUserCache[partnerId] !== 'not_found') {
+                    if (window.chatUserCache[partnerId].name) partnerName = window.chatUserCache[partnerId].name;
+                }
+                
                 openChat(partnerName, chat.jobTitle, chat.lastMsg, chat.time, false, chat.id);
             }
         }

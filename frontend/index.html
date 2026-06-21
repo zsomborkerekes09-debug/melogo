@@ -5481,8 +5481,8 @@ flex-direction: column !important;
                 
                 let bounds = [];
                 try {
-                    if (window.geofire) {
-                        bounds = window.geofire.geohashQueryBounds([userCoords.lat, userCoords.lon], radiusInM);
+                    if (window.geofireCommon) {
+                        bounds = window.geofireCommon.geohashQueryBounds([userCoords.lat, userCoords.lon], radiusInM);
                     }
                 } catch(e) { console.error('Geofire error', e); }
 
@@ -7282,7 +7282,7 @@ function filterWorkerByExactJob(jobName) {
                             jobLat = window.userCoords.lat;
                             jobLon = window.userCoords.lon;
                         }
-                        const hash = typeof geofire !== 'undefined' ? geofire.geohashForLocation([jobLat, jobLon]) : null;
+                        const hash = typeof geofireCommon !== 'undefined' ? geofireCommon.geohashForLocation([jobLat, jobLon]) : null;
 
                         const newDocRef = await window.firebaseAPI.addDoc(window.firebaseAPI.collection(window.firebaseDb, "jobs"), {
                             title: finalJobTitle,
@@ -13615,7 +13615,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     toolsRequired: activeToolsRequired,
                     lat: confirmedLat || 46.3667,
                     lon: confirmedLon || 17.7833,
-                    geohash: window.geofire ? window.geofire.geohashForLocation([confirmedLat || 46.3667, confirmedLon || 17.7833]) : ''
+                    geohash: window.geofireCommon ? window.geofireCommon.geohashForLocation([confirmedLat || 46.3667, confirmedLon || 17.7833]) : ''
                 };
 
                 localEmployerJobs.unshift(newJob);

@@ -5407,7 +5407,7 @@ flex-direction: column !important;
                     lon: fJob.lon || 17.79,
                     category: fJob.category || 'Kert',
                     location: fJob.location || 'Kaposvár',
-                    time: fJob.datetime ? fJob.datetime.slice(0, 10) : new Date().toISOString().slice(0, 10),
+                    time: fJob.datetime ? fJob.datetime : new Date().toISOString().slice(0, 16),
                     urgent: fJob.urgent || false,
                     timeOffset: fJob.createdAt ? -(Number(fJob.createdAt)) : -Date.now(),
                     desc: fJob.details || fJob.desc || '',
@@ -10403,7 +10403,9 @@ let settingsConfirmedAddress = null;
             selectedChatId = chatId;
             window.selectedChatId = chatId;
             document.getElementById('chat-detail-name').innerText = name || 'Ismeretlen';
-            document.getElementById('chat-detail-job').innerText = jobTitle || '';
+            
+            const jobEl = document.getElementById('chat-detail-job');
+            if (jobEl) jobEl.style.display = 'none';
             
             // Dynamically fetch other user's phone number
             const phoneEl = document.getElementById('chat-detail-phone');
@@ -10434,48 +10436,58 @@ let settingsConfirmedAddress = null;
             
             const avatarImg = document.getElementById('chat-detail-avatar');
             const avatarFallback = document.getElementById('chat-detail-avatar-fallback');
-            if (avatarImg && avatarFallback && window.avatarCache && window.avatarCache[name]) {
-                const photoURL = window.avatarCache[name];
-                if (photoURL && typeof photoURL === 'string' && (photoURL.startsWith('http') || photoURL.startsWith('data:'))) {
-                    avatarImg.src = photoURL;
-                    avatarImg.style.display = 'block';
-                    avatarFallback.style.display = 'none';
-                } else {
-                    avatarImg.style.display = 'none';
+            
+            const chat = localChats.find(c => c.id === chatId);
+            let partnerId = null;
+            if (chat) {
+                const myUid = window.firebaseAuth?.currentUser?.uid;
+                const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
+                partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
+            }
+            
+            let photoURL = null;
+            if (partnerId && window.chatUserCache && window.chatUserCache[partnerId] && window.chatUserCache[partnerId].photoURL) {
+                photoURL = window.chatUserCache[partnerId].photoURL;
+            } else if (window.avatarCache && window.avatarCache[name]) {
+                photoURL = window.avatarCache[name];
+            }
+            
+            if (photoURL && typeof photoURL === 'string' && (photoURL.startsWith('http') || photoURL.startsWith('data:'))) {
+                if (avatarImg) { avatarImg.src = photoURL; avatarImg.style.display = 'block'; }
+                if (avatarFallback) { avatarFallback.style.display = 'none'; }
+            } else {
+                if (avatarImg) { avatarImg.style.display = 'none'; }
+                if (avatarFallback) {
                     avatarFallback.style.display = 'block';
-                    avatarFallback.innerText = photoURL;
-                    document.getElementById('chat-detail-avatar-container').style.backgroundColor = getAvatarColor(name);
+                    avatarFallback.innerText = (name || 'I').substring(0,2).toUpperCase();
                 }
-            } else if (avatarImg && avatarFallback) {
-                avatarImg.style.display = 'none';
-                avatarFallback.style.display = 'block';
-                avatarFallback.innerText = (name || 'I').substring(0,2).toUpperCase();
-                document.getElementById('chat-detail-avatar-container').style.backgroundColor = getAvatarColor(name || 'Ismeretlen');
+                const avatarContainer = document.getElementById('chat-detail-avatar-container');
+                if (avatarContainer) avatarContainer.style.backgroundColor = getAvatarColor(name || 'Ismeretlen');
             }
             
             // Populate chat pinned summary info bar dynamically
-            let matchedJob = localEmployerJobs.find(j => j.title === jobTitle);
+            let matchedJob = null;
             let jobTimeStr = '';
+            
+            const actualJobId = chat ? chat.jobId : null;
+            if (actualJobId) {
+                matchedJob = localEmployerJobs.find(j => String(j.id) === String(actualJobId));
+                if (!matchedJob) matchedJob = mockJobs.find(j => String(j.id) === String(actualJobId));
+            }
+            if (!matchedJob) {
+                // Fallback to title search
+                matchedJob = localEmployerJobs.find(j => j.title === jobTitle);
+                if (!matchedJob) matchedJob = mockJobs.find(j => j.title === jobTitle);
+            }
             
             if (matchedJob) {
                 jobTimeStr = matchedJob.datetime || matchedJob.time || '';
             } else {
-                // Check mockJobs
-                const mock = mockJobs.find(j => j.title === jobTitle);
-                if (mock) {
-                    matchedJob = {
-                        location: mock.location,
-                        price: mock.price,
-                        title: mock.title,
-                        time: mock.time
-                    };
-                    jobTimeStr = mock.time || '';
-                } else {
-                    // Check localWorkerApplications
-                    const app = localWorkerApplications.find(a => String(a.jobId) === String(typeof chatData !== "undefined" ? chatData.jobId : (typeof chat !== "undefined" ? chat.jobId : (typeof jobId !== "undefined" ? jobId : ""))));
-                    if (app) {
-                        jobTimeStr = app.date || app.datetime || '';
-                    }
+                // Check localWorkerApplications
+                const app = actualJobId ? localWorkerApplications.find(a => String(a.jobId) === String(actualJobId)) : null;
+                if (app) {
+                    jobTimeStr = app.date || app.datetime || '';
+                    matchedJob = { location: 'Kaposvár', price: app.price || 10000, title: app.title || jobTitle, time: jobTimeStr };
                 }
             }
             

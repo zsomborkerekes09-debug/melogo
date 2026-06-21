@@ -10040,6 +10040,10 @@ let settingsConfirmedAddress = null;
                         skills = data.skills || skills;
                         avatar = data.photoURL || avatar;
                         
+                        if (data.name) {
+                            document.getElementById('wp-name').innerText = data.name;
+                        }
+                        
                         completedJobs = data.jobCount !== undefined ? data.jobCount : 0;
                         rating = data.rating !== undefined ? data.rating : 5.0;
                         firestoreReviews = data.reviews || [];
@@ -11508,26 +11512,38 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
         function handleChatAvatarClick() {
             const chat = localChats.find(c => c.id === window.selectedChatId);
             if (!chat) return;
-            const role = currentRole || loginSelectedRole || localStorage.getItem('melogo_active_role') || 'worker';
-            if (role === 'employer') {
-                const name = chat.workerName || chat.name || 'Diák';
-                if (typeof openWorkerProfile === 'function') openWorkerProfile(name, chat.workerId);
+            const myUid = window.firebaseAuth?.currentUser?.uid;
+            const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
+            const partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
+            let partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
+            
+            if (partnerId && window.chatUserCache && window.chatUserCache[partnerId] && window.chatUserCache[partnerId] !== 'loading' && window.chatUserCache[partnerId] !== 'not_found' && window.chatUserCache[partnerId].name) {
+                partnerName = window.chatUserCache[partnerId].name;
+            }
+
+            if (isEmployerChat) {
+                if (typeof openWorkerProfile === 'function') openWorkerProfile(partnerName, partnerId);
             } else {
-                const name = chat.employerName || 'Megbízó';
-                openEmployerMiniModal(name, chat.employerId);
+                openEmployerMiniModal(partnerName, partnerId);
             }
         }
         
         function handleListAvatarClick(chatId) {
             const chat = localChats.find(c => c.id === chatId);
             if (!chat) return;
-            const role = currentRole || loginSelectedRole || localStorage.getItem('melogo_active_role') || 'worker';
-            if (role === 'employer') {
-                const name = chat.workerName || chat.name || 'Diák';
-                if (typeof openWorkerProfile === 'function') openWorkerProfile(name, chat.workerId);
+            const myUid = window.firebaseAuth?.currentUser?.uid;
+            const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
+            const partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
+            let partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
+            
+            if (partnerId && window.chatUserCache && window.chatUserCache[partnerId] && window.chatUserCache[partnerId] !== 'loading' && window.chatUserCache[partnerId] !== 'not_found' && window.chatUserCache[partnerId].name) {
+                partnerName = window.chatUserCache[partnerId].name;
+            }
+
+            if (isEmployerChat) {
+                if (typeof openWorkerProfile === 'function') openWorkerProfile(partnerName, partnerId);
             } else {
-                const name = chat.employerName || 'Megbízó';
-                openEmployerMiniModal(name, chat.employerId);
+                openEmployerMiniModal(partnerName, partnerId);
             }
         }
 
@@ -11621,6 +11637,11 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         const data = userDoc.data();
                         bio = data.bio || bio;
                         stars = data.rating !== undefined ? parseFloat(data.rating).toFixed(1) : stars;
+                        
+                        if (data.name) {
+                            document.getElementById('ep-name').innerText = data.name;
+                        }
+                        
                         if (data.photoURL) {
                             avatarImg.src = data.photoURL;
                             avatarImg.style.display = 'block';

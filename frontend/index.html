@@ -2076,12 +2076,11 @@ flex-direction: column !important;
             color: var(--color-text);
         }
 
-
         .toast-success {
             position: fixed;
-            top: -100px; /* Hidden above the screen */
+            top: 0; /* Keep it at the top, just hidden */
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -100%);
             background: rgba(0, 0, 0,0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -2096,12 +2095,21 @@ flex-direction: column !important;
             gap: 8px;
             
             z-index: 10000;
-            transition: top 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), opacity 0.4s ease, visibility 0.4s;
             pointer-events: none;
+        }
+        .toast-success svg {
+            flex-shrink: 0;
+        }
+        .toast-success span {
             white-space: nowrap;
         }
         .toast-success.show {
-            top: 48px;
+            transform: translate(-50%, 48px); /* Below safe area */
+            opacity: 1;
+            visibility: visible;
         }
 
     

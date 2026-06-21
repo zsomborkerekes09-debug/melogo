@@ -2078,8 +2078,8 @@ flex-direction: column !important;
 
 
         .toast-success {
-            position: absolute;
-            top: -60px; /* Hidden above the screen */
+            position: fixed;
+            top: -100px; /* Hidden above the screen */
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0,0.85);
@@ -2101,7 +2101,7 @@ flex-direction: column !important;
             white-space: nowrap;
         }
         .toast-success.show {
-            top: 24px;
+            top: 48px;
         }
 
     
@@ -14466,7 +14466,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
             // 2. Employer Form
             const empOverlay = document.getElementById('employer-form-overlay');
-            if (empOverlay && empOverlay.classList.contains('active')) {
+            if (empOverlay && (empOverlay.classList.contains('active') || empOverlay.classList.contains('open'))) {
                 const empBtn = document.querySelector('#employer-form-overlay .emp-submit-btn');
                 if (empBtn) {
                     const cat = document.querySelector('.emp-cat-card.active');

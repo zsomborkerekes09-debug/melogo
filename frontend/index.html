@@ -2993,7 +2993,19 @@ flex-direction: column !important;
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="assets/logo_new.jpg" type="image/jpeg">
     <link rel="apple-touch-icon" href="assets/logo_new.jpg">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script></head>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
+</head>
 <body>
 <div id="phone-app" class="phone-container">
     <!-- Hidden inputs for photo and camera pickers -->

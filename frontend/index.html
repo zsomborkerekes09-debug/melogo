@@ -631,7 +631,7 @@
         }
 
         /* OVERLAYS CSS RESTORED */
-        .action-overlay, .settings-overlay, .overlay-success, .confirm-sheet {
+        .action-overlay, .overlay-success, .confirm-sheet {
             position: fixed;
             left: 0;
             right: 0;
@@ -650,20 +650,32 @@
             overflow-y: auto;
         }
 
+        .settings-overlay {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: 0 auto;
+            max-width: 100%;
+            width: 100%;
+            background-color: var(--color-surface);
+            z-index: 9999 !important;
+            pointer-events: none !important;
+            transform: translateX(100%) !important;
+            visibility: hidden;
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0.3s, opacity 0.3s linear !important;
+            display: flex;
+            flex-direction: column;
+        }
+
         .action-overlay {
             bottom: 0;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
-            
             height: 65%;
         }
-.action-overlay.active {
-transform: translateY(0) !important;
-visibility: visible !important;
-opacity: 1 !important;
-pointer-events: auto !important;
-transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s;
-}
 
         .action-header {
             display: flex;
@@ -676,32 +688,6 @@ transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0
             border-top-right-radius: 24px;
         }
 
-.settings-overlay {
-max-width: 480px;
-margin: 0 auto;
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-width: 100%;
-height: 100%;
-background-color: var(--color-bg); /* fallback */
-z-index: 3000;
-transform: translateY(100%);
-transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0.3s;
-display: flex !important;
-flex-direction: column !important;
-visibility: hidden;
-pointer-events: none;
-}
-.settings-overlay.open {
-transform: translateY(0) !important;
-visibility: visible !important;
-opacity: 1 !important;
-pointer-events: auto !important;
-transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0s, opacity 0.3s linear;
-}
         /* Chat detail overlay open state */
         #chat-detail-overlay.open {
             transform: translateX(0) !important;
@@ -720,37 +706,15 @@ transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linea
             justify-content: center;
             background-color: var(--color-bg);
         }
-.overlay-success.active, .overlay-success.open {
-transform: translateY(0) !important;
-visibility: visible !important;
-opacity: 1 !important;
-pointer-events: auto !important;
-transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s, opacity 0.3s linear;
-}
 
         .confirm-sheet {
             bottom: 0;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
             padding: 20px 24px 32px 24px;
-            
             z-index: 3001;
             max-height: 80%;
         }
-.confirm-sheet.open {
-transform: translateY(0) !important;
-visibility: visible !important;
-opacity: 1 !important;
-pointer-events: auto !important;
-transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0s;
-}
-
-#job-picker-sheet.open {
-transform: translateY(0) !important;
-visibility: visible !important;
-opacity: 1 !important;
-display: flex !important;
-}
         
         .overlay-backdrop {
             position: fixed;
@@ -1892,8 +1856,8 @@ display: flex !important;
         .settings-scroll {
             flex: 1;
             display: flex !important;
-flex-direction: column !important;
-/* overflow-y removed */ /* Enable scrolling only inside this area */
+            flex-direction: column !important;
+            /* overflow-y removed */ /* Enable scrolling only inside this area */
             padding-bottom: 32px;
         }
         .settings-group-label {
@@ -2928,6 +2892,21 @@ flex-direction: column !important;
             visibility: hidden !important;
             pointer-events: none !important;
         }
+        
+        .action-overlay.open, .action-overlay.active, .overlay-success.open, .overlay-success.active {
+            transform: translateY(0) !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
+        .settings-overlay.open, .settings-overlay.active {
+            transform: translateX(0) !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+
         .confirm-sheet.open, .confirm-sheet.active,
         #distance-sheet.open, #distance-sheet.active,
         .apply-bottom-sheet.open, .apply-bottom-sheet.active,
@@ -2935,6 +2914,7 @@ flex-direction: column !important;
             visibility: visible !important;
             pointer-events: auto !important;
         }
+        
         /* Redesigned Clean & Modern Auth Screen Styles */
         .auth-input-container {
             width: 100%;
@@ -14747,6 +14727,53 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
         </div>
     </div>
 
+    <script>
+        // Smooth swipe-to-go-back listener for settings and chat overlays
+        document.addEventListener('touchstart', handleSwipeStart, {passive: true});
+        document.addEventListener('touchend', handleSwipeEnd, {passive: true});
+        let swipeStartX = 0;
+        let swipeStartY = 0;
+
+        function handleSwipeStart(e) {
+            swipeStartX = e.changedTouches[0].screenX;
+            swipeStartY = e.changedTouches[0].screenY;
+        }
+
+        function handleSwipeEnd(e) {
+            const swipeEndX = e.changedTouches[0].screenX;
+            const swipeEndY = e.changedTouches[0].screenY;
+            // Check if swipe started from the left edge (<= 40px)
+            if (swipeStartX <= 40) {
+                const deltaX = swipeEndX - swipeStartX;
+                const deltaY = Math.abs(swipeEndY - swipeStartY);
+                
+                // If horizontal swipe is long enough and vertical swipe is minimal
+                if (deltaX > 50 && deltaY < 50) {
+                    // Find active overlays
+                    const overlays = document.querySelectorAll('.settings-overlay.open, .settings-overlay.active, #chat-detail-overlay');
+                    for (let el of overlays) {
+                        // For chat overlay
+                        if (el.id === 'chat-detail-overlay' && el.classList.contains('open')) {
+                            if (typeof closeChatRoom === 'function') closeChatRoom();
+                            return;
+                        } else if (el.classList.contains('open') || el.classList.contains('active')) {
+                            // Map overlays to their close functions
+                            if (el.id === 'worker-settings' && typeof closeWorkerSettings === 'function') closeWorkerSettings();
+                            else if (el.id === 'employer-form-overlay' && typeof closeEmployerForm === 'function') closeEmployerForm();
+                            else if (el.id === 'job-offer-overlay' && typeof closeJobOffer === 'function') closeJobOffer();
+                            else if (el.id === 'worker-profile-overlay' && typeof closeWorkerProfileOverlay === 'function') closeWorkerProfileOverlay();
+                            else if (el.id === 'employer-profile-overlay' && typeof closeEmployerProfileOverlay === 'function') closeEmployerProfileOverlay();
+                            else if (el.id === 'notifications-overlay' && typeof closeNotificationsSheet === 'function') closeNotificationsSheet();
+                            else if (el.id === 'help-overlay' && typeof closeHelpSheet === 'function') closeHelpSheet();
+                            else if (el.id === 'privacy-overlay' && typeof closePrivacySheet === 'function') closePrivacySheet();
+                            else if (el.id === 'terms-overlay' && typeof closeTermsSheet === 'function') closeTermsSheet();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>
 

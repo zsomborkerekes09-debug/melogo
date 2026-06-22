@@ -763,6 +763,7 @@
         .chat-body {
             padding: 20px;
             flex-grow: 1;
+            min-height: 0;
             overflow-y: auto;
             background-color: var(--color-chat-bg, #F3F4F6);
             display: flex;
@@ -1497,6 +1498,7 @@
         }
         .emp-form-body {
             flex: 1;
+            min-height: 0; /* Fix flexbox overflow issue */
             overflow-y: auto;
             background: var(--color-bg);
             padding: 20px;
@@ -1857,6 +1859,7 @@
             flex: 1;
             display: flex !important;
             flex-direction: column !important;
+            min-height: 0; /* Fix flexbox overflow issue */
             overflow-y: auto !important; /* Enable scrolling inside this area */
             padding-bottom: 32px;
         }

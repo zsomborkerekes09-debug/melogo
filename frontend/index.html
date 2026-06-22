@@ -3662,6 +3662,7 @@
                                         <span class="settings-row-label">Teljes neved</span>
                                     </div>
                                     <input type="text" id="settings-name" style="width: 100%; border: none; background: var(--color-surface); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 300; color: var(--color-text); box-sizing: border-box;" placeholder="Add meg a teljes neved">
+                                    <div id="settings-name-err" style="display:none; color:#EF4444; font-size:11px; margin-top:4px; font-weight:300; padding-left:4px;">Kérlek add meg a teljes nevedet!</div>
                                 </div>
                                 <!-- Birth Year -->
                                 <div style="border-bottom: 0.5px solid var(--color-border); padding: 0 16px 12px 16px;">
@@ -3671,7 +3672,8 @@
                                         </div>
                                         <span class="settings-row-label">Születési év</span>
                                     </div>
-                                    <input type="number" id="settings-birthyear" style="width: 100%; border: none; background: var(--color-surface); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 300; color: var(--color-text); box-sizing: border-box;" placeholder="Születési év (pl. 2004)">
+                                    <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="settings-birthyear" style="width: 100%; border: none; background: var(--color-surface); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 300; color: var(--color-text); box-sizing: border-box;" placeholder="Születési év (pl. 2004)">
+                                    <div id="settings-birthyear-err" style="display:none; color:#EF4444; font-size:11px; margin-top:4px; font-weight:300; padding-left:4px;">Kérlek adj meg egy érvényes évet (1950 - 2012)!</div>
                                 </div>
                                 <!-- Phone -->
                                 <div style="border-bottom: 0.5px solid var(--color-border); padding: 0 16px 12px 16px;">
@@ -3682,6 +3684,7 @@
                                         <span class="settings-row-label">Telefonszám</span>
                                     </div>
                                     <input type="tel" id="settings-phone" style="width: 100%; border: none; background: var(--color-surface); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 300; color: var(--color-text); box-sizing: border-box;" placeholder="pl. +36201234567">
+                                    <div id="settings-phone-err" style="display:none; color:#EF4444; font-size:11px; margin-top:4px; font-weight:300; padding-left:4px;">Kérlek adj meg egy érvényes magyar telefonszámot!</div>
                                 </div>
                                 <!-- Bio -->
                                 <div style="border-bottom: 0.5px solid var(--color-border);">
@@ -8863,12 +8866,32 @@ let settingsConfirmedAddress = null;
         }
 
         async function saveSettings() {
-            const nameVal = document.getElementById('settings-name')?.value || '';
+            const nameVal = document.getElementById('settings-name')?.value.trim() || '';
+            const nameErr = document.getElementById('settings-name-err');
+            if (nameErr) nameErr.style.display = 'none';
+            if (!nameVal) {
+                if (nameErr) nameErr.style.display = 'block';
+                return;
+            }
+
             const birthYearVal = document.getElementById('settings-birthyear')?.value ? parseInt(document.getElementById('settings-birthyear').value.trim()) : null;
-            let phoneVal = document.getElementById('settings-phone')?.value || '';
+            
+            const birthYearErr = document.getElementById('settings-birthyear-err');
+            if (birthYearErr) birthYearErr.style.display = 'none';
+            if (birthYearVal !== null && (isNaN(birthYearVal) || birthYearVal < 1950 || birthYearVal > 2012)) {
+                if (birthYearErr) birthYearErr.style.display = 'block';
+                return;
+            }
+            let phoneVal = document.getElementById('settings-phone')?.value.trim() || '';
+            const phoneErr = document.getElementById('settings-phone-err');
+            if (phoneErr) phoneErr.style.display = 'none';
             const cleanedPhone = phoneVal.replace(/[\s\-\(\)]/g, '');
             if (cleanedPhone.startsWith('06') && cleanedPhone.length === 11) {
                 phoneVal = '+36' + cleanedPhone.substring(2);
+            }
+            if (phoneVal && !window.validateHungarianPhone(phoneVal)) {
+                if (phoneErr) phoneErr.style.display = 'block';
+                return;
             }
             const bioVal = document.getElementById('settings-bio')?.value || '';
             const skillsArr = Array.from(selectedSkills);

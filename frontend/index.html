@@ -3138,6 +3138,11 @@
                     <input type="text" id="app-name" class="auth-input-field login-input" placeholder="Teljes neved" style="padding-left:16px;">
                 </div>
             </div>
+            <div class="floating-group" style="margin:0;">
+                <div class="auth-input-container">
+                    <input type="number" id="app-birth-year" class="auth-input-field login-input" placeholder="Születési év (pl. 2004)" style="padding-left:16px;">
+                </div>
+            </div>
             <button class="login-btn" id="btn-step-1-next" onclick="submitStep1Name()" style="margin-top:16px; width:100%; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius:14px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
         </div>
 
@@ -3657,6 +3662,16 @@
                                         <span class="settings-row-label">Teljes neved</span>
                                     </div>
                                     <input type="text" id="settings-name" style="width: 100%; border: none; background: var(--color-surface); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 300; color: var(--color-text); box-sizing: border-box;" placeholder="Add meg a teljes neved">
+                                </div>
+                                <!-- Birth Year -->
+                                <div style="border-bottom: 0.5px solid var(--color-border); padding: 0 16px 12px 16px;">
+                                    <div style="display:flex;align-items:center;gap:12px;padding:12px 0 4px 0;">
+                                        <div class="settings-row-icon" style="background: rgba(0, 0, 0,0.05);">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                        </div>
+                                        <span class="settings-row-label">Születési év</span>
+                                    </div>
+                                    <input type="number" id="settings-birthyear" style="width: 100%; border: none; background: var(--color-surface); padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 300; color: var(--color-text); box-sizing: border-box;" placeholder="Születési év (pl. 2004)">
                                 </div>
                                 <!-- Phone -->
                                 <div style="border-bottom: 0.5px solid var(--color-border); padding: 0 16px 12px 16px;">
@@ -4390,6 +4405,7 @@
                             <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
                                 <h2 id="wp-name" style="font-size: 19px; font-weight: 500; color: var(--color-text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">Diák</h2>
                             </div>
+                            <p id="wp-age" style="display: none; font-size: 13px; color: var(--color-text-muted); margin-top: 2px;"></p>
                             <p id="wp-trust-badge" style="display: inline-block; background: rgba(0, 0, 0,0.08); color: var(--color-text); font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 16px; margin-top: 6px;">Megbízható Diák</p>
                         </div>
 
@@ -4925,7 +4941,7 @@
                         address = data.address || '';
                         phone = data.phone || '';
                         
-                        const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || '', reviews: data.reviews || [], address: address, phone: phone };
+                        const userData = { bio: data.bio || '', skills: data.skills || [], photoURL: data.photoURL || '', reviews: data.reviews || [], address: address, phone: phone, birthYear: data.birthYear || null };
                         localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     }
                     localStorage.removeItem('melogo_pending_role');
@@ -5121,9 +5137,15 @@
         window.submitStep1Name = async function() {
             const nameInput = document.getElementById('app-name');
             const nameVal = nameInput ? nameInput.value.trim() : '';
+            const yearInput = document.getElementById('app-birth-year');
+            const yearVal = yearInput ? parseInt(yearInput.value.trim()) : 0;
             
             if (!nameVal) {
                 alert("Kérlek add meg a teljes neved!");
+                return;
+            }
+            if (!yearVal || yearVal < 1950 || yearVal > 2012) {
+                alert("Kérlek adj meg egy érvényes születési évet (pl. 2004)!");
                 return;
             }
             
@@ -5142,7 +5164,8 @@
             try {
                 const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", user.uid);
                 await window.firebaseAPI.setDoc(userRef, {
-                    name: nameVal
+                    name: nameVal,
+                    birthYear: yearVal
                 }, { merge: true });
                 
                 localStorage.setItem('melogo_name', nameVal);
@@ -6482,6 +6505,7 @@
                     userData.photoURL = photoURL;
                     userData.reviews = userDoc.exists() ? (userDoc.data().reviews || []) : [];
                     userData.address = userDoc.exists() ? (userDoc.data().address || '') : '';
+                    userData.birthYear = userDoc.exists() ? (userDoc.data().birthYear || null) : null;
                     localStorage.setItem('melogo_user_data', JSON.stringify(userData));
                     
                     doEnterApp(name, email, defaultRole);
@@ -8816,6 +8840,7 @@ let settingsConfirmedAddress = null;
 
         async function saveSettings() {
             const nameVal = document.getElementById('settings-name')?.value || '';
+            const birthYearVal = document.getElementById('settings-birthyear')?.value ? parseInt(document.getElementById('settings-birthyear').value.trim()) : null;
             let phoneVal = document.getElementById('settings-phone')?.value || '';
             const cleanedPhone = phoneVal.replace(/[\s\-\(\)]/g, '');
             if (cleanedPhone.startsWith('06') && cleanedPhone.length === 11) {
@@ -8846,6 +8871,10 @@ let settingsConfirmedAddress = null;
                 phone: phoneVal,
                 skills: skillsArr
             };
+            if (birthYearVal && birthYearVal > 1950 && birthYearVal <= 2012) {
+                firestoreUpdateData.birthYear = birthYearVal;
+                userData.birthYear = birthYearVal;
+            }
             
             const zip = (document.getElementById('set-zip') || {}).value?.trim() || '';
             const county = (document.getElementById('set-county') || {}).value?.trim() || '';
@@ -10152,6 +10181,16 @@ let settingsConfirmedAddress = null;
                         
                         if (data.name) {
                             document.getElementById('wp-name').innerText = data.name;
+                        }
+                        const ageEl = document.getElementById('wp-age');
+                        if (ageEl) {
+                            if (data.birthYear) {
+                                const age = new Date().getFullYear() - data.birthYear;
+                                ageEl.innerText = `${age} éves`;
+                                ageEl.style.display = 'block';
+                            } else {
+                                ageEl.style.display = 'none';
+                            }
                         }
                         
                         completedJobs = data.jobCount !== undefined ? data.jobCount : 0;
@@ -13951,6 +13990,11 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             const settingsNameInput = document.getElementById('settings-name');
             if (settingsNameInput) {
                 settingsNameInput.value = user.name || '';
+            }
+            const settingsBirthYearInput = document.getElementById('settings-birthyear');
+            const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
+            if (settingsBirthYearInput && userData.birthYear) {
+                settingsBirthYearInput.value = userData.birthYear;
             }
 
             // Update avatar displays

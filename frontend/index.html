@@ -3103,7 +3103,7 @@
             </div>
             <div class="floating-group" style="margin:0;">
                 <div class="auth-input-container">
-                    <input type="password" id="app-pw" class="auth-input-field login-input" placeholder="Jelszó" style="padding-right:44px;">
+                    <input type="password" id="app-pw" class="auth-input-field login-input" placeholder="Jelszó (min. 6 karakter)" style="padding-right:44px;">
                     <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('app-pw', this)">
                         <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -3111,7 +3111,7 @@
             </div>
             <div class="floating-group" style="margin:0;">
                 <div class="auth-input-container">
-                    <input type="password" id="app-pw2" class="auth-input-field login-input" placeholder="Jelszó megerősítése" style="padding-right:44px;">
+                    <input type="password" id="app-pw2" class="auth-input-field login-input" placeholder="Jelszó megerősítése (min. 6 karakter)" style="padding-right:44px;">
                     <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('app-pw2', this)">
                         <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -3140,7 +3140,7 @@
             </div>
             <div class="floating-group" style="margin:0;">
                 <div class="auth-input-container">
-                    <input type="number" id="app-birth-year" class="auth-input-field login-input" placeholder="Születési év (pl. 2004)" style="padding-left:16px;">
+                    <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="app-birth-year" class="auth-input-field login-input" placeholder="Születési év (pl. 2004)" style="padding-left:16px;">
                 </div>
             </div>
             <button class="login-btn" id="btn-step-1-next" onclick="submitStep1Name()" style="margin-top:16px; width:100%; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius:14px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>

@@ -2918,7 +2918,9 @@
         .overlay-success.open, .overlay-success.active {
             transform: translateY(0) !important;
             visibility: visible !important;
+            opacity: 1 !important;
             pointer-events: auto !important;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear 0s, opacity 0.3s linear !important;
         }
         
         /* Redesigned Clean & Modern Auth Screen Styles */

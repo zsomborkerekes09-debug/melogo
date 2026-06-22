@@ -7768,16 +7768,14 @@ function filterWorkerByExactJob(jobName) {
             const matchedJob = allJobs.find(j => String(j.id) === String(gameState.jobId)) || allJobs.find(j => j.title === gameState.jobTitle);
 
             if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
-                alert('K�rj�k jelentkezz be a jelentkez�shez!');
                 gameState.applied = false;
                 gameState.status = '';
-                return;
+                return { error: 'Jelentkezz be a jelentkezéshez!' };
             }
             if (!matchedJob || !matchedJob.ownerUid) {
-                alert('Hiba: a munk�ltat� nem tal�lhat�.');
                 gameState.applied = false;
                 gameState.status = '';
-                return;
+                return { error: 'A munkáltató nem található!' };
             }
 
             const employerEmail = matchedJob.ownerEmail || 'ismeretlen@employer.hu';
@@ -7795,22 +7793,18 @@ function filterWorkerByExactJob(jobName) {
                     );
                     const snap = await window.firebaseAPI.getDocs(q);
                     if (!snap.empty) {
-                        alert('M�r jelentkezt�l erre a munk�ra!');
                         gameState.applied = false;
                         gameState.status = '';
-                        return;
+                        return { error: 'Már jelentkeztél erre a munkára!' };
                     }
                 }
             } catch(e) { console.warn('Duplicate check error', e); }
 
             // Prevent applying to own job if ownerUid matches strictly
             if (matchedJob && matchedJob.ownerUid && workerId !== 'NO_UID' && matchedJob.ownerUid === workerId) {
-                alert("Saját munkádra nem jelentkezhetsz!");
                 gameState.applied = false;
                 gameState.status = '';
-                const btn = document.querySelector('.emp-submit-btn');
-                if (btn) btn.disabled = false;
-                return;
+                return { error: 'Saját munkádra nem jelentkezhetsz!' };
             }
 
             const _workerSession = JSON.parse(localStorage.getItem('melogo_worker_session') || '{}');
@@ -11071,7 +11065,24 @@ let settingsConfirmedAddress = null;
             document.getElementById('worker-apply-sheet').classList.remove('open');
         }
 
-        function submitWorkerApplyFromSheet() {
+        function showApplyError(msg) {
+            const btn = document.getElementById('worker-apply-btn');
+            if (!btn) return;
+            const oldText = btn.innerHTML;
+            const oldBg = btn.style.backgroundColor || '';
+            const oldColor = btn.style.color || '';
+            btn.innerHTML = `<span style="font-weight:500;">${msg}</span>`;
+            btn.style.backgroundColor = '#FEE2E2';
+            btn.style.color = '#EF4444';
+            btn.classList.remove('loading');
+            setTimeout(() => {
+                btn.innerHTML = oldText;
+                btn.style.backgroundColor = oldBg;
+                btn.style.color = oldColor;
+            }, 2500);
+        }
+
+        async function submitWorkerApplyFromSheet() {
             closeApplySheet();
             
             const btn = document.getElementById('worker-apply-btn');
@@ -11081,19 +11092,20 @@ let settingsConfirmedAddress = null;
             btn.classList.add('loading');
             btn.innerHTML = '<div class="btn-spinner"></div> Küldés...';
 
-            setTimeout(() => {
-                // Call original apply function
-                workerApplyToJob();
+            const result = await workerApplyToJob();
+            if (result && result.error) {
+                showApplyError(result.error);
+                return;
+            }
 
-                // Confirmed state
-                btn.classList.remove('loading');
-                btn.classList.add('confirmed');
-                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Jelentkezve ✓';
+            // Confirmed state
+            btn.classList.remove('loading');
+            btn.classList.add('confirmed');
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Jelentkezve ✓';
 
-                // Push notification
-                const _applyUser = loadCurrentUser(); 
-                showPushNotification('📩 ' + (_applyUser ? _applyUser.name : 'Valaki') + ' jelentkezett', 'A munkádra: ' + (gameState.jobTitle || 'Fűnyírás'), 'var(--color-text)');
-            }, 1000);
+            // Push notification
+            const _applyUser = loadCurrentUser(); 
+            showPushNotification('📩 ' + (_applyUser ? _applyUser.name : 'Valaki') + ' jelentkezett', 'A munkádra: ' + (gameState.jobTitle || 'Fűnyírás'), 'var(--color-text)');
         }
 
         function updateApplyBtnState() {

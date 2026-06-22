@@ -5135,19 +5135,28 @@
         };
 
         window.submitStep1Name = async function() {
+            // Clear previous errors
+            document.querySelectorAll('#auth-step-1 .auth-input-container').forEach(c => {
+                c.classList.remove('has-error');
+                const errSlot = c.querySelector('.inline-err-msg');
+                if (errSlot) errSlot.style.display = 'none';
+            });
+
             const nameInput = document.getElementById('app-name');
             const nameVal = nameInput ? nameInput.value.trim() : '';
             const yearInput = document.getElementById('app-birth-year');
             const yearVal = yearInput ? parseInt(yearInput.value.trim()) : 0;
             
+            let hasError = false;
             if (!nameVal) {
-                alert("Kérlek add meg a teljes neved!");
-                return;
+                highlightInputError('app-name', "Kérlek add meg a teljes neved!");
+                hasError = true;
             }
             if (!yearVal || yearVal < 1950 || yearVal > 2012) {
-                alert("Kérlek adj meg egy érvényes születési évet (pl. 2004)!");
-                return;
+                highlightInputError('app-birth-year', "Kérlek adj meg egy érvényes születési évet (pl. 2004)!");
+                hasError = true;
             }
+            if (hasError) return;
             
             const user = window.firebaseAuth?.currentUser;
             if (!user) {
@@ -5210,6 +5219,13 @@
         };
 
         window.submitStep2Phone = async function() {
+            // Clear previous errors
+            document.querySelectorAll('#auth-step-2 .auth-input-container').forEach(c => {
+                c.classList.remove('has-error');
+                const errSlot = c.querySelector('.inline-err-msg');
+                if (errSlot) errSlot.style.display = 'none';
+            });
+
             const phoneInput = document.getElementById('reg-phone-input');
             const phoneVal = phoneInput ? phoneInput.value.trim() : '';
             let cleanedPhone = phoneVal.replace(/[\s\-\(\)]/g, '');
@@ -5218,7 +5234,7 @@
             }
             
             if (!window.validateHungarianPhone(phoneVal)) {
-                alert("Kérjük, érvényes magyar telefonszámot adj meg (pl. +36201234567 vagy 06201234567)!");
+                highlightInputError('reg-phone-input', "Kérjük, érvényes magyar telefonszámot adj meg!");
                 return;
             }
             
@@ -5263,16 +5279,24 @@
         };
 
         window.submitStep3Address = async function() {
+            // Clear previous errors
+            document.querySelectorAll('#auth-step-3 .auth-input-container').forEach(c => {
+                c.classList.remove('has-error');
+                const errSlot = c.querySelector('.inline-err-msg');
+                if (errSlot) errSlot.style.display = 'none';
+            });
+
             const zip = document.getElementById('reg-address-zip').value.trim();
             const city = document.getElementById('reg-address-city').value.trim();
             const street = document.getElementById('reg-address-street').value.trim();
             const house = document.getElementById('reg-address-house').value.trim();
             const county = document.getElementById('reg-address-county').value.trim();
             
-            if (!zip || !city || !street) {
-                alert("Kérlek, töltsd ki legalább az irányítószámot, várost és az utcát!");
-                return;
-            }
+            let hasError = false;
+            if (!zip) { highlightInputError('reg-address-zip', "Kötelező"); hasError = true; }
+            if (!city) { highlightInputError('reg-address-city', "Kötelező"); hasError = true; }
+            if (!street) { highlightInputError('reg-address-street', "Kötelező"); hasError = true; }
+            if (hasError) return;
             
             // Build full address string
             let fullAddress = `${zip} ${city}, ${street}`;

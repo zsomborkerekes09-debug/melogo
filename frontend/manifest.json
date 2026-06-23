@@ -5,13 +5,33 @@
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#000000",
+  "orientation": "portrait",
   "description": "Találj munkát gyorsan, vagy hívj egy diákot segítségül!",
   "icons": [
     {
-      "src": "logo_new.jpg",
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "test_login.png",
+      "sizes": "630x1035",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "test_jobs.png",
+      "sizes": "630x1035",
+      "type": "image/png",
+      "form_factor": "narrow"
     }
   ]
 }

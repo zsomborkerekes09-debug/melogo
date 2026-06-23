@@ -53,38 +53,41 @@
     <h1>Adatvédelmi Tájékoztató (Privacy Policy)</h1>
     <p><em>Utolsó frissítés: 2026. Június</em></p>
 
-    <p>A MeloGo tiszteletben tartja a felhasználók magánéletét és elkötelezett a személyes adatok védelme iránt. Jelen tájékoztató ismerteti, hogyan gyűjtjük, használjuk és védjük az Ön adatait, amikor a MeloGo alkalmazást használja.</p>
+    <p>A MeloGo (továbbiakban: "App") tiszteletben tartja a felhasználók magánéletét és elkötelezett a személyes adatok védelme iránt. Jelen tájékoztató részletesen ismerteti, hogy milyen adatokat gyűjtünk, miért, és hogyan védjük azokat.</p>
 
-    <h2>1. Milyen adatokat gyűjtünk?</h2>
+    <h2>1. Milyen személyes adatokat gyűjtünk és MIÉRT?</h2>
     <ul>
-        <li><strong>Fiókadatok:</strong> Név, e-mail cím (amelyet a Firebase Authentication rendszer biztonságosan kezel).</li>
-        <li><strong>Profiladatok:</strong> Az Ön által feltöltött profilkép és bemutatkozó szöveg.</li>
-        <li><strong>Helyadatok (GPS):</strong> A MeloGo a készülék GPS-koordinátáit használja ahhoz, hogy a közeledben lévő munkákat jelenítse meg, illetve hogy kiszámolja a munkák és a felhasználó közötti távolságot. <strong>Ezeket a pontos GPS adatokat (szélességi és hosszúsági fok) soha nem osztjuk meg más felhasználókkal, kizárólag a távolságszámításhoz és a térképes megjelenítéshez használjuk helyileg.</strong> A munkák pontos címe csak sikeres jelentkezés után, a megbízó engedélyével válik láthatóvá.</li>
-        <li><strong>Alkalmazáshasználat:</strong> IP cím, eszközinformációk, munkák feladása, jelentkezések és chat üzenetek.</li>
+        <li><strong>Név, E-mail cím és Telefonszám:</strong> A fiók létrehozásához, az Ön egyértelmű azonosításához és a kapcsolattartáshoz. Ha egy munkát elfogadnak, ezek az adatok (név és e-mail/telefon) segítenek a megbízónak és a munkavállalónak a sikeres kapcsolattartásban.</li>
+        <li><strong>Lakcím / Munkavégzés helye:</strong> Szükséges a munkák földrajzi strukturálásához, és a munkavállalók/megbízók pontos fizikai távolságának meghatározásához.</li>
+        <li><strong>Helyadatok (GPS):</strong> A MeloGo a készülék GPS-koordinátáit használja ahhoz, hogy a közeledben lévő releváns munkákat jelenítse meg. <strong>Ezeket a pontos GPS adatokat (szélességi és hosszúsági fok) soha nem osztjuk meg más felhasználókkal nyilvánosan.</strong> A munkák pontos címe csak sikeres jelentkezés után, a megbízó engedélyével válik láthatóvá.</li>
+        <li><strong>Profilkép és Bemutatkozás (Bio):</strong> Opcionális adatok, amelyeket a platformba vetett bizalom építése és a hitelesebb profil kialakítása érdekében kérünk be.</li>
+        <li><strong>Alkalmazáshasználat:</strong> Technikai információk, hibajelentések és a kiírt munkák, jelentkezések logolása a szolgáltatás minőségének javítása érdekében.</li>
     </ul>
 
-    <h2>2. Hogyan használjuk az adatokat?</h2>
-    <ul>
-        <li>A MeloGo platform funkcióinak biztosítására (munkák listázása távolság alapján, jelentkezések kezelése, chatelés a felek között).</li>
-        <li>Értesítések küldésére (pl. új üzenet, sikeres jelentkezés).</li>
-        <li>Biztonsági célokra, hogy megakadályozzuk a visszaéléseket.</li>
-    </ul>
+    <h2>2. Mennyi ideig tároljuk az adatokat? (Adatmegőrzés)</h2>
+    <p>A felhasználói adatokat addig tároljuk, amíg az Ön fiókja aktív az App-ban. Amennyiben Ön kéri a fiókja törlését (az alkalmazáson belül elérhető "Fiók végleges törlése" gombbal), minden személyes adatát (beleértve a profilképet, adatbázis bejegyzéseket és azonosítókat) <strong>30 napon belül véglegesen és visszaállíthatatlanul töröljük</strong> a rendszereinkből.</p>
 
     <h2>3. Adatok megosztása harmadik felekkel</h2>
-    <p>Személyes adatait soha nem adjuk el, és nem bocsátjuk áruba. Az alábbi harmadik felekkel osztunk meg technikai adatokat az app működése érdekében:</p>
+    <p>Személyes adatait <strong>soha nem adjuk el, és nem bocsátjuk harmadik felek rendelkezésére hirdetési célból.</strong> Az alábbi szolgáltatókkal osztunk meg technikai és titkosított adatokat a platform működtetése (autentikáció és felhő-tárhely) érdekében:</p>
     <ul>
-        <li><strong>Google Firebase:</strong> Adatbázis-kezelés, felhasználói azonosítás és értesítések küldése.</li>
+        <li><strong>Google Firebase:</strong> (Auth, Firestore, Storage) Felhasználói azonosítás, biztonságos adatbázis-kezelés, értesítések küldése és képek tárolása.</li>
+        <li><strong>Apple (Sign in with Apple):</strong> Ha ezt a belépési módot választja, az Apple hitelesítési rendszerén keresztül történik a biztonságos bejelentkezés. Ekkor mi csak egy megerősítő tokent és (opcionálisan) egy rejtett e-mail címet kapunk az Apple-től.</li>
         <li><strong>Vercel:</strong> A webes infrastruktúra hosztolása.</li>
     </ul>
 
-    <h2>4. Adatbiztonság és Adattörlés</h2>
-    <p>Minden adatot titkosított csatornákon (HTTPS) továbbítunk és biztonságos szervereken (Google Firestore) tárolunk. Az alkalmazáson belül bármikor kérheti a fiókja és minden hozzá kapcsolódó adata teljes és végleges törlését a Profil → Fiók törlése menüpont alatt.</p>
+    <h2>4. Az Ön jogai (GDPR)</h2>
+    <p>A GDPR rendelet értelmében Önnek joga van:</p>
+    <ul>
+        <li><strong>Hozzáférni adataihoz:</strong> Bármikor megtekintheti adatait az alkalmazáson belül.</li>
+        <li><strong>Törléshez való jog ("Elfeledtetés joga"):</strong> Bármikor törölheti teljes fiókját az applikáció "Profil -> Beállítások" menüjében, amivel minden adata eltávolításra kerül a rendszerből.</li>
+        <li><strong>Helyesbítéshez való jog:</strong> Bármikor módosíthatja személyes adatait a Beállítások menüben.</li>
+        <li><strong>Adathordozhatósághoz való jog:</strong> Kérheti a tárolt adatainak másolatát strukturált formátumban.</li>
+    </ul>
 
-    <h2>5. Az Ön jogai (GDPR)</h2>
-    <p>Önnek joga van hozzáférni adataihoz, kérni azok helyesbítését, törlését, vagy tiltakozni az adatkezelés ellen. Kérdéseivel vagy adattörlési igényével forduljon hozzánk bizalommal.</p>
-
-    <h2>6. Kapcsolat</h2>
-    <p>Ha bármilyen kérdése van az adatkezeléssel kapcsolatban, kérjük, vegye fel velünk a kapcsolatot az alkalmazáson belül, vagy a weboldalunkon keresztül.</p>
+    <h2>5. Kapcsolat és Adattörlési igények</h2>
+    <p>Ha bármilyen kérdése van az adatkezeléssel kapcsolatban, vagy szeretné gyakorolni a GDPR jogait, kérjük, vegye fel velünk a kapcsolatot a következő címen:</p>
+    <p><strong>Email:</strong> <a href="mailto:support@melogo.hu">support@melogo.hu</a></p>
+    <p>A manuális adattörlési kéréseket 30 napon belül teljesítjük.</p>
 
 </div>
 

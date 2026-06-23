@@ -1,11 +1,15 @@
 {
   "name": "Melogo Diákmunka",
   "short_name": "Melogo",
+  "id": "/?source=pwa",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#000000",
   "orientation": "portrait",
+  "categories": ["business", "finance", "lifestyle"],
+  "prefer_related_applications": false,
+  "related_applications": [],
   "description": "Találj munkát gyorsan, vagy hívj egy diákot segítségül!",
   "icons": [
     {
@@ -32,6 +36,12 @@
       "sizes": "630x1035",
       "type": "image/png",
       "form_factor": "narrow"
+    },
+    {
+      "src": "test_wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ]
 }

@@ -10059,6 +10059,7 @@ let settingsConfirmedAddress = null;
                         lat: pos.coords.latitude,
                         lon: pos.coords.longitude
                     };
+                    window.userCoords = userCoords;
                     // Cache the location locally
                     try {
                         localStorage.setItem('melogo_last_gps_location', JSON.stringify({
@@ -10081,6 +10082,7 @@ let settingsConfirmedAddress = null;
                     // Do not clear userCoords if we have a cached fallback loaded
                     if (!userCoords) {
                         userCoords = null;
+                        window.userCoords = null;
                         setGPSStatus(false, 'GPS letiltva');
                     }
                 },
@@ -10118,6 +10120,7 @@ let settingsConfirmedAddress = null;
                 label.innerText = cityName;
                 locText.className = 'gps-location unknown';
                 userCoords = null;
+                window.userCoords = null;
             }
 
             recalculateJobDistances();
@@ -10143,6 +10146,7 @@ let settingsConfirmedAddress = null;
             }
             
             userCoords = { lat: lat, lon: lon };
+            window.userCoords = userCoords;
             setManualLocationStatus(cityName);
             closeLocationSheet();
             recalculateJobDistances();

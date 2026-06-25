@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.melogo.app",
+        "sha256_cert_fingerprints": ["04:D2:5F:C5:1D:C2:31:7E:F6:F2:A5:1C:17:39:FF:DE:68:53:77:3B:66:AC:B6:5E:DE:43:6F:8C:04:01:B2:F3"]
+      }
+    }]

@@ -4,18 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="var(--color-text)">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>MeloGo – Diákmunka Közel, Gyorsan</title>
     <meta name="description" content="MeloGo: Find one-day student jobs near you in minutes. Keress közeli egynapos diákmunkát percek alatt Magyarország bármely pontján.">
+    <link rel="canonical" href="https://melogo-kappa.vercel.app/">
     <link rel="icon" type="image/jpeg" href="logo_new.jpg">
     <link rel="apple-touch-icon" href="logo_new.jpg">
+    <meta property="og:title" content="MeloGo – Diákmunka Közel, Gyorsan">
+    <meta property="og:description" content="MeloGo: Find one-day student jobs near you in minutes. Keress közeli egynapos diákmunkát percek alatt Magyarország bármely pontján.">
+    <meta property="og:url" content="https://melogo-kappa.vercel.app/">
     <meta property="og:image" content="logo_new.jpg">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-    <script src="https://unpkg.com/geofire-common@5.2.0/dist/geofire-common.min.js" defer></script>
+    <script src="https://unpkg.com/geofire-common@5.2.0/dist/geofire-common/geofire-common.min.js" defer></script>
     <style>
         html, body { background-color: var(--color-text); }
         button, a { touch-action: manipulation; }
@@ -5493,7 +5497,7 @@
 
             function normalizeFirestoreJob(fJob) {
                 const userCoords = window.userCoords || { lat: 47.4979, lon: 19.0402 };
-                let dist = (fJob.lat && fJob.lon) ? haversineLocal(userCoords.lat, userCoords.lon, fJob.lat, fJob.lon) : Math.round(Math.random() * 4 * 10) / 10;
+                let dist = (fJob.lat && fJob.lon) ? haversineLocal(userCoords.lat, userCoords.lon, fJob.lat, fJob.lon) : null;
                 return {
                     id: fJob.id,
                     title: fJob.title,
@@ -9216,16 +9220,17 @@ let settingsConfirmedAddress = null;
         function renderSkeletonJobs(containerId, count) {
             const list = document.getElementById(containerId);
             if (!list) return;
+            list._lastFingerprint = null;
             let html = '';
             for (let i = 0; i < count; i++) {
                 html += `
                     <div class="job-card shimmer" style="min-height: 96px; margin-bottom: 12px; border-radius: 16px; border: 1px solid #E5E7EB; background: var(--color-surface); overflow: hidden; position: relative;">
                         <div style="padding: 24px;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                                <div style="width: 60%; height: 20px; background: var(--color-surface); border-radius: 6px;"></div>
-                                <div style="width: 25%; height: 20px; background: var(--color-surface); border-radius: 6px;"></div>
+                                <div style="width: 60%; height: 20px; background: var(--color-shimmer, #E5E7EB); border-radius: 6px;"></div>
+                                <div style="width: 25%; height: 20px; background: var(--color-shimmer, #E5E7EB); border-radius: 6px;"></div>
                             </div>
-                            <div style="width: 40%; height: 16px; background: var(--color-surface); border-radius: 6px;"></div>
+                            <div style="width: 40%; height: 16px; background: var(--color-shimmer, #E5E7EB); border-radius: 6px;"></div>
                         </div>
                     </div>
                 `;
@@ -10084,7 +10089,7 @@ let settingsConfirmedAddress = null;
                     setGPSStatus(true, 'GPS Aktív');
                     
                     // Frissítjük a távolságokat az új koordináták alapján
-                    if (typeof recalculateDistances === 'function') recalculateDistances();
+                    if (typeof recalculateJobDistances === 'function') recalculateJobDistances();
                     // Ha a worker nézeten vagyunk, rendereljünk újra mindent
                     if (typeof currentRole !== 'undefined' && currentRole === 'worker' && typeof refreshJobList === 'function') {
                         refreshJobList(true);
@@ -13432,13 +13437,13 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             for (let i = 0; i < count; i++) {
                 html += `
                     <div class="emp-ad-card shimmer" style="border: 1px solid #E5E7EB; background: var(--color-surface)">
-                        <div class="emp-ad-icon-circle" style="background: var(--color-surface); border:none;"></div>
+                        <div class="emp-ad-icon-circle" style="background: var(--color-shimmer, #E5E7EB); border:none;"></div>
                         <div class="emp-ad-middle">
-                            <div style="width:60%; height:14px; background: var(--color-surface); border-radius:4px; margin-bottom:6px;"></div>
-                            <div style="width:40%; height:10px; background: var(--color-surface); border-radius:4px;"></div>
+                            <div style="width:60%; height:14px; background: var(--color-shimmer, #E5E7EB); border-radius:4px; margin-bottom:6px;"></div>
+                            <div style="width:40%; height:10px; background: var(--color-shimmer, #E5E7EB); border-radius:4px;"></div>
                         </div>
                         <div class="emp-ad-right">
-                            <div style="width:48px; height:20px; background: var(--color-surface); border-radius: 16px;"></div>
+                            <div style="width:48px; height:20px; background: var(--color-shimmer, #E5E7EB); border-radius: 16px;"></div>
                         </div>
                     </div>
                 `;
@@ -14910,50 +14915,52 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
     <script>
         // Smooth swipe-to-go-back listener for settings and chat overlays
-        document.addEventListener('touchstart', handleSwipeStart, {passive: true});
-        document.addEventListener('touchend', handleSwipeEnd, {passive: true});
-        let swipeStartX = 0;
-        let swipeStartY = 0;
+        (function() {
+            document.addEventListener('touchstart', handleSwipeStart, {passive: true});
+            document.addEventListener('touchend', handleSwipeEnd, {passive: true});
+            let swipeStartX = 0;
+            let swipeStartY = 0;
 
-        function handleSwipeStart(e) {
-            swipeStartX = e.changedTouches[0].screenX;
-            swipeStartY = e.changedTouches[0].screenY;
-        }
+            function handleSwipeStart(e) {
+                swipeStartX = e.changedTouches[0].screenX;
+                swipeStartY = e.changedTouches[0].screenY;
+            }
 
-        function handleSwipeEnd(e) {
-            const swipeEndX = e.changedTouches[0].screenX;
-            const swipeEndY = e.changedTouches[0].screenY;
-            // Check if swipe started from the left edge (<= 40px)
-            if (swipeStartX <= 40) {
-                const deltaX = swipeEndX - swipeStartX;
-                const deltaY = Math.abs(swipeEndY - swipeStartY);
-                
-                // If horizontal swipe is long enough and vertical swipe is minimal
-                if (deltaX > 50 && deltaY < 50) {
-                    // Find active overlays
-                    const overlays = document.querySelectorAll('.settings-overlay.open, .settings-overlay.active, #chat-detail-overlay');
-                    for (let el of overlays) {
-                        // For chat overlay
-                        if (el.id === 'chat-detail-overlay' && el.classList.contains('open')) {
-                            if (typeof closeChatRoom === 'function') closeChatRoom();
-                            return;
-                        } else if (el.classList.contains('open') || el.classList.contains('active')) {
-                            // Map overlays to their close functions
-                            if (el.id === 'worker-settings' && typeof closeWorkerSettings === 'function') closeWorkerSettings();
-                            else if (el.id === 'employer-form-overlay' && typeof closeEmployerForm === 'function') closeEmployerForm();
-                            else if (el.id === 'job-offer-overlay' && typeof closeJobOffer === 'function') closeJobOffer();
-                            else if (el.id === 'worker-profile-overlay' && typeof closeWorkerProfileOverlay === 'function') closeWorkerProfileOverlay();
-                            else if (el.id === 'employer-profile-overlay' && typeof closeEmployerProfileOverlay === 'function') closeEmployerProfileOverlay();
-                            else if (el.id === 'notifications-overlay' && typeof closeNotificationsSheet === 'function') closeNotificationsSheet();
-                            else if (el.id === 'help-overlay' && typeof closeHelpSheet === 'function') closeHelpSheet();
-                            else if (el.id === 'privacy-overlay' && typeof closePrivacySheet === 'function') closePrivacySheet();
-                            else if (el.id === 'terms-overlay' && typeof closeTermsSheet === 'function') closeTermsSheet();
-                            return;
+            function handleSwipeEnd(e) {
+                const swipeEndX = e.changedTouches[0].screenX;
+                const swipeEndY = e.changedTouches[0].screenY;
+                // Check if swipe started from the left edge (<= 40px)
+                if (swipeStartX <= 40) {
+                    const deltaX = swipeEndX - swipeStartX;
+                    const deltaY = Math.abs(swipeEndY - swipeStartY);
+                    
+                    // If horizontal swipe is long enough and vertical swipe is minimal
+                    if (deltaX > 50 && deltaY < 50) {
+                        // Find active overlays
+                        const overlays = document.querySelectorAll('.settings-overlay.open, .settings-overlay.active, #chat-detail-overlay');
+                        for (let el of overlays) {
+                            // For chat overlay
+                            if (el.id === 'chat-detail-overlay' && el.classList.contains('open')) {
+                                if (typeof closeChatRoom === 'function') closeChatRoom();
+                                return;
+                            } else if (el.classList.contains('open') || el.classList.contains('active')) {
+                                // Map overlays to their close functions
+                                if (el.id === 'worker-settings' && typeof closeWorkerSettings === 'function') closeWorkerSettings();
+                                else if (el.id === 'employer-form-overlay' && typeof closeEmployerForm === 'function') closeEmployerForm();
+                                else if (el.id === 'job-offer-overlay' && typeof closeJobOffer === 'function') closeJobOffer();
+                                else if (el.id === 'worker-profile-overlay' && typeof closeWorkerProfileOverlay === 'function') closeWorkerProfileOverlay();
+                                else if (el.id === 'employer-profile-overlay' && typeof closeEmployerProfileOverlay === 'function') closeEmployerProfileOverlay();
+                                else if (el.id === 'notifications-overlay' && typeof closeNotificationsSheet === 'function') closeNotificationsSheet();
+                                else if (el.id === 'help-overlay' && typeof closeHelpSheet === 'function') closeHelpSheet();
+                                else if (el.id === 'privacy-overlay' && typeof closePrivacySheet === 'function') closePrivacySheet();
+                                else if (el.id === 'terms-overlay' && typeof closeTermsSheet === 'function') closeTermsSheet();
+                                return;
+                            }
                         }
                     }
                 }
             }
-        }
+        })();
     </script>
 </body>
 </html>

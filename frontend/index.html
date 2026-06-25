@@ -9154,6 +9154,7 @@ let settingsConfirmedAddress = null;
         let activeDateFilter = null;
         let activeCategoryFilter = 'Összes';
         let activeRadius = parseInt(localStorage.getItem('melogo_radius') || '10');
+        window.activeRadius = activeRadius; // keep window in sync from the start
         let activeSortMode = 'newest';
         let currentMapCategory = 'all';
         let selectedMapJob = null;
@@ -9367,8 +9368,13 @@ let settingsConfirmedAddress = null;
         }
 
         function getFilteredAndSortedJobs() {
-            // Ensure activeRadius is a valid number, fallback to 100 if broken
-            if (isNaN(activeRadius)) activeRadius = 100;
+            // Sync from window.activeRadius so changes from confirmDistance() are always
+            // reflected here, even if the local variable was not updated yet.
+            if (typeof window.activeRadius === 'number' && !isNaN(window.activeRadius)) {
+                activeRadius = window.activeRadius;
+            }
+            // Ensure activeRadius is a valid number, fallback to 10 if broken
+            if (isNaN(activeRadius) || activeRadius <= 0) activeRadius = 10;
             
             const currentWorkerName = window.currentUser ? window.currentUser.name : '';
 
@@ -9834,6 +9840,8 @@ let settingsConfirmedAddress = null;
         // DISTANCE SHEET
         // ===================================================================
         function openDistanceSheet() {
+            // Sync local variable from window (in case it was updated externally)
+            if (typeof window.activeRadius === 'number') activeRadius = window.activeRadius;
             const slider = document.getElementById('distance-slider');
             if (slider) slider.value = activeRadius;
             document.getElementById('distance-display-km').innerText = activeRadius;
@@ -9861,6 +9869,10 @@ let settingsConfirmedAddress = null;
 
         function confirmDistance() {
             const val = parseInt(document.getElementById('distance-slider').value);
+            // Update BOTH the local and the window-level variable so every part of the
+            // code (getFilteredAndSortedJobs, setupFirestoreListeners, etc.) sees the
+            // same value immediately.
+            activeRadius = val;
             window.activeRadius = val;
             localStorage.setItem('melogo_radius', val);
             document.getElementById('distance-pill-text').innerText = val + ' km';

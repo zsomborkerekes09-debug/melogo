@@ -55,5 +55,7 @@
 	<string>Kérjük, engedélyezze a kamera használatát, hogy a profiljához közvetlenül tudjon fotót készíteni, vagy egy adott munkához azonnal feltölthesse az aktuális helyszín képét.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>A MeloGo a profilkép és munkát bemutató képek feltöltéséhez használja a fotókönyvtárat.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

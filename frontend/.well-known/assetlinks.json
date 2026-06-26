@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "com.melogo.app",
-        "sha256_cert_fingerprints": ["04:D2:5F:C5:1D:C2:31:7E:F6:F2:A5:1C:17:39:FF:DE:68:53:77:3B:66:AC:B6:5E:DE:43:6F:8C:04:01:B2:F3"]
+        "sha256_cert_fingerprints": ["37:99:12:17:E5:F0:68:F2:69:E8:20:1B:9A:8F:EA:0B:33:09:E0:B8:BD:1A:95:32:33:67:42:AD:E3:78:1A:F0"]
       }
     }]

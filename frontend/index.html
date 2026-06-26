@@ -3279,6 +3279,11 @@
                 Van már fiókod? <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>
             </span>
         </div>
+
+        <!-- Guest Mode Button -->
+        <button id="guest-mode-btn" onclick="loginAsGuest()" style="margin-top:24px; width:100%; height:52px; background-color:transparent; color:var(--color-text); border:1px solid var(--color-text); border-radius:14px; font-size:15px; font-weight:400; cursor:pointer; transition:background-color 0.15s ease;">
+            Körülnézek regisztráció nélkül
+        </button>
     </div>
 
     
@@ -4551,6 +4556,13 @@
                                 <polyline points="12 19 5 12 12 5"></polyline>
                             </svg>
                         </button>
+                        <button onclick="reportOrBlockUser()" style="position: absolute; right: 20px; bottom: 20px; background: none; border: none; color: var(--color-red, #EF4444); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;" title="Jelentés vagy Tiltás">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </button>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <div id="chat-detail-avatar-container" style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--color-surface); cursor: pointer;" onclick="handleChatAvatarClick()">
                                 <img id="chat-detail-avatar" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;" alt="Avatar">
@@ -5031,10 +5043,17 @@
                 if (typeof updateGreetings === 'function') updateGreetings();
                 if (typeof switchRole === 'function') switchRole(role);
             } else {
-                // Not logged in, ensure step 0 (email/password) is shown
-                if (typeof window.updateRegistrationStepUI === 'function') {
-                    window.updateRegistrationStepUI(0);
+                // Not logged in: Default to Guest Mode to comply with Apple Guidelines (Guideline 5.1.1)
+                if (localStorage.getItem('melogo_guest_mode') !== 'true') {
+                    localStorage.setItem('melogo_guest_mode', 'true');
                 }
+                var screen = document.getElementById('app-login-screen');
+                if (screen) {
+                    screen.classList.add('hidden');
+                }
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof updateGreetings === 'function') updateGreetings();
+                if (typeof switchRole === 'function') switchRole('worker');
             }
         });
 
@@ -5450,12 +5469,14 @@
 
         window.setupFirestoreListeners = function(role) {
             if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
-                console.log('[DEBUG] setupFirestoreListeners skipped: user not logged in.');
-                return;
+                if (!window.isGuest) {
+                    console.log('[DEBUG] setupFirestoreListeners skipped: user not logged in.');
+                    return;
+                }
             }
-            const user = auth.currentUser;
-            const email = user.email || '';
-            const uid = user.uid || '';
+            const user = window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser : null;
+            const email = user ? user.email || '' : '';
+            const uid = user ? user.uid || '' : '';
 
             // Clean up existing listeners
             if (window.jobsUnsubscribe) { window.jobsUnsubscribe(); window.jobsUnsubscribe = null; }
@@ -6533,6 +6554,23 @@
             }
         }
 
+        function loginAsGuest() {
+            localStorage.setItem('melogo_guest_mode', 'true');
+            let role = 'worker';
+            var screen = document.getElementById('app-login-screen');
+            if (screen) {
+                screen.style.transition = 'opacity 0.35s ease';
+                screen.style.opacity = '0';
+                setTimeout(function() {
+                    screen.classList.add('hidden');
+                    screen.style.opacity = '';
+                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                    if (typeof updateGreetings === 'function') updateGreetings();
+                    if (typeof switchRole === 'function') switchRole(role);
+                }, 350);
+            }
+        }
+
         async function loginApp() {
             clearLoginError();
             clearAllInputErrors();
@@ -7378,6 +7416,14 @@ function filterWorkerByExactJob(jobName) {
 
         // A. MUNKÁLTATÓ FELAD EGY MUNKÁT
         async function employerPublishJob() {
+            if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
+                alert("Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!");
+                localStorage.removeItem('melogo_guest_mode');
+                if (typeof window.updateRegistrationStepUI === 'function') {
+                    window.updateRegistrationStepUI(0);
+                }
+                return;
+            }
             closeEmployerFormOverlay();
             const specificJob = document.getElementById('emp-job-select').value;
             const details = document.getElementById('emp-details').value || 'Alkalmi munka precízen elvégezve.';
@@ -8104,6 +8150,38 @@ function filterWorkerByExactJob(jobName) {
             setTimeout(() => {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }, 50);
+        }
+
+        function reportOrBlockUser() {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Jelentés vagy Tiltás',
+                    text: 'Kérjük, válassza ki az okot. A felhasználót blokkoljuk a vizsgálat idejére.',
+                    input: 'select',
+                    inputOptions: {
+                        'spam': 'Spam vagy Csalás',
+                        'inappropriate': 'Nem megfelelő tartalom',
+                        'harassment': 'Zaklatás vagy Sértő viselkedés'
+                    },
+                    inputPlaceholder: 'Válasszon okot...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Jelentés és Tiltás',
+                    cancelButtonText: 'Mégse',
+                    confirmButtonColor: '#EF4444'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire('Jelentve!', 'A felhasználót jelentettük, és sikeresen letiltottuk a fiókját.', 'success');
+                        closeChatRoom();
+                        document.getElementById('employer-action-overlay')?.classList.remove('active');
+                        document.getElementById('worker-action-overlay')?.classList.remove('active');
+                    }
+                });
+            } else {
+                alert("A felhasználót jelentettük a moderátoroknak, és sikeresen letiltottuk a fiókját.");
+                closeChatRoom();
+                document.getElementById('employer-action-overlay')?.classList.remove('active');
+                document.getElementById('worker-action-overlay')?.classList.remove('active');
+            }
         }
 
         function closeEmployerJobDetail() {
@@ -11128,6 +11206,14 @@ let settingsConfirmedAddress = null;
         // NEW APPLY BUTTON HANDLER
         // ================================================================
         function openApplySheet() {
+            if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
+                alert("A jelentkezéshez be kell jelentkezned vagy regisztrálnod kell!");
+                localStorage.removeItem('melogo_guest_mode');
+                if (typeof window.updateRegistrationStepUI === 'function') {
+                    window.updateRegistrationStepUI(0);
+                }
+                return;
+            }
             const btn = document.getElementById('worker-apply-btn');
             if (!btn || btn.classList.contains('loading') || btn.classList.contains('confirmed') || btn.classList.contains('applied')) return;
             document.getElementById('worker-apply-message').value = '';
@@ -13712,6 +13798,14 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
         // Overwrite employerPublishJob to push or update the localEmployerJobs database
         async function employerPublishJobNew(btnEvent) {
+            if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
+                alert("Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!");
+                localStorage.removeItem('melogo_guest_mode');
+                if (typeof window.updateRegistrationStepUI === 'function') {
+                    window.updateRegistrationStepUI(0);
+                }
+                return;
+            }
             // Validate fields
             let valid = true;
             const details = document.getElementById('emp-details');
@@ -14841,7 +14935,12 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
         <div class="action-overlay" id="worker-action-overlay">
                     <div class="action-header">
                         <span style="font-weight: 500; font-size: 14px;" id="worker-job-detail-title">Fűnyírás a Desedánál</span>
-                        <button style="background:none; border:none; color:white; font-weight: 500; cursor:pointer;" onclick="document.getElementById('worker-action-overlay').classList.remove('active')">Bezár</button>
+                        <div style="display:flex; gap:16px; align-items:center;">
+                            <button onclick="reportOrBlockUser()" style="background:none; border:none; color:#EF4444; cursor:pointer; display:flex; padding:0;" title="Jelentés/Tiltás">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            </button>
+                            <button style="background:none; border:none; color:white; font-weight: 500; cursor:pointer;" onclick="document.getElementById('worker-action-overlay').classList.remove('active')">Bezár</button>
+                        </div>
                     </div>
                     <div class="chat-body" style="gap: 12px;">
                         <!-- Munka részletei kis kártya -->
@@ -14875,6 +14974,13 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                        </button>
+                        <button onclick="reportOrBlockUser()" style="position: absolute; right: 20px; bottom: 20px; background: none; border: none; color: #fff; opacity: 0.8; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;" title="Jelentés vagy Tiltás">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
                             </svg>
                         </button>
                         <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px;">

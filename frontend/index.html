@@ -5691,9 +5691,9 @@
         }
 
         window.isAdministrator = function() { return false; };
-        window.logConsentAndAuth = logConsentAndAuth;
-        window.geocodeAndCenterMap = geocodeAndCenterMap;
-        window.downloadConsentLogsCSV = downloadConsentLogsCSV;
+        window.logConsentAndAuth = function() { return false; };
+        window.geocodeAndCenterMap = function() { return false; };
+        window.downloadConsentLogsCSV = function() { return false; };
         
 </script>
 

@@ -3024,7 +3024,7 @@
 
     <!-- FORCE CACHE BUSTER -->
     <script>
-        if (!localStorage.getItem('melogo_force_update_v4')) {
+        if (!localStorage.getItem('melogo_force_update_v5')) {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(registrations) {
                     for (let registration of registrations) {
@@ -3039,7 +3039,7 @@
                     }
                 });
             }
-            localStorage.setItem('melogo_force_update_v4', 'true');
+            localStorage.setItem('melogo_force_update_v5', 'true');
             window.location.reload(true);
         }
     </script>
@@ -4990,7 +4990,7 @@
 
         
         // Custom Category Injection
-        const originalFilterWorkerJobs = window.filterWorkerJobs;
+        var originalFilterWorkerJobs = window.originalFilterWorkerJobs || window.filterWorkerJobs;
         window.filterWorkerJobs = function(cat) {
             if (cat === 'Egyéb / Egyéni' || cat === 'Egyéni munka megadása') {
                 const customJob = prompt("Kérlek írd be a munka pontos megnevezését (pl. terasztisztítás):");
@@ -5010,7 +5010,7 @@
 
         
         // Custom Category Injection
-        const originalFilterWorkerJobs = window.filterWorkerJobs;
+        var originalFilterWorkerJobs = window.originalFilterWorkerJobs || window.filterWorkerJobs;
         window.filterWorkerJobs = function(cat) {
             if (cat === 'Egyéb / Egyéni' || cat === 'Egyéni munka megadása') {
                 const customJob = prompt("Kérlek írd be a munka pontos megnevezését (pl. terasztisztítás):");
@@ -6385,26 +6385,38 @@
             }
         }
 
-                async function loginWithGoogle() {
-            showPushNotification("Google Belépés", "Bejelentkezés teszt felhasználóval...", "#3b82f6"); 
-            setTimeout(() => { 
+                        async function loginWithGoogle() {
+            if (!window.firebaseAPI || !window.firebaseAPI.signInWithPopup) {
+                showPushNotification("Töltés...", "A Google bejelentkezés előkészítése folyamatban van. Próbáld újra egy pillanat múlva.", "#3b82f6"); 
+                setTimeout(() => { if(window.firebaseAuth && window.firebaseAPI) loginWithGoogle(); }, 1500);
+                return;
+            }
+            try {
+                const provider = new window.firebaseAPI.GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
+                const result = await window.firebaseAPI.signInWithPopup(window.firebaseAuth, provider);
+                const user = result.user;
+                if (!user.email) {
+                    alert('Hiba: Nem kaptunk email címet a Google-től.');
+                    return;
+                }
                 const role = loginSelectedRole || 'worker';
+                const session = { email: user.email, name: user.displayName || 'Google Felhasználó', role: role, loginAt: Date.now(), method: 'google', uid: user.uid };
                 if (role === 'employer') {
-                    const session = { email: 'google_teszt@melogo.hu', name: 'Google Teszt Megbízó', role: 'employer', loginAt: Date.now(), method: 'google' };
                     localStorage.setItem('melogo_employer_session', JSON.stringify(session));
                     localStorage.setItem('melogo_active_role', 'employer');
                     if (document.getElementById('employer-login-screen')) document.getElementById('employer-login-screen').classList.add('hidden');
-                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
-                    if (typeof switchRole === 'function') switchRole('employer');
                 } else {
-                    const session = { email: 'google_teszt_diak@melogo.hu', name: 'Google Teszt Diák', role: 'worker', loginAt: Date.now(), method: 'google' };
                     localStorage.setItem('melogo_worker_session', JSON.stringify(session));
                     localStorage.setItem('melogo_active_role', 'worker');
                     if (document.getElementById('login-screen')) document.getElementById('login-screen').classList.add('hidden');
-                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
-                    if (typeof switchRole === 'function') switchRole('worker');
                 }
-            }, 800);
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof switchRole === 'function') switchRole(role);
+            } catch (error) {
+                console.error("Google login error:", error);
+                alert('Hiba a Google bejelentkezés során: ' + (error.message || error.code));
+            }
         }
 
         async function loginApp() {

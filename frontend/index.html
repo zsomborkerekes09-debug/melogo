@@ -5626,7 +5626,7 @@
             }
         }
 
-        window.setupFirestoreListeners = function(role) {
+        window.setupFirestoreListeners = async function(role) {
             if (!window.firebaseAuth || (!window.firebaseAuth.currentUser && !localStorage.getItem('melogo_employer_session') && !localStorage.getItem('melogo_worker_session'))) {
                 showPushNotification("Hiba", "Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!", "#EF4444");
                 localStorage.removeItem('melogo_guest_mode');

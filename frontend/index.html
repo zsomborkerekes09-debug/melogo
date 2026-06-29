@@ -3013,7 +3013,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(registration => {
+          navigator.serviceWorker.register('/sw.js?v=1782741919009').then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, err => {
             console.log('ServiceWorker registration failed: ', err);
@@ -6466,6 +6466,13 @@
                 { name: 'Belső porszívózás', price: 5000 },
                 { name: 'Kárpit tisztítás', price: 7000 },
                 { name: 'Motortér tisztítás', price: 6000 }
+            ],
+            'Medence takarítás': [
+                { name: 'Medence tisztítás', price: 15000 },
+                { name: 'Vízkezelés', price: 8000 }
+            ],
+            'Egyéb / Egyéni': [
+                { name: 'Egyéni munka megadása', price: 8000 }
             ]
         };
 

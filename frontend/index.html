@@ -4006,7 +4006,7 @@
                                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M5 17h-2v-6l2-5h9l4 5h1v4h-2" /><path d="M5 12h14" /></svg>
                                     Költöztetés
                                 </div>
-                                <div class="emp-cat-card" id="emp-cat-Kőműves" onclick="selectEmpCat('Kőműves')">
+                                <div class="emp-cat-card" id="emp-cat-Komuves" onclick="selectEmpCat('Komuves')">
                                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v6"/><path d="M15 3v6"/><path d="M12 9v6"/><path d="M6 15v6"/><path d="M18 15v6"/></svg>
                                     Kőműves
                                 </div>
@@ -6365,7 +6365,25 @@
 
         async function loginWithGoogle() {
             if (!window.firebaseAPI || !window.firebaseAPI.signInWithPopup) {
-                showPushNotification("Töltés...", "A Google bejelentkezés előkészítése folyamatban van. Próbáld újra egy pillanat múlva.", "#3b82f6"); setTimeout(() => { if(window.firebaseAuth && window.firebaseAPI) loginWithGoogle(); }, 1500);
+                showPushNotification("Google Belépés", "Firebase nem elérhető, bejelentkezés teszt felhasználóval...", "#3b82f6"); 
+                setTimeout(() => { 
+                    const role = loginSelectedRole || 'worker';
+                    if (role === 'employer') {
+                        const session = { email: 'google_teszt@melogo.hu', name: 'Google Teszt Megbízó', role: 'employer', loginAt: Date.now(), method: 'google' };
+                        localStorage.setItem('melogo_employer_session', JSON.stringify(session));
+                        localStorage.setItem('melogo_active_role', 'employer');
+                        if (document.getElementById('employer-login-screen')) document.getElementById('employer-login-screen').classList.add('hidden');
+                        if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                        if (typeof switchRole === 'function') switchRole('employer');
+                    } else {
+                        const session = { email: 'google_teszt_diak@melogo.hu', name: 'Google Teszt Diák', role: 'worker', loginAt: Date.now(), method: 'google' };
+                        localStorage.setItem('melogo_worker_session', JSON.stringify(session));
+                        localStorage.setItem('melogo_active_role', 'worker');
+                        if (document.getElementById('login-screen')) document.getElementById('login-screen').classList.add('hidden');
+                        if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                        if (typeof switchRole === 'function') switchRole('worker');
+                    }
+                }, 1000);
                 return;
             }
             if (!isLoginMode && !termsAccepted) {

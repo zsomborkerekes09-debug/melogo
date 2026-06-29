@@ -9568,7 +9568,7 @@ let settingsConfirmedAddress = null;
 
         function recalculateJobDistances() {
             mockJobs.forEach(job => {
-                if (gameState.gpsActive && userCoords && job.lat && job.lon) {
+                if (userCoords && job.lat && job.lon) {
                     const d = calculateHaversine(userCoords.lat, userCoords.lon, job.lat, job.lon);
                     job.distance = Math.round(d * 10) / 10;
                 } else {

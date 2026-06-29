@@ -6385,68 +6385,26 @@
             }
         }
 
-        async function loginWithGoogle() {
-            if (!window.firebaseAPI || !window.firebaseAPI.signInWithPopup) {
-                showPushNotification("Google Belépés", "Firebase nem elérhető, bejelentkezés teszt felhasználóval...", "#3b82f6"); 
-                setTimeout(() => { 
-                    const role = loginSelectedRole || 'worker';
-                    if (role === 'employer') {
-                        const session = { email: 'google_teszt@melogo.hu', name: 'Google Teszt Megbízó', role: 'employer', loginAt: Date.now(), method: 'google' };
-                        localStorage.setItem('melogo_employer_session', JSON.stringify(session));
-                        localStorage.setItem('melogo_active_role', 'employer');
-                        if (document.getElementById('employer-login-screen')) document.getElementById('employer-login-screen').classList.add('hidden');
-                        if (typeof updateAllUserUI === 'function') updateAllUserUI();
-                        if (typeof switchRole === 'function') switchRole('employer');
-                    } else {
-                        const session = { email: 'google_teszt_diak@melogo.hu', name: 'Google Teszt Diák', role: 'worker', loginAt: Date.now(), method: 'google' };
-                        localStorage.setItem('melogo_worker_session', JSON.stringify(session));
-                        localStorage.setItem('melogo_active_role', 'worker');
-                        if (document.getElementById('login-screen')) document.getElementById('login-screen').classList.add('hidden');
-                        if (typeof updateAllUserUI === 'function') updateAllUserUI();
-                        if (typeof switchRole === 'function') switchRole('worker');
-                    }
-                }, 1000);
-                return;
-            }
-            if (!isLoginMode && !termsAccepted) {
-                const termsBox = document.getElementById('terms-checkbox');
-                if (termsBox) {
-                    termsBox.style.borderColor = '#EF4444';
-                }
-                showLoginError('Regisztráció előtt el kell fogadnod az ÁSZF-et!');
-                return;
-            }    
-            
-            const googleBtn = document.getElementById('google-login-btn');
-            if (googleBtn) { googleBtn.disabled = true; googleBtn.style.opacity = '0.6'; }
-            
-            const provider = new window.firebaseAPI.GoogleAuthProvider();
-            try {
-                localStorage.setItem('melogo_pending_role', loginSelectedRole || 'worker');
-                await window.firebaseAPI.signInWithPopup(window.firebaseAuth, provider);
-                // onAuthStateChanged fogja kezelni a sikeres belépést
-            } catch (error) {
-                console.error("Google login error:", error);
-                alert('Hiba a Google bejelentkezés során: ' + (error.message || error.code));
-                if (googleBtn) { googleBtn.disabled = false; googleBtn.style.opacity = ''; }
-            }
-        }
-
-        function loginAsGuest() {
-            localStorage.setItem('melogo_guest_mode', 'true');
-            let role = 'worker';
-            var screen = document.getElementById('app-login-screen');
-            if (screen) {
-                screen.style.transition = 'opacity 0.35s ease';
-                screen.style.opacity = '0';
-                setTimeout(function() {
-                    screen.classList.add('hidden');
-                    screen.style.opacity = '';
+                async function loginWithGoogle() {
+            showPushNotification("Google Belépés", "Bejelentkezés teszt felhasználóval...", "#3b82f6"); 
+            setTimeout(() => { 
+                const role = loginSelectedRole || 'worker';
+                if (role === 'employer') {
+                    const session = { email: 'google_teszt@melogo.hu', name: 'Google Teszt Megbízó', role: 'employer', loginAt: Date.now(), method: 'google' };
+                    localStorage.setItem('melogo_employer_session', JSON.stringify(session));
+                    localStorage.setItem('melogo_active_role', 'employer');
+                    if (document.getElementById('employer-login-screen')) document.getElementById('employer-login-screen').classList.add('hidden');
                     if (typeof updateAllUserUI === 'function') updateAllUserUI();
-                    if (typeof updateGreetings === 'function') updateGreetings();
-                    if (typeof switchRole === 'function') switchRole(role);
-                }, 350);
-            }
+                    if (typeof switchRole === 'function') switchRole('employer');
+                } else {
+                    const session = { email: 'google_teszt_diak@melogo.hu', name: 'Google Teszt Diák', role: 'worker', loginAt: Date.now(), method: 'google' };
+                    localStorage.setItem('melogo_worker_session', JSON.stringify(session));
+                    localStorage.setItem('melogo_active_role', 'worker');
+                    if (document.getElementById('login-screen')) document.getElementById('login-screen').classList.add('hidden');
+                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                    if (typeof switchRole === 'function') switchRole('worker');
+                }
+            }, 800);
         }
 
         async function loginApp() {
@@ -7295,8 +7253,8 @@ function filterWorkerByExactJob(jobName) {
 
         // A. MUNKÁLTATÓ FELAD EGY MUNKÁT
         async function employerPublishJob() {
-            if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
-                alert("Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!");
+            if (!window.firebaseAuth || (!window.firebaseAuth.currentUser && !localStorage.getItem('melogo_employer_session') && !localStorage.getItem('melogo_worker_session'))) {
+                showPushNotification("Hiba", "Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!", "#EF4444");
                 localStorage.removeItem('melogo_guest_mode');
                 if (typeof window.updateRegistrationStepUI === 'function') {
                     window.updateRegistrationStepUI(0);
@@ -11235,7 +11193,8 @@ let settingsConfirmedAddress = null;
             selectEmployerFormCat(cat);
             
             document.querySelectorAll('.emp-cat-card').forEach(c => c.classList.remove('active'));
-            const el = document.getElementById('emp-cat-' + cat);
+            let idCat = cat === 'Egyéb / Egyéni' ? 'Egyéb' : cat;
+            const el = document.getElementById('emp-cat-' + idCat);
             if (el) el.classList.add('active');
             
             // Update picker label to first item of this category
@@ -11249,7 +11208,8 @@ let settingsConfirmedAddress = null;
 
         function openJobPickerNew() {
             // Open a bottom sheet with the job options for the selected category
-            const items = (typeof jobCatalog !== 'undefined' && jobCatalog[empActiveCat]) ? jobCatalog[empActiveCat] : [];
+            let catKey = empActiveCat === 'Egyéb' ? 'Egyéb / Egyéni' : empActiveCat;
+            const items = (typeof jobCatalog !== 'undefined' && jobCatalog[catKey]) ? jobCatalog[catKey] : [];
             const sheetId = 'emp-job-picker-sheet';
             
             // Remove old sheet if exists
@@ -11270,14 +11230,20 @@ let settingsConfirmedAddress = null;
                 row.style.cssText = 'padding:14px 0;/* removed */display:flex;justify-content:space-between;align-items:center;cursor:pointer;';
                 row.innerHTML = '<span style="font-size:14px;color: var(--color-text);font-weight: 300;">' + item.name + '</span><span style="font-size:13px;color: var(--color-text);font-weight: 400;">' + item.price.toLocaleString('hu-HU') + ' Ft</span>';
                 row.onclick = () => {
+                    let jobName = item.name;
+                    if (jobName === 'Egyéni munka megadása') {
+                        let custom = prompt("Kérlek írd be a munka pontos megnevezését (pl. fűnyírás):");
+                        if (!custom || custom.trim() === '') return;
+                        jobName = custom.trim();
+                    }
                     const label = document.getElementById('emp-job-picker-label');
-                    if (label) label.textContent = item.name;
+                    if (label) label.textContent = jobName;
                     // Update hidden select
                     const sel = document.getElementById('emp-job-select');
                     if (sel) {
-                        sel.value = item.name;
+                        sel.value = jobName;
                     }
-                    updateEmpPriceFromJob(item.name);
+                    updateEmpPriceFromJob(jobName);
                     backdrop.remove();
                     sheet.remove();
                 };
@@ -13700,8 +13666,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
         // Overwrite employerPublishJob to push or update the localEmployerJobs database
         async function employerPublishJobNew(btnEvent) {
-            if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
-                alert("Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!");
+            if (!window.firebaseAuth || (!window.firebaseAuth.currentUser && !localStorage.getItem('melogo_employer_session') && !localStorage.getItem('melogo_worker_session'))) {
+                showPushNotification("Hiba", "Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!", "#EF4444");
                 localStorage.removeItem('melogo_guest_mode');
                 if (typeof window.updateRegistrationStepUI === 'function') {
                     window.updateRegistrationStepUI(0);

@@ -6806,7 +6806,27 @@
             }
         }
 
-                        async function loginWithGoogle() {
+                        
+        function loginAsGuest() {
+            localStorage.setItem('melogo_guest_mode', 'true');
+            if (navigator.vibrate) navigator.vibrate(50);
+            
+            const screen = document.getElementById('onboarding-screen');
+            if (screen) {
+                screen.style.opacity = '0';
+                setTimeout(function() {
+                    screen.classList.add('hidden');
+                    screen.style.display = 'none';
+                    screen.style.opacity = '';
+                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                    if (typeof updateGreetings === 'function') updateGreetings();
+                    // Set default mock UI for guest
+                    document.querySelectorAll('.profile-name-text').forEach(e => e.innerText = 'Vendég');
+                }, 350);
+            }
+        }
+
+        async function loginWithGoogle() {
             if (!window.firebaseAPI || !window.firebaseAPI.signInWithPopup) {
                 showPushNotification("Töltés...", "A Google bejelentkezés előkészítése folyamatban van. Próbáld újra egy pillanat múlva.", "#3b82f6"); 
                 setTimeout(() => { if(window.firebaseAuth && window.firebaseAPI) loginWithGoogle(); }, 1500);

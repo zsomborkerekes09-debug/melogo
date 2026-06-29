@@ -4990,7 +4990,7 @@
 
         
         // Custom Category Injection
-        var originalFilterWorkerJobs = window.originalFilterWorkerJobs || window.filterWorkerJobs;
+        var originalFilterWorkerJobs = window.filterWorkerJobs;
         window.filterWorkerJobs = function(cat) {
             if (cat === 'Egyéb / Egyéni' || cat === 'Egyéni munka megadása') {
                 const customJob = prompt("Kérlek írd be a munka pontos megnevezését (pl. terasztisztítás):");
@@ -5010,7 +5010,7 @@
 
         
         // Custom Category Injection
-        var originalFilterWorkerJobs = window.originalFilterWorkerJobs || window.filterWorkerJobs;
+        var originalFilterWorkerJobs = window.filterWorkerJobs;
         window.filterWorkerJobs = function(cat) {
             if (cat === 'Egyéb / Egyéni' || cat === 'Egyéni munka megadása') {
                 const customJob = prompt("Kérlek írd be a munka pontos megnevezését (pl. terasztisztítás):");
@@ -6419,11 +6419,20 @@
             }
         }
 
-        async function loginApp() {
+        async async function loginApp() {
             clearLoginError();
             clearAllInputErrors();
             var role = loginSelectedRole || 'worker';
             var btn = document.getElementById('main-auth-btn');
+            
+            // Wait for Firebase API to be ready (module loading)
+            if (!window.firebaseAPI) {
+                if (btn) { btn.disabled = true; btn.innerText = 'Töltés...'; }
+                showLoginError('A rendszer töltődik, kérlek várj egy pillanatot...');
+                setTimeout(loginApp, 1000);
+                return;
+            }
+
             
             if (isLoginMode) {
                 // LOGIN flow

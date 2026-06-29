@@ -4974,6 +4974,26 @@
             if (originalFilterWorkerJobs) originalFilterWorkerJobs(cat);
         };
 
+        
+        // Custom Category Injection
+        const originalFilterWorkerJobs = window.filterWorkerJobs;
+        window.filterWorkerJobs = function(cat) {
+            if (cat === 'Egyéb / Egyéni' || cat === 'Egyéni munka megadása') {
+                const customJob = prompt("Kérlek írd be a munka pontos megnevezését (pl. terasztisztítás):");
+                if (customJob && customJob.trim() !== '') {
+                    if (!window.jobCatalog) window.jobCatalog = {};
+                    if (!window.jobCatalog['Egyéb / Egyéni']) window.jobCatalog['Egyéb / Egyéni'] = [];
+                    window.jobCatalog['Egyéb / Egyéni'].push({ name: customJob, price: 8000 });
+                    if (!window.SKILL_CATEGORIES['Egyéb / Egyéni'].includes(customJob)) {
+                        window.SKILL_CATEGORIES['Egyéb / Egyéni'].push(customJob);
+                    }
+                    if (originalFilterWorkerJobs) originalFilterWorkerJobs(customJob);
+                }
+                return;
+            }
+            if (originalFilterWorkerJobs) originalFilterWorkerJobs(cat);
+        };
+
         // Expose to global window object so the existing script can use them
         window.firebaseApp = app;
         window.firebaseAuth = auth;
@@ -8570,7 +8590,7 @@ function filterWorkerByExactJob(jobName) {
         const SKILL_CATEGORIES = {
             'Kertészet': ['Fűnyírás', 'Gyomirtás, kapálás', 'Levelek gereblyézése', 'Sövény nyírása', 'Virágágyás gondozása', 'Terasz söprése', 'Hólapátolás', 'Kerti bútor összerakása', 'Öntözőrendszer felszerelése', 'Fák metszése', 'Komposztálás segítése'],
             'Magántanár': ['Angol', 'Magyar', 'Matek', 'Kémia', 'Fizika', 'Biológia', 'Történelem', 'Földrajz', 'Német', 'Francia', 'Spanyol', 'Olasz', 'Informatika', 'Programozás', 'Zene/Hangszer', 'Rajz/Vizuális'],
-            'Takarítás': ['Lakástakarítás', 'Mély takarítás', 'Iroda/üzlethelyiség', 'Építés utáni', 'Fürdőszoba és konyha', 'Ablakok tisztítása', 'Lomtalanítás', 'Pince/garázs kitakarítása'],
+            'Takarítás': ['Lakástakarítás', 'Mély takarítás', 'Iroda/üzlethelyiség', 'Építés utáni', 'Fürdőszoba és konyha', 'Ablakok tisztítása', 'Lomtalanítás', 'Pince/garázs kitakarítása', 'Medence takarítás'],
             'Bébiszitter / Gyerekfelügyelet': ['Bébiszitterkedés', 'Iskolából hazakísérés', 'Délutáni felügyelet', 'Hétvégi felügyelet', 'Játszótéri kísérés', 'Házi feladat segítés'],
             'Festés & Karbantartás': ['Kerítés festése', 'Kapu/pad/bútor festése', 'Falak festése', 'Foltok lefestése', 'Alapozó festés', 'Homlokzat festés', 'Kisebb javítások'],
             'Költöztetés & Cipelés': ['Bútor cipelés', 'Dobozok pakolása', 'Furgon rakodás', 'Lépcsőn cipelés', 'Bútor szétszerelése', 'Csomagküldés segítése'],

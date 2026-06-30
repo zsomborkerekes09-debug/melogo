@@ -6,8 +6,8 @@ service cloud.firestore {
     // JOBS collection
     // ===========================
     match /jobs/{jobId} {
-      // Anyone authenticated can read open jobs (worker home screen filter)
-      allow read: if request.auth != null;
+      // Anyone can read open jobs (Guest mode support)
+      allow read: if true;
       // Only the owner (employer) can create their own job and the ownerUid must match
       allow create: if request.auth != null && request.resource.data.ownerUid == request.auth.uid;
       allow update, delete: if request.auth != null && resource.data.ownerUid == request.auth.uid;
@@ -83,12 +83,21 @@ service cloud.firestore {
     // USERS collection
     // ===========================
     match /users/{userId} {
-      // Any authenticated user can read user profiles.
+      // Anyone can read user profiles.
       // Phone numbers are only revealed post-acceptance in the app UI (enforced in JS).
-      allow read: if request.auth != null;
+      allow read: if true;
       // Only the user themselves can write their own profile
       allow write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // ===========================
+    // REPORTS collection
+    // ===========================
+    match /reports/{reportId} {
+      // Anyone can create a report
+      allow create: if true;
+      // No one can read/update/delete reports except Firebase Admins
+      allow read, update, delete: if false;
+    }
   }
 }
-

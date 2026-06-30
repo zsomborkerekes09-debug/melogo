@@ -1,5 +1,19 @@
 {
   "appId": "com.melogo.app",
   "appName": "MeloGo",
-  "webDir": "frontend"
+  "webDir": "frontend",
+  "backgroundColor": "#000000",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 500,
+      "backgroundColor": "#000000",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_INSIDE",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#000000"
+    }
+  }
 }

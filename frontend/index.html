@@ -3195,7 +3195,7 @@
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </div>
                 <div style="font-size:12px; color: var(--color-text); line-height:1.4; user-select:none; margin-top:-1px;">
-                    Elfogadom az <span style="color:var(--color-text); font-weight: 600; text-decoration:underline;" onclick="event.stopPropagation(); window.open('terms.html', '_blank')">ÁSZF</span>-et és az <span style="color:var(--color-text); font-weight: 600; text-decoration:underline;" onclick="event.stopPropagation(); window.open('privacy-policy.html', '_blank')">Adatkezelési Tájékoztatót</span>.
+                    Elfogadom az <span style="color:var(--color-text); font-weight: 600; text-decoration:underline;" onclick="event.stopPropagation(); openLegalModal('terms')">ÁSZF</span>-et és az <span style="color:var(--color-text); font-weight: 600; text-decoration:underline;" onclick="event.stopPropagation(); openLegalModal('privacy')">Adatkezelési Tájékoztatót</span>.
                 </div>
             </div>
         </div>
@@ -4977,7 +4977,7 @@
 
         const firebaseConfig = {
             apiKey: "AIzaSyDNysWD3J01zAyuFMCYq0BJAavhy206eMs",
-            authDomain: "melogo-app.firebaseapp.com",
+            authDomain: "melogo-app.web.app",
             projectId: "melogo-app",
             storageBucket: "melogo-app.firebasestorage.app",
             messagingSenderId: "54031234",
@@ -6812,18 +6812,33 @@
             if (navigator.vibrate) navigator.vibrate(50);
             
             const screen = document.getElementById('onboarding-screen');
+            const loginScreen = document.getElementById('app-login-screen');
+            
             if (screen) {
                 screen.style.opacity = '0';
                 setTimeout(function() {
                     screen.classList.add('hidden');
                     screen.style.display = 'none';
                     screen.style.opacity = '';
-                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
-                    if (typeof updateGreetings === 'function') updateGreetings();
-                    // Set default mock UI for guest
-                    document.querySelectorAll('.profile-name-text').forEach(e => e.innerText = 'Vendég');
                 }, 350);
             }
+            if (loginScreen) {
+                loginScreen.style.opacity = '0';
+                setTimeout(function() {
+                    loginScreen.classList.add('hidden');
+                    loginScreen.style.display = 'none';
+                    loginScreen.style.opacity = '';
+                }, 350);
+            }
+            
+            setTimeout(function() {
+                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                if (typeof updateGreetings === 'function') updateGreetings();
+                // Set default mock UI for guest
+                document.querySelectorAll('.profile-name-text').forEach(e => e.innerText = 'Vendég');
+                // Refresh job list without filters for guest
+                if (typeof refreshJobList === 'function') refreshJobList();
+            }, 350);
         }
 
         async function loginWithGoogle() {
@@ -8452,35 +8467,54 @@ function filterWorkerByExactJob(jobName) {
         }
 
         function reportOrBlockUser() {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Jelentés vagy Tiltás',
-                    text: 'Kérjük, válassza ki az okot. A felhasználót blokkoljuk a vizsgálat idejére.',
-                    input: 'select',
-                    inputOptions: {
-                        'spam': 'Spam vagy Csalás',
-                        'inappropriate': 'Nem megfelelő tartalom',
-                        'harassment': 'Zaklatás vagy Sértő viselkedés'
-                    },
-                    inputPlaceholder: 'Válasszon okot...',
-                    showCancelButton: true,
-                    confirmButtonText: 'Jelentés és Tiltás',
-                    cancelButtonText: 'Mégse',
-                    confirmButtonColor: '#EF4444'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire('Jelentve!', 'A felhasználót jelentettük, és sikeresen letiltottuk a fiókját.', 'success');
-                        closeChatRoom();
-                        document.getElementById('employer-action-overlay')?.classList.remove('active');
-                        document.getElementById('worker-action-overlay')?.classList.remove('active');
-                    }
-                });
-            } else {
-                alert("A felhasználót jelentettük a moderátoroknak, és sikeresen letiltottuk a fiókját.");
-                closeChatRoom();
-                document.getElementById('employer-action-overlay')?.classList.remove('active');
-                document.getElementById('worker-action-overlay')?.classList.remove('active');
+            let targetId = window.currentEmployerDetailJobId || window.currentEditJobId || (typeof gameState !== 'undefined' ? gameState.jobTitle : null) || 'ismeretlen';
+            if (typeof currentChatRoomId !== 'undefined' && currentChatRoomId) targetId = currentChatRoomId;
+
+            const handleBlock = (reason) => {
+                let blocked = JSON.parse(localStorage.getItem('melogo_blocked_items') || '[]');
+                if (!blocked.includes(targetId)) {
+                    blocked.push(targetId);
+                    localStorage.setItem('melogo_blocked_items', JSON.stringify(blocked));
+                }
+                
+                // Write to Firestore reports if available
+                if (window.firebaseAPI && window.firebaseAPI.collection) {
+                    try {
+                        const currentUserEmail = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : 'vendeg';
+                        window.firebaseAPI.collection('reports').add({
+                            targetId: targetId,
+                            reason: reason,
+                            reportedBy: currentUserEmail,
+                            timestamp: window.firebaseAPI.serverTimestamp ? window.firebaseAPI.serverTimestamp() : new Date()
+                        }).catch(e => console.log('Report save error:', e));
+                    } catch(e) {}
+                }
+
+                alert("A tartalom jelentve lett a moderátoroknak, és azonnal elrejtettük a felületedről.");
+                
+                if (typeof closeChatRoom === 'function') closeChatRoom();
+                const empOverlay = document.getElementById('employer-action-overlay');
+                if (empOverlay) empOverlay.classList.remove('active');
+                const workOverlay = document.getElementById('worker-action-overlay');
+                if (workOverlay) workOverlay.classList.remove('active');
+                
+                // Close job detail sheets
+                const workerJobDetail = document.getElementById('worker-job-detail');
+                if (workerJobDetail) workerJobDetail.style.transform = 'translateY(100%)';
+                
+                if (typeof closeWorkerJobDetailNew === 'function') closeWorkerJobDetailNew();
+                if (typeof closeEmployerAdDetailNew === 'function') closeEmployerAdDetailNew();
+
+                if (typeof refreshJobList === 'function') refreshJobList();
+                if (typeof renderChatList === 'function') renderChatList();
+            };
+
+            const isConfirmed = confirm('Biztosan jelented és letiltod ezt a tartalmat? Ezzel eltűnik a hírfolyamodból és a moderátorok értesítést kapnak.');
+            if (isConfirmed) {
+                let reason = prompt('Kérlek írd le röviden a jelentés okát (opcionális):', '');
+                handleBlock(reason || 'Nem adott meg okot');
             }
+        }
         }
 
         function closeEmployerJobDetail() {
@@ -9776,7 +9810,11 @@ let settingsConfirmedAddress = null;
 
             // Allow jobs with null/undefined distance, OR if they are within radius. 
             // DEBUG: Bypass distance filter completely for Firestore jobs to guarantee visibility.
+            
+            let blockedItems = JSON.parse(localStorage.getItem('melogo_blocked_items') || '[]');
             let jobs = mockJobs.filter(j => {
+                if (blockedItems.includes(String(j.id)) || blockedItems.includes(j.title)) return false;
+
                 const s = j.status || 'Keresés';
                 if (s !== 'Keresés' && s !== 'Kereses') {
                     // Show accepted jobs ONLY to the worker who was actually accepted
@@ -10470,8 +10508,7 @@ let settingsConfirmedAddress = null;
             }
             
             window.gpsWatchId = 'manual'; // Placeholder so clearWatch works safely if called
-            navigator.geolocation.getCurrentPosition(
-                async (pos) => {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
                     userCoords = {
                         lat: pos.coords.latitude,
                         lon: pos.coords.longitude
@@ -10494,8 +10531,7 @@ let settingsConfirmedAddress = null;
                     if (typeof currentRole !== 'undefined' && currentRole === 'worker' && typeof refreshJobList === 'function') {
                         refreshJobList(true);
                     }
-                },
-                (err) => {
+                }, (err) => {
                     // Do not clear userCoords if we have a cached fallback loaded
                     if (!userCoords) {
                         userCoords = null;
@@ -10503,8 +10539,7 @@ let settingsConfirmedAddress = null;
                         setGPSStatus(false, 'GPS letiltva');
                     }
                 },
-                { enableHighAccuracy: false, maximumAge: 300000, timeout: 5000 }
-            );
+                { enableHighAccuracy: false, maximumAge: 300000, timeout: 5000 }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
         }
 
         function setGPSStatus(active, cityName) {
@@ -11949,7 +11984,7 @@ let settingsConfirmedAddress = null;
                 console.error("GPS error:", err);
                 alert("A helymeghatározás sikertelen (engedély megtagadva vagy hiba történt).");
                 resetGPSBtn(txt, btn);
-            }, { enableHighAccuracy: false, maximumAge: 60000, timeout: 5000 });
+            }, { enableHighAccuracy: false, maximumAge: 60000, timeout: 5000 }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
         }
         function useCurrentLocationForJobPost() {
             const btn = document.getElementById('emp-gps-btn');
@@ -11995,7 +12030,7 @@ let settingsConfirmedAddress = null;
                 console.error("GPS error:", err);
                 alert("A helymeghatározás sikertelen (engedély megtagadva vagy hiba történt).");
                 btn.innerHTML = originalText;
-            }, { enableHighAccuracy: false, maximumAge: 60000, timeout: 5000 });
+            }, { enableHighAccuracy: false, maximumAge: 60000, timeout: 5000 }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
         }
         
         function resetGPSBtn(txt, btn) {
@@ -13221,7 +13256,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             if (!list) return;
             list.innerHTML = '';
 
-            let filtered = localChats.filter(c => !c.archived && c.active !== false);
+            
+            let blockedItems = JSON.parse(localStorage.getItem('melogo_blocked_items') || '[]');
+            let filtered = localChats.filter(c => !c.archived && c.active !== false && !blockedItems.includes(c.id));
+
             
             // Unread badge logic
             let totalUnread = filtered.reduce((acc, c) => acc + (c.isUnread ? 1 : 0), 0);
@@ -15398,6 +15436,36 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             }
         })();
     </script>
+
+<!-- Legal Modal -->
+<div id="legal-modal" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:var(--color-bg); z-index:9999; display:flex; flex-direction:column;">
+    <div style="height: 50px; display:flex; align-items:center; justify-content:space-between; padding: 0 16px; border-bottom: 1px solid var(--color-border); padding-top: env(safe-area-inset-top); background: var(--color-bg);">
+        <button onclick="closeLegalModal()" style="background:none; border:none; color:var(--color-text); font-size:16px; font-weight:600; padding:10px;">Vissza</button>
+        <span id="legal-modal-title" style="font-weight:600; font-size: 16px; color:var(--color-text);"></span>
+        <div style="width:60px;"></div>
+    </div>
+    <iframe id="legal-iframe" style="flex:1; border:none; width:100%;" src=""></iframe>
+</div>
+<script>
+function openLegalModal(type) {
+    const modal = document.getElementById('legal-modal');
+    const iframe = document.getElementById('legal-iframe');
+    const title = document.getElementById('legal-modal-title');
+    if (type === 'terms') {
+        title.innerText = 'ÁSZF';
+        iframe.src = 'terms.html';
+    } else {
+        title.innerText = 'Adatvédelem';
+        iframe.src = 'privacy-policy.html';
+    }
+    modal.classList.remove('hidden');
+}
+function closeLegalModal() {
+    document.getElementById('legal-modal').classList.add('hidden');
+    document.getElementById('legal-iframe').src = '';
+}
+</script>
+
 </body>
 </html>
 

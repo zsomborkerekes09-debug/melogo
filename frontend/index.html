@@ -5353,7 +5353,7 @@
             }
             if (hasError) return;
             
-            const user = window.firebaseAuth?.currentUser;
+            const user = (window.firebaseAuth ? window.firebaseAuth.currentUser : undefined);
             if (!user) {
                 alert("Nincs bejelentkezett felhasználó.");
                 return;
@@ -5433,7 +5433,7 @@
                 return;
             }
             
-            const user = window.firebaseAuth?.currentUser;
+            const user = (window.firebaseAuth ? window.firebaseAuth.currentUser : undefined);
             if (!user) {
                 alert("Nincs bejelentkezett felhasználó.");
                 return;
@@ -5502,7 +5502,7 @@
                 fullAddress += `, ${county}`;
             }
             
-            const user = window.firebaseAuth?.currentUser;
+            const user = (window.firebaseAuth ? window.firebaseAuth.currentUser : undefined);
             if (!user) {
                 alert("Nincs bejelentkezett felhasználó.");
                 return;
@@ -7779,7 +7779,7 @@ function filterWorkerByExactJob(jobName) {
                     price: price,
                     status: 'Keresés',
                     category: activeCat,
-                    datetime: document.getElementById('emp-datetime')?.value || 'Holnap, 14:00'
+                    datetime: (document.getElementById('emp-datetime') ? document.getElementById('emp-datetime').value : '') || 'Holnap, 14:00'
                 });
                 saveEmployerJobs();
                 renderEmployerHome();
@@ -7806,8 +7806,8 @@ function filterWorkerByExactJob(jobName) {
                             price: price,
                             category: activeCat,
                             status: 'Keresés',
-                            urgent: document.getElementById('emp-urgent-job')?.checked || false,
-                            datetime: document.getElementById('emp-datetime')?.value || 'Holnap, 14:00',
+                            urgent: (document.getElementById('emp-urgent-job') ? document.getElementById('emp-urgent-job').checked : false) || false,
+                            datetime: (document.getElementById('emp-datetime') ? document.getElementById('emp-datetime').value : '') || 'Holnap, 14:00',
                             lat: jobLat,
                             lon: jobLon,
                             geohash: hash,
@@ -8947,8 +8947,8 @@ let settingsConfirmedAddress = null;
             const backdropId = 'tutor-level-backdrop';
             const modalId = 'tutor-level-modal';
             
-            document.getElementById(backdropId)?.remove();
-            document.getElementById(modalId)?.remove();
+            if(document.getElementById(backdropId)) document.getElementById(backdropId).remove();
+            if(document.getElementById(modalId)) document.getElementById(modalId).remove();
             
             const backdrop = document.createElement('div');
             backdrop.id = backdropId;
@@ -9338,7 +9338,7 @@ let settingsConfirmedAddress = null;
         }
 
         async function saveSettings() {
-            const nameVal = document.getElementById('settings-name')?.value.trim() || '';
+            const nameVal = (document.getElementById('settings-name') ? document.getElementById('settings-name').value : '').trim() || '';
             const nameErr = document.getElementById('settings-name-err');
             if (nameErr) nameErr.style.display = 'none';
             if (!nameVal) {
@@ -9346,7 +9346,7 @@ let settingsConfirmedAddress = null;
                 return;
             }
 
-            const birthYearVal = document.getElementById('settings-birthyear')?.value ? parseInt(document.getElementById('settings-birthyear').value.trim()) : null;
+            const birthYearVal = (document.getElementById('settings-birthyear') ? document.getElementById('settings-birthyear').value : '') ? parseInt(document.getElementById('settings-birthyear').value.trim()) : null;
             
             const birthYearErr = document.getElementById('settings-birthyear-err');
             if (birthYearErr) birthYearErr.style.display = 'none';
@@ -9354,7 +9354,7 @@ let settingsConfirmedAddress = null;
                 if (birthYearErr) birthYearErr.style.display = 'block';
                 return;
             }
-            let phoneVal = document.getElementById('settings-phone')?.value.trim() || '';
+            let phoneVal = (document.getElementById('settings-phone') ? document.getElementById('settings-phone').value : '').trim() || '';
             const phoneErr = document.getElementById('settings-phone-err');
             if (phoneErr) phoneErr.style.display = 'none';
             const cleanedPhone = phoneVal.replace(/[\s\-\(\)]/g, '');
@@ -9365,7 +9365,7 @@ let settingsConfirmedAddress = null;
                 if (phoneErr) phoneErr.style.display = 'block';
                 return;
             }
-            const bioVal = document.getElementById('settings-bio')?.value || '';
+            const bioVal = (document.getElementById('settings-bio') ? document.getElementById('settings-bio').value : '') || '';
             const skillsArr = Array.from(selectedSkills);
             
             // Save to local storage
@@ -9395,12 +9395,12 @@ let settingsConfirmedAddress = null;
                 userData.birthYear = birthYearVal;
             }
             
-            const zip = (document.getElementById('set-zip') || {}).value?.trim() || '';
-            const county = (document.getElementById('set-county') || {}).value?.trim() || '';
-            const city = (document.getElementById('set-city') || {}).value?.trim() || '';
-            const street = (document.getElementById('set-street') || {}).value?.trim() || '';
-            const house = (document.getElementById('set-house') || {}).value?.trim() || '';
-            const apt = (document.getElementById('set-apartment') || {}).value?.trim() || '';
+            const zip = ((document.getElementById('set-zip') || {}).value ? (document.getElementById('set-zip') || {}).value.trim() : '') || '';
+            const county = ((document.getElementById('set-county') || {}).value ? (document.getElementById('set-county') || {}).value.trim() : '') || '';
+            const city = ((document.getElementById('set-city') || {}).value ? (document.getElementById('set-city') || {}).value.trim() : '') || '';
+            const street = ((document.getElementById('set-street') || {}).value ? (document.getElementById('set-street') || {}).value.trim() : '') || '';
+            const house = ((document.getElementById('set-house') || {}).value ? (document.getElementById('set-house') || {}).value.trim() : '') || '';
+            const apt = ((document.getElementById('set-apartment') || {}).value ? (document.getElementById('set-apartment') || {}).value.trim() : '') || '';
             
             if (!zip || !county || !city || !street || !house) {
                 const err = document.getElementById('err-set-structured');
@@ -10939,7 +10939,7 @@ let settingsConfirmedAddress = null;
         }
 
         async function loadChatHeaderAndStatus(chatId, chatData) {
-            const myUid = window.firebaseAuth?.currentUser?.uid;
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
             const isEmployerChat = chatData.employerId ? (myUid === chatData.employerId) : (currentRole === 'employer');
             const partnerUid = !isEmployerChat ? chatData.employerId : chatData.workerId;
             const partnerData = await fetchUserDetails(partnerUid);
@@ -11145,7 +11145,7 @@ let settingsConfirmedAddress = null;
             const chat = localChats.find(c => c.id === chatId);
             let partnerId = null;
             if (chat) {
-                const myUid = window.firebaseAuth?.currentUser?.uid;
+                const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
                 const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                 partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
             }
@@ -11297,7 +11297,7 @@ let settingsConfirmedAddress = null;
                     } else if (msg.from === 'other') {
                         isMe = false;
                     } else {
-                        const myUid = window.firebaseAuth?.currentUser?.uid;
+                        const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
                         if (msg.from === 'employer') {
                             isMe = chat && chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                         } else if (msg.from === 'worker') {
@@ -12272,7 +12272,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
         function handleChatAvatarClick() {
             const chat = localChats.find(c => c.id === window.selectedChatId);
             if (!chat) return;
-            const myUid = window.firebaseAuth?.currentUser?.uid;
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
             const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
             const partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
             let partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
@@ -12291,7 +12291,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
         function handleListAvatarClick(chatId) {
             const chat = localChats.find(c => c.id === chatId);
             if (!chat) return;
-            const myUid = window.firebaseAuth?.currentUser?.uid;
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
             const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
             const partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
             let partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
@@ -12697,7 +12697,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
         async function updateApplicationStatusInFirestore(chatData, newStatus, extraFields = {}) {
             if (!chatData || !chatData.jobId || !chatData.workerId) return;
-            const myUid = window.firebaseAuth?.currentUser?.uid;
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
             if (!myUid) return;
             try {
                 // Determine if we are the worker or employer for this chat
@@ -12745,7 +12745,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 try {
                     chatSnap = await window.firebaseAPI.getDoc(chatRef);
                 } catch(e) {
-                    const myUid = window.firebaseAuth?.currentUser?.uid || 'N/A';
+                    const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined) || 'N/A';
                     const localChat = (window.localChats || []).find(c => c.id === chatId);
                     const empId = localChat ? localChat.employerId : 'NOT_FOUND';
                     const wrkId = localChat ? localChat.workerId : 'NOT_FOUND';
@@ -13039,7 +13039,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             const bar = document.getElementById('chat-action-bar');
             if (!bar) return;
             
-            const myUid = window.firebaseAuth?.currentUser?.uid;
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
             const isEmployer = chatData.employerId ? (myUid === chatData.employerId) : (currentRole === 'employer');
             const status = chatData.status || 'pending';
             
@@ -13304,7 +13304,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             });
 
             filtered.forEach(chat => {
-                const myUid = window.firebaseAuth?.currentUser?.uid;
+                const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
                 const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                 let partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
                 const partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
@@ -13497,7 +13497,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 // Sync to Firestore
                 const chat = localChats[index];
                 if (window.firebaseAPI && window.firebaseDb && chat.isFirestore) {
-                    const myUid = window.firebaseAuth?.currentUser?.uid;
+                    const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
                     const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                     const updateField = !isEmployerChat ? 'workerLastRead' : 'employerLastRead';
                     window.firebaseAPI.updateDoc(
@@ -13508,7 +13508,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
                 renderChatList();
                 
-                const myUid = window.firebaseAuth?.currentUser?.uid;
+                const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
                 const isEmployerChat = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
                 let partnerName = !isEmployerChat ? (chat.employerName || 'Megbízó') : (chat.workerName || chat.name || 'Diák');
                 const partnerId = !isEmployerChat ? chat.employerId : chat.workerId;
@@ -13534,7 +13534,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 return;
             }
 
-            const myUid = window.firebaseAuth?.currentUser?.uid;
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
             const isEmployer = chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
 
             // Find the correct application matching this chat's worker

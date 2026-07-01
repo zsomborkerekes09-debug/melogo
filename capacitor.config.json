@@ -3,6 +3,10 @@
   "appName": "MeloGo",
   "webDir": "frontend",
   "backgroundColor": "#000000",
+  "server": {
+    "url": "https://melogo-kappa.vercel.app/",
+    "cleartext": true
+  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 500,

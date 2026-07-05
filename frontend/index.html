@@ -9857,7 +9857,7 @@ let settingsConfirmedAddress = null;
                     }
                     return false;
                 }
-                return j.distance === null || j.distance === undefined || j.distance <= activeRadius;
+                let notExp = true; if(j.time) { const jd = new Date(j.time); if(!isNaN(jd.getTime()) && jd < new Date()) notExp = false; } return (j.distance === null || j.distance === undefined || j.distance <= activeRadius) && notExp;
             });
 
             if (activeCategoryFilter !== 'Összes' && activeCategoryFilter !== 'all') {
@@ -10433,7 +10433,7 @@ let settingsConfirmedAddress = null;
                 }
                 const matchesDistance = (j.distance === null || j.distance <= activeRadius);
                 const matchesCategory = (currentMapCategory === 'all' || j.category === currentMapCategory);
-                return matchesDistance && matchesCategory;
+                let notExp = true; if(j.time) { const jd = new Date(j.time); if(!isNaN(jd.getTime()) && jd < new Date()) notExp = false; } return matchesDistance && matchesCategory && notExp;
             });
 
             visibleJobs.forEach(job => {

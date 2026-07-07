@@ -1,0 +1,214 @@
+--- TAG BALANCE CHECK ---
+div: open=622, close=622, self-closed=0, diff=0
+span: open=109, close=109, self-closed=0, diff=0
+section: open=0, close=0, self-closed=0, diff=0
+button: open=81, close=81, self-closed=0, diff=0
+a: open=1, close=1, self-closed=0, diff=0
+p: open=23, close=23, self-closed=117, diff=-117
+main: open=0, close=0, self-closed=0, diff=0
+header: open=0, close=0, self-closed=0, diff=0
+footer: open=0, close=0, self-closed=0, diff=0
+script: open=3, close=3, self-closed=0, diff=0
+style: open=3, close=3, self-closed=0, diff=0
+
+--- POTENTIAL OVERLAYS IN HTML ---
+Line 2862: <div id="app-login-screen" style="position:absolute; top:0; left:0; right:0; bottom:0; background-color:#fff !important; z-index:1000; padding:60px 24px 40px 24px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; -ms-overflow-style:none; box-sizing:border-box;">
+Line 2871: <h2 id="login-mode-subtitle" style="font-size:22px; font-weight:500; color:#0A0F2E; margin:0; font-family:'DM Sans',sans-serif;">Hozd létre a fiókodat</h2>
+Line 2875: <div style="margin-top:32px; display:flex; gap:12px;" id="login-role-selector">
+Line 2885: <div id="login-err" style="display:none; color:#EF4444; font-size:13px; text-align:center; margin:16px 0 0 0; padding:10px 16px; background:#FEF2F2; border-radius:10px; border:1px solid #FECACA; font-family:'DM Sans',sans-serif;"></div>
+Line 2888: <div id="register-fields" style="margin-top:24px; display:flex; flex-direction:column; gap:12px;">
+Line 2891: <input type="text" id="app-name" class="auth-input-field login-input" placeholder="Teljes neved">
+Line 2896: <input type="email" id="app-email" class="auth-input-field login-input" placeholder="Email cím">
+Line 2901: <input type="password" id="app-pw" class="auth-input-field login-input" placeholder="Jelszó" style="padding-right:44px;">
+Line 2909: <input type="password" id="app-pw2" class="auth-input-field login-input" placeholder="Jelszó megerősítése" style="padding-right:44px;">
+Line 2919: <input type="text" id="reg-zip" class="auth-input-field login-input" placeholder="Irányítószám">
+Line 2924: <input type="text" id="reg-city" class="auth-input-field login-input" placeholder="Város">
+Line 2930: <input type="text" id="reg-street" class="auth-input-field login-input" placeholder="Utca, házszám">
+Line 2935: <input type="text" id="reg-county" class="auth-input-field login-input" placeholder="Megye">
+Line 2951: <div id="login-fields" style="display:none; margin-top:24px; flex-direction:column; gap:12px;">
+Line 2954: <input type="email" id="login-email" class="auth-input-field login-input" placeholder="Email cím">
+Line 2959: <input type="password" id="login-pw" class="auth-input-field login-input" placeholder="Jelszó" style="padding-right:44px;">
+Line 2971: <button class="login-btn" id="main-auth-btn" onclick="loginApp()" style="margin-top:24px; width:100%; height:52px; background-color:#0A0F2E; color:#fff; border:none; border-radius:14px; font-size:16px; font-weight:500; cursor:pointer; transition:transform 0.15s ease, opacity 0.15s ease;">Regisztrálok & Bejelentkezem</button>
+Line 2979: <button id="google-login-btn" onclick="loginWithGoogle()" style="margin-top:16px; width:100%; height:52px; background-color:#fff; color:#0A0F2E; border:1px solid #e0e0e0; border-radius:14px; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; transition:background-color 0.15s ease;">
+Line 3337: <div id="worker-apply-sheet-backdrop" class="apply-sheet-backdrop" onclick="closeApplySheet()"></div>
+Line 3351: <div id="maps-action-sheet-backdrop" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 10000; display: none;" onclick="closeMapsActionSheet()"></div>
+Line 3366: <div class="settings-overlay" id="worker-settings">
+Line 3495: <div class="confirm-sheet-backdrop" id="logout-backdrop" onclick="closeLogoutConfirm()"></div>
+Line 3497: <div class="confirm-sheet-backdrop" id="close-job-backdrop" onclick="closeCloseJobSheet()" style="display:none;"></div>
+Line 3518: <div class="confirm-sheet-backdrop" id="avatar-picker-backdrop" onclick="closeAvatarPicker()"></div>
+Line 3535: <div id="avatar-crop-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 12, 46, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; overflow: hidden; font-family: 'DM Sans', sans-serif;">
+Line 3562: <div class="confirm-sheet-backdrop" id="job-picker-backdrop" onclick="closeJobPicker()"></div>
+Line 3574: <div class="overlay-success" id="worker-success">
+Line 3582: <div class="settings-overlay" id="employer-form-overlay" style="display:flex; flex-direction:column;">
+Line 3807: <div class="emp-success-overlay" id="emp-success-anim">
+Line 3821: <div class="settings-overlay" id="job-offer-overlay">
+Line 3915: <div id="search-overlay">
+Line 3919: <input type="text" id="search-overlay-input" placeholder="Milyen munkát keresel?" oninput="onSearchInput(this.value)">
+Line 3932: <div id="distance-sheet-backdrop" onclick="closeDistanceSheet()"></div>
+Line 3958: <div class="settings-overlay" id="worker-profile-overlay" style="z-index: 3000;">
+Line 4030: <div id="employer-mini-modal-backdrop" class="overlay-backdrop" style="z-index: 2100; transition: opacity 0.2s ease;" onclick="closeEmployerMiniModal()"></div>
+Line 4031: <div id="employer-mini-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); width: 85%; max-width: 320px; background: rgba(128,128,128,0.2); border: 1px solid var(--color-text); border-radius: 20px; padding: 24px; z-index: 2101; opacity: 0; pointer-events: none; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; text-align: center;">
+Line 4040: <div class="settings-overlay" id="employer-profile-overlay" style="z-index: 3000;">
+Line 4075: <div id="chat-detail-overlay" style="
+Line 4226: <div class="action-sheet-backdrop" id="msg-action-sheet-backdrop" onclick="closeMsgActionSheet()"></div>
+Line 4243: <div class="settings-overlay" id="notifications-overlay">
+Line 4256: <div class="confirm-sheet-backdrop" id="earnings-backdrop" onclick="closeEarningsSheet()"></div>
+Line 4270: <div class="confirm-sheet-backdrop" id="last-job-backdrop" onclick="closeLastJobSheet()"></div>
+Line 4293: <div class="settings-overlay" id="help-overlay">
+Line 4328: <div class="settings-overlay" id="privacy-overlay">
+Line 4356: <div class="settings-overlay" id="terms-overlay">
+Line 9204: <div class="overlay-backdrop" id="global-overlay-backdrop" onclick="closeAllActionOverlays()"></div>
+Line 9206: <div class="action-overlay" id="worker-action-overlay">
+Line 9242: <div class="action-overlay" id="employer-action-overlay">
+
+--- CSS INTERACTION BARRIERS ---
+Line 28: opacity: 0 !important;
+Line 86: .hidden { display: none !important; }
+Line 87: .invisible { visibility: hidden; pointer-events: none; }
+Line 95: opacity: 0.8 !important;
+Line 103: z-index: 1000;
+Line 112: display: none; /* Safari and Chrome */
+Line 162: display: none;
+Line 207: z-index: 5;
+Line 247: pointer-events: none;
+Line 439: z-index: 10;
+Line 442: .map-chips::-webkit-scrollbar { display: none; }
+Line 563: from { opacity: 0; transform: translateY(10px); }
+Line 576: display: none !important;
+Line 594: z-index: 9999 !important;
+Line 595: pointer-events: auto !important;
+Line 636: z-index: 3000;
+Line 651: 0%, 80%, 100% { transform: scale(0.3); opacity: 0.4; }
+Line 672: z-index: 3001;
+Line 684: z-index: 9000 !important;
+Line 685: opacity: 0;
+Line 686: pointer-events: none;
+Line 691: pointer-events: auto;
+Line 698: z-index: 3000;
+Line 699: opacity: 0;
+Line 700: pointer-events: none;
+Line 705: pointer-events: auto;
+Line 740: z-index: 5000;
+Line 879: .sort-row::-webkit-scrollbar { display: none; }
+Line 903: z-index: 4000;
+Line 904: opacity: 0;
+Line 905: pointer-events: none;
+Line 910: pointer-events: auto;
+Line 919: z-index: 4001;
+Line 985: z-index: 9999;
+Line 1066: pointer-events: auto;
+Line 1083: z-index: 5;
+Line 1084: pointer-events: none;
+Line 1096: opacity: 0;
+Line 1102: opacity: 0.8;
+Line 1106: opacity: 0;
+Line 1149: z-index: 1050;
+Line 1156: pointer-events: none;
+Line 1157: opacity: 0;
+Line 1161: pointer-events: auto;
+Line 1173: opacity: 0;
+Line 1175: pointer-events: none;
+Line 1206: z-index: 100;
+Line 1271: .sort-row::-webkit-scrollbar { display: none; }
+Line 1337: pointer-events: none;
+Line 1341: pointer-events: none;
+Line 1345: pointer-events: none;
+Line 1516: opacity: 0;
+Line 1517: pointer-events: none;
+Line 1533: z-index: 10;
+Line 1554: opacity: 0.5;
+Line 1556: pointer-events: none;
+Line 1562: display: none;
+Line 1574: z-index: 9000;
+Line 1579: opacity: 0;
+Line 1580: pointer-events: none;
+Line 1585: pointer-events: auto;
+Line 1598: from { transform: scale(0); opacity: 0; }
+Line 1682: display: none;
+Line 1817: user-select: none;
+Line 1818: -webkit-user-select: none;
+Line 1821: z-index: 5;
+Line 1822: pointer-events: auto !important;
+Line 1909: z-index: 10000;
+Line 1911: pointer-events: none;
+Line 1923: z-index: 9999;
+Line 1928: pointer-events: none;
+Line 1947: display: none;
+Line 1950: display: none;
+Line 1984: display: none;
+Line 2056: .settings-row:last-child::after { display: none; }
+Line 2084: z-index: 99999;
+Line 2091: opacity: 0;
+Line 2092: pointer-events: none;
+Line 2097: pointer-events: auto;
+Line 2120: display: none;
+Line 2127: 0% { opacity: 0; transform: translateY(-20px); }
+Line 2134: .fade-view.hidden { opacity: 0; pointer-events: none; position: absolute; }
+Line 2142: display: none;
+Line 2174: z-index: 2500;
+Line 2192: z-index: 2500;
+Line 2236: opacity: 0.6;
+Line 2301: z-index: 2;
+Line 2304: user-select: none;
+Line 2340: z-index: 3;
+Line 2416: z-index: 3;
+Line 2430: z-index: 1;
+Line 2439: z-index: 4000;
+Line 2440: opacity: 0;
+Line 2441: pointer-events: none;
+Line 2443: display: none;
+Line 2447: pointer-events: auto;
+Line 2458: z-index: 4001;
+Line 2461: display: none;
+Line 2679: z-index: 10050;
+Line 2680: opacity: 0;
+Line 2681: pointer-events: none;
+Line 2686: pointer-events: auto;
+Line 2696: z-index: 10100;
+Line 2719: pointer-events: none !important;
+Line 2726: pointer-events: auto !important;
+Line 2775: user-select: none;
+Line 2795: <div id="splash-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width:500px;background:var(--color-text);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition: opacity 0.5s ease;">
+Line 2799: <div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width:500px;background:var(--color-text);z-index:9999;display:none;flex-direction:column;overflow:hidden;">
+Line 2800: <button onclick="skipOnboarding()" style="position:absolute;top:52px;right:24px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:14px;font-weight:500;cursor:pointer;z-index:10;">Kihagyás</button>
+Line 2862: <div id="app-login-screen" style="position:absolute; top:0; left:0; right:0; bottom:0; background-color:#fff !important; z-index:1000; padding:60px 24px 40px 24px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; -ms-overflow-style:none; box-sizing:border-box;">
+Line 2866: <div style="font-size:36px; font-weight:800; font-family:'DM Sans',sans-serif; letter-spacing:-1.5px; color:#0A0F2E; width:160px; text-align:center; user-select:none;">Melo<span style="color:var(--color-green);">Go</span></div>
+Line 2944: <div style="font-size:12px; color: var(--color-text); line-height:1.4; user-select:none; margin-top:-1px;">
+Line 2986: <span id="auth-switch-text" style="font-size:13px; color: var(--color-text); font-family:'DM Sans',sans-serif; user-select:none;">
+Line 3009: opacity: 0;
+Line 3010: z-index: 10;
+Line 3011: pointer-events: none;
+Line 3028: <input type="text" id="home-search-display" placeholder="Milyen munkát keresel?" readonly style="cursor:pointer; pointer-events:none;">
+Line 3064: <div id="sub-categories-row" style="display: none; gap: 8px; overflow-x: auto; margin-bottom: 10px; padding: 0 16px 4px 16px; scrollbar-width: none;">
+Line 3084: <div id="home-employer-view" class="job-list" style="display: none; padding: 0 0 calc(96px + env(safe-area-inset-bottom)) 0; flex-direction: column;">
+Line 3132: <div id="map-leaflet-container" style="width: 100%; height: 100%; position: absolute; top:0; left:0; right:0; bottom:0; z-index: 1;"></div>
+Line 3134: <div id="map-pins-container" style="display: none;"></div>
+Line 3137: <div class="map-chips" id="map-chips-row" style="z-index: 10; left: 16px; right: 16px; top: 16px;">
+Line 3200: <div style="margin: -35px 20px 20px 20px; background-color: white; border-radius: 16px; border: 1px solid var(--color-text);  display: flex; position: relative; z-index: 2; padding: 16px 0;">
+Line 3351: <div id="maps-action-sheet-backdrop" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 10000; display: none;" onclick="closeMapsActionSheet()"></div>
+Line 3352: <div id="maps-action-sheet" class="confirm-sheet" style="z-index: 10001; bottom: 0; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 24px 20px; box-sizing: border-box; display: none; flex-direction: column; gap: 12px; width: 100%; max-width: 500px; margin: 0 auto; left: 0; right: 0; position: absolute;">
+Line 3489: <div style="padding: 16px 20px 28px 20px; background-color: #fff; border-top: 1px solid var(--color-text); flex-shrink: 0; z-index: 10;">
+Line 3519: <div class="confirm-sheet" id="avatar-picker-sheet" style="padding: 24px; box-sizing: border-box; z-index: 3101;">
+Line 3535: <div id="avatar-crop-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8, 12, 46, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; overflow: hidden; font-family: 'DM Sans', sans-serif;">
+Line 3540: <img id="crop-preview-image" style="max-width: none; position: absolute; transform-origin: center; cursor: move; user-select: none; -webkit-user-drag: none;" alt="Preview">
+Line 3577: <p style="font-size: 12px; opacity: 0.8; margin-bottom: 16px;" id="worker-success-desc">Értesítettük a munkáltatót.</p>
+Line 3669: <svg style="position:absolute; right:14px; top:50%; transform:translateY(-50%); pointer-events:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+Line 3721: <div id="emp-address-suggestions" style="display:none; position:absolute; top:100%; left:0; right:0; background: var(--color-surface); border: 1px solid var(--color-text); border-radius: 16px;  z-index:50; margin-top:4px; max-height:200px; overflow-y:auto;">
+Line 3799: <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: var(--color-surface); border-top: 1px solid var(--color-text); z-index: 100; padding: 0 20px; display: flex; align-items: center; padding-bottom: 16px;">
+Line 3822: <div class="settings-header" style="background-color: white; border-bottom: 1px solid var(--color-border); z-index: 10;">
+Line 3864: <div style="width: 40px; height: 4px; background: var(--color-text); border-radius: 2px; margin: -12px auto 16px auto; flex-shrink: 0; opacity: 0.2;"></div>
+Line 3871: <div style="width: 40px; height: 4px; background: var(--color-text); border-radius: 2px; margin: -12px auto 16px auto; flex-shrink: 0; opacity: 0.2;"></div>
+Line 3903: <span class="nav-badge" id="app-msg-badge" style="display: none;">1</span>
+Line 3958: <div class="settings-overlay" id="worker-profile-overlay" style="z-index: 3000;">
+Line 3974: <div id="wp-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;  background-color: var(--color-text); color: white; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; font-family:'DM Sans',sans-serif;">KB</div>
+Line 4030: <div id="employer-mini-modal-backdrop" class="overlay-backdrop" style="z-index: 2100; transition: opacity 0.2s ease;" onclick="closeEmployerMiniModal()"></div>
+Line 4031: <div id="employer-mini-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); width: 85%; max-width: 320px; background: rgba(128,128,128,0.2); border: 1px solid var(--color-text); border-radius: 20px; padding: 24px; z-index: 2101; opacity: 0; pointer-events: none; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; text-align: center;">
+Line 4040: <div class="settings-overlay" id="employer-profile-overlay" style="z-index: 3000;">
+Line 4055: <img id="ep-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff;  display: none;" alt="Megbízó avatar">
+Line 4080: z-index: 9999;
+Line 4097: <img id="chat-detail-avatar" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;" alt="Avatar">
+Line 4161: <div id="chat-action-bar" style="display: none; padding: 12px 16px; background-color: #FFFFFF; border-top: 1px solid var(--color-text); flex-shrink: 0; align-items: center; justify-content: space-between; gap: 12px; box-sizing: border-box;"></div>
+Line 6782: <div style="display: flex; align-items: center; gap: 8px; justify-content: center; opacity: 0.8;">
+Line 8516: html: `<div class="map-pin-label" style="background:var(--color-text); color:white; padding:8px 12px; border-radius: 16px; font-weight:700; font-size:12px; border:2px solid white;  cursor:pointer; pointer-events:auto; text-align:center; white-space:nowrap;">${job.price.toLocaleString('hu-HU')} Ft</div>`,
+Line 9223: <div id="worker-chat-messages" style="flex-grow: 1; display: none; flex-direction: column; gap: 10px; overflow-y: auto; padding: 4px 0;">
+Line 9233: <div id="worker-chat-input-bar" style="display: none; align-items: center; gap: 10px; padding: 12px 0 0 0; background: var(--color-surface); border-top: 1px solid var(--color-border); flex-shrink: 0; margin-top: 8px;">

@@ -1927,7 +1927,7 @@
             line-height: 1.3;
         }
         .jp-cat-card:active {
-            background: #000;
+            background: rgba(0,0,0,0.06);
             color: #fff;
         }
         .jp-back-btn {
@@ -3379,7 +3379,7 @@ button:active, .job-card:active, .filter-pill:active, .msg-filter-pill:active {
 .search-bar input { background: transparent !important; color: var(--color-text) !important; }
 
 /* Add hover state for date pills */
-div[onclick^="setDateFilter"]:hover { background: #111815 !important; }
+div[onclick^="setDateFilter"]:hover { background: transparent !important; }
 div[onclick^="setDateFilter"]:active { background: #1A241F !important; }
 .search-bar input::placeholder { color: var(--color-text-muted) !important; }
 
@@ -3574,7 +3574,7 @@ input:focus, textarea:focus { background: rgba(255, 255, 255, 0.15) !important; 
 .bottom-sheet, .apply-bottom-sheet, .confirm-sheet, #distance-sheet, .action-overlay, .settings-overlay, .overlay-success { background: #1C1C1E !important; }
 .overlay-backdrop, .apply-sheet-backdrop { background: rgba(0, 0, 0, 0.6) !important; }
 select { background: rgba(255, 255, 255, 0.05) !important; border: none !important; color: #FFFFFF !important; border-radius: 6px !important; transition: background 0.2s cubic-bezier(0.32, 0.72, 0, 1); }
-select:focus, select:active { background: #111815 !important; outline: none !important; }
+select:focus, select:active { background: transparent !important; outline: none !important; }
 
 /* 5. Bottom Navigation Bar */
 #bottom-nav, .bottom-nav { background-color: rgba(20, 20, 22, 0.8) !important;  -webkit- border-top: 0.5px solid rgba(255, 255, 255, 0.1) !important; border-left: none !important; border-right: none !important; border-bottom: none !important; box-shadow: none !important; }
@@ -3608,7 +3608,7 @@ svg[stroke="#D1D5DB"] {
    MAP SCREEN
    ========================================== */
 .leaflet-layer, .leaflet-control-zoom-in, .leaflet-control-zoom-out, .leaflet-control-attribution {
-    filter: brightness(115%) contrast(95%); /* Slightly brighten the dark_all tiles so roads are clearly visible */
+    filter: brightness(115%) contrast(95%); /* Slightly brighten the light_all tiles so roads are clearly visible */
 }
 .leaflet-control-zoom a { background-color: #1C1C1E !important; color: var(--color-text) !important; border: 1px solid var(--color-border) !important; }
 .map-pin-label { background-color: var(--color-green) !important; border: 2px solid #000000 !important; color: #000000 !important; }
@@ -3654,7 +3654,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
    ========================================== */
 /* 1. Sync Categories and Dates */
 .category-btn, .date-btn, div[onclick^="setDateFilter"], .emp-cat-card, .filter-chip {
-    background: #111815 !important;
+    background: transparent !important;
     color: #FFFFFF !important;
     border: none !important;
     transition: background 0.2s cubic-bezier(0.32, 0.72, 0, 1), transform 0.15s !important;
@@ -3669,7 +3669,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     box-shadow: none !important;
 }
 /* Ensure JavaScript inline active checks are overridden by !important */
-div[onclick^="setDateFilter"] { background: #111815 !important; color: #FFFFFF !important; }
+div[onclick^="setDateFilter"] { background: transparent !important; color: #FFFFFF !important; }
 div[onclick^="setDateFilter"].active-date { background: rgba(255, 255, 255, 0.25) !important; color: #FFFFFF !important; font-weight: 600 !important; }
 
 /* 2. Search Bar */
@@ -3725,7 +3725,7 @@ input[type="range"]::-webkit-slider-thumb {
     border: 0.5px solid rgba(0,0,0,0.1) !important;
 }
 input[type="range"] {
-    background: rgba(255,255,255,0.15) !important;
+    background: rgba(255,255,255,0.15);
     /* Track active part handled by JS or CSS custom */
 }
 
@@ -3900,7 +3900,7 @@ strong, b, .font-semibold, .font-bold, .job-price, .celeb-amount,
 
 /* A. FORMOK ÉS BEMENETI MEZŐK */
 .auth-input, input:not([type="checkbox"]):not([type="radio"]), textarea, select {
-    background: #111815 !important;
+    background: transparent !important;
     border: 1px solid rgba(255, 255, 255, 0.09) !important;
     border-radius: 6px !important;
     padding: 16px 20px !important;
@@ -4302,7 +4302,7 @@ body, .app-container, #phone-app {
 
 /* Input focus state */
 .auth-input-container:focus-within, .floating-group input:focus, .login-input:focus, .auth-input-field:focus {
-    background: #111815 !important;
+    background: transparent !important;
     border: 0.5px solid rgba(255, 255, 255, 0.3) !important;
     box-shadow: none !important;
 }
@@ -4319,7 +4319,7 @@ body, .app-container, #phone-app {
 }
 
 #google-login-btn:active, #apple-login-btn:active, .google-btn:active, .apple-btn:active, button[onclick*="app-login-screen"]:active {
-    background: #111815 !important;
+    background: transparent !important;
     transform: scale(0.97) !important;
 }
 
@@ -4390,7 +4390,7 @@ body, .app-container, #phone-app {
 
 /* Focus state */
 .auth-input-container:focus-within, .floating-group input:focus, .login-input:focus, .auth-input-field:focus {
-    background: #111815 !important;
+    background: transparent !important;
     border: 0.5px solid #FF5722 !important; /* Neon green border on focus */
     box-shadow: none !important;
 }
@@ -4517,7 +4517,7 @@ input.auth-input-field, input.login-input, input[type="email"], input[type="pass
 
 /* Focus state */
 input.auth-input-field:focus, input.login-input:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focus, input[type="tel"]:focus {
-    background: #111815 !important;
+    background: transparent !important;
     border: 0.5px solid #FF5722 !important; /* Neon green border on focus */
     box-shadow: none !important;
 }
@@ -4610,7 +4610,7 @@ input.auth-input-field:focus, input.login-input:focus, input[type="email"]:focus
 
 /* Ensure only the inner input field gets the neon green focus border */
 input.auth-input-field:focus, input.login-input:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focus, input[type="tel"]:focus {
-    background: #111815 !important;
+    background: transparent !important;
     border: 0.5px solid #FF5722 !important; /* Neon green border on focus */
     box-shadow: none !important;
     outline: none !important;
@@ -4798,7 +4798,548 @@ input.auth-input-field:focus, input.login-input:focus, input[type="email"]:focus
     .filter-pill, .employer-pill, .sort-pill, .msg-filter-pill { color: #636366 !important; border-bottom: 1px solid transparent !important; }
     .filter-pill.active, .employer-pill.active { color: #FF5722 !important; border-bottom: 1px solid #FF5722 !important; }
 </style>
+
+
+
+<style id="extra-refinements-css">
+    /* Extra overrides for Minden feladat and Messages */
+    #worker-job-filter-display { 
+        background: rgba(255,255,255,0.7) !important; 
+        color: #1C1C1E !important; 
+        border: 1px solid rgba(0,0,0,0.1) !important; 
+        border-radius: 8px !important; 
+    }
+    
+    /* Messages header background fix */
+    .msg-list-header {
+        background: transparent !important; 
+    }
+    div[style*="background: var(--color-bg)"] {
+        background: transparent !important;
+    }
+    
+    /* Ensure the Map fills cleanly and isn't dark */
+    #map-worker-view {
+        background: #E5E5EA !important;
+    }
+    
+    /* Ensure Profile screen text is completely dark */
+    .profile-section * {
+        color: #1C1C1E !important;
+    }
+    .profile-skill-chip {
+        border-color: rgba(0,0,0,0.2) !important;
+        color: #1C1C1E !important;
+    }
+</style>
+
+<style id="msg-header-fix">
+    .msg-midnight-header { background: transparent !important; }
+    .msg-midnight-header .brand-logo { color: #1C1C1E !important; }
+    /* Re-apply the neon Go here just in case */
+    .msg-midnight-header .brand-logo span { color: #c0fc2a !important; text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5) !important; }
+    
+    /* Fix "Olvasatlan" unread pill background */
+    .msg-filter-pill.inactive { background: rgba(0,0,0,0.05) !important; color: #1C1C1E !important; }
+    #msg-filter-unread { background: transparent !important; }
+</style>
+
+<style id="profile-text-fix">
+    /* Brutal override for Profile texts */
+    #app-profile-screen * {
+        color: #1C1C1E !important;
+    }
+    #app-profile-screen span[style*="color: #FFF"],
+    #app-profile-screen span[style*="color: #FFFFFF"],
+    #app-profile-screen div[style*="color: #FFF"],
+    #app-profile-screen div[style*="color: #FFFFFF"],
+    #app-profile-screen div[style*="color: var(--color-text-muted)"],
+    #app-profile-screen span[style*="color: var(--color-text-muted)"] {
+        color: #636366 !important;
+    }
+    #app-profile-screen .profile-name,
+    #app-profile-screen .stat-value {
+        color: #1C1C1E !important;
+    }
+    /* Yellow stats */
+    #app-profile-screen .stat-value,
+    #app-profile-screen .rating-stars,
+    #app-profile-screen .rating-stars svg {
+        color: #FF5722 !important;
+        stroke: #FF5722 !important;
+        fill: #FF5722 !important;
+    }
+    /* Segmented Control Text inside Profile */
+    .role-toggle-btn.active { color: #fff !important; }
+    .role-toggle-btn:not(.active) { color: #8E8E93 !important; }
+</style>
+
+<style id="fix-complaints-css">
+    /* 1. Keresőmező javítása: eredeti méret, fekete szöveg, látható keret */
+    #home-search-display {
+        border: 1px solid rgba(0, 0, 0, 0.2) !important;
+        padding: 8px 12px !important; border-radius: 8px !important; /* Revert my padding */
+        font-size: initial !important; /* Revert my font size */
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+    #home-search-display::placeholder {
+        color: #1C1C1E !important; /* Fekete szöveg */
+        font-weight: 400 !important;
+    }
+
+    /* 2. Helyzet és Távolság: egyforma, eredeti stílus visszahozása (nincs kártya) */
+    .gps-location, .distance-pill-btn {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    /* 3. Egyetlen, egységes kiválasztási effekt (finom sötétedés) */
+    .category-btn.active, div[onclick^="setDateFilter"][style*="1px solid"], .filter-pill.active, .employer-pill.active {
+        background-color: rgba(0, 0, 0, 0.06) !important; /* Egyforma sötétedés */
+        border-radius: 6px !important;
+        border-color: transparent !important;
+    }
+
+    /* 4. Munka cikkekben a távolság és idő ne legyen fehér */
+    .job-badge-loc, .job-badge-time, .job-card-badges span {
+        color: #636366 !important;
+    }
+
+    /* 5. Térkép visszasötétítése (törlöm a filter:none-t) */
+    #app-map, .map-container, iframe {
+        filter: invert(90%) hue-rotate(180deg) !important;
+        -webkit-filter: invert(90%) hue-rotate(180deg) !important;
+    }
+
+    /* 6. Üzenetek visszaállítása az eredeti sötét fejlécbe, de zöld nélkül */
+    .msg-midnight-header {
+        background: #111815 !important; /* Eredeti sötét szín */
+    }
+    .msg-midnight-header .brand-logo {
+        color: #fff !important; /* Eredeti fehér szöveg */
+    }
+    .msg-midnight-header .brand-logo span {
+        color: #FF5722 !important; /* Zöld helyett narancs */
+        text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5) !important;
+    }
+    /* Olvasatlan pötty megtartása, de elegánsabban */
+    .msg-filter-pill.inactive { background: transparent !important; color: #8E8E93 !important; }
+
+    /* 7. Profil szerepváltás (Munkás/Megbízó) csúnya sárga háttér eltüntetése */
+    .role-toggle-btn.active { background: rgba(255,255,255,0.2) !important; color: #FFF !important; }
+    .role-toggle-btn { color: #8E8E93 !important; }\n    .avatar { color: #fff !important; }
+</style>
+
+<style id="final-checklist-css">
+    /* 1. "Minden feladat felirat fura kicsit abba a feket dobozba" -> Fekete doboz eltávolítása, világos stílus */
+    #worker-job-filter-display {
+        background: rgba(255, 255, 255, 0.6) !important;
+        color: #1C1C1E !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        border-radius: 8px !important;
+    }
+
+    /* 2. "Térkép világosabb legyen" -> Világos (eredeti) Google Maps, eltüntetjük az invert filtert */
+    #app-map, .map-container, iframe {
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+
+    /* 3. "És nem annyira olvasható az üzenetek oldal" -> Olvashatóbb chat buborékok és listák */
+    .msg-item, .chat-item {
+        color: #1C1C1E !important;
+        background: rgba(255,255,255,0.5) !important;
+        border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    }
+    .msg-item * {
+        color: #1C1C1E !important;
+    }
+    .msg-item span[style*="color"] {
+        color: #636366 !important;
+    }
+    .chat-body, #app-messages-screen {
+        background: #DCDCE0 !important;
+    }
+    .message.received {
+        background: rgba(255,255,255,0.9) !important;
+        color: #1C1C1E !important;
+    }
+    .message.sent, .message[style*="background: var(--color-green)"] {
+        background: #FF5722 !important;
+        color: #FFFFFF !important;
+    }
+
+    /* 4. "Profilnál fehérek a feliratok amiknek feketének kéne lenniük" -> Biztosra megyünk */
+    #app-profile-screen, #worker-profile-overlay, #employer-profile-overlay {
+        background: #DCDCE0 !important;
+    }
+    .profile-name, .profile-desc, .profile-section * {
+        color: #1C1C1E !important;
+    }
+    /* De a profil képben (avatar) maradjon fehér a betű */
+    .avatar { color: #ffffff !important; }
+</style>
+
+<style id="map-text-fix">
+    /* Map buttons text color fix for light map */
+    .map-category-btn { color: #1C1C1E !important; }
+    .map-category-btn.active { background: rgba(0,0,0,0.1) !important; color: #1C1C1E !important; }
+</style>
+
+<style id="pro-fixes-css">
+    /* 1. Köszöntő keret (Jó estét, kk!) */
+    .welcome-text {
+        background: rgba(0, 0, 0, 0.04) !important;
+        padding: 6px 14px !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        display: inline-block !important;
+        margin-top: 8px !important;
+    }
+
+    /* 2. Helyzet & Távolság pontos egymás alá igazítása és közelítése */
+    .gps-location span:nth-child(2), #distance-pill span:nth-child(2) {
+        width: 60px !important; /* Lecsökkentve a hatalmas űrt */
+        display: inline-block !important;
+    }
+    #distance-pill {
+        margin-top: 6px !important; /* Hogy szépen a Helyzet alatt legyen */
+    }
+
+    /* 3. Egységes kiválasztás mindenhol (ugyanaz a sötét háttér) */
+    .category-btn.active, 
+    div[onclick^="setDateFilter"][style*="0.15"], 
+    div[onclick^="setDateFilter"][style*="rgba(255, 255, 255, 0.15)"],
+    .filter-pill.active, 
+    .employer-pill.active, 
+    .sort-pill.active {
+        background-color: rgba(0, 0, 0, 0.08) !important;
+        color: #1C1C1E !important;
+        border-radius: 6px !important;
+        border: none !important;
+    }
+
+    /* 4. Munkahirdetés kártyák szövegeinek középre húzása (ne csússzanak le) */
+    .job-card {
+        padding: 16px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+    .job-card h3 {
+        margin-top: 0 !important;
+    }
+
+    /* 6. Üzenetek: Go neon színűre */
+    .msg-midnight-header .brand-logo span {
+        color: #c0fc2a !important; /* Neon zöld */
+    }
+
+    /* 7. Üzenetek: Olvasatlan gomb aljának javítása (ne legyen levágva) */
+    .msg-filter-pill {
+        height: auto !important;
+        line-height: normal !important;
+        padding: 6px 14px !important;
+        border-radius: 20px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 8. Üzenetek: "Még nincs üzeneted" alatti szöveg feketére */
+    #app-messages-screen p, #app-messages-screen .empty-state-subtext, #app-messages-screen div[style*="Jelentkezz"] {
+        color: #1C1C1E !important;
+        opacity: 0.8 !important;
+    }
+
+    /* 9. Profil: Szerepválasztó (Munkás/Megbízó) sötét dobozának világosítása */
+    .segmented-control {
+        background: rgba(0, 0, 0, 0.06) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        padding: 4px !important;
+    }
+    .role-toggle-btn {
+        color: #636366 !important;
+    }
+    .role-toggle-btn.active {
+        background: #FFFFFF !important;
+        color: #1C1C1E !important;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.1) !important;
+    }
+</style>
+
+<style id="missing-text-fix">
+    /* Fix missing text colors for map and messages */
+    .map-category-btn { color: #1C1C1E !important; font-weight: 500 !important; }
+    .map-category-btn.active { background: rgba(0,0,0,0.1) !important; color: #1C1C1E !important; }
+    
+    /* Force messages empty state text to be dark */
+    div[style*="Jelentkezz egy munkára"] { color: #1C1C1E !important; opacity: 0.8 !important; font-weight: 400 !important; }
+</style>
+
+<style id="final-profile-fix">
+    .role-switcher-container { 
+        background: rgba(0,0,0,0.06) !important; 
+        padding: 4px !important; 
+        border-radius: 8px !important; 
+        border: 1px solid rgba(0,0,0,0.1) !important; 
+    }
+    .role-switcher-container .role-btn { 
+        border-radius: 6px !important; 
+        background: transparent !important;
+        color: #636366 !important;
+    }
+    .role-switcher-container .role-btn.active { 
+        background: #FFFFFF !important; 
+        color: #1C1C1E !important;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.1) !important;
+    }
+</style>
+
+<style id="final-polish-css">
+    /* 1. Days Hover/Active state to match categories perfectly */
+    div[onclick^="setDateFilter"]:hover, 
+    div[onclick^="setDateFilter"].active-date, 
+    div[onclick^="setDateFilter"][style*="0.15"], 
+    div[onclick^="setDateFilter"][style*="rgba(255, 255, 255, 0.15)"] {
+        background-color: rgba(0, 0, 0, 0.06) !important;
+        color: #1C1C1E !important;
+        border-radius: 8px !important;
+        border: none !important;
+    }
+    /* Fixed padding for days so they aren't huge */
+    div[onclick^="setDateFilter"] {
+        height: auto !important;
+        padding: 8px 12px !important;
+        border-radius: 8px !important;
+        background-color: transparent !important;
+    }
+    /* Ensure the day number doesn't inherit opacity issues */
+    div[onclick^="setDateFilter"] span {
+        opacity: 1 !important;
+    }
+
+    /* 2. Tutor Subcategories */
+    .tutor-chip:hover, 
+    .tutor-chip.active {
+        background-color: rgba(0, 0, 0, 0.06) !important;
+        color: #1C1C1E !important;
+        border-radius: 8px !important;
+        border: none !important;
+    }
+    .tutor-chip {
+        color: #636366 !important;
+    }
+    
+    /* 3. Search Bar Overlay Green background fix */
+    /* Target any dark green overlay elements like search */
+    #search-overlay {
+        background-color: #E5E5EA !important; /* Light theme background */
+    }
+    #search-overlay-input {
+        background-color: #FFFFFF !important;
+        color: #1C1C1E !important;
+        border: 1px solid rgba(0,0,0,0.2) !important;
+    }
+    /* Fix header of search overlay if it was dark green */
+    div[style*="background: #1A241F"], div[style*="background-color: #1A241F"] {
+        background-color: #1C1C1E !important;
+    }
+    
+    /* 5. Messages Unread Pill Cut-off */
+    .msg-filter-pill {
+        box-sizing: border-box !important;
+        height: 32px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        border: 1px solid rgba(0,0,0,0.2) !important;
+        padding: 0 14px !important;
+    }
+
+    /* 6. Profile Picture Placeholder (Default green to dark gray) */
+    .profile-img, .profile-avatar, .user-avatar, #app-profile-screen div[style*="border-radius: 50%"] {
+        background-color: #1C1C1E !important;
+    }
+    
+    /* 7. Profile Stats Colors (0 and — to orange) */
+    #app-profile-screen .stat-value {
+        color: #FF5722 !important;
+    }
+</style>
+
+<style id="super-final-polish">
+    /* Search overlay fix */
+    .search-overlay-input-wrap { 
+        background: #E5E5EA !important; 
+    } 
+    #search-overlay-input { 
+        background: #FFFFFF !important; 
+        border: 1px solid rgba(0,0,0,0.1) !important; 
+        color: #1C1C1E !important; 
+    } 
+    .search-overlay-input-wrap svg { 
+        stroke: #1C1C1E !important; 
+    }
+    
+    /* Ensure profile stats are orange */
+    #app-profile-screen .stat-value {
+        color: #FF5722 !important;
+    }
+</style>
+
+<style id="map-invert-fix">
+    .leaflet-layer {
+        filter: invert(100%) hue-rotate(180deg) contrast(2.0) brightness(0.95) !important;
+        -webkit-filter: invert(100%) hue-rotate(180deg) contrast(2.0) brightness(0.95) !important;
+    }
+</style>
+
+<style id="super-dark-roads-and-black-dot">
+    /* Force user dot to be black */
+    .user-gps-dot {
+        background: #1C1C1E !important;
+        border: 2.5px solid rgba(0,0,0,0.3) !important;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+    }
+    
+    /* Keep water (blue) visible but keep map clean and roads crisp */
+    .leaflet-layer {
+        filter: saturate(0.5) contrast(1.1) brightness(1.05) !important;
+        -webkit-filter: saturate(0.5) contrast(1.1) brightness(1.05) !important;
+    }
+</style>
+<style id="fix-map-buttons-icons">
+    /* Fix Leaflet zoom buttons (+ and -) so they are actually visible on the dark button */
+    .leaflet-control-zoom a {
+        color: #FFFFFF !important;
+        text-shadow: none !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Fix the GPS floating button icon if it exists */
+    .map-floating-btn, .map-floating-btn svg {
+        color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+    }
+</style>
+<style id="modal-color-fixes">
+    /* 1. Make backdrops much darker (less transparent) */
+    #distance-sheet-backdrop, #location-sheet-backdrop {
+        background: rgba(0,0,0,0.85) !important;
+    }
+
+    /* 2. Fix the "Beállítás" button to be brand yellow instead of dark green */
+    .distance-confirm-btn {
+        background: #FF5722 !important;
+        color: #000000 !important;
+        border: none !important;
+    }
+
+    /* 3. Fix the "Mégse" button to be a neutral dark gray */
+    button[onclick="closeLocationSheet()"].distance-confirm-btn {
+        background: #2C2C2E !important;
+        color: #FFFFFF !important;
+    }
+
+    /* 4. Fix the "GPS helyzet észlelése" button to be brand yellow */
+    .location-gps-btn {
+        background: #FF5722 !important;
+        color: #000000 !important;
+    }
+
+    /* 5. Fix slider accent color to be yellow */
+    input[type="range"] {
+        accent-color: #FF5722 !important;
+    }
+</style>
+<style id="force-slider-yellow">
+    /* Force slider to use native styling with yellow accent color */
+    #distance-slider, input[type="range"] {
+        appearance: auto !important;
+        -webkit-appearance: auto !important;
+        accent-color: #FF5722 !important;
+        background: transparent !important;
+    }
+    
+    /* Ensure no green thumbs remain */
+    #distance-slider::-webkit-slider-thumb {
+        background: #FFFFFF !important;
+    }
+</style>
+<style id="modal-solid-and-lava">
+    /* 1. Make the modal sheets themselves completely solid (not transparent) */
+    #distance-sheet, #location-sheet {
+        background: #FFFFFF !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    /* 2. Change buttons and slider to Lava Orange (#FF5722) instead of Amber Yellow (#FF5722) */
+    .distance-confirm-btn {
+        background: #FF5722 !important;
+        color: #FFFFFF !important;
+    }
+    
+    /* Keep "Mégse" button dark gray */
+    button[onclick="closeLocationSheet()"].distance-confirm-btn {
+        background: #2C2C2E !important;
+        color: #FFFFFF !important;
+    }
+
+    .location-gps-btn {
+        background: #FF5722 !important;
+        color: #FFFFFF !important;
+    }
+
+    #distance-slider, input[type="range"] {
+        accent-color: #FF5722 !important;
+    }
+</style>
+<style id="force-modal-text-colors">
+    /* Force all text inside the newly white modals to be dark */
+    #distance-sheet, #location-sheet,
+    #distance-sheet .distance-sheet-title, 
+    #location-sheet .distance-sheet-title,
+    #distance-sheet .distance-value-display span {
+        color: #111111 !important;
+    }
+
+    /* Force secondary text (like '1 km', '50 km', 'Csak a kiválasztott...') to be dark gray instead of white */
+    #distance-sheet div[style*="color"], #location-sheet div[style*="color"] {
+        color: #666666 !important;
+    }
+    
+    /* Exceptions for buttons inside the modals to keep them white text on lava background */
+    
+    /* Exceptions ONLY for primary/secondary action buttons to have white text */
+    .distance-confirm-btn, .location-gps-btn {
+        color: #FFFFFF !important;
+    }
+    /* Explicitly force city select buttons to have black text */
+    #location-sheet .city-select-item, #location-sheet .city-select-item span {
+        color: #111111 !important;
+    }
+
+</style>
+<style id="force-modal-button-text">
+    /* Force city names in buttons to be readable */
+    #location-sheet .city-select-item {
+        color: #111111 !important;
+    }
+    
+    /* Ensure secondary text in distance modal is readable */
+    #distance-sheet span {
+        color: #111111 !important;
+    }
+</style>
 </head>
+</head>
+</head>
+</head>
+</head>
+</head>
+</head>
+
 <body>
     <!-- Global Snackbar for replacing alert() -->
     <div id="global-snackbar" style="position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background-color: #333; color: #fff; padding: 16px 24px; border-radius: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 14px; z-index: 100000; transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: none !important; max-width: 90%; text-align: center; pointer-events: none;">
@@ -12027,7 +12568,7 @@ let settingsConfirmedAddress = null;
             const slider = document.getElementById('distance-slider');
             if (!slider) return;
             const pct = ((slider.value - 1) / (50 - 1)) * 100;
-            slider.style.background = `linear-gradient(to right, var(--color-text) ${pct}%, #FFFFFF ${pct}%)`;
+            slider.style.setProperty('background', `linear-gradient(to right, #FF5722 ${pct}%, rgba(255,255,255,0.15) ${pct}%)`, 'important');
         }
 
         function confirmDistance() {
@@ -12074,7 +12615,7 @@ let settingsConfirmedAddress = null;
                 attributionControl: false
             }).setView([startLat, startLon], startZoom);
 
-                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png', {
+                        L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&apistyle=s.e:l.i|p.v:off,s.t:2|p.v:off', {
                 maxZoom: 18,
                 minZoom: 6
             }).addTo(leafletMap);
@@ -12109,7 +12650,7 @@ let settingsConfirmedAddress = null;
             if (gameState.gpsActive && userCoords) {
                 const gpsIcon = L.divIcon({
                     className: 'leaflet-gps-pin',
-                    html: `<div class="user-gps-dot" style="width: 16px; height: 16px; background: var(--color-text); border: 2.5px solid #fff; border-radius: 50%;  animation: gps-pulse 2s infinite;"></div>`,
+                    html: `<div class="user-gps-dot" style="width: 16px; height: 16px; background: #000000; border: 2.5px solid rgba(0,0,0,0.2); box-shadow: 0 0 10px rgba(0,0,0,0.3); border-radius: 50%;  animation: gps-pulse 2s infinite;"></div>`,
                     iconSize: [20, 20],
                     iconAnchor: [10, 10]
                 });
@@ -13585,7 +14126,7 @@ let settingsConfirmedAddress = null;
                     zoomControl: false,
                     attributionControl: false
                 }).setView([lat, lon], 14);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+                L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&apistyle=s.e:l.i|p.v:off,s.t:2|p.v:off', {
                     maxZoom: 19
                 }).addTo(empFormMap);
                 empFormMarker = L.marker([lat, lon]).addTo(empFormMap);
@@ -17313,12 +17854,21 @@ setInterval(() => {
     background: rgba(255, 255, 255, 0.15);
 }
 #emp-job-display:hover, #emp-tutor-display:hover {
-    background: #111815 !important;
+    background: transparent !important;
 }
 #emp-job-display:active, #emp-tutor-display:active {
     background: #1A241F !important;
 }
 </style>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if(typeof updateSliderTrack === 'function') {
+            updateSliderTrack();
+        }
+    });
+</script>
 
 </body>
 </html>

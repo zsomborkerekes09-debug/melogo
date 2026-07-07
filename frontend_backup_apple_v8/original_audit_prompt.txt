@@ -1,0 +1,110 @@
+<USER_REQUEST>
+MeloGo — Core Flow Audit
+For Antigravity Development Team
+
+Please test each flow below from start to finish, exactly as a real user would. Use two real test accounts — one employer and one worker. After testing, write down every bug, broken step, wrong behavior, or visual issue you find. Send the full written report back to us. Do not skip anything and do not hide any issues — we want the complete honest list.
+
+=== FLOW 1: JOB POSTING — EMPLOYER CREATES A JOB ===
+Steps:
+1. Log in as employer
+2. Open "create new job" screen
+3. Check that the address field auto-fills with the employer's saved profile address
+4. Fill in all fields: title, category, description, pay, date, location
+5. Confirm the map pin preview shows the correct location
+6. Post the job
+7. Switch to worker account — verify the job appears on the home feed and on the map
+
+Check for bugs in:
+☐ Address auto-fill — does it fill correctly or is the field empty?
+☐ Map pin — does it appear at the right location?
+☐ All form fields save correctly — nothing gets lost after posting
+☐ Job appears on worker feed immediately after posting
+☐ Job appears as a pin on the map for workers
+☐ All job details (pay, address, category, date) display correctly on the card
+
+=== FLOW 2: JOB APPLICATION — WORKER APPLIES FOR A JOB ===
+Steps:
+1. Log in as worker
+2. Find the job posted in Flow 1 on the home feed
+3. Tap the job card — check that the detail sheet opens correctly
+4. Tap Apply
+5. Switch to employer account — verify the application arrived and the correct worker's name appears
+6. Also test applying from the map view — tap a pin, open the sheet, apply
+7. Test applying from a second worker account to the same job — both applications must appear separately
+
+Check for bugs in:
+☐ Application arrives at the correct employer — not a random account
+☐ Worker's name and profile show correctly in the applicant list
+☐ Applying from the map works the same as applying from the feed
+☐ A worker cannot apply to their own job (if they also have an employer account)
+☐ Applying from a second account does not trigger "own job" error
+☐ Apply button shows confirmation or success state after tapping
+
+=== FLOW 3: ACCEPTING AN APPLICANT — EMPLOYER SELECTS A WORKER ===
+Steps:
+1. Log in as employer
+2. Open the job's applicant list
+3. Accept one of the applicants
+4. Verify the job status changes to "filled"
+5. Switch to accepted worker account — they must still see all job details
+6. Switch to a different worker account — the job must have disappeared from their feed
+
+Check for bugs in:
+☐ Job disappears from feed for all other workers after being filled
+☐ Accepted worker still sees the job and all its details
+☐ Job status updates in real time — no need to restart the app
+☐ Rejected applicants receive correct status update
+
+=== FLOW 4: CHAT — MESSAGING BETWEEN WORKER AND EMPLOYER ===
+Steps:
+1. After an application is sent, open the chat conversation related to that job
+2. Send a free-text message as the worker
+3. Switch to employer account — verify the message arrived in the correct conversation
+4. Reply as employer — switch back to worker and verify the reply arrived
+5. Tap the location/address at the top of the chat — verify it opens Google Maps or Apple Maps
+6. Tap the employer profile icon in the chat — verify the profile card appears with name, address, and "View profile" button
+7. Check that there is only one input field — no duplicate, no image upload button
+
+Check for bugs in:
+☐ Messages arrive in the correct conversation — not mixed up between jobs or users
+☐ Real-time delivery — messages appear without needing to refresh
+☐ Location tap opens the correct address in Maps
+☐ Employer profile card shows correct info
+☐ Only one input field visible — no duplicates
+☐ Send button works correctly — message appears after tapping
+☐ Chat works correctly for multiple simultaneous conversations (2+ jobs)
+
+=== FLOW 5: JOB COMPLETION & DELETION ===
+Steps:
+1. As employer, mark the job as completed
+2. Switch to worker feed — job must not appear
+3. Check the map — job pin must be gone
+4. As employer, create a new job then delete it
+5. Switch to worker feed — deleted job must not appear
+
+Check for bugs in:
+☐ Completed job gone from feed and map immediately
+☐ Deleted job gone from feed and map immediately
+☐ No ghost pins remaining on map after job is removed
+
+=== BUG REPORT FORMAT ===
+For every bug found, write it up like this:
+
+BUG-001 · Flow: [flow name] · Severity: Critical / High / Medium / Low
+Description: [what is wrong]
+Steps: [how to reproduce it]
+Expected: [what should happen]
+Actual: [what actually happens]
+Status: Fixed ✓ / Not fixed / Needs discussion
+
+Severity guide:
+- Critical — app crashes, data goes to wrong user, core flow completely broken
+- High — feature doesn't work but app doesn't crash
+- Medium — feature works but with wrong behavior or missing element
+- Low — visual/cosmetic issue, minor text error
+
+Please send the full bug report back to us before the next delivery.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-06-11T22:49:19+02:00.
+</ADDITIONAL_METADATA>

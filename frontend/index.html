@@ -16787,6 +16787,24 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 return;
             }
 
+            if (!isMapUsed && window.confirmedAddress) {
+                try {
+                    const geocodeRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(window.confirmedAddress)}&format=json&limit=1`, { headers: { 'Accept-Language': 'hu' } });
+                    const geocodeData = await geocodeRes.json();
+                    if (geocodeData && geocodeData.length > 0) {
+                        confirmedLat = parseFloat(geocodeData[0].lat);
+                        confirmedLon = parseFloat(geocodeData[0].lon);
+                    } else {
+                        const cityRes = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(document.getElementById('emp-city').value.trim())}&country=Hungary&format=json&limit=1`);
+                        const cityData = await cityRes.json();
+                        if (cityData && cityData.length > 0) {
+                            confirmedLat = parseFloat(cityData[0].lat);
+                            confirmedLon = parseFloat(cityData[0].lon);
+                        }
+                    }
+                } catch(e) { console.error("Geocoding failed during save", e); }
+            }
+
             const specificJob = document.getElementById('emp-job-select').value;
             const desc = details.value || 'Alkalmi munka precízen elvégezve.';
             const county = document.getElementById('emp-county').value || 'Somogy';

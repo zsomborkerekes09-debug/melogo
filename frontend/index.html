@@ -3501,7 +3501,7 @@ button:active, .job-card:active, .filter-pill:active, .msg-filter-pill:active {
 
 /* Toasts */
 .toast-success, .toast, #push-banner {
-    background-color: #FFFFFF !important;
+    background-color: var(--color-surface) !important;
     color: var(--color-text) !important;
     border: 0.5px solid var(--color-border) !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
@@ -4316,6 +4316,94 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     .emp-floating-plus-circle { background: #FF5722 !important; box-shadow: none !important; border: none !important; }
     .emp-floating-plus-circle svg { stroke: #FFFFFF !important; }
     .emp-floating-plus-wrapper { background: transparent !important; border: none !important; }
+
+    /* ===== TOAST & PUSH NOTIFICATION - DARK MODE FIX ===== */
+    /* Toast (settings saved, apply sent, etc.) */
+    .toast-success, .toast {
+        background-color: #1e1e22 !important;
+        color: #F8FAFC !important;
+        border: 0.5px solid #2a2a30 !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .toast-success svg { stroke: #FF5722 !important; }
+
+    /* Push notification banner */
+    #push-banner {
+        background-color: #1e1e22 !important;
+        border: 0.5px solid #2a2a30 !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .push-banner-title { color: #F8FAFC !important; }
+    .push-banner-msg { color: rgba(248, 250, 252, 0.65) !important; }
+    .push-banner-close { color: rgba(248, 250, 252, 0.4) !important; }
+    .push-banner-icon { background: #FF5722 !important; }
+
+    /* ===== CHAT CONVERSATION VIEW - DARK MODE ===== */
+    .msg-midnight-header { background-color: #1e1e22 !important; }
+    .msg-midnight-header * { color: #F8FAFC !important; }
+    #employer-action-overlay .grab-handle { background: #2a2a30 !important; }
+
+    /* Incoming chat bubble border in dark mode */
+    .chat-bubble.incoming {
+        border: 1px solid #2a2a30 !important;
+    }
+
+    /* Chat input area */
+    .chat-input-wrap, #chat-input-area, [id*="chat-input"] {
+        background: #1e1e22 !important;
+        border-top: 0.5px solid #2a2a30 !important;
+    }
+    .chat-text-input, [id*="msg-input"], [id*="message-input"] {
+        background: #121214 !important;
+        color: #F8FAFC !important;
+        border: 1px solid #2a2a30 !important;
+    }
+    .chat-text-input::placeholder { color: rgba(248,250,252,0.35) !important; }
+    .chat-send-btn { background: #FF5722 !important; }
+    .chat-send-btn svg { stroke: #FFFFFF !important; }
+
+    /* ===== DISTANCE PICKER SHEET - DARK MODE ===== */
+    #distance-sheet .sheet-title, #distance-sheet * { color: var(--color-text) !important; }
+
+    /* ===== SEARCH OVERLAY - DARK MODE ===== */
+    #search-overlay { background: #121214 !important; }
+    #search-overlay-input { background: #1e1e22 !important; color: #F8FAFC !important; }
+    .search-result-item { border-bottom: 0.5px solid #2a2a30 !important; }
+    .search-result-item:hover { background: #1e1e22 !important; }
+
+    /* ===== WORKER JOB FILTER DISPLAY - DARK MODE ===== */
+    #worker-job-filter-display {
+        background-color: #1e1e22 !important;
+        border: 1px solid #2a2a30 !important;
+        color: #F8FAFC !important;
+    }
+
+    /* ===== MAP PRICE PIN LABEL - readable in dark ===== */
+    .map-pin-label {
+        background: #FF5722 !important;
+        color: #FFFFFF !important;
+        border: 2px solid #1e1e22 !important;
+    }
+
+    /* ===== BOTTOM NAV - DARK MODE ===== */
+    #bottom-nav, .bottom-nav {
+        background-color: rgba(18, 18, 20, 0.95) !important;
+        border-top: 0.5px solid #2a2a30 !important;
+    }
+    .nav-item:not(.active) { color: #636366 !important; }
+    .nav-item:not(.active) svg { stroke: #636366 !important; }
+    .nav-item.active { color: #FF5722 !important; }
+    .nav-item.active svg { stroke: #FF5722 !important; }
+
+    /* ===== LOGOUT BUTTON - DARK MODE FIX ===== */
+    .emp-ad-icon-circle { background: rgba(255,255,255,0.06) !important; border: none !important; }
+
+    /* ===== SKILL TAGS ON PROFILE - DARK MODE ===== */
+    .skill-tag, [class*="skill-badge"] {
+        background: rgba(255, 87, 34, 0.12) !important;
+        color: #FF5722 !important;
+        border: 1px solid rgba(255, 87, 34, 0.25) !important;
+    }
 </style>
 
 <style id="fix-map-buttons-icons">

@@ -76,7 +76,7 @@
     <meta charset="UTF-8">
     <meta name="color-scheme" content="light">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#F8F9FB">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>MeloGo – Diákmunka Közel, Gyorsan</title>
@@ -3361,7 +3361,7 @@ svg {
 
 /* 30. Safe Area Bottom */
 .bottom-nav {
-    padding-bottom: env(safe-area-inset-bottom);
+    /* Padding removed because bottom-nav is a floating capsule */
 }
 .apply-bottom-sheet, .action-overlay, .confirm-sheet {
     padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important;
@@ -3479,8 +3479,8 @@ button:active, .job-card:active, .filter-pill:active, .msg-filter-pill:active {
 /* Bottom Nav */
 #bottom-nav, .bottom-nav {
     background-color: rgba(255, 255, 255, 0.95) !important;
-    border-top: 0.5px solid rgba(0, 0, 0, 0.08) !important;
-    box-shadow: 0 -1px 3px rgba(0,0,0,0.02) !important;
+    border: 0.5px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
 }
 .nav-item.active {
     background: transparent !important;
@@ -4171,9 +4171,12 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 </style>
 
 <style id="map-invert-fix">
-    .leaflet-layer {
-        filter: invert(100%) grayscale(100%) brightness(140%) contrast(95%) !important;
-        -webkit-filter: invert(100%) grayscale(100%) brightness(140%) contrast(95%) !important;
+    .leaflet-layer, .leaflet-control-zoom a, .leaflet-control-attribution {
+        filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
+        -webkit-filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
+    }
+    .leaflet-container {
+        background-color: #121214 !important;
     }
 </style>
 
@@ -4388,7 +4391,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     /* ===== BOTTOM NAV - DARK MODE ===== */
     #bottom-nav, .bottom-nav {
         background-color: rgba(18, 18, 20, 0.95) !important;
-        border-top: 0.5px solid #2a2a30 !important;
+        border: 0.5px solid #2a2a30 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
     }
     .nav-item:not(.active) { color: #636366 !important; }
     .nav-item:not(.active) svg { stroke: #636366 !important; }
@@ -17359,6 +17363,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 root.style.setProperty('--color-chat-text-in', '#FFFFFF');
                 root.style.setProperty('--color-chat-text-out', '#000000');
                 root.style.setProperty('--color-chat-border-in', '#2a2a30');
+                
+                // Update iOS safe area / status bar color
+                const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+                if (metaThemeColor) metaThemeColor.setAttribute("content", "#121214");
             } else {
                 root.setAttribute('data-theme', 'light');
                 // Enable light-mode specific override style sheets
@@ -17395,6 +17403,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 root.style.setProperty('--color-chat-text-out', '#FFFFFF');
                 root.style.setProperty('--color-chat-text-out', '#FFFFFF');
                 root.style.setProperty('--color-chat-border-in', '#E2E8F0');
+                
+                // Update iOS safe area / status bar color
+                const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+                if (metaThemeColor) metaThemeColor.setAttribute("content", "#F8F9FB");
             }
 
             // Dynamically toggle tile layer URLs between CartoDB Dark Matter and Google Maps

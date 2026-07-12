@@ -74,7 +74,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta charset="UTF-8">
-    <meta name="color-scheme" content="light">
+    <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#F8F9FB">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -4171,10 +4171,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 </style>
 
 <style id="map-invert-fix">
-    .leaflet-layer, .leaflet-control-zoom a, .leaflet-control-attribution {
-        filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
-        -webkit-filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
-    }
+    /* Dark map: let CartoDB dark tile layer handle the dark look.
+       Only ensure container bg is dark so no white flicker. */
     .leaflet-container {
         background-color: #121214 !important;
     }
@@ -12857,9 +12855,15 @@ let settingsConfirmedAddress = null;
                 attributionControl: false
             }).setView([startLat, startLon], startZoom);
 
-                        window.mainTileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&apistyle=s.e:l.i|p.v:off,s.t:2|p.v:off', {
+            const isDarkNow = localStorage.getItem('melogo_dark_manual') === 'true' || 
+                (localStorage.getItem('melogo_dark_manual') === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            const initialUrl = isDarkNow 
+                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                : 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&apistyle=s.e:l.i|p.v:off,s.t:2|p.v:off';
+            window.mainTileLayer = L.tileLayer(initialUrl, {
                 maxZoom: 18,
-                minZoom: 6
+                minZoom: 6,
+                subdomains: 'abcd'
             });
             window.mainTileLayer.addTo(leafletMap);
 
@@ -17355,6 +17359,11 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 root.style.setProperty('--color-text-light', '#94A3B8');
                 document.body.style.background = '#121214';
                 document.body.style.color = '#F8FAFC';
+                // Fix iOS status bar gap: set html element bg and update theme-color
+                document.documentElement.style.background = '#121214';
+                document.documentElement.style.backgroundColor = '#121214';
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) metaTheme.setAttribute('content', '#121214');
                 
                 // Chat variables
                 root.style.setProperty('--color-chat-bg', '#121214');
@@ -17405,8 +17414,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 root.style.setProperty('--color-chat-border-in', '#E2E8F0');
                 
                 // Update iOS safe area / status bar color
-                const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-                if (metaThemeColor) metaThemeColor.setAttribute("content", "#F8F9FB");
+                document.documentElement.style.background = '';
+                document.documentElement.style.backgroundColor = '';
+                const metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (metaTheme) metaTheme.setAttribute('content', '#F8F9FB');
             }
 
             // Dynamically toggle tile layer URLs between CartoDB Dark Matter and Google Maps

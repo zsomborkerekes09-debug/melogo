@@ -4176,6 +4176,12 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     .leaflet-container {
         background-color: #121214 !important;
     }
+    
+    /* Make the dark map lighter (graphite grey) without adding green/brown colors */
+    .leaflet-layer {
+        filter: brightness(2.2) contrast(0.85) !important;
+        -webkit-filter: brightness(2.2) contrast(0.85) !important;
+    }
 </style>
 
 <style id="super-dark-roads-and-black-dot">
@@ -4300,11 +4306,11 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         font-weight: 500 !important;
     }
 
-    /* Lava Orange GPS location indicator dot on Map in dark mode */
+    /* White GPS location indicator dot on Map in dark mode */
     .user-gps-dot {
-        background: #FF5722 !important;
-        border: 2.5px solid rgba(255, 87, 34, 0.4) !important;
-        box-shadow: 0 0 10px rgba(255, 87, 34, 0.4) !important;
+        background: #FFFFFF !important;
+        border: 2.5px solid rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.6) !important;
     }
 
     /* Fix Employer Category Cards */

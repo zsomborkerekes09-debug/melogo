@@ -7859,7 +7859,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     if (lf) lf.style.display = 'flex';
                     if (roleSel) roleSel.style.display = 'none';
                     if (btn) { btn.style.display = 'block'; btn.innerText = 'Bejelentkezem'; }
-                    if (sw) { sw.style.display = 'block'; sw.innerHTML = `${typeof t === 'function' ? t('Nincs még fiókod?') : 'Nincs még fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === "function" ? t("Regisztrálj") : "Regisztrálj"}</span>'; }
+                    if (sw) { sw.style.display = 'block'; sw.innerHTML = `${typeof t === 'function' ? t('Nincs még fiókod?') : 'Nincs még fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === "function" ? t("Regisztrálj") : "Regisztrálj"}</span>`; }
                 } else {
                     if (rf) rf.style.display = 'flex';
                     if (lf) lf.style.display = 'none';
@@ -9432,7 +9432,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             if (roleSel) roleSel.style.display = 'none';
             if (sub) sub.innerText = 'Lépj be a fiókodba';
             if (btn) btn.innerText = 'Bejelentkezem';
-            if (sw) sw.innerHTML = 'Nincs még fiókod? <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>';
+            if (sw) sw.innerHTML = `${typeof t === 'function' ? t('Nincs még fiókod?') : 'Nincs még fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Regisztrálj') : 'Regisztrálj'}</span>`;
             
             clearAllInputErrors();
             clearLoginError();

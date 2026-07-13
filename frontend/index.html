@@ -6588,7 +6588,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                         Fénykép készítése
                     </button>
-                    <button class="confirm-sheet-btn" type="button" onclick="triggerGalleryPicker()" style="background: var(--color-surface); color:#000000; height:50px; border-radius: 6px; width:100%; border:none; font-weight: 400; font-size:15px; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: transform 0.15s ease;">
+                    <button class="confirm-sheet-btn" type="button" onclick="triggerGalleryPicker()" style="background: var(--color-surface); color: var(--color-text) !important; height:50px; border-radius: 6px; width:100%; border:none; font-weight: 400; font-size:15px; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: transform 0.15s ease;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                         Választás a galériából
                     </button>
@@ -12066,11 +12066,27 @@ let settingsConfirmedAddress = null;
         }
 
         async function saveSettings() {
+            const saveBtn = document.querySelector('.settings-save-btn');
+            if (saveBtn) {
+                if (saveBtn.disabled) return;
+                saveBtn.disabled = true;
+                saveBtn._originalText = saveBtn.innerHTML;
+                saveBtn.innerHTML = '<span class="spinner-small" style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;"></span> Mentés...';
+            }
+
+            const restoreBtn = () => {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = saveBtn._originalText || 'Mentés';
+                }
+            };
+
             const nameVal = (document.getElementById('settings-name') ? document.getElementById('settings-name').value : '').trim() || '';
             const nameErr = document.getElementById('settings-name-err');
             if (nameErr) nameErr.style.display = 'none';
             if (!nameVal) {
                 if (nameErr) nameErr.style.display = 'block';
+                restoreBtn();
                 return;
             }
 
@@ -12080,6 +12096,7 @@ let settingsConfirmedAddress = null;
             if (birthYearErr) birthYearErr.style.display = 'none';
             if (birthYearVal !== null && (isNaN(birthYearVal) || birthYearVal < 1950 || birthYearVal > 2012)) {
                 if (birthYearErr) birthYearErr.style.display = 'block';
+                restoreBtn();
                 return;
             }
             let phoneVal = (document.getElementById('settings-phone') ? document.getElementById('settings-phone').value : '').trim() || '';
@@ -12091,11 +12108,36 @@ let settingsConfirmedAddress = null;
             }
             if (phoneVal && !window.validateHungarianPhone(phoneVal)) {
                 if (phoneErr) phoneErr.style.display = 'block';
+                restoreBtn();
                 return;
             }
             const bioVal = (document.getElementById('settings-bio') ? document.getElementById('settings-bio').value : '') || '';
             const skillsArr = Array.from(selectedSkills);
             
+            const zip = ((document.getElementById('set-zip') || {}).value ? (document.getElementById('set-zip') || {}).value.trim() : '') || '';
+            const county = ((document.getElementById('set-county') || {}).value ? (document.getElementById('set-county') || {}).value.trim() : '') || '';
+            const city = ((document.getElementById('set-city') || {}).value ? (document.getElementById('set-city') || {}).value.trim() : '') || '';
+            const street = ((document.getElementById('set-street') || {}).value ? (document.getElementById('set-street') || {}).value.trim() : '') || '';
+            const house = ((document.getElementById('set-house') || {}).value ? (document.getElementById('set-house') || {}).value.trim() : '') || '';
+            const apt = ((document.getElementById('set-apartment') || {}).value ? (document.getElementById('set-apartment') || {}).value.trim() : '') || '';
+            
+            let addressValid = true;
+            let generatedAddress = '';
+            const err = document.getElementById('err-set-structured');
+            
+            if (!zip || !county || !city || !street || !house) {
+                addressValid = false;
+                if (err) {
+                    err.classList.add('show');
+                    err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                if (err) err.classList.remove('show');
+                generatedAddress = `${zip} ${city}, ${street} ${house}.`;
+                if (apt) generatedAddress += ` ${apt}`;
+                settingsConfirmedAddress = generatedAddress;
+            }
+
             // Save to local storage
             localStorage.setItem('melogo_name', nameVal);
             
@@ -12123,34 +12165,17 @@ let settingsConfirmedAddress = null;
                 userData.birthYear = birthYearVal;
             }
             
-            const zip = ((document.getElementById('set-zip') || {}).value ? (document.getElementById('set-zip') || {}).value.trim() : '') || '';
-            const county = ((document.getElementById('set-county') || {}).value ? (document.getElementById('set-county') || {}).value.trim() : '') || '';
-            const city = ((document.getElementById('set-city') || {}).value ? (document.getElementById('set-city') || {}).value.trim() : '') || '';
-            const street = ((document.getElementById('set-street') || {}).value ? (document.getElementById('set-street') || {}).value.trim() : '') || '';
-            const house = ((document.getElementById('set-house') || {}).value ? (document.getElementById('set-house') || {}).value.trim() : '') || '';
-            const apt = ((document.getElementById('set-apartment') || {}).value ? (document.getElementById('set-apartment') || {}).value.trim() : '') || '';
-            
-            if (!zip || !county || !city || !street || !house) {
-                const err = document.getElementById('err-set-structured');
-                if (err) err.classList.add('show');
-                return;
-            }
-            const err = document.getElementById('err-set-structured');
-            if (err) err.classList.remove('show');
-            
-            let generatedAddress = `${zip} ${city}, ${street} ${house}.`;
-            if (apt) generatedAddress += ` ${apt}`;
-            
-            settingsConfirmedAddress = generatedAddress;
-            userData.address = generatedAddress;
-            userData.addressCity = city;
-            userData.addressStreet = street;
-            userData.addressCounty = county;
+            if (addressValid) {
+                userData.address = generatedAddress;
+                userData.addressCity = city;
+                userData.addressStreet = street;
+                userData.addressCounty = county;
 
-            firestoreUpdateData.address = generatedAddress;
-            firestoreUpdateData.addressCity = city;
-            firestoreUpdateData.addressStreet = street;
-            firestoreUpdateData.addressCounty = county;
+                firestoreUpdateData.address = generatedAddress;
+                firestoreUpdateData.addressCity = city;
+                firestoreUpdateData.addressStreet = street;
+                firestoreUpdateData.addressCounty = county;
+            }
             
             localStorage.setItem('melogo_user_data', JSON.stringify(userData));
             
@@ -12164,7 +12189,12 @@ let settingsConfirmedAddress = null;
                 }
             }
             
-                        // Re-render user UI to refresh profile views
+            restoreBtn();
+            if (typeof showGreenBanner === 'function') {
+                showGreenBanner('Beállítások elmentve!');
+            }
+            
+            // Re-render user UI to refresh profile views
             updateAllUserUI();
             
             if (typeof geocodeAndCenterMap === 'function' && generatedAddress) {

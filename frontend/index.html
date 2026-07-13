@@ -74,9 +74,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta charset="UTF-8">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#F8F9FB">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>MeloGo – Diákmunka Közel, Gyorsan</title>
@@ -256,9 +256,9 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            /* Handle iOS notch properly by pushing content down */
+            /* Handle iOS notch properly by pushing content down, and black background for the gap */
             padding-top: max(env(safe-area-inset-top), var(--safe-top));
-            background-color: transparent;
+            background-color: var(--color-text);
         }
         .phone-container-old {
 
@@ -266,7 +266,7 @@
             max-width: 100%;
             height: 100vh;
             height: 100dvh;
-            background-color: transparent;
+            background-color: var(--color-text);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -766,7 +766,7 @@
             transform: translateY(100%);
             visibility: hidden;
             opacity: 0;
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease, visibility 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0.4s, opacity 0.4s linear;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -1938,12 +1938,12 @@
             text-align: center;
             padding: 16px 8px;
             border-radius: 6px;
-            border: 1.5px solid var(--color-border);
-            background: var(--color-surface);
+            border: 1.5px solid #000;
+            background: #fff;
             cursor: pointer;
             font-size: 13px;
             font-weight: 400;
-            color: var(--color-text);
+            color: #000;
             min-height: 70px;
             transition: background 0.15s, color 0.15s;
             user-select: none;
@@ -3105,57 +3105,11 @@
             user-select: none;
         }
         .auth-role-card.active {
-            background-color: var(--color-text) !important;
-            color: var(--color-bg) !important;
-            border: 0.5px solid var(--color-text) !important;
-            font-weight: 500 !important;
-        }
-    
-/* Fix for msg-filter-pill visibility */
-.msg-filter-pill.active {
-    background-color: var(--color-text) !important;
-    color: var(--color-bg) !important;
-    border: none !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-    font-weight: 500 !important;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: none !important;
 }
-.msg-filter-pill.inactive {
-    background-color: rgba(142, 142, 147, 0.1) !important;
-    color: #8E8E93 !important;
-    border: none !important;
-}
-
-/* New styles for Day Filter Boxes */
-.day-box {
-    border-radius: 8px !important;
-    border: 1px solid var(--color-border) !important;
-    background: transparent !important;
-    color: var(--color-text) !important;
-}
-.day-box span {
-    color: var(--color-text) !important;
-    opacity: 0.7 !important;
-    font-weight: 400 !important;
-}
-.day-box span:last-child {
-    font-weight: 500 !important;
-}
-.day-box.active {
-    background-color: rgba(0, 0, 0, 0.08) !important;
-    border-color: transparent !important;
-}
-.day-box.active span {
-    color: #1C1C1E !important;
-    opacity: 1 !important;
-    font-weight: 600 !important;
-}
-[data-theme="dark"] .day-box.active {
-    background-color: rgba(255, 255, 255, 0.15) !important;
-}
-[data-theme="dark"] .day-box.active span {
-    color: #FFFFFF !important;
-}
-</style>
+    </style>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="assets/logo_new.jpg" type="image/jpeg">
     <link rel="apple-touch-icon" href="assets/logo_new.jpg">
@@ -3361,7 +3315,7 @@ svg {
 
 /* 30. Safe Area Bottom */
 .bottom-nav {
-    /* Padding removed because bottom-nav is a floating capsule */
+    padding-bottom: env(safe-area-inset-bottom);
 }
 .apply-bottom-sheet, .action-overlay, .confirm-sheet {
     padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important;
@@ -3379,35 +3333,42 @@ input:focus {
 
 
 <style id="apple-premium-light-mode">
+
+/* Root variables reset - Apple iOS 15 Settings/WWDC inspired */
 :root {
-    --color-profile-header-bg: #FFFFFF;
-    --color-profile-header-text: #1D1D1F;
-    --color-navy: #000000;
-    --color-green: #FF5722;
-    --color-logo-green: #c0fc2a;
-    --color-bg: #F8F9FB;
-    --color-text: #1D1D1F;
-    --color-text-light: #4A5568;
-    --color-border: rgba(0, 0, 0, 0.08);
-    --color-surface: #FFFFFF;
-    --color-text-muted: #86868B;
-    
-    --color-chat-bg: #F3F4F6;
-    --color-chat-bubble-in: #FFFFFF;
-    --color-chat-bubble-out: #FF5722;
-    --color-chat-text-in: #000000;
-    --color-chat-text-out: #FFFFFF;
-    --color-chat-border-in: #E2E8F0;
+    --color-chat-bg: var(--color-bg) !important;
+    --color-chat-bubble-in: #1C1C1E !important;
+    --color-chat-bubble-out: #30D158 !important;
+    --color-chat-text-in: #FFFFFF !important;
+    --color-chat-text-out: #FFFFFF !important;
+    --color-chat-border-in: #333336 !important;
+    --color-bg: transparent !important;
+    --color-surface: rgba(255, 255, 255, 0.7) !important;
+    --color-text: #1D1D1F !important;
+    --color-text-light: #3A3A3C !important;
+    --color-border: rgba(0, 0, 0, 0.08) !important;
+    --color-text-muted: #86868B !important;
+    --color-green: #FF5722 !important; /* Keep brand accent */
+    --color-navy: #000000 !important;
+    --color-chat-bg: #000000 !important;
+    --color-chat-bubble-in: #1C1C1E !important;
+    --color-chat-bubble-out: #0066CC !important; /* Apple iMessage blue */
+    --color-chat-text-in: #FFFFFF !important;
+    --color-chat-text-out: #FFFFFF !important;
 }
 
+/* Backgrounds for Screens ONLY (fixes the map overlap issue) */
+/* We DO NOT target .screen generally to avoid messing with map visibility logic */
 body, html, #app-container, #app-home-screen, #app-messages-screen, #app-profile-screen, #app-login-screen { 
     background-color: var(--color-bg) !important; 
     color: var(--color-text) !important; 
     font-family: 'Inter', sans-serif !important;
 }
 
+/* Hide scrollbars safely */
 ::-webkit-scrollbar { display: none !important; }
 
+/* Global Typography & Interactions */
 button, .job-card, .filter-pill, .nav-item, .msg-filter-pill, .employer-pill, .category-btn, .sort-pill {
     font-family: 'Inter', sans-serif !important;
     transition: transform 120ms ease-in-out, background-color 150ms ease-in-out !important;
@@ -3417,6 +3378,9 @@ button:active, .job-card:active, .filter-pill:active, .msg-filter-pill:active {
     transform: scale(0.97) !important;
 }
 
+/* ==========================================
+   HEADERS
+   ========================================== */
 .home-header, .header-midnight, .msg-midnight-header, .msg-filter-row, .profile-midnight-header, .profile-header {
     background-color: var(--color-bg) !important;
     border: none !important;
@@ -3424,113 +3388,154 @@ button:active, .job-card:active, .filter-pill:active, .msg-filter-pill:active {
 }
 .brand-logo { color: var(--color-text) !important; }
 
+
+/* ==========================================
+   HOME SCREEN SPECIFICS
+   ========================================== */
 .welcome-text { color: var(--color-text-light) !important; font-size: 13px !important; font-weight: 400 !important; }
 .user-first-name-display { color: var(--color-text-light) !important; }
 
+/* Search Bar & Overlays */
 .search-bar, #search-overlay-input, .search-overlay-input-wrap {
-    background-color: rgba(0, 0, 0, 0.05) !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
     border: none !important;
 }
 .search-bar input { background: transparent !important; color: var(--color-text) !important; }
+
+/* Add hover state for date pills */
+div[onclick^="setDateFilter"]:hover { background: transparent !important; }
+div[onclick^="setDateFilter"]:active { background: #1A241F !important; }
 .search-bar input::placeholder { color: var(--color-text-muted) !important; }
 
 .gps-location { color: var(--color-text-light) !important; }
 .gps-dot { background-color: var(--color-green) !important; }
-.distance-pill-btn { background-color: var(--color-surface) !important; border: 1px solid var(--color-border) !important; color: var(--color-text) !important; }
+.distance-pill-btn { background-color: #1C1C1E !important; border: 1px solid var(--color-border) !important; color: var(--color-text) !important; }
 
-#worker-job-filter-display { background-color: var(--color-surface) !important; border: 1px solid var(--color-border) !important; color: var(--color-text) !important; }
+#worker-job-filter-display { background-color: #1C1C1E !important; border: 1px solid var(--color-border) !important; color: rgba(255,255,255,0.70) !important; }
 
+/* Date Selector explicitly styled via JS regex above. Override specific spans if needed */
+div[onclick^="setDateFilter"] span:first-child { font-size: 10px !important; }
+div[onclick^="setDateFilter"] span:last-child { font-size: 18px !important; font-weight: 600 !important;}
+
+/* ==========================================
+   CARDS (Apple iOS 15 Style)
+   ========================================== */
 .job-card, .emp-ad-item {
     background-color: var(--color-surface) !important;
     border: none !important;
     border-radius: 6px !important;
     box-shadow: none !important;
 }
-.job-card:active { background-color: rgba(0, 0, 0, 0.05) !important; }
+.job-card:active { background-color: #2C2C2E !important; }
 .job-title { color: var(--color-text) !important; }
 .job-price { color: var(--color-green) !important; }
 .job-meta, .job-meta-item, .job-card [class*="address"], .job-card [class*="distance"] { color: var(--color-text-light) !important; }
-.urgent-badge, [class*="urgent"] { background-color: rgba(255, 87, 34, 0.1) !important; border: 1px solid rgba(255, 87, 34, 0.2) !important; color: var(--color-green) !important; }
+.urgent-badge, [class*="urgent"] { background-color: rgba(170,255,0,0.12) !important; border: 1px solid rgba(170,255,0,0.30) !important; color: var(--color-green) !important; }
 
-/* Pills styling */
+/* ==========================================
+   PILLS (Overview / iOS / macOS style)
+   ========================================== */
 .filter-pill, .employer-pill, .category-btn, .sort-pill, .msg-filter-pill, .map-chip {
     background-color: transparent !important;
     border: none !important;
-    padding: 4px 12px !important;
-    color: var(--color-text-muted) !important;
+    padding: 4px 8px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
     font-weight: 400 !important;
 }
 .filter-pill.active, .filter-pill.selected, .employer-pill.active, .employer-pill.selected, .category-btn.active, .sort-pill.active, .msg-filter-pill.active, .map-chip.active {
-    background-color: var(--color-green) !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;
     color: #FFFFFF !important;
     border: none !important;
     font-weight: 500 !important;
 }
-.sort-pill svg, .category-btn svg { stroke: var(--color-text-light) !important; fill: none !important; }
+.sort-pill svg, .category-btn svg { stroke: rgba(255, 255, 255, 0.7) !important; fill: none !important; }
 .sort-pill.active svg, .category-btn.active svg { stroke: #FFFFFF !important; }
 
-#splash-screen { background-color: var(--color-bg) !important; }
-#splash-screen .brand-logo { color: var(--color-text) !important; }
+/* ==========================================
+   SPLASH SCREEN
+   ========================================== */
+#splash-screen { background-color: #000000 !important; }
+#splash-screen .brand-logo { color: #FFFFFF !important; }
 
+/* ==========================================
+   SEARCH OVERLAY (Fixing white header block)
+   ========================================== */
 #search-overlay { background-color: var(--color-bg) !important; }
 .search-overlay-header { background-color: var(--color-bg) !important; }
 .search-overlay-input-wrap { background-color: var(--color-surface) !important; }
 
-/* Bottom Nav */
+/* ==========================================
+   BOTTOM NAVIGATION
+   ========================================== */
 #bottom-nav, .bottom-nav {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    border: 0.5px solid rgba(0, 0, 0, 0.08) !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+    background-color: rgba(28, 28, 30, 0.85) !important;
+    
+    -webkit-
+    border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: none !important;
 }
 .nav-item.active {
     background: transparent !important;
-    color: var(--color-green) !important;
+    color: #FFFFFF !important;
 }
 .nav-item:not(.active) {
-    color: #8E8E93 !important;
+    color: #8E8E93 !important; /* System Gray for inactive */
 }
 .nav-item.active::before {
-    display: none !important;
+    display: none !important; /* Remove the inner pill border */
 }
 .nav-item.active svg {
-    stroke: var(--color-green) !important;
+    stroke: #FFFFFF !important;
 }
 .nav-item:not(.active) svg {
     stroke: #8E8E93 !important;
 }
 
-/* Toasts */
-.toast-success, .toast, #push-banner {
-    background-color: var(--color-surface) !important;
-    color: var(--color-text) !important;
-    border: 0.5px solid var(--color-border) !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+/* ==========================================
+   TOASTS (Top Notifications)
+   ========================================== */
+.toast-success, .toast {
+    background-color: #1C1C1E !important; /* System Gray 6 Dark */
+    color: #FFFFFF !important;
+    border: 0.5px solid rgba(255,255,255,0.15) !important;
+    box-shadow: none !important;
 }
-.push-banner-title { color: var(--color-text) !important; }
-.push-banner-msg { color: var(--color-text-light) !important; }
-.push-banner-close { color: var(--color-text-muted) !important; }
-.msg-badge, [id*="badge"] { background-color: var(--color-green) !important; color: #FFFFFF !important; }
+#push-banner {
+    background-color: #1C1C1E !important; /* System Gray 6 Dark */
+    border: 0.5px solid rgba(255,255,255,0.15) !important;
+    box-shadow: none !important;
+}
+.push-banner-title { color: #FFFFFF !important; }
+.push-banner-msg { color: #8E8E93 !important; }
+.push-banner-close { color: #8E8E93 !important; }
+.msg-badge, [id*="badge"] { background-color: var(--color-green) !important; color: #000000 !important; }
 
-/* Messages screen */
+/* ==========================================
+   MESSAGES SCREEN
+   ========================================== */
 .chat-item-wrapper { background-color: transparent !important; border-bottom: 0.5px solid var(--color-border) !important; }
-.chat-avatar-circle { background-color: var(--color-border) !important; color: var(--color-text) !important; }
+.chat-avatar-circle { background-color: #1C1C1E !important; color: var(--color-text) !important; }
 .chat-name { color: var(--color-text) !important; }
 .chat-job-title { color: var(--color-text-light) !important; }
 .chat-preview { color: var(--color-text-muted) !important; }
-.chat-time { color: var(--color-text-muted) !important; }
+.chat-time { color: rgba(255,255,255,0.25) !important; }
 .unread-dot { background-color: var(--color-green) !important; }
 
-/* Profile screen */
-.profile-avatar { background-color: var(--color-border) !important; border: none !important; }
+/* ==========================================
+   PROFILE SCREEN
+   ========================================== */
+.profile-avatar { background-color: #1C1C1E !important; border: none !important; }
 .profile-name { color: var(--color-text) !important; }
 .profile-location { color: var(--color-text-light) !important; }
 .stats-card { background-color: var(--color-surface) !important; border: none !important; }
 .stat-value { color: var(--color-text) !important; }
 .stat-label { color: var(--color-text-light) !important; }
 .section-label { color: var(--color-text-muted) !important; }
-.section-card { background-color: var(--color-surface) !important; border: none !important; }
-.bio-text { color: var(--color-text-light) !important; }
 
+
+
+
+/* APPLE CRISP TYPOGRAPHY - ULTRA THIN PREMIUM */
 * {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
     -webkit-font-smoothing: antialiased !important;
@@ -3538,67 +3543,1115 @@ button:active, .job-card:active, .filter-pill:active, .msg-filter-pill:active {
     text-rendering: optimizeLegibility !important;
 }
 
-
+body, input, button, select, textarea, div, span, p, a, .nav-item, .job-title, .job-card, .profile-name, .stat-value, .filter-pill, .sort-pill, .employer-pill, .category-btn {
+    font-weight: 300 !important;
+    letter-spacing: -0.015em !important;
+}
 
 strong, b, .font-semibold, .font-bold, .job-price, .celeb-amount {
     font-weight: 500 !important;
 }
 
-.job-card:active { background-color: rgba(0,0,0,0.05) !important; }
-.emp-ad-pill.seeking { background-color: rgba(255, 87, 34, 0.1) !important; color: var(--color-green) !important; font-weight: 500 !important; }
-.emp-ad-card.status-seeking { border-left: 3.5px solid var(--color-green) !important; }
+.section-card { background-color: var(--color-surface) !important; border: none !important; }
+.bio-text { color: rgba(255,255,255,0.70) !important; }
 
-/* Employer Home fixes */
-.emp-floating-plus-circle { background: var(--color-green) !important; box-shadow: none !important; border: none !important; }
+/* Override active states that were left white */
+.job-card:active { background-color: rgba(255, 255, 255, 0.15) !important; }
+.emp-ad-pill.seeking { background-color: rgba(255, 255, 255, 0.15) !important; color: #FFFFFF !important; font-weight: 500 !important; }
+.emp-ad-card.status-seeking { border-left: 3.5px solid #FFFFFF !important; }
+
+/* EMPLOYER SCREEN FIXES */
+.emp-cat-card.active { background-color: rgba(255,255,255,0.15) !important; border: 0.5px solid rgba(255,255,255,0.3) !important; color: #FFFFFF !important; }
+/* Removed override hack for tools buttons */
+
+/* PUSH BANNER (TOP NOTIFICATION) FIX */
+#push-banner { background-color: #2C2C2E !important; border: 0.5px solid rgba(255,255,255,0.2) !important; box-shadow: none !important; }
+.push-banner-title { color: #FFFFFF !important; }
+.push-banner-msg { color: rgba(255,255,255,0.7) !important; }
+.push-banner-icon { background: rgba(255,255,255,0.1) !important; border: 0.5px solid rgba(255,255,255,0.2) !important; color: #FFFFFF !important; }
+
+/* ==========================================
+   APPLE PREMIUM UI OVERHAUL (THE ULTIMATE FIX)
+   ========================================== */
+/* 1. Floating Plus Button (FAB) */
+.emp-floating-plus-circle { background: #1A241F !important; box-shadow: none !important; border: none !important; }
 .emp-floating-plus-circle svg { stroke: #FFFFFF !important; }
 .emp-floating-plus-wrapper { background: transparent !important; border: none !important; }
 
-.emp-home-header, .emp-form-header { background: var(--color-surface) !important; border-bottom: 0.5px solid var(--color-border) !important; border-radius: 0 !important; }
+/* 2. Employer Home Header & Modal Header */
+.emp-home-header, .emp-form-header { background: #FFFFFF !important; border-bottom: 0.5px solid var(--color-border) !important; border-radius: 0 !important; }
 
-.emp-cat-card { background: var(--color-surface) !important; border: 1px solid var(--color-border) !important; border-radius: 6px !important; box-shadow: none !important; color: var(--color-text-light) !important; }
-.emp-cat-card.active { background: var(--color-green) !important; border-color: var(--color-green) !important; color: #FFFFFF !important; }
-.emp-cat-card svg { stroke: var(--color-text-light) !important; opacity: 0.9 !important; }
+/* 3. Category Cards & Small Buttons */
+.emp-cat-card { background: rgba(255, 255, 255, 0.05) !important; border: none !important; border-radius: 6px !important; box-shadow: none !important; color: rgba(255, 255, 255, 0.7) !important; }
+.emp-cat-card.active { background: rgba(255, 255, 255, 0.15) !important; border: none !important; color: #FFFFFF !important; }
+.emp-cat-card svg { stroke: rgba(255, 255, 255, 0.7) !important; opacity: 0.9 !important; }
 .emp-cat-card.active svg { stroke: #FFFFFF !important; }
-.emp-ad-icon-circle { border: none !important; background: rgba(0, 0, 0, 0.05) !important; }
+.emp-ad-icon-circle { border: none !important; background: rgba(255, 255, 255, 0.1) !important; }
 
-input, textarea { background: var(--color-surface) !important; border: 1px solid var(--color-border) !important; color: var(--color-text) !important; border-radius: 6px !important; }
-input:focus, textarea:focus { background: var(--color-surface) !important; border-color: var(--color-green) !important; box-shadow: none !important; }
+/* 4. Inputs and Textareas */
+input, textarea { background: var(--color-surface) !important; border: 0.5px solid var(--color-border) !important; color: var(--color-text) !important; border-radius: 6px !important; }
+input:focus, textarea:focus { background: rgba(255, 255, 255, 0.15) !important; box-shadow: none !important; border-color: transparent !important; }
 
-.bottom-sheet, .apply-bottom-sheet, .confirm-sheet, #distance-sheet, .action-overlay, .settings-overlay, .overlay-success { background: var(--color-surface) !important; }
+/* Dropdowns & Bottom Sheets Refinements */
+.bottom-sheet, .apply-bottom-sheet, .confirm-sheet, #distance-sheet, .action-overlay, .settings-overlay, .overlay-success { background: #FFFFFF !important; }
 .overlay-backdrop, .apply-sheet-backdrop { background: rgba(0, 0, 0, 0.6) !important; }
-select { background: var(--color-surface) !important; border: 1px solid var(--color-border) !important; color: var(--color-text) !important; border-radius: 6px !important; }
+select { background: var(--color-surface) !important; border: 0.5px solid var(--color-border) !important; color: var(--color-text) !important; border-radius: 6px !important; transition: background 0.2s cubic-bezier(0.32, 0.72, 0, 1); }
+select:focus, select:active { background: transparent !important; outline: none !important; }
 
-/* Bottom buttons & Price */
-#emp-price-input { background: transparent !important; border: none !important; font-size: 44px !important; font-weight: 700 !important; color: var(--color-text) !important; }
-.emp-submit-btn, button[onclick^="adjustEmpPrice"], .job-apply-btn, button.primary { background: var(--color-green) !important; color: #FFFFFF !important; font-weight: 600 !important; border: none !important; box-shadow: none !important; }
-.emp-submit-btn:disabled, button:disabled { background: rgba(0,0,0,0.05) !important; color: var(--color-text-muted) !important; box-shadow: none !important; }
+/* 5. Bottom Navigation Bar */
+#bottom-nav, .bottom-nav { background-color: rgba(20, 20, 22, 0.8) !important;  -webkit- border-top: 0.5px solid rgba(255, 255, 255, 0.1) !important; border-left: none !important; border-right: none !important; border-bottom: none !important; box-shadow: none !important; }
 
+/* 6. Stats Cards & Category Pills */
+.emp-stat-card, div[style*="border: 1px solid var(--color-border)"] { border: none !important; background: rgba(255, 255, 255, 0.05) !important; }
+div[onclick^="setDateFilter"] { border: none !important; background: rgba(255, 255, 255, 0.05) !important; }
+div[onclick^="setDateFilter"] span { color: rgba(255, 255, 255, 0.7) !important; font-weight: 400 !important; }
+div[onclick^="setDateFilter"][style*="0.15)"] { background: rgba(255, 255, 255, 0.15) !important; }
+div[onclick^="setDateFilter"][style*="0.15)"] span { color: #FFFFFF !important; font-weight: 500 !important; }
+
+/* 7. Modal Specific Overrides (GPS, Price, Submit) */
+#emp-gps-btn { border: none !important; background: rgba(50, 215, 75, 0.1) !important; color: #32D74B !important; font-weight: 600 !important; }
+#emp-price-input { background: transparent !important; border: none !important; font-size: 44px !important; font-weight: 700 !important; color: #fff !important; }
+.emp-submit-btn { background: #1A241F !important; color: #FFFFFF !important; font-weight: 600 !important; border: none !important; box-shadow: none !important; }
+.emp-submit-btn:disabled { background: rgba(255, 255, 255, 0.1) !important; color: rgba(255, 255, 255, 0.4) !important; box-shadow: none !important; }
+button[onclick^="adjustEmpPrice"] { background: #1A241F !important; color: #FFFFFF !important; font-weight: 500 !important; }
+
+/* Empty states refinement (Apple style) */
 svg[stroke="#D1D5DB"] {
-    stroke: var(--color-border) !important;
+    stroke: rgba(255,255,255,0.15) !important; /* Very subtle empty state icon */
+}
+[id*="empty"] div {
+    color: var(--color-text-light) !important; /* Subtitle color */
+}
+[id*="empty"] div:first-of-type {
+    color: var(--color-text) !important; /* Title color */
 }
 
-/* Leaflet maps popup */
-.leaflet-control-zoom a { background-color: var(--color-surface) !important; color: var(--color-text) !important; border: 1px solid var(--color-border) !important; }
-.map-pin-label { background-color: var(--color-green) !important; border: 2px solid #FFFFFF !important; color: #FFFFFF !important; }
-.user-gps-dot { background-color: #FFFFFF !important; border: 3px solid var(--color-green) !important; }
+/* ==========================================
+   MAP SCREEN
+   ========================================== */
+.leaflet-layer, .leaflet-control-zoom-in, .leaflet-control-zoom-out, .leaflet-control-attribution {
+    filter: brightness(115%) contrast(95%); /* Slightly brighten the light_all tiles so roads are clearly visible */
+}
+.leaflet-control-zoom a { background-color: #1C1C1E !important; color: var(--color-text) !important; border: 1px solid var(--color-border) !important; }
+.map-pin-label { background-color: var(--color-green) !important; border: 2px solid #000000 !important; color: #000000 !important; }
+.user-gps-dot { background-color: #FFFFFF !important; border: 3px solid rgba(255,255,255,0.3) !important; box-shadow: none !important; }
 .map-floating-btn { background-color: var(--color-surface) !important; border: 1px solid var(--color-border) !important; color: var(--color-text) !important; }
-.leaflet-popup-content-wrapper, .leaflet-popup-tip { background-color: var(--color-surface) !important; color: var(--color-text) !important; border: 1px solid var(--color-border) !important; }
-.leaflet-popup-content { color: var(--color-text) !important; }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background-color: #1C1C1E !important; color: #FFFFFF !important; border: 1px solid rgba(84,84,88,0.35) !important; }
+.leaflet-popup-content { color: #FFFFFF !important; }
 
-/* Login screen adjustments */
-.auth-input { background-color: var(--color-surface) !important; border: 1px solid var(--color-border) !important; color: var(--color-text) !important; }
-.auth-input:focus { background-color: var(--color-surface) !important; border-color: var(--color-green) !important; }
-input[type="checkbox"] { border: 1px solid var(--color-border) !important; }
+/* ==========================================
+   LOGIN SCREEN
+   ========================================== */
+.auth-input { background-color: #1C1C1E !important; border: none !important; color: var(--color-text) !important; }
+.auth-input:focus { background-color: #2C2C2E !important; }
+.auth-input::placeholder { color: var(--color-text-muted) !important; }
+input[type="checkbox"] { border: 1px solid rgba(255,255,255,0.20) !important; }
 input[type="checkbox"]:checked { background-color: var(--color-green) !important; border-color: var(--color-green) !important; }
-.auth-bottom-link { color: var(--color-text-muted) !important; }
-.role-card { background-color: var(--color-surface) !important; border: 1px solid var(--color-border) !important; }
-.role-card.selected { border: 1.5px solid var(--color-green) !important; background-color: rgba(255, 87, 34, 0.05) !important; }
+.auth-bottom-link { color: rgba(255,255,255,0.60) !important; }
+.role-card { background-color: var(--color-surface) !important; border: none !important; }
+.role-card.selected { border: 1.5px solid var(--color-green) !important; background-color: rgba(170,255,0,0.06) !important; }
 
+/* Buttons */
+[style*="background: #16C45A"], [style*="background-color: #16C45A"], .login-btn, .register-btn, .job-apply-btn, button.primary {
+    background-color: var(--color-green) !important;
+    color: #000000 !important;
+    height: 56px !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    border: none !important;
+}
+.google-btn { background-color: #1C1C1E !important; border: none !important; color: var(--color-text) !important; }
+.apple-btn { background-color: #FFFFFF !important; color: #000000 !important; border: none !important; }
+.apple-btn svg { fill: #000000 !important; }
+
+/* Empty state */
+.empty-illustration { opacity: 0.15 !important; }
+.empty-title { color: var(--color-text) !important; }
+.empty-desc { color: var(--color-text-muted) !important; }
+.empty-state a { color: var(--color-text-muted) !important; }
+
+
+/* ==========================================
+   APPLE PREMIUM DARK THEME OVERRIDES
+   ========================================== */
+/* 1. Sync Categories and Dates */
+.category-btn, .date-btn, div[onclick^="setDateFilter"], .emp-cat-card, .filter-chip {
+    background: transparent !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    transition: background 0.2s cubic-bezier(0.32, 0.72, 0, 1), transform 0.15s !important;
+}
+.category-btn:hover, .date-btn:hover, div[onclick^="setDateFilter"]:hover, .emp-cat-card:hover {
+    background: #1A241F !important;
+}
+.category-btn.active, .date-btn.active, div[onclick^="setDateFilter"][style*="0.15"], div[onclick^="setDateFilter"][style*="white"], .emp-cat-card.active, .filter-chip.active {
+    background: rgba(255, 255, 255, 0.25) !important; /* Apple Segmented Control Selected */
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+/* Ensure JavaScript inline active checks are overridden by !important */
+div[onclick^="setDateFilter"] { background: transparent !important; color: #FFFFFF !important; }
+div[onclick^="setDateFilter"].active-date { background: rgba(255, 255, 255, 0.25) !important; color: #FFFFFF !important; font-weight: 600 !important; }
+
+/* 2. Search Bar */
+.search-bar, #search-overlay-input, .search-overlay-input-wrap {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-radius: 6px !important;
+    border: none !important;
+}
+.search-bar:focus-within, #search-overlay-input:focus {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* 7. Animations */
+* {
+    /* Force new bezier curve on transitions */
+    transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1) !important;
+}
+
+/* 11. Menu item dividers */
+.custom-sheet-option {
+    border-bottom: 0.5px solid rgba(255,255,255,0.08) !important;
+}
+.custom-sheet-option:last-child {
+    border-bottom: none !important;
+}
+
+/* 16. Primary Buttons Glow */
+[style*="background: #16C45A"], [style*="background-color: #16C45A"], .login-btn, .register-btn, .job-apply-btn, button.primary, .emp-submit-btn {
+    background: #1A241F !important;
+    color: #000000 !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+.emp-submit-btn:disabled {
+    background: rgba(255,255,255,0.1) !important;
+    box-shadow: none !important;
+    color: rgba(255,255,255,0.3) !important;
+}
+
+/* 17. Apple Toggle */
+#urgent-track {
+    background: rgba(255,255,255,0.15) !important;
+}
+input[type="checkbox"]:checked ~ #urgent-track {
+    background: #32D74B !important;
+}
+
+/* 18. Slider Thumb */
+input[type="range"]::-webkit-slider-thumb {
+    background: #FFFFFF !important;
+    box-shadow: none !important;
+    border: 0.5px solid rgba(0,0,0,0.1) !important;
+}
+input[type="range"] {
+    background: rgba(255,255,255,0.15);
+    /* Track active part handled by JS or CSS custom */
+}
+
+/* 22. Badge Apple Red */
+.message-badge, .nav-badge, [id*="unread"] {
+    background-color: #FF3B30 !important;
+    color: #FFFFFF !important;
+    border: 2px solid #111111 !important;
+    font-weight: 700 !important;
+}
+
+/* 26. Map Floating Button */
+.map-floating-btn, #emp-gps-btn {
+    background: rgba(28, 28, 30, 0.85) !important;
+    
+    -webkit-
+    border: 0.5px solid rgba(255,255,255,0.15) !important;
+    color: #32D74B !important;
+    box-shadow: none !important;
+}
+
+/* 27. Avatar gradients */
+.default-avatar, #profile-avatar-circle {
+    background: #1A241F !important;
+    color: #FFF !important;
+    border: none !important;
+}
+
+/* 35. Chat Bubbles */
+.chat-bubble-sent {
+    background-color: #0A84FF !important;
+    color: #FFF !important;
+    border-bottom-right-radius: 4px !important; /* Apple tail effect */
+}
+.chat-bubble-received {
+    background-color: #2C2C2E !important;
+    color: #FFF !important;
+    border-bottom-left-radius: 4px !important;
+}
+
+/* Fix missing Safe Area */
+.chat-input-area {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Extra premium touch */
+.job-card {
+    background: #1C1C1E !important;
+    border: 0.5px solid rgba(255,255,255,0.05) !important;
+}
+
+/* ==========================================
+   PERFECT PROFILE & ROLE SWITCHER OVERRIDES
+   ========================================== */
+/* Fix the Profile Hero background so it blends with the black body */
+#app-profile-screen > div:first-child {
+    background-color: transparent !important; 
+}
+/* Fix the Avatar circle */
+#profile-avatar-circle {
+    background: #1A241F !important;
+    border: 2px solid var(--color-border) !important;
+    color: #FFFFFF !important;
+}
+/* Fix all the generated white cards in Profile to be Dark Grey */
+#app-profile-screen div[style*="background-color: white"],
+#app-profile-screen div[style*="background: white"] {
+    background-color: var(--color-surface) !important;
+    background: var(--color-surface) !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+/* Dividers inside cards */
+#app-profile-screen div[style*="height: 0.5px"][style*="background-color: var(--color-bg)"] {
+    background-color: var(--color-border) !important;
+}
+/* The edit badges */
+#app-profile-screen div[style*="bottom: 0; right: 0;"] {
+    background-color: var(--color-surface) !important;
+    border-color: var(--color-bg) !important;
+    color: var(--color-text) !important;
+}
+/* Logout button */
+#app-profile-screen button[style*="background-color: white"] {
+    background-color: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+    color: #EF4444 !important;
+}
+
+/* ==========================================
+   PERFECT ROLE SWITCHER
+   ========================================== */
+.role-switcher-container {
+    background-color: #000000 !important;
+    border: 0.5px solid var(--color-border) !important;
+    display: flex !important;
+    padding: 4px !important;
+    border-radius: 6px !important;
+    min-height: 40px !important; /* Force a minimum height so it doesn't collapse */
+}
+.role-btn {
+    color: var(--color-text-light) !important;
+    background: transparent !important;
+    flex: 1 !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    border: none !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    height: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+}
+.role-btn.active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+
+/* ==========================================
+   ULTIMATE SHARP TYPOGRAPHY OVERRIDE
+   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+}
+
+/* Reset all font weights to a sharper base (400 instead of blurry 300) */
+body, div, span, p, a, input, button, textarea, select {
+    font-weight: 400 !important;
+    letter-spacing: -0.01em !important;
+}
+
+/* Medium Text for important UI elements */
+strong, b, .font-semibold, .font-bold, .job-price, .celeb-amount,
+.role-btn, .category-btn, .emp-cat-card, .filter-pill, .sort-pill, .map-chip,
+.job-title, .profile-name, .stat-value, button, .nav-item span {
+    font-weight: 500 !important;
+}
+
+/* Bold Text for Headers and Primary Actions */
+.home-header, .header-midnight, h1, h2, h3, .msg-midnight-header, .login-btn, .register-btn, .job-apply-btn, .emp-submit-btn,
+.push-banner-title, .toast-success {
+    font-weight: 600 !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* Increase contrast for all muted/secondary text so it is SHARP and READABLE */
+.job-meta, .job-meta-item, .chat-preview, .bio-text, .section-label, .stat-label, .profile-location, .welcome-text,
+.empty-desc, .role-description-text, [style*="color: var(--color-text-muted)"], [style*="color: rgba(255,255,255,0.3)"] {
+    color: #86868B !important;
+}
+
+/* Specific fix for text variables to ensure sharp contrast */
+:root {
+    --color-text-muted: #86868B;
+    --color-text-light: #3A3A3C;
+    --color-text: #1D1D1F;
+}
+
+/* ==========================================
+   100% APPLE PREMIUM ULTIMATE REDESIGN
+   ========================================== */
+
+/* A. FORMOK ÉS BEMENETI MEZŐK */
+.auth-input, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select {
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 6px !important;
+    padding: 16px 20px !important;
+    color: var(--color-text) !important;
+    font-size: 16px !important; /* Prevents iOS zooming and looks premium */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+.auth-input:focus, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus, textarea:focus, select:focus {
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-text) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+.auth-input::placeholder, input::placeholder, textarea::placeholder {
+    color: var(--color-text-muted) !important;
+    opacity: 0.7 !important;
+}
+.password-toggle svg {
+    stroke-width: 1.5px !important;
+    stroke: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* B. GOMBOK (PRIMARY & SECONDARY) */
+[style*="background: #16C45A"], [style*="background-color: #16C45A"], .login-btn, .register-btn, .job-apply-btn, button.primary, .emp-submit-btn {
+    background: #1A241F !important;
+    color: #000000 !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+    border-radius: 6px !important;
+    height: 56px !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.15s !important;
+}
+[style*="background: #16C45A"]:active, [style*="background-color: #16C45A"]:active, .login-btn:active, .register-btn:active, .job-apply-btn:active, button.primary:active, .emp-submit-btn:active {
+    transform: scale(0.97) !important;
+    box-shadow: none !important;
+}
+.emp-submit-btn:disabled, button:disabled {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.3) !important;
+    box-shadow: none !important;
+}
+.google-btn, button[onclick="loginAsGuest()"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    height: 56px !important;
+}
+.google-btn:active, button[onclick="loginAsGuest()"]:active {
+    background: rgba(255, 255, 255, 0.15) !important;
+    transform: scale(0.97) !important;
+}
+
+/* C. TIPOGRÁFIA ÉS CÍMSOROK */
+.auth-title, .home-header, [style*="font-size: 28px"], [style*="font-size: 24px"], [style*="font-size: 32px"] {
+    font-size: 34px !important;
+    font-weight: 700 !important;
+    letter-spacing: -1px !important;
+    line-height: 1.2 !important;
+}
+.brand-logo {
+    font-weight: 700 !important;
+    letter-spacing: -1px !important;
+}
+
+.auth-subtitle, .welcome-text {
+    font-size: 17px !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-weight: 400 !important;
+}
 #app-login-screen .terms-text, #app-login-screen .auth-bottom-link, #app-login-screen [style*="font-size: 11px"], #app-login-screen [style*="font-size: 12px"] {
     font-size: 13px !important;
-    color: var(--color-text-muted) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
     line-height: 1.4 !important;
 }
+.terms-text a, .auth-bottom-link a {
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+    text-decoration: underline !important;
+}
+
+/* D. KÁRTYÁK ÉS KONTÉNEREK */
+.emp-stat-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+.emp-stat-card.active {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: none !important;
+}
+.emp-stat-card.active .stat-value, .emp-stat-card.active .stat-label {
+    color: #FFFFFF !important;
+}
+.job-card, .emp-ad-item {
+    background: rgba(28, 28, 30, 0.6) !important;
+    
+    -webkit-
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 6px !important;
+    padding: 20px !important;
+    box-shadow: none !important;
+}
+.empty-illustration {
+    opacity: 0.1 !important;
+    filter: grayscale(100%) !important;
+}
+#bottom-nav, .bottom-nav {
+    border-top: 0.5px solid rgba(255, 255, 255, 0.1) !important;
+}
+.emp-floating-plus-circle {
+    background: #1A241F !important;
+    box-shadow: none !important;
+}
+
+/* E. DÁTUM ÉS SZŰRŐVÁLASZTÓK */
+.category-btn, .date-btn, div[onclick^="setDateFilter"], .emp-cat-card, .filter-chip, .search-map-filter-btn {
+    background: transparent !important;
+    border: none !important;
+    color: var(--color-text-muted) !important;
+    border-radius: 6px !important;
+    min-height: 38px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.category-btn.active, .date-btn.active, div[onclick^="setDateFilter"][style*="0.15"], .emp-cat-card.active, .filter-chip.active, .search-map-filter-btn.active {
+    background: transparent !important;
+    color: var(--color-text) !important;
+    border-bottom: 1px solid var(--color-text) !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: none !important;
+}
+.category-btn.active svg, .emp-cat-card.active svg {
+    stroke: #FFFFFF !important;
+}
+.search-bar, #search-overlay-input, .search-overlay-input-wrap {
+    background: #1A241F !important;
+    border: none !important;
+    border-radius: 6px !important;
+}
+.search-bar svg {
+    stroke: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Kártya Orange/Primary szegélyének eltávolítása (Glow fix) */
+div[style*="border-color: var(--color-primary)"], div[style*="border: 1px solid var(--color-primary)"], div[style*="border: 2px solid var(--color-primary)"],
+div[style*="border-color: #FFAA00"], div[style*="border: 1px solid #FFAA00"] {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    box-shadow: none !important;
+}
+div[style*="color: var(--color-primary)"], div[style*="color: #FFAA00"] {
+    color: #FFFFFF !important;
+}
+
+
+
+.search-bar input, .search-overlay-input-wrap input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0 !important;
+}
+.search-bar { padding-left: 16px !important; }
+
+
+#bottom-nav, .bottom-nav {
+    width: 92% !important;
+    left: 4% !important;
+    bottom: 24px !important;
+    border-radius: 34px !important;
+    
+    -webkit-
+    background: rgba(28, 28, 30, 0.85) !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+    padding-bottom: 0 !important;
+    height: 64px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 8px !important;
+}
+.nav-item {
+    height: 100% !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+    border-radius: 6px !important;
+}
+/* Also fix safe-area for the app container since the nav is floating */
+.app-container {
+    padding-bottom: 100px !important;
+}
+
+
+
+/* UI TWEAKS BATCH 2 */
+/* 1. Fix double search bar */
+#home-search-display, #search-overlay-input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0 !important;
+}
+
+/* 2. Fix bottom nav centering */
+#bottom-nav, .bottom-nav {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 92% !important;
+    max-width: 400px !important; /* Keep it nice on wider screens */
+    margin: 0 auto !important;
+}
+
+/* 3. Fix Közeli munkák massive text */
+h2[style*="font-size: 18px"], .search-section-label {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+}
+
+
+
+/* UI TWEAKS BATCH 3 - FONT OPTIMIZATION & NEON GREEN LOGO */
+
+/* 1. Neon Green Logo */
+.brand-logo span, .logo span {
+    color: #c0fc2a !important; /* Bright neon lime green */
+    text-shadow: 0 0 10px rgba(204, 255, 0, 0.4) !important; /* Slight neon glow */
+}
+
+/* 2. Absolute Font Optimization (Max 1 font family: Inter) */
+* {
+    font-family: 'Inter', sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: geometricPrecision !important; /* Sharpest possible rendering */
+}
+
+/* Ensure headings aren't overly bulky on Windows */
+h1, h2, h3, .home-header, .auth-title {
+    font-weight: 600 !important;
+    letter-spacing: -0.5px !important;
+}
+
+/* Ensure body text is sharp and readable */
+body, div, span, p, a, input, button, textarea, select {
+    letter-spacing: 0 !important;
+}
+
+
+
+/* UI TWEAKS BATCH 4 - BACKGROUND BRIGHTNESS */
+body, .app-container, #phone-app {
+    background-color: #0E0E10 !important; /* Slightly lighter than pure black */
+}
+
+/* Lighten job cards / ads */
+.job-card, .emp-ad-item {
+    background: rgba(45, 45, 48, 0.8) !important; /* Lighter grey for cards */
+    border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Make sure the bottom capsule nav stands out against the lighter background */
+#bottom-nav, .bottom-nav {
+    background: rgba(35, 35, 38, 0.9) !important;
+}
+
+
+
+/* UI TWEAKS BATCH 5 - ELEGANT HEADER BACKGROUND */
+.header-midnight {
+    background: #1A241F !important;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: none !important;
+    border-bottom-left-radius: 36px !important;
+    border-bottom-right-radius: 36px !important;
+    padding-bottom: 24px !important;
+    padding-top: max(24px, env(safe-area-inset-top)) !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* Ensure the background stretches fully left and right if it was constrained */
+#phone-app .header-midnight {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Slight adjustment to search bar to match the new grey header */
+.header-midnight .search-bar {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    box-shadow: none !important;
+}
+
+
+
+/* UI TWEAKS BATCH 6 - MESSAGES SCREEN HEADER */
+.msg-midnight-header {
+    background: #1A241F !important;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: none !important;
+    border-bottom-left-radius: 36px !important;
+    border-bottom-right-radius: 36px !important;
+    padding-bottom: 24px !important;
+    padding-top: max(24px, env(safe-area-inset-top)) !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* Ensure the logo inside uses the neon green! */
+.msg-midnight-header .brand-logo span {
+    color: #c0fc2a !important;
+    text-shadow: 0 0 10px rgba(204, 255, 0, 0.4) !important;
+}
+
+
+
+/* UI TWEAKS BATCH 7 - FIX WHITE CARDS AND SLIDER BUTTON */
+
+/* Fix radius slider confirmation button */
+.distance-confirm-btn {
+    background: #1A241F !important;
+    color: #000000 !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+    height: 56px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Fix stark white category cards in bottom sheets */
+.emp-cat-card {
+    background: rgba(45, 45, 48, 0.8) !important;
+    color: #FFFFFF !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+}
+.emp-cat-card svg {
+    stroke: #FFFFFF !important;
+}
+
+/* Ensure active category cards use the neon green style */
+.emp-cat-card.active {
+    background: #FF5722 !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.emp-cat-card.active svg {
+    stroke: #000000 !important;
+}
+
+
+
+/* UI TWEAKS BATCH 8 - FIX JP CAT CARDS (JOB PICKER SHEET) */
+.jp-cat-card {
+    background: rgba(45, 45, 48, 0.8) !important;
+    color: #FFFFFF !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+}
+.jp-cat-card:active {
+    background: #FF5722 !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: scale(0.96) !important;
+}
+
+
+
+/* 1. Glassy Input Fields (kis keretek) */
+.auth-input-container, .floating-group input, .input-container, .login-input, .auth-input-field {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+    
+    -webkit-
+    box-shadow: none !important;
+    border-radius: 6px !important;
+    color: #FFFFFF !important;
+}
+
+/* Input focus state */
+.auth-input-container:focus-within, .floating-group input:focus, .login-input:focus, .auth-input-field:focus {
+    background: transparent !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: none !important;
+}
+
+/* 2. Glassy Bottom Buttons (Google, Apple, Csak körülnézek) */
+#google-login-btn, #apple-login-btn, .google-btn, .apple-btn, button[onclick*="app-login-screen"], button[onclick*="loginAsGuest"] {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+    
+    -webkit-
+    color: #FFFFFF !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+}
+
+#google-login-btn:active, #apple-login-btn:active, .google-btn:active, .apple-btn:active, button[onclick*="app-login-screen"]:active {
+    background: transparent !important;
+    transform: scale(0.97) !important;
+}
+
+/* 3. Glassy Main Green Button (Elegant, not too much) */
+.login-btn, .register-btn, button[onclick*="createAccount"], button[onclick*="loginUser"], button[onclick*="nextStep"] {
+    background: linear-gradient(180deg, rgba(50, 215, 75, 0.2) 0%, rgba(40, 167, 69, 0.2) 100%) !important;
+    border: 0.5px solid rgba(50, 215, 75, 0.5) !important;
+    
+    -webkit-
+    color: #FFFFFF !important;
+    text-shadow: 0 0 10px rgba(50, 215, 75, 0.5) !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+}
+
+.login-btn:active, .register-btn:active, button[onclick*="createAccount"]:active, button[onclick*="loginUser"]:active, button[onclick*="nextStep"]:active {
+    background: linear-gradient(180deg, rgba(50, 215, 75, 0.3) 0%, rgba(40, 167, 69, 0.3) 100%) !important;
+    transform: scale(0.97) !important;
+}
+
+
+
+/* 1. Background Gradient (Dark grey with neon green glow at top) */
+#app-login-screen {
+    background: radial-gradient(120% 100% at 50% 0%, rgba(204, 255, 0, 0.18) 0%, rgba(204, 255, 0, 0.05) 25%, #121214 70%, #0E0E10 100%) !important;
+}
+
+/* 2. Left align titles & subtitles */
+#app-login-screen h2#login-mode-subtitle {
+    text-align: left !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    letter-spacing: -1px !important;
+    margin-bottom: 8px !important;
+}
+#app-login-screen > div[style*="text-align:center"]:nth-child(2) {
+    text-align: left !important;
+}
+#app-login-screen div[style*="font-size:18px"] {
+    text-align: left !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.5px !important;
+}
+#app-login-screen div[style*="font-size:13px"] {
+    text-align: left !important;
+    font-size: 15px !important;
+    margin-top: 8px !important;
+    margin-bottom: 32px !important;
+    color: rgba(255,255,255,0.6) !important;
+    line-height: 1.5 !important;
+}
+
+/* 3. Pill shaped glassy inputs */
+.auth-input-container, .floating-group input, .input-container, .login-input, .auth-input-field {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    
+    -webkit-
+    border-radius: 6px !important; /* Pill shape! */
+    height: 56px !important;
+    padding-left: 20px !important;
+    color: #FFFFFF !important;
+    font-size: 15px !important;
+    margin-bottom: 16px !important;
+}
+
+/* Focus state */
+.auth-input-container:focus-within, .floating-group input:focus, .login-input:focus, .auth-input-field:focus {
+    background: transparent !important;
+    border: 0.5px solid #FF5722 !important; /* Neon green border on focus */
+    box-shadow: none !important;
+}
+
+/* 4. Main Submit Button (Neon Green Gradient) */
+.login-btn, .register-btn, button[onclick*="createAccount"], button[onclick*="loginUser"], button[onclick*="nextStep"], button[onclick*="submitStep"] {
+    background: #1A241F !important;
+    border: none !important;
+    border-radius: 6px !important; /* Pill shape! */
+    height: 56px !important;
+    color: #000000 !important; /* Black text on neon green */
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    position: relative !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-shadow: none !important;
+    margin-top: 16px !important;
+    text-transform: none !important;
+}
+
+/* Add the '>>' icon to the right of the button */
+.login-btn::after, .register-btn::after, button[onclick*="submitStep"]::after {
+    content: ">>";
+    position: absolute !important;
+    right: 24px !important;
+    font-weight: 800 !important;
+    font-size: 18px !important;
+    letter-spacing: -2px !important;
+    opacity: 0.4 !important;
+}
+
+/* Left circle arrow */
+.login-btn::before, .register-btn::before, button[onclick*="submitStep"]::before {
+    content: "→";
+    position: absolute !important;
+    left: 8px !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: rgba(255,255,255,0.3) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: bold !important;
+    font-size: 18px !important;
+}
+
+/* Adjust button text to not overlap with icons */
+.login-btn, .register-btn, button[onclick*="submitStep"] {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
+/* 5. Apple / Google Buttons - make them pill shaped too */
+#google-login-btn, #apple-login-btn, .google-btn, .apple-btn, button[onclick*="app-login-screen"], button[onclick*="loginAsGuest"] {
+    border-radius: 6px !important;
+    height: 56px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+
+
+
+/* UI TWEAKS BATCH 11 - AUTH SCREEN FIXES (NO DOUBLE BORDERS, NO ARROWS) */
+
+/* 1. Background Gradient (Dark grey with neon green glow at top) */
+#app-login-screen {
+    background: radial-gradient(120% 100% at 50% 0%, rgba(204, 255, 0, 0.18) 0%, rgba(204, 255, 0, 0.05) 25%, #121214 70%, #0E0E10 100%) !important;
+}
+
+/* 2. Left align titles & subtitles */
+#app-login-screen h2#login-mode-subtitle {
+    text-align: left !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    letter-spacing: -1px !important;
+    margin-bottom: 8px !important;
+}
+#app-login-screen > div[style*="text-align:center"]:nth-child(2) {
+    text-align: left !important;
+}
+#app-login-screen div[style*="font-size:18px"] {
+    text-align: left !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.5px !important;
+}
+#app-login-screen div[style*="font-size:13px"] {
+    text-align: left !important;
+    font-size: 15px !important;
+    margin-top: 8px !important;
+    margin-bottom: 32px !important;
+    color: rgba(255,255,255,0.6) !important;
+    line-height: 1.5 !important;
+}
+
+/* 3. Container fixes - ensure containers don't have double backgrounds */
+.auth-input-container {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    
+    -webkit-
+    margin-bottom: 16px !important; /* Move margin to container */
+}
+
+/* 4. Pill shaped glassy inputs - TARGET ONLY INPUTS */
+input.auth-input-field, input.login-input, input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    
+    -webkit-
+    border-radius: 6px !important; /* Pill shape! */
+    height: 56px !important;
+    padding-left: 20px !important;
+    color: #FFFFFF !important;
+    font-size: 15px !important;
+    margin-bottom: 0 !important; /* Margin handled by container */
+    box-sizing: border-box !important;
+    width: 100% !important;
+}
+
+/* Focus state */
+input.auth-input-field:focus, input.login-input:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focus, input[type="tel"]:focus {
+    background: transparent !important;
+    border: 0.5px solid #FF5722 !important; /* Neon green border on focus */
+    box-shadow: none !important;
+}
+
+/* 5. Main Submit Button (Neon Green Gradient, NO ARROWS) */
+.login-btn, .register-btn, button[onclick*="createAccount"], button[onclick*="loginUser"], button[onclick*="nextStep"], button[onclick*="submitStep"] {
+    background: #1A241F !important;
+    border: none !important;
+    border-radius: 6px !important; /* Pill shape! */
+    height: 56px !important;
+    color: #000000 !important; /* Black text on neon green */
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    position: relative !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-shadow: none !important;
+    margin-top: 16px !important;
+    text-transform: none !important;
+    padding: 0 !important;
+}
+
+/* Remove old arrow content */
+.login-btn::after, .register-btn::after, button[onclick*="submitStep"]::after { content: none !important; display: none !important; }
+.login-btn::before, .register-btn::before, button[onclick*="submitStep"]::before { content: none !important; display: none !important; }
+
+/* 6. Apple / Google Buttons - pill shaped */
+#google-login-btn, #apple-login-btn, .google-btn, .apple-btn, button[onclick*="app-login-screen"], button[onclick*="loginAsGuest"] {
+    border-radius: 6px !important;
+    height: 56px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+
+
+
+/* UI TWEAKS BATCH 12 - TITLE COMPACTNESS AND DISABLED BUTTON STATE */
+
+/* 1. Make the title compact and thinner */
+#app-login-screen h2#login-mode-subtitle {
+    font-size: 24px !important;
+    font-weight: 300 !important; /* Thinner */
+    letter-spacing: 0px !important;
+}
+
+/* 2. Make the disabled main button completely grey */
+.login-btn:disabled, .register-btn:disabled, button[onclick*="submitStep"]:disabled, button[onclick*="createAccount"]:disabled, button[onclick*="loginUser"]:disabled, button[onclick*="nextStep"]:disabled {
+    background: #2A2A2C !important; /* Completely dark grey */
+    color: #666666 !important; /* Grey text */
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+}
+
+
+
+/* UI TWEAKS BATCH 13 - FINAL FIXES (DISABLED BUTTON TEXT SHADOW, SEARCH BAR) */
+
+/* 1. Remove text-shadow from disabled auth button so it's completely grey */
+.login-btn:disabled, .register-btn:disabled, button[onclick*="submitStep"]:disabled, button[onclick*="createAccount"]:disabled, button[onclick*="loginUser"]:disabled, button[onclick*="nextStep"]:disabled {
+    text-shadow: none !important;
+}
+
+/* 2. Fix the Search Bar double-box overlap issue caused by global text input styling */
+.search-bar input, .search-overlay-input-wrap input, #home-search-display, #worker-search-input, #text-search-input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    
+    -webkit-
+    height: 100% !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding-left: 12px !important;
+}
+
+
+
+/* UI TWEAKS BATCH 14 - FIX DOUBLE FOCUS BORDER */
+
+/* Explicitly disable the old focus-within styles on the container to prevent double borders */
+.auth-input-container:focus-within {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    
+    -webkit-
+}
+
+/* Ensure only the inner input field gets the neon green focus border */
+input.auth-input-field:focus, input.login-input:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focus, input[type="tel"]:focus {
+    background: transparent !important;
+    border: 0.5px solid #FF5722 !important; /* Neon green border on focus */
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+
+
+/* UI TWEAKS BATCH 15 - FIX SAVE BUTTON & REGISTRATION BUTTON VISIBILITY */
+
+
+
+/* 2. Fix the duplicate registration button issue caused by 'display: flex !important' overriding JS */
+.login-btn[style*="display: none"], 
+#app-auth-btn[style*="display: none"], 
+.register-btn[style*="display: none"] {
+    display: none !important;
+}
+
 </style>
 
 <style>
@@ -3630,13 +4683,13 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 <style id="light-gray-orange-glow">
     /* 1. Sötét Mód letiltása & 2. Inkább szürkés háttér */
     :root, html, body, #app-container, .apple-premium-light-mode {
-        --color-bg: #F8F9FB;
-        --color-surface: #FFFFFF;
-        --color-text: #1C1C1E;
-        --color-text-muted: #636366;
-        --color-border: rgba(0, 0, 0, 0.08);
-        --color-green: #FF5722;
-        background-color: #F8F9FB !important;
+        --color-bg: #DCDCE0 !important; /* Inkább szürkés háttér */
+        --color-surface: rgba(255, 255, 255, 0.6) !important;
+        --color-text: #1C1C1E !important; /* Sötét szöveg */
+        --color-text-muted: #636366 !important;
+        --color-border: rgba(0, 0, 0, 0.1) !important;
+        --color-green: #FF5722 !important; /* Láva narancs kiemelések */
+        background-color: #DCDCE0 !important;
         color: #1C1C1E !important;
     }
 
@@ -3827,10 +4880,6 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     /* Brutal override for Profile texts */
     #app-profile-screen * {
         color: #1C1C1E !important;
-    }
-    #app-profile-screen .auth-role-card.active,
-    #app-profile-screen .auth-role-card.active * {
-        color: #FFFFFF !important;
     }
     #app-profile-screen span[style*="color: #FFF"],
     #app-profile-screen span[style*="color: #FFFFFF"],
@@ -4171,16 +5220,9 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 </style>
 
 <style id="map-invert-fix">
-    /* Dark map: let CartoDB dark tile layer handle the dark look.
-       Only ensure container bg is dark so no white flicker. */
-    .leaflet-container {
-        background-color: #121214 !important;
-    }
-    
-    /* Make the dark map lighter (graphite grey) without adding green/brown colors */
     .leaflet-layer {
-        filter: brightness(2.2) contrast(0.85) !important;
-        -webkit-filter: brightness(2.2) contrast(0.85) !important;
+        filter: brightness(1.5) contrast(1.05) !important;
+        -webkit-filter: brightness(1.5) contrast(1.05) !important;
     }
 </style>
 
@@ -4204,12 +5246,6 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     .brand-logo span, .logo span, .brand-logo + span, [class*="logo"] span {
         color: #c0fc2a !important;
     }
-
-    /* Fix search overlay in dark mode */
-    #search-overlay, .search-overlay-header { background-color: var(--color-bg) !important; }
-    .search-overlay-input-wrap { background-color: var(--color-surface) !important; }
-    #search-overlay-input { color: var(--color-text) !important; }
-    .search-overlay-input-wrap svg { stroke: var(--color-text-muted) !important; }
 
     /* Dark mode active buttons and categories */
     .filter-pill, .employer-pill, .category-btn, .sort-pill, .msg-filter-pill, .map-chip {
@@ -4282,7 +5318,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     }
 
     /* Action buttons: Force Lava Orange background and white text */
-    .location-gps-btn, .settings-save-btn, #manual-city-search-btn, .distance-confirm-btn, .apply-btn-main, .emp-submit-btn, .job-apply-btn {
+    .location-gps-btn, .settings-save-btn, #manual-city-search-btn, .distance-confirm-btn {
         background: #FF5722 !important;
         color: #FFFFFF !important;
         box-shadow: none !important;
@@ -4309,108 +5345,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     /* White GPS location indicator dot on Map in dark mode */
     .user-gps-dot {
         background: #FFFFFF !important;
-        border: 2.5px solid rgba(255, 255, 255, 0.3) !important;
-        box-shadow: 0 0 12px rgba(255, 255, 255, 0.6) !important;
-    }
-
-    /* Fix Employer Category Cards */
-    .emp-cat-card { background: var(--color-surface) !important; border: 1px solid var(--color-border) !important; color: var(--color-text-light) !important; }
-    .emp-cat-card.active { background: #FF5722 !important; border-color: #FF5722 !important; color: #FFFFFF !important; }
-    .emp-cat-card svg { stroke: var(--color-text-light) !important; opacity: 0.9 !important; }
-    .emp-cat-card.active svg { stroke: #FFFFFF !important; }
-
-    /* Fix Floating Plus Button */
-    .emp-floating-plus-circle { background: #FF5722 !important; box-shadow: none !important; border: none !important; }
-    .emp-floating-plus-circle svg { stroke: #FFFFFF !important; }
-    .emp-floating-plus-wrapper { background: transparent !important; border: none !important; }
-
-    /* ===== TOAST & PUSH NOTIFICATION - DARK MODE FIX ===== */
-    /* Toast (settings saved, apply sent, etc.) */
-    .toast-success, .toast {
-        background-color: #1e1e22 !important;
-        color: #F8FAFC !important;
-        border: 0.5px solid #2a2a30 !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
-    }
-    .toast-success svg { stroke: #FF5722 !important; }
-
-    /* Push notification banner */
-    #push-banner {
-        background-color: #1e1e22 !important;
-        border: 0.5px solid #2a2a30 !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
-    }
-    .push-banner-title { color: #F8FAFC !important; }
-    .push-banner-msg { color: rgba(248, 250, 252, 0.65) !important; }
-    .push-banner-close { color: rgba(248, 250, 252, 0.4) !important; }
-    .push-banner-icon { background: #FF5722 !important; }
-
-    /* ===== CHAT CONVERSATION VIEW - DARK MODE ===== */
-    .msg-midnight-header { background-color: #1e1e22 !important; }
-    .msg-midnight-header * { color: #F8FAFC !important; }
-    #employer-action-overlay .grab-handle { background: #2a2a30 !important; }
-
-    /* Incoming chat bubble border in dark mode */
-    .chat-bubble.incoming {
-        border: 1px solid #2a2a30 !important;
-    }
-
-    /* Chat input area */
-    .chat-input-wrap, #chat-input-area, [id*="chat-input"] {
-        background: #1e1e22 !important;
-        border-top: 0.5px solid #2a2a30 !important;
-    }
-    .chat-text-input, [id*="msg-input"], [id*="message-input"] {
-        background: #121214 !important;
-        color: #F8FAFC !important;
-        border: 1px solid #2a2a30 !important;
-    }
-    .chat-text-input::placeholder { color: rgba(248,250,252,0.35) !important; }
-    .chat-send-btn { background: #FF5722 !important; }
-    .chat-send-btn svg { stroke: #FFFFFF !important; }
-
-    /* ===== DISTANCE PICKER SHEET - DARK MODE ===== */
-    #distance-sheet .sheet-title, #distance-sheet * { color: var(--color-text) !important; }
-
-    /* ===== SEARCH OVERLAY - DARK MODE ===== */
-    #search-overlay { background: #121214 !important; }
-    #search-overlay-input { background: #1e1e22 !important; color: #F8FAFC !important; }
-    .search-result-item { border-bottom: 0.5px solid #2a2a30 !important; }
-    .search-result-item:hover { background: #1e1e22 !important; }
-
-    /* ===== WORKER JOB FILTER DISPLAY - DARK MODE ===== */
-    #worker-job-filter-display {
-        background-color: #1e1e22 !important;
-        border: 1px solid #2a2a30 !important;
-        color: #F8FAFC !important;
-    }
-
-    /* ===== MAP PRICE PIN LABEL - readable in dark ===== */
-    .map-pin-label {
-        background: #FF5722 !important;
-        color: #FFFFFF !important;
-        border: 2px solid #1e1e22 !important;
-    }
-
-    /* ===== BOTTOM NAV - DARK MODE ===== */
-    #bottom-nav, .bottom-nav {
-        background-color: rgba(18, 18, 20, 0.95) !important;
-        border: 0.5px solid #2a2a30 !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
-    }
-    .nav-item:not(.active) { color: #636366 !important; }
-    .nav-item:not(.active) svg { stroke: #636366 !important; }
-    .nav-item.active { color: #FF5722 !important; }
-    .nav-item.active svg { stroke: #FF5722 !important; }
-
-    /* ===== LOGOUT BUTTON - DARK MODE FIX ===== */
-    .emp-ad-icon-circle { background: rgba(255,255,255,0.06) !important; border: none !important; }
-
-    /* ===== SKILL TAGS ON PROFILE - DARK MODE ===== */
-    .skill-tag, [class*="skill-badge"] {
-        background: rgba(255, 87, 34, 0.12) !important;
-        color: #FF5722 !important;
-        border: 1px solid rgba(255, 87, 34, 0.25) !important;
+        border: 2.5px solid rgba(255, 255, 255, 0.4) !important;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.4) !important;
     }
 </style>
 
@@ -4494,7 +5430,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
     /* 1. Make the modal sheets themselves completely solid (not transparent) */
     #distance-sheet, #location-sheet {
-        background: var(--color-surface) !important;
+        background: #FFFFFF !important;
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
     }
@@ -4704,59 +5640,21 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     const TRANSLATIONS = {
         hu: {}, // Hungarian is default, no translation needed
         en: {
+
+            "Lépj be a fiókodba": "Log in to your account",
+            "Vállalj munkát a közeledben": "Find jobs near you",
+            "Találj egynapos munkákat percek alatt, bárhol Magyarországon.": "Find one-day jobs in minutes, anywhere in Hungary.",
+            "Elfogadom az ÁSZF-et és az Adatkezelési Tájékoztatót.": "I accept the Terms and Privacy Policy.",
+            "Email címed": "Your email address",
+            "Rendben": "OK",
+            "Hozz létre fiókot": "Create your account",
+            "Hozd létre a fiókodat": "Create your account",
+
             // Navigation
             "Főlap": "Home", "Térkép": "Map", "Üzenetek": "Messages", "Profil": "Profile", "Meló": "Day Jobs", "Értékelés": "Rating", "Kezdő": "Beginner", "Magyarország": "Hungary", "Bemutatkozás": "Bio",
             "Munkás": "Worker", "Megbízó": "Employer",
             "VÉLEMÉNYEK": "REVIEWS", "Képességek": "Skills", "Szaktudás": "Skills",
             "Vélemény": "Review", "Vélemények": "Reviews",
-            "Ma": "Today",
-            "Boldog államalapítást": "Happy State Foundation Day",
-            "Sikeres feladás!": "Posted successfully!",
-            "A(z) \"{job}\" munka felkerült a diákok listájára és a GPS térképre!": "The day job \"{job}\" has been added to the student list and the GPS map!",
-            "AI Képellenőrzés sikeres!": "AI Photo Verification Successful!",
-            "A Gemini 1.5 Flash AI megvizsgálta a fotót: \"A(z) '{job}' munka elvégzésre került. A fotó hiteles.\"": "Gemini 1.5 Flash AI examined the photo: \"The day job '{job}' has been completed. The photo is authentic.\"",
-            "Értékelés leadva": "Rating submitted",
-            "Munka lezárva és értékelve": "Day job completed and rated",
-            "Munka fotója elküldve": "Day job photo sent",
-            "A munkáltató lezárta a munkát és értékelte a teljesítményt:": "The employer closed the day job and rated the performance:",
-            "A megbízó elfogadta a munkást": "The employer accepted the worker",
-            "A munka elkezdődött": "The day job has started",
-            "A munkás késznek jelölte a munkát": "The worker marked the day job as completed",
-            "A munka befejeződött": "The day job is completed",
-            "A munkás jelentkezett a munkára": "The worker applied for the day job",
-            "Módosítások mentése": "Save changes",
-            "A munka sikeresen befejezve": "The day job is successfully completed",
-            "A diák befejezte a munkát! Értékeld a teljesítményét:": "The worker has finished the day job! Rate their performance:",
-            "A munka aktív! Végeztél a feladattal?": "The day job is active! Have you finished the task?",
-            "Végeztem a munkával": "I have finished the day job",
-            "Elfogadás": "Accept",
-            "jelentkezett a munkára.": "applied for the day job.",
-            "A diák befejezte a munkát. Igazold vissza!": "The student finished the day job. Please confirm!",
-            "Befejezés megerősítése": "Confirm completion",
-            "Munka indítása": "Start day job",
-            "Elfogadtad a jelentkezést. Indítsd el a munkát!": "You accepted the application. Start the day job!",
-            "A munka folyamatban van...": "The day job is in progress...",
-            "Várakozás a megbízó elfogadására...": "Waiting for the employer to accept...",
-            "Várakozás a munka indítására...": "Waiting for the day job to start...",
-            "Várakozás az értékelésre...": "Waiting for the rating...",
-            "Várakozás a megbízó jóváhagyására...": "Waiting for the employer to approve...",
-            "éves": "years old",
-            "Ajánlott": "Recommended",
-            "Helyszín megnyitása": "Open location",
-            "Fotó feltöltve": "Photo uploaded",
-            "A munka fotója el lett küldve a munkáltatónak!": "The day job photo has been sent to the employer!",
-            "Értékelés leadva: ": "Rating submitted: ",
-            " csillag!": " stars!",
-            "Keresés": "Searching",
-            "Befejezve": "Completed",
-            "Folyamatban": "In progress",
-            "Hirdetés szerkesztése": "Edit listing",
-            "Elfogadtad a jelentkezést": "You accepted the application",
-            "A megbízó elfogadta a jelentkezést": "The employer accepted the application",
-            "A diák késznek jelölte a munkát": "The student marked the day job as completed",
-            "Késznek jelölted a munkát": "You marked the day job as completed",
-            "A munkáltató lezárta a munkát és értékelte a teljesítményt:": "The employer closed the day job and rated the performance:",
-            "Munka lezárva és értékelve": "Day job completed and rated", "Holnap": "Tomorrow", "V": "Sun", "H": "Mon", "K": "Tue", "Sze": "Wed", "Cs": "Thu", "P": "Fri", "Szo": "Sat",
             // Buttons
             "Regisztrálok & Bejelentkezem": "Register & Log In",
             "Bejelentkezem": "Log In", "Regisztrálj": "Register",
@@ -5049,14 +5947,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             "Értesítettük a munkáltatót.": "The employer has been notified.",
             "Profil sikeresen mentve!": "Profile saved successfully!",
             "Hirdetés közzétéve!": "Ad published!",
-            "Munkások már keresik a munkát": "Workers are already looking for the day job"
-        ,
-            "Jelentkezem a munkára": "Apply for the day job"
-        ,
-            "Nincs még fiókod?": "Don't have an account?"
-        ,
-            "Jelentkezz egy munkára és a beszélgetések": "Apply for a day job and conversations",
-            "itt fognak megjelenni.": "will appear here."
+            "Munkások már keresik a munkát": "Workers are already looking for the job"
         },
         de: {
             "Főlap": "Startseite", "Térkép": "Karte", "Üzenetek": "Nachrichten", "Profil": "Profil",
@@ -5138,37 +6029,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             "Nincs közeli munka": "Keine Jobs in der Nähe",
             "Próbálj nagyobb hatókört beállítani,\nvagy nézz vissza hamarosan.": "Erhöhe die Reichweite,\noder schau später vorbei.",
             "Nincs találat": "Keine Ergebnisse",
-            "Nincs még üzeneted": "Keine Nachrichten vorhanden",
-            "éves": "Jahre alt",
-            "Ajánlott": "Empfohlen",
-            "Helyszín megnyitása": "Standort öffnen",
-            "Boldog államalapítást": "Schönen Nationalfeiertag",
-            "Sikeres feladás!": "Erfolgreich veröffentlicht!",
-            "A(z) \"{job}\" munka felkerült a diákok listájára és a GPS térképre!": "Der Job \"{job}\" wurde der Studentenliste und der GPS-Karte hinzugefügt!",
-            "AI Képellenőrzés sikeres!": "KI-Fotoverifizierung erfolgreich!",
-            "A Gemini 1.5 Flash AI megvizsgálta a fotót: \"A(z) '{job}' munka elvégzésre került. A fotó hiteles.\"": "Gemini 1.5 Flash AI hat das Foto überprüft: \"Der Job '{job}' wurde abgeschlossen. Das Foto ist authentisch.\"",
-            "Értékelés leadva": "Bewertung abgegeben",
-            "Munka lezárva és értékelve": "Job abgeschlossen und bewertet",
-            "Munka fotója elküldve": "Arbeitsfoto gesendet",
-            "A munkáltató lezárta a munkát és értékelte a teljesítményt:": "Der Arbeitgeber hat den Job geschlossen und die Leistung bewertet:",
-            "Módosítások mentése": "Änderungen speichern",
-            "Munka indítása": "Job starten",
-            "Keresés": "Suche",
-            "Befejezve": "Abgeschlossen",
-            "Folyamatban": "In Bearbeitung",
-            "Hirdetés szerkesztése": "Anzeige bearbeiten",
-            "Értékelés leadva: ": "Bewertung abgegeben: ",
-            " csillag!": " Sterne!",
-            "Fotó feltöltve": "Foto hochgeladen",
-            "A munka fotója el lett küldve a munkáltatónak!": "Das Arbeitsfoto wurde an den Arbeitgeber gesendet!"
-        ,
-            "Jelentkező": "Bewerber",
-            "Jelentkezem a munkára": "Für den day job bewerben"
-        ,
-            "Nincs még fiókod?": "Sie haben noch kein Konto?"
-        ,
-            "Jelentkezz egy munkára és a beszélgetések": "Für einen day job bewerben und Gespräche",
-            "itt fognak megjelenni.": "werden hier erscheinen."
+            "Nincs még üzeneted": "Keine Nachrichten vorhanden"
         },
         it: {
             "Főlap": "Home", "Térkép": "Mappa", "Üzenetek": "Messaggi", "Profil": "Profilo",
@@ -5248,36 +6109,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             "Nincs közeli munka": "Nessun lavoro nelle vicinanze",
             "Próbálj nagyobb hatókört beállítani,\nvagy nézz vissza hamarosan.": "Prova ad aumentare il raggio,\no torna più tardi.",
             "Nincs találat": "Nessun risultato",
-            "Nincs még üzeneted": "Nessun messaggio",
-            "éves": "anni",
-            "Ajánlott": "Consigliato",
-            "Helyszín megnyitása": "Apri posizione",
-            "Boldog államalapítást": "Buona Festa Nazionale",
-            "Sikeres feladás!": "Pubblicato con successo!",
-            "A(z) \"{job}\" munka felkerült a diákok listájára és a GPS térképre!": "Il lavoro \"{job}\" è stato aggiunto all'elenco studenti e alla mappa GPS!",
-            "AI Képellenőrzés sikeres!": "Verifica foto AI riuscita!",
-            "Értékelés leadva": "Valutazione inviata",
-            "Munka lezárva és értékelve": "Lavoro completato e valutato",
-            "Munka fotója elküldve": "Foto del lavoro inviata",
-            "A munkáltató lezárta a munkát és értékelte a teljesítményt:": "Il datore di lavoro ha chiuso il lavoro e valutato la performance:",
-            "Módosítások mentése": "Salva modifiche",
-            "Munka indítása": "Avvia lavoro",
-            "Keresés": "Ricerca",
-            "Befejezve": "Completato",
-            "Folyamatban": "In corso",
-            "Hirdetés szerkesztése": "Modifica annuncio",
-            "Értékelés leadva: ": "Valutazione inviata: ",
-            " csillag!": " stelle!",
-            "Fotó feltöltve": "Foto caricata",
-            "A munka fotója el lett küldve a munkáltatónak!": "La foto del lavoro è stata inviata al datore di lavoro!"
-        ,
-            "Jelentkező": "Candidato",
-            "Jelentkezem a munkára": "Candidati per il day job"
-        ,
-            "Nincs még fiókod?": "Non hai ancora un account?"
-        ,
-            "Jelentkezz egy munkára és a beszélgetések": "Candidati per un day job e le conversazioni",
-            "itt fognak megjelenni.": "appariranno qui."
+            "Nincs még üzeneted": "Nessun messaggio"
         },
         es: {
             "Főlap": "Inicio", "Térkép": "Mapa", "Üzenetek": "Mensajes", "Profil": "Perfil",
@@ -5343,34 +6175,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             "Nincs közeli munka": "No hay trabajos cerca",
             "Próbálj nagyobb hatókört beállítani,\nvagy nézz vissza hamarosan.": "Intenta aumentar el radio de búsqueda,\no vuelve pronto.",
             "Nincs találat": "Sin resultados",
-            "Nincs még üzeneted": "No tienes mensajes",
-            "éves": "años",
-            "Ajánlott": "Recomendado",
-            "Helyszín megnyitása": "Abrir ubicación",
-            "Boldog államalapítást": "Feliz Día Nacional",
-            "Sikeres feladás!": "¡Publicado con éxito!",
-            "Értékelés leadva": "Calificación enviada",
-            "Munka lezárva és értékelve": "Trabajo completado y calificado",
-            "Munka fotója elküldve": "Foto del trabajo enviada",
-            "A munkáltató lezárta a munkát és értékelte a teljesítményt:": "El empleador cerró el trabajo y calificó el rendimiento:",
-            "Módosítások mentése": "Guardar cambios",
-            "Keresés": "Buscando",
-            "Befejezve": "Completado",
-            "Folyamatban": "En progreso",
-            "Hirdetés szerkesztése": "Editar anuncio",
-            "Értékelés leadva: ": "Calificación enviada: ",
-            " csillag!": " estrellas!",
-            "AI Képellenőrzés sikeres!": "¡Verificación de foto AI exitosa!",
-            "Fotó feltöltve": "Foto subida",
-            "A munka fotója el lett küldve a munkáltatónak!": "¡La foto del trabajo fue enviada al empleador!"
-        ,
-            "Jelentkező": "Candidato",
-            "Jelentkezem a munkára": "Solicitar el day job"
-        ,
-            "Nincs még fiókod?": "¿Aún no tienes cuenta?"
-        ,
-            "Jelentkezz egy munkára és a beszélgetések": "Solicitar un day job y las conversaciones",
-            "itt fognak megjelenni.": "aparecerán aquí."
+            "Nincs még üzeneted": "No tienes mensajes"
         },
         ro: {
             "Főlap": "Acasă", "Térkép": "Hartă", "Üzenetek": "Mesaje", "Profil": "Profil",
@@ -5436,57 +6241,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             "Nincs közeli munka": "Niciun job în apropiere",
             "Próbálj nagyobb hatókört beállítani,\nvagy nézz vissza hamarosan.": "Încearcă să mărești raza de căutare,\nsau revino mai târziu.",
             "Nincs találat": "Niciun rezultat",
-            "Nincs még üzeneted": "Nu aveți mesaje încă",
-            "éves": "ani",
-            "Ajánlott": "Recomandat",
-            "Helyszín megnyitása": "Deschideȟi locaȟia",
-            "Boldog államalapítást": "Sărbătoare Naȟională Fericită",
-            "Sikeres feladás!": "Publicat cu succes!",
-            "Értékelés leadva": "Evaluare trimisă",
-            "Munka lezárva és értékelve": "Muncă finalizată şi evaluată",
-            "Munka fotója elküldve": "Fotografia muncii trimisă",
-            "A munkáltató lezárta a munkát és értékelte a teljesítményt:": "Angajatorul a închis munca şi a evaluat performanȟa:",
-            "Módosítások mentése": "Salvează modificările",
-            "Keresés": "Caută",
-            "Befejezve": "Finalizat",
-            "Folyamatban": "În progres",
-            "Hirdetés szerkesztése": "Editează anunȟul",
-            "Értékelés leadva: ": "Evaluare trimisă: ",
-            " csillag!": " stele!",
-            "AI Képellenőrzés sikeres!": "Verificare foto AI reuşită!",
-            "Fotó feltöltve": "Fotografie încărcată",
-            "A munka fotója el lett küldve a munkáltatónak!": "Fotografia muncii a fost trimisă angajatorului!",
-            "Elfogadtad a jelentkezést": "Ai acceptat aplicaȟia",
-            "A megbízó elfogadta a jelentkezést": "Beneficiarul a acceptat aplicaȟia",
-            "A diák késznek jelölte a munkát": "Studentul a marcat munca ca finalizată",
-            "Késznek jelölted a munkát": "Ai marcat munca ca finalizată",
-            "Munka indítása": "Porneşte munca",
-            "A munka aktív! Végeztél a feladattal?": "Munca este activă! Ai terminat sarcina?",
-            "Végeztem a munkával": "Am terminat munca",
-            "A munka elkezdődött": "Munca a început",
-            "A munka befejeződött": "Munca s-a încheiat",
-            "A munkás késznek jelölte a munkát": "Muncitorul a marcat munca ca finalizată",
-            "A munkás jelentkezett a munkára": "Muncitorul a aplicat pentru muncă",
-            "A munka sikeresen befejezve": "Munca a fost finalizată cu succes",
-            "A munka folyamatban van...": "Munca este în progres...",
-            "Várakozás a megbízó elfogadására...": "Aşteptarea acceptării beneficiarului...",
-            "Várakozás a munka indítására...": "Aşteptarea începerii muncii...",
-            "Elfogadás": "Acceptă",
-            "jelentkezett a munkára.": "a aplicat pentru muncă.",
-            "A diák befejezte a munkát. Igazold vissza!": "Studentul a terminat munca. Confirmaȟi!",
-            "Befejezés megerősítése": "Confirmaȟi finalizarea",
-            "A diák befejezte a munkát! Értékeld a teljesítményét:": "Studentul a terminat munca! Evaluaȟi performanȟa:",
-            "Várakozás az értékelésre...": "Aşteptarea evaluării...",
-            "Várakozás a megbízó jóváhagyására...": "Aşteptarea aprobării beneficiarului...",
-            "A megbízó elfogadta a munkást": "Beneficiarul a acceptat muncitorul"
-        ,
-            "Jelentkező": "Candidat",
-            "Jelentkezem a munkára": "Aplică pentru day job"
-        ,
-            "Nincs még fiókod?": "Nu ai încă cont?"
-        ,
-            "Jelentkezz egy munkára și a beszélgetések": "Aplică pentru un day job și conversațiile",
-            "itt fognak megjelenni.": "vor apărea aici."
+            "Nincs még üzeneted": "Nu aveți mesaje încă"
         },
         sk: {
             "Főlap": "Domov", "Térkép": "Mapa", "Üzenetek": "Správy", "Profil": "Profil",
@@ -5552,34 +6307,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             "Nincs közeli munka": "Žiadne práce v okolí",
             "Próbálj nagyobb hatókört beállítani,\nvagy nézz vissza hamarosan.": "Skús nastaviť väčší dosah,\nalebo sa vráť neskôr.",
             "Nincs találat": "Žiadne výsledky",
-            "Nincs még üzeneted": "Nemáte žiadne správy",
-            "éves": "rokov",
-            "Ajánlott": "Odporúčané",
-            "Helyszín megnyitása": "Otvoritʼ miesto",
-            "Boldog államalapítást": "Šťastný Národný Sviatokm",
-            "Sikeres feladás!": "Úspešne zverejnené!",
-            "Értékelés leadva": "Hodnotenie odoslané",
-            "Munka lezárva és értékelve": "Práca dokončená a hodnotená",
-            "Munka fotója elküldve": "Fotografia práce odoslaná",
-            "A munkáltató lezárta a munkát és értékelte a teljesítményt:": "Zamestnávateľ uzatvoril prácu a ohodnotil výkon:",
-            "Módosítások mentése": "Uložiť zmeny",
-            "Keresés": "Hľadá",
-            "Befejezve": "Dokončené",
-            "Folyamatban": "V procese",
-            "Hirdetés szerkesztése": "Upraviť inzerát",
-            "Értékelés leadva: ": "Hodnotenie odoslané: ",
-            " csillag!": " hváldičky!",
-            "AI Képellenőrzés sikeres!": "Úspesná verifikácia fotografie AI!",
-            "Fotó feltöltve": "Fotografia nahraná",
-            "A munka fotója el lett küldve a munkáltatónak!": "Fotografia práce bola odoslaná zamestnávateľovi!"
-        ,
-            "Jelentkező": "Uchádzač",
-            "Jelentkezem a munkára": "Prihlásiť sa na day job"
-        ,
-            "Nincs még fiókod?": "Ešte nemáte účet?"
-        ,
-            "Jelentkezz egy munkára és a beszélgetések": "Prihlásiť sa na day job a konverzácie",
-            "itt fognak megjelenni.": "sa zobrazia tu."
+            "Nincs még üzeneted": "Nemáte žiadne správy"
         }
     };
 
@@ -5680,6 +6408,47 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     }, 1500);
 })();
 </script>
+
+<style id="auth-fixes">
+
+    #app-container #apple-login-btn,
+    #app-login-screen #apple-login-btn,
+    button.apple-auth-btn {
+        background-color: #000 !important;
+        color: #fff !important;
+        border: 1px solid #000 !important;
+    }
+    
+    body.dark-mode #app-container #apple-login-btn,
+    body.dark-mode #app-login-screen #apple-login-btn,
+    body.dark-mode button.apple-auth-btn,
+    .dark-mode button.apple-auth-btn {
+        background-color: #fff !important;
+        color: #000 !important;
+        border: 1px solid #fff !important;
+    }
+    
+    /* Make the svg fill match the text color */
+    #apple-login-btn svg {
+        fill: currentColor !important;
+    }
+
+    #app-login-screen .auth-btn, #login-btn, #main-auth-btn, .login-btn {
+        background: #ff5a2b !important;
+        color: #fff !important;
+    }
+    #reg-terms-check {
+        border: 1px solid var(--color-border);
+        background-color: var(--color-surface);
+    }
+    .reg-terms-container {
+        margin-bottom: 12px;
+    }
+    body.dark-mode .apple-auth-btn {
+        border: 1px solid var(--color-border);
+    }
+</style>
+
 </head>
 </head>
 </head>
@@ -5723,10 +6492,10 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
 <!-- Splash Screen -->
 <div id="splash-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width: 100%;background:#121214;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition: opacity 0.5s ease;">
-    <div style="font-size:44px;font-weight: 500;color:#fff;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;letter-spacing:-1.5px;animation: pulse 2s infinite;">Melo<span style="color:var(--color-logo-green);">Go</span></div>
+    <div style="font-size:44px;font-weight: 500;color:var(--color-text);font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;letter-spacing:-1.5px;animation: pulse 2s infinite;">Melo<span style="color:var(--color-logo-green);">Go</span></div>
 </div>
 
-<div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width: 100%;background:#121214;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
+<div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width: 100%;background-color:var(--color-bg);z-index:9999;display:none;flex-direction:column;overflow:hidden;">
     <button onclick="skipOnboarding()" style="position:absolute;top:52px;right:24px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:14px;font-weight: 300;cursor:pointer;z-index:10;">Kihagyás</button>
     
     <div id="onboarding-slides" style="display:flex;width:300%;height:100%;transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
@@ -5781,12 +6550,12 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     
     <!-- CTA buttons -->
     <div style="position:absolute;bottom:44px;left:32px;right:32px;">
-        <button id="ob-next-btn" onclick="onboardingNext()" style="width:100%;height:52px;background:var(--color-green);color:#ffffff;border:none;border-radius: 6px;font-size:16px;font-weight: 500;cursor:pointer;transition:transform 0.15s ease;">Tovább</button>
+        <button id="ob-next-btn" onclick="onboardingNext()" style="width:100%;height:52px;background:var(--color-text);color:#fff;border:none;border-radius: 6px;font-size:16px;font-weight: 500;cursor:pointer;transition:transform 0.15s ease;">Tovább</button>
     </div>
 </div>
 <style>
 .ob-dot { width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s ease; }
-.ob-dot-active { background:var(--color-green) !important;width:24px;border-radius:4px; }
+.ob-dot-active { background:var(--color-text);width:24px;border-radius:4px; }
 </style>
 
     <div id="app-login-screen" style="position:absolute; top:0; left:0; right:0; bottom:0; background-color: var(--color-bg) !important; z-index:1000; padding:60px 24px 40px 24px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; -ms-overflow-style:none; box-sizing:border-box;">
@@ -5869,7 +6638,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="app-birth-year" class="auth-input-field login-input" placeholder="Születési év (pl. 2004)" style="padding-left:16px;">
                 </div>
             </div>
-            <button class="login-btn" id="btn-step-1-next" onclick="submitStep1Name()" style="margin-top:16px; width:100%; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius: 6px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
+            <button class="login-btn" id="btn-step-1-next" onclick="submitStep1Name()" style="margin-top:16px; width:100%; height:52px;  border:none; border-radius: 6px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
         </div>
 
         <!-- STEP 3: Address fields (formerly step 2) -->
@@ -5912,7 +6681,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 </div>
             </div>
             
-            <button class="login-btn" id="btn-step-3-next" onclick="submitStep3Address()" style="margin-top:16px; width:100%; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius: 6px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
+            <button class="login-btn" id="btn-step-3-next" onclick="submitStep3Address()" style="margin-top:16px; width:100%; height:52px;  border:none; border-radius: 6px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
         </div>
 
         <!-- STEP 2: Phone number fields (formerly step 3) -->
@@ -5924,7 +6693,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     <input type="tel" id="reg-phone-input" class="auth-input-field login-input" placeholder="+36 20 123 4567" style="padding-left:16px;">
                 </div>
             </div>
-            <button class="login-btn" id="btn-step-2-next" onclick="submitStep2Phone()" style="margin-top:16px; width:100%; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius: 6px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
+            <button class="login-btn" id="btn-step-2-next" onclick="submitStep2Phone()" style="margin-top:16px; width:100%; height:52px;  border:none; border-radius: 6px; font-size:16px; font-weight: 500; cursor:pointer; transition:transform 0.15s ease;">Tovább</button>
         </div>
 
 
@@ -5949,7 +6718,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         </div>
 
         <!-- Main primary auth button -->
-        <button class="login-btn" id="main-auth-btn" onclick="loginApp()" style="margin-top:24px; width:100%; flex-shrink:0; height:52px; background-color:var(--color-text); color:var(--color-bg); border:none; border-radius: 6px; font-size:16px; font-weight: 300; cursor:pointer; transition:transform 0.15s ease, opacity 0.15s ease;">Regisztrálok & Bejelentkezem</button>
+        <button class="login-btn" id="main-auth-btn" onclick="loginApp()" style="margin-top:24px; width:100%; flex-shrink:0; height:52px;  border:none; border-radius: 6px; font-size:16px; font-weight: 300; cursor:pointer; transition:transform 0.15s ease, opacity 0.15s ease;">Regisztrálok & Bejelentkezem</button>
 
         <style>
             @supports (-webkit-touch-callout: none) {
@@ -5969,7 +6738,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         </button>
 
         <!-- Sign in with Apple -->
-        <button class="ios-oauth-hide" id="apple-login-btn" onclick="loginWithApple()" style="margin-top:12px; width:100%; flex-shrink:0; height:52px; background-color:#000000; color:#ffffff; border:none; border-radius: 6px; font-size:15px; font-weight:400; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; transition:opacity 0.15s ease;">
+        <button class="ios-oauth-hide apple-auth-btn" id="apple-login-btn" onclick="loginWithApple()" style="margin-top:12px; width:100%; flex-shrink:0; height:52px;  border:none; border-radius: 6px; font-size:15px; font-weight:400; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; transition:opacity 0.15s ease;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.78 1.18-.19 2.31-.88 3.5-.84 1.33.04 2.6.58 3.44 1.6-3.09 1.76-2.58 5.75.39 7.02-.75 1.83-1.63 3.53-2.41 4.41zm-2.85-15.02c.6-1.57-.45-3.17-1.92-3.26-.78 1.68.51 3.25 1.92 3.26z"/></svg>
             Belépés Apple-azonosítóval
         </button>
@@ -6182,25 +6951,25 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             <div class="screen" id="app-profile-screen" style="background-color: var(--color-bg); overflow-y: auto;">
                         
                         <!-- Top section — Hero area (Dark Navy) -->
-                        <div style="background-color: var(--color-bg); color: var(--color-text); padding: 40px 20px 80px 20px; position: relative; text-align: center;">
+                        <div style="background-color: var(--color-profile-header-bg); color: var(--color-profile-header-text); padding: 40px 20px 80px 20px; position: relative; text-align: center;">
                             <button onclick="openSettings()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; cursor: pointer;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                             </button>
 
                             <div style="position: relative; display: inline-block; margin-top: 10px; margin-bottom: 12px;">
-                                <div id="profile-avatar-circle" class="user-avatar-bg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--color-bg) !important; background-color: var(--color-text); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 500; color: #FFFFFF !important;">
-                                    <span class="user-initials-display" style="color: #FFFFFF !important;">?</span>
+                                <div id="profile-avatar-circle" class="user-avatar-bg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--color-text); background-color: var(--color-text); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 500; color: white;">
+                                    <span class="user-initials-display">?</span>
                                 </div>
-                                <div style="position: absolute; bottom: 0; right: 0; width: 22px; height: 22px; background-color: var(--color-text); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #FFFFFF !important; border: 2px solid var(--color-bg) !important; box-shadow: 0 0 0 2px var(--color-bg);">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" style="stroke: #FFFFFF !important;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <div style="position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; background-color: var(--color-text); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: 2px solid var(--color-text);">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                 </div>
                             </div>
 
-                            <div style="font-size: 18px; font-weight: 500; color: var(--color-profile-header-text) !important; margin-bottom: 4px;" class="user-name-display">Felhasználó</div>
+                            <div style="font-size: 18px; font-weight: 500; color: white; margin-bottom: 4px;" class="user-name-display">Felhasználó</div>
                             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom: 6px;">
                                 <div style="display:flex; align-items:center; gap:4px;" id="profile-hero-rating">
                                     <span style="color:#f4c542; font-size:13px;">★</span>
-                                    <span style="color: var(--color-profile-header-text) !important; font-size:13px;" class="user-rating-display">5.0</span>
+                                    <span style="color:white; font-size:13px;" class="user-rating-display">5.0</span>
                                 </div>
                                 <span class="user-trust-badge"></span>
                             </div>
@@ -6223,19 +6992,15 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                         </div>
 
                         <!-- Content Sections Container -->
-                        <div style="padding: 0 20px 120px 20px; display: flex; flex-direction: column; gap: 24px;">
+                        <div style="padding: 0 20px 40px 20px; display: flex; flex-direction: column; gap: 24px;">
                             
                             <!-- Section 1: SZEREPEM -->
                             <div>
                                 <div style="font-size: 12px; font-weight: 500; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">SZEREPEM</div>
                                 <div style="background-color: var(--color-surface); border-radius: 6px; border: 0.5px solid var(--color-border); padding: 16px;">
-                                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
-                                        <div id="role-btn-worker" class="auth-role-card active" onclick="switchRole('worker')" style="flex: 1;">
-                                            Munkás
-                                        </div>
-                                        <div id="role-btn-employer" class="auth-role-card" onclick="switchRole('employer')" style="flex: 1;">
-                                            Megbízó
-                                        </div>
+                                    <div class="role-switcher-container" style="max-width: 100%; margin-bottom: 8px; background-color: var(--color-bg);">
+                                        <button class="role-btn active" id="role-btn-worker" onclick="switchRole('worker')">Munkás</button>
+                                        <button class="role-btn" id="role-btn-employer" onclick="switchRole('employer')">Megbízó</button>
                                     </div>
                                     <div id="role-description-text" style="font-size: 11px; color: var(--color-text); text-align: center; font-style: italic;">
                                         Közeli munkákat keresel és vállalsz.
@@ -6588,7 +7353,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                         Fénykép készítése
                     </button>
-                    <button class="confirm-sheet-btn" type="button" onclick="triggerGalleryPicker()" style="background: var(--color-surface); color: var(--color-text) !important; height:50px; border-radius: 6px; width:100%; border:none; font-weight: 400; font-size:15px; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: transform 0.15s ease;">
+                    <button class="confirm-sheet-btn" type="button" onclick="triggerGalleryPicker()" style="background: var(--color-surface); color:#000000; height:50px; border-radius: 6px; width:100%; border:none; font-weight: 400; font-size:15px; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: transform 0.15s ease;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                         Választás a galériából
                     </button>
@@ -6898,7 +7663,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 <!-- Ajánlat Overlay Megbízóknak -->
                 <div class="settings-overlay" id="job-offer-overlay">
                     <div class="settings-header" style="background-color: white; border-bottom: 0.5px solid var(--color-border); z-index: 10;">
-                        <button class="settings-back-btn" onclick="closeJobOffer()" style="color: var(--color-text-dark);">
+                        <button class="settings-back-btn" onclick="document.getElementById('job-offer-overlay').classList.remove('open')" style="color: var(--color-text-dark);">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
                         <div class="settings-title">Ajánlat küldése</div>
                     </div>
@@ -7120,7 +7885,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         <!-- ===== WORKER PROFILE OVERLAY FOR EMPLOYER ===== -->
         <div class="settings-overlay" id="worker-profile-overlay" style="z-index: 3000;">
             <div class="settings-header">
-                <button class="settings-back-btn" onclick="closeWorkerProfileOverlay()">
+                <button class="settings-back-btn" onclick="document.getElementById('worker-profile-overlay').classList.remove('open')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <div class="settings-title">Munkavállaló Profilja</div>
@@ -7133,9 +7898,9 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     <div style="padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;">
                         <!-- Avatar -->
                         <div style="position: relative; display: inline-block; width: 80px; height: 80px;">
-                            <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-bg);  display: block;" alt="Diák avatar">
-                            <div id="wp-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--color-bg);  background-color: var(--color-text); color: var(--color-bg) !important; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">KB</div>
-                            <div id="wp-verified" style="position: absolute; bottom: 0; right: 0; background: var(--color-text); color: var(--color-bg) !important; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--color-bg); ">
+                            <img id="wp-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fff;  display: block;" alt="Diák avatar">
+                            <div id="wp-avatar-fallback" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;  background-color: var(--color-text); color: white; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 500; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">KB</div>
+                            <div id="wp-verified" style="position: absolute; bottom: 0; right: 0; background: var(--color-text); color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; ">
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                             </div>
                         </div>
@@ -7203,7 +7968,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
         <div class="settings-overlay" id="employer-profile-overlay" style="z-index: 3000;">
             <div class="settings-header">
-                <button class="settings-back-btn" onclick="closeEmployerProfileOverlay()">
+                <button class="settings-back-btn" onclick="document.getElementById('employer-profile-overlay').classList.remove('open')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
                 <div class="settings-title">Megbízó Profilja</div>
@@ -7409,7 +8174,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     <!-- 1. ÉRTESÍTÉSEK OVERLAY (Slides from right) -->
     <div class="settings-overlay" id="notifications-overlay">
         <div class="settings-header">
-            <button class="settings-back-btn" onclick="closeNotificationsSheet()">
+            <button class="settings-back-btn" onclick="document.getElementById('notifications-overlay').classList.remove('open')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="settings-title">Értesítések</div>
@@ -7459,7 +8224,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     <!-- 4. SÚGÓ ÉS GYIK OVERLAY (Slides from right) -->
     <div class="settings-overlay" id="help-overlay">
         <div class="settings-header">
-            <button class="settings-back-btn" onclick="closeHelpSheet()">
+            <button class="settings-back-btn" onclick="document.getElementById('help-overlay').classList.remove('open')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="settings-title">Súgó és GYIK</div>
@@ -7514,7 +8279,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     <!-- 5. ADATVÉDELEM OVERLAY (Slides from right) -->
     <div class="settings-overlay" id="privacy-overlay">
         <div class="settings-header">
-            <button class="settings-back-btn" onclick="closePrivacySheet()">
+            <button class="settings-back-btn" onclick="document.getElementById('privacy-overlay').classList.remove('open')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="settings-title">Adatvédelem</div>
@@ -7549,7 +8314,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     <!-- 6. FELHASZNÁLÁSI FELTÉTELEK OVERLAY (Slides from right) -->
     <div class="settings-overlay" id="terms-overlay">
         <div class="settings-header">
-            <button class="settings-back-btn" onclick="closeTermsSheet()">
+            <button class="settings-back-btn" onclick="document.getElementById('terms-overlay').classList.remove('open')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="settings-title">Feltételek</div>
@@ -7859,13 +8624,13 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     if (lf) lf.style.display = 'flex';
                     if (roleSel) roleSel.style.display = 'none';
                     if (btn) { btn.style.display = 'block'; btn.innerText = 'Bejelentkezem'; }
-                    if (sw) { sw.style.display = 'block'; sw.innerHTML = `${typeof t === 'function' ? t('Nincs még fiókod?') : 'Nincs még fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Regisztrálj') : 'Regisztrálj'}</span>`; }
+                    if (sw) { sw.style.display = 'block'; sw.innerHTML = 'Nincs még fiókod? <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>'; }
                 } else {
                     if (rf) rf.style.display = 'flex';
                     if (lf) lf.style.display = 'none';
                     if (roleSel) roleSel.style.display = 'none'; // Role selector removed!
                     if (btn) { btn.style.display = 'block'; btn.innerText = 'Regisztrálok & Bejelentkezem'; }
-                    if (sw) { sw.style.display = 'block'; sw.innerHTML = `${typeof t === 'function' ? t('Van már fiókod?') : 'Van már fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Jelentkezz be') : 'Jelentkezz be'}</span>`; }
+                    if (sw) { sw.style.display = 'block'; sw.innerHTML = 'Van már fiókod? <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>'; }
                 }
                 if (googleBtn) googleBtn.style.display = 'flex';
                 if (appleBtn) appleBtn.style.display = 'flex';
@@ -8744,28 +9509,28 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
 <!-- FORGOT PASSWORD MODAL -->
 <div id="forgot-pw-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;  -webkit-">
-    <div style="background:var(--color-surface); border-radius: 6px; padding:24px; width:100%; max-width:400px; display:flex; flex-direction:column; position:relative; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+    <div style="background:#fff; border-radius: 6px; padding:24px; width:100%; max-width:400px; display:flex; flex-direction:column; position:relative; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
         
         <div id="forgot-pw-form" style="display:flex; flex-direction:column; gap:16px;">
-            <h3 style="font-size:18px; font-weight:600; margin:0; text-align:center; color:var(--color-text);">Elfelejtett jelszó</h3>
-            <p style="font-size:14px; font-weight:300; color:var(--color-text-muted); text-align:center; margin:0;">Add meg a regisztrált email címedet, és küldünk egy linket a jelszó visszaállításához.</p>
-            <input type="email" id="forgot-pw-email" placeholder="Email címed" style="height:50px; border-radius: 6px; border:1px solid var(--color-border); background:var(--color-input-bg); color:var(--color-text); padding:0 16px; font-size:15px; outline:none; font-family:inherit;">
+            <h3 style="font-size:18px; font-weight:600; margin:0; text-align:center;">Elfelejtett jelszó</h3>
+            <p style="font-size:14px; font-weight:300; color:#666; text-align:center; margin:0;">Add meg a regisztrált email címedet, és küldünk egy linket a jelszó visszaállításához.</p>
+            <input type="email" id="forgot-pw-email" placeholder="Email címed" style="height:50px; border-radius: 6px; border:1px solid #ccc; padding:0 16px; font-size:15px; outline:none; font-family:inherit;">
             <div style="display:flex; gap:12px; margin-top:8px;">
-                <button onclick="closeForgotPasswordModal()" style="flex:1; height:48px; border-radius: 6px; border:1px solid var(--color-border); background:none; color:var(--color-text); font-weight:500; font-size:15px; cursor:pointer;">Mégse</button>
-                <button id="forgot-pw-submit-btn" onclick="submitForgotPassword()" style="flex:1; height:48px; border-radius: 6px; border:none; background:var(--color-text); color:var(--color-surface); font-weight:500; font-size:15px; cursor:pointer; transition: opacity 0.2s;">Küldés</button>
+                <button onclick="closeForgotPasswordModal()" style="flex:1; height:48px; border-radius: 6px; border:1px solid #ccc; background:none; font-weight:500; font-size:15px; cursor:pointer;">Mégse</button>
+                <button id="forgot-pw-submit-btn" onclick="submitForgotPassword()" style="flex:1; height:48px; border-radius: 6px; border:none; background:#000; color:#fff; font-weight:500; font-size:15px; cursor:pointer; transition: opacity 0.2s;">Küldés</button>
             </div>
         </div>
 
         <div id="forgot-pw-success" style="display:none; flex-direction:column; align-items:center; gap:16px; padding:8px 0;">
-            <div class="success-checkmark-wrapper" style="width:64px; height:64px; border-radius:50%; background:var(--color-input-bg); display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
+            <div class="success-checkmark-wrapper" style="width:64px; height:64px; border-radius:50%; background:#ECFDF5; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
                 <svg style="width:32px; height:32px;" viewBox="0 0 52 52">
                     <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
                     <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                 </svg>
             </div>
-            <h3 style="font-size:18px; font-weight:600; margin:0; text-align:center; color:var(--color-text);">Email elküldve!</h3>
-            <p style="font-size:14px; font-weight:300; color:var(--color-text-muted); text-align:center; margin:0; line-height:1.5;">Elküldtük a jelszó visszaállító linket a megadott címre. Kérlek ellenőrizd a Spam mappát is.</p>
-            <button onclick="closeForgotPasswordModal()" style="margin-top:16px; width:100%; height:48px; border-radius: 6px; border:none; background:var(--color-text); color:var(--color-surface); font-weight:500; font-size:15px; cursor:pointer;">Rendben</button>
+            <h3 style="font-size:18px; font-weight:600; margin:0; text-align:center;">Email elküldve!</h3>
+            <p style="font-size:14px; font-weight:300; color:#666; text-align:center; margin:0; line-height:1.5;">Elküldtük a jelszó visszaállító linket a megadott címre. Kérlek ellenőrizd a Spam mappát is.</p>
+            <button onclick="closeForgotPasswordModal()" style="margin-top:16px; width:100%; height:48px; border-radius: 6px; border:none; background:#000; color:#fff; font-weight:500; font-size:15px; cursor:pointer;">Rendben</button>
         </div>
 
     </div>
@@ -8773,14 +9538,14 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
 <!-- GLOBAL CONFIRM MODAL -->
 <div id="melogo-confirm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;  -webkit-">
-    <div style="background:var(--color-surface); border-radius: 6px; padding:24px; width:100%; max-width:320px; display:flex; flex-direction:column; align-items:center; gap:16px; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+    <div style="background:#fff; border-radius: 6px; padding:24px; width:100%; max-width:320px; display:flex; flex-direction:column; align-items:center; gap:16px; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
         <div style="width:56px; height:56px; border-radius:50%; background:#FEF2F2; display:flex; align-items:center; justify-content:center; color:#DC2626;">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
         </div>
-        <h3 id="melogo-confirm-title" style="font-size:18px; font-weight:600; margin:0; text-align:center; color:var(--color-text);">Biztosan törlöd?</h3>
-        <p id="melogo-confirm-text" style="font-size:14px; font-weight:300; color:var(--color-text-muted); text-align:center; margin:0; line-height:1.4;">A művelet nem visszavonható.</p>
+        <h3 id="melogo-confirm-title" style="font-size:18px; font-weight:600; margin:0; text-align:center;">Biztosan törlöd?</h3>
+        <p id="melogo-confirm-text" style="font-size:14px; font-weight:300; color:#666; text-align:center; margin:0; line-height:1.4;">A művelet nem visszavonható.</p>
         <div style="display:flex; gap:12px; width:100%; margin-top:8px;">
-            <button id="melogo-confirm-cancel" style="flex:1; height:44px; border-radius: 6px; border:1px solid var(--color-border); background:none; color:var(--color-text); font-weight:500; font-size:14px; cursor:pointer;">Mégse</button>
+            <button id="melogo-confirm-cancel" style="flex:1; height:44px; border-radius: 6px; border:1px solid #ccc; background:none; font-weight:500; font-size:14px; cursor:pointer;">Mégse</button>
             <button id="melogo-confirm-ok" style="flex:1; height:44px; border-radius: 6px; border:none; background:#DC2626; color:#fff; font-weight:500; font-size:14px; cursor:pointer; transition: opacity 0.2s;">Törlés</button>
         </div>
     </div>
@@ -8788,16 +9553,16 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
 <!-- GLOBAL SUCCESS MODAL -->
 <div id="melogo-success-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;  -webkit-">
-    <div style="background:var(--color-surface); border-radius: 6px; padding:32px 24px; width:100%; max-width:320px; display:flex; flex-direction:column; align-items:center; gap:16px; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-        <div class="success-checkmark-wrapper" style="width:72px; height:72px; border-radius:50%; background:var(--color-input-bg); display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
+    <div style="background:#fff; border-radius: 6px; padding:32px 24px; width:100%; max-width:320px; display:flex; flex-direction:column; align-items:center; gap:16px; animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div class="success-checkmark-wrapper" style="width:72px; height:72px; border-radius:50%; background:#ECFDF5; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
             <svg style="width:36px; height:36px;" viewBox="0 0 52 52">
                 <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
                 <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
             </svg>
         </div>
-        <h3 id="melogo-success-title" style="font-size:20px; font-weight:600; margin:0; text-align:center; color: var(--color-text);">Sikeres művelet</h3>
-        <p id="melogo-success-text" style="font-size:15px; font-weight:300; color:var(--color-text-muted); text-align:center; margin:0; line-height:1.4;">A művelet sikeresen befejeződött.</p>
-        <button onclick="document.getElementById('melogo-success-modal').style.display='none';" style="margin-top:16px; width:100%; height:48px; border-radius: 6px; border:none; background:var(--color-text); color:var(--color-surface); font-weight:500; font-size:15px; cursor:pointer;">Rendben</button>
+        <h3 id="melogo-success-title" style="font-size:20px; font-weight:600; margin:0; text-align:center;">Sikeres művelet</h3>
+        <p id="melogo-success-text" style="font-size:15px; font-weight:300; color:#666; text-align:center; margin:0; line-height:1.4;">A művelet sikeresen befejeződött.</p>
+        <button onclick="document.getElementById('melogo-success-modal').style.display='none';" style="margin-top:16px; width:100%; height:48px; border-radius: 6px; border:none; background:#000; color:#fff; font-weight:500; font-size:15px; cursor:pointer;">Rendben</button>
     </div>
 </div>
 
@@ -9385,7 +10150,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             if (roleSel) roleSel.style.display = 'none';
             if (sub) sub.innerText = 'Lépj be a fiókodba';
             if (btn) btn.innerText = 'Bejelentkezem';
-            if (sw) sw.innerHTML = `${typeof t === 'function' ? t('Nincs még fiókod?') : 'Nincs még fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Regisztrálj') : 'Regisztrálj'}</span>`;
+            if (sw) sw.innerHTML = 'Nincs még fiókod? <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Regisztrálj</span>';
             
             clearAllInputErrors();
             clearLoginError();
@@ -9405,7 +10170,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             if (roleSel) roleSel.style.display = 'none';
             if (sub) sub.innerText = 'Hozd létre a fiókodat';
             if (btn) btn.innerText = 'Regisztrálok & Bejelentkezem';
-            if (sw) sw.innerHTML = `${typeof t === 'function' ? t('Van már fiókod?') : 'Van már fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Jelentkezz be') : 'Jelentkezz be'}</span>`;
+            if (sw) sw.innerHTML = 'Van már fiókod? <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">Jelentkezz be</span>';
             
             clearAllInputErrors();
             clearLoginError();
@@ -10620,76 +11385,13 @@ function filterWorkerByExactJob(jobName) {
         }
 
         function closeWorkerJobDetail() {
-            const el = document.getElementById('worker-action-overlay');
-            if (el) {
-                el.classList.remove('active');
-                el.classList.remove('open');
-                el.style.display = '';
-            }
-            closeGlobalBackdrop();
-        }
-
-        function closeEmployerJobDetail() {
-            const el = document.getElementById('employer-action-overlay');
-            if (el) {
-                el.classList.remove('active');
-                el.classList.remove('open');
-                el.style.display = '';
-            }
-            closeGlobalBackdrop();
+            document.getElementById('worker-action-overlay').style.display = 'none';
         }
 
         function closeAllActionOverlays() {
-            document.querySelectorAll('.action-overlay, .settings-overlay').forEach(el => {
-                el.classList.remove('active');
-                el.classList.remove('open');
-                el.style.display = '';
+            document.querySelectorAll('.action-overlay.active, .settings-overlay.active').forEach(el => {
+                el.style.display = 'none';
             });
-            closeGlobalBackdrop();
-        }
-
-        function closeGlobalBackdrop() {
-            const backdrop = document.getElementById('global-overlay-backdrop');
-            if (backdrop) {
-                backdrop.classList.remove('open');
-                backdrop.classList.remove('active');
-            }
-        }
-
-        function closeJobOffer() {
-            const el = document.getElementById('job-offer-overlay');
-            if (el) { el.classList.remove('open'); el.classList.remove('active'); el.style.display = ''; }
-            closeGlobalBackdrop();
-        }
-        function closeWorkerProfileOverlay() {
-            const el = document.getElementById('worker-profile-overlay');
-            if (el) { el.classList.remove('open'); el.classList.remove('active'); el.style.display = ''; }
-            closeGlobalBackdrop();
-        }
-        function closeEmployerProfileOverlay() {
-            const el = document.getElementById('employer-profile-overlay');
-            if (el) { el.classList.remove('open'); el.classList.remove('active'); el.style.display = ''; }
-            closeGlobalBackdrop();
-        }
-        function closeNotificationsSheet() {
-            const el = document.getElementById('notifications-overlay');
-            if (el) { el.classList.remove('open'); el.classList.remove('active'); el.style.display = ''; }
-            closeGlobalBackdrop();
-        }
-        function closeHelpSheet() {
-            const el = document.getElementById('help-overlay');
-            if (el) { el.classList.remove('open'); el.classList.remove('active'); el.style.display = ''; }
-            closeGlobalBackdrop();
-        }
-        function closePrivacySheet() {
-            const el = document.getElementById('privacy-overlay');
-            if (el) { el.classList.remove('open'); el.classList.remove('active'); el.style.display = ''; }
-            closeGlobalBackdrop();
-        }
-        function closeTermsSheet() {
-            const el = document.getElementById('terms-overlay');
-            if (el) { el.classList.remove('open'); el.classList.remove('active'); el.style.display = ''; }
-            closeGlobalBackdrop();
         }
 
         // ÚJ: DIÁK MEGNYITJA AZ ÜZENETEK MENÜBŐL A CSEVEGÉST
@@ -10852,7 +11554,7 @@ function filterWorkerByExactJob(jobName) {
                 `;
             } else if (gameState.status === 'Keresés') {
                 container.innerHTML = `
-                    <div style="background-color: var(--color-surface); border:1px solid var(--color-border); color: var(--color-text-muted); padding: 12px; border-radius: 8px; font-size: 11px; text-align:center; font-weight: 400;">
+                    <div style="background-color: #f8fafc; border:1px solid #e2e8f0; color: var(--color-text-muted); padding: 12px; border-radius: 8px; font-size: 11px; text-align:center; font-weight: 400;">
                         ${typeof window.t === 'function' ? window.t('⌛ Jelentkezés elküldve. Várakozás a Munkáltató válaszára és a letét zárolására...') : '⌛ Jelentkezés elküldve. Várakozás a Munkáltató válaszára és a letét zárolására...'}
                     </div>
                     <button class="emp-submit-btn" style="margin-top: 12px; background-color: var(--color-navy);" onclick="openWorkerChatFromOverlay()">
@@ -10899,7 +11601,7 @@ function filterWorkerByExactJob(jobName) {
             }
             if (chat) {
                 // Close the job detail overlay first
-                closeWorkerJobDetail();
+                document.getElementById('worker-action-overlay').style.display = 'none';
                 // Open the real chat room
                 openChatRoom(chat.id);
             } else {
@@ -11246,7 +11948,9 @@ function filterWorkerByExactJob(jobName) {
             }
         }
 
-        
+        function closeEmployerJobDetail() {
+            document.getElementById('employer-action-overlay').style.display = 'none';
+        }
 
         function updateEmployerActionFooter() {
             const footer = document.getElementById('employer-action-footer');
@@ -12066,27 +12770,11 @@ let settingsConfirmedAddress = null;
         }
 
         async function saveSettings() {
-            const saveBtn = document.querySelector('.settings-save-btn');
-            if (saveBtn) {
-                if (saveBtn.disabled) return;
-                saveBtn.disabled = true;
-                saveBtn._originalText = saveBtn.innerHTML;
-                saveBtn.innerHTML = '<span class="spinner-small" style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;"></span> Mentés...';
-            }
-
-            const restoreBtn = () => {
-                if (saveBtn) {
-                    saveBtn.disabled = false;
-                    saveBtn.innerHTML = saveBtn._originalText || 'Mentés';
-                }
-            };
-
             const nameVal = (document.getElementById('settings-name') ? document.getElementById('settings-name').value : '').trim() || '';
             const nameErr = document.getElementById('settings-name-err');
             if (nameErr) nameErr.style.display = 'none';
             if (!nameVal) {
                 if (nameErr) nameErr.style.display = 'block';
-                restoreBtn();
                 return;
             }
 
@@ -12096,7 +12784,6 @@ let settingsConfirmedAddress = null;
             if (birthYearErr) birthYearErr.style.display = 'none';
             if (birthYearVal !== null && (isNaN(birthYearVal) || birthYearVal < 1950 || birthYearVal > 2012)) {
                 if (birthYearErr) birthYearErr.style.display = 'block';
-                restoreBtn();
                 return;
             }
             let phoneVal = (document.getElementById('settings-phone') ? document.getElementById('settings-phone').value : '').trim() || '';
@@ -12108,36 +12795,11 @@ let settingsConfirmedAddress = null;
             }
             if (phoneVal && !window.validateHungarianPhone(phoneVal)) {
                 if (phoneErr) phoneErr.style.display = 'block';
-                restoreBtn();
                 return;
             }
             const bioVal = (document.getElementById('settings-bio') ? document.getElementById('settings-bio').value : '') || '';
             const skillsArr = Array.from(selectedSkills);
             
-            const zip = ((document.getElementById('set-zip') || {}).value ? (document.getElementById('set-zip') || {}).value.trim() : '') || '';
-            const county = ((document.getElementById('set-county') || {}).value ? (document.getElementById('set-county') || {}).value.trim() : '') || '';
-            const city = ((document.getElementById('set-city') || {}).value ? (document.getElementById('set-city') || {}).value.trim() : '') || '';
-            const street = ((document.getElementById('set-street') || {}).value ? (document.getElementById('set-street') || {}).value.trim() : '') || '';
-            const house = ((document.getElementById('set-house') || {}).value ? (document.getElementById('set-house') || {}).value.trim() : '') || '';
-            const apt = ((document.getElementById('set-apartment') || {}).value ? (document.getElementById('set-apartment') || {}).value.trim() : '') || '';
-            
-            let addressValid = true;
-            let generatedAddress = '';
-            const err = document.getElementById('err-set-structured');
-            
-            if (!zip || !county || !city || !street || !house) {
-                addressValid = false;
-                if (err) {
-                    err.classList.add('show');
-                    err.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            } else {
-                if (err) err.classList.remove('show');
-                generatedAddress = `${zip} ${city}, ${street} ${house}.`;
-                if (apt) generatedAddress += ` ${apt}`;
-                settingsConfirmedAddress = generatedAddress;
-            }
-
             // Save to local storage
             localStorage.setItem('melogo_name', nameVal);
             
@@ -12165,17 +12827,34 @@ let settingsConfirmedAddress = null;
                 userData.birthYear = birthYearVal;
             }
             
-            if (addressValid) {
-                userData.address = generatedAddress;
-                userData.addressCity = city;
-                userData.addressStreet = street;
-                userData.addressCounty = county;
-
-                firestoreUpdateData.address = generatedAddress;
-                firestoreUpdateData.addressCity = city;
-                firestoreUpdateData.addressStreet = street;
-                firestoreUpdateData.addressCounty = county;
+            const zip = ((document.getElementById('set-zip') || {}).value ? (document.getElementById('set-zip') || {}).value.trim() : '') || '';
+            const county = ((document.getElementById('set-county') || {}).value ? (document.getElementById('set-county') || {}).value.trim() : '') || '';
+            const city = ((document.getElementById('set-city') || {}).value ? (document.getElementById('set-city') || {}).value.trim() : '') || '';
+            const street = ((document.getElementById('set-street') || {}).value ? (document.getElementById('set-street') || {}).value.trim() : '') || '';
+            const house = ((document.getElementById('set-house') || {}).value ? (document.getElementById('set-house') || {}).value.trim() : '') || '';
+            const apt = ((document.getElementById('set-apartment') || {}).value ? (document.getElementById('set-apartment') || {}).value.trim() : '') || '';
+            
+            if (!zip || !county || !city || !street || !house) {
+                const err = document.getElementById('err-set-structured');
+                if (err) err.classList.add('show');
+                return;
             }
+            const err = document.getElementById('err-set-structured');
+            if (err) err.classList.remove('show');
+            
+            let generatedAddress = `${zip} ${city}, ${street} ${house}.`;
+            if (apt) generatedAddress += ` ${apt}`;
+            
+            settingsConfirmedAddress = generatedAddress;
+            userData.address = generatedAddress;
+            userData.addressCity = city;
+            userData.addressStreet = street;
+            userData.addressCounty = county;
+
+            firestoreUpdateData.address = generatedAddress;
+            firestoreUpdateData.addressCity = city;
+            firestoreUpdateData.addressStreet = street;
+            firestoreUpdateData.addressCounty = county;
             
             localStorage.setItem('melogo_user_data', JSON.stringify(userData));
             
@@ -12189,12 +12868,7 @@ let settingsConfirmedAddress = null;
                 }
             }
             
-            restoreBtn();
-            if (typeof showGreenBanner === 'function') {
-                showGreenBanner('Beállítások elmentve!');
-            }
-            
-            // Re-render user UI to refresh profile views
+                        // Re-render user UI to refresh profile views
             updateAllUserUI();
             
             if (typeof geocodeAndCenterMap === 'function' && generatedAddress) {
@@ -12757,9 +13431,9 @@ let settingsConfirmedAddress = null;
                 const isActive = (activeDateFilter === isoDate);
                 
                 html += `
-                    <div onclick="setDateFilter('${isoDate}')" class="day-box ${isActive ? 'active' : ''}" style="min-width: 52px; height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; box-sizing: border-box;">
-                        <span style="font-size: 11px; margin-bottom: 4px; pointer-events: none;">${typeof window.t === 'function' ? window.t(dayName) : dayName}</span>
-                        <span style="font-size: 18px; pointer-events: none;">${num}</span>
+                    <div onclick="setDateFilter('${isoDate}')" style="min-width: 52px; height: 64px; border-radius: 6px; border: none; background: ${isActive ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)'}; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; box-sizing: border-box;">
+                        <span style="font-size: 11px; font-weight: 300; color: #FFFFFF; margin-bottom: 2px; opacity: ${isActive ? '1' : '0.6'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'};">${dayName}</span>
+                        <span style="font-size: 16px; font-weight: 300; color: #FFFFFF; opacity: ${isActive ? '1' : '0.8'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'}; font-weight: ${isActive ? '500' : '400'};">${num}</span>
                     </div>
                 `;
             }
@@ -13108,15 +13782,9 @@ let settingsConfirmedAddress = null;
                 attributionControl: false
             }).setView([startLat, startLon], startZoom);
 
-            const isDarkNow = localStorage.getItem('melogo_dark_manual') === 'true' || 
-                (localStorage.getItem('melogo_dark_manual') === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            const initialUrl = isDarkNow 
-                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-                : 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&apistyle=s.e:l.i|p.v:off,s.t:2|p.v:off';
-            window.mainTileLayer = L.tileLayer(initialUrl, {
+                        window.mainTileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&apistyle=s.e:l.i|p.v:off,s.t:2|p.v:off', {
                 maxZoom: 18,
-                minZoom: 6,
-                subdomains: 'abcd'
+                minZoom: 6
             });
             window.mainTileLayer.addTo(leafletMap);
 
@@ -13178,7 +13846,7 @@ let settingsConfirmedAddress = null;
 
                 const priceIcon = L.divIcon({
                     className: 'leaflet-custom-pin',
-                    html: `<div class="map-pin-label" style="background:var(--color-text); color:var(--color-bg); padding:8px 12px; border-radius: 6px; font-weight: 500; font-size:12px; border:2px solid var(--color-bg);  cursor:pointer; pointer-events:auto; text-align:center; white-space:nowrap; box-shadow: 0px 2px 5px rgba(0,0,0,0.2);">${job.price.toLocaleString('hu-HU')} Ft</div>`,
+                    html: `<div class="map-pin-label" style="background:var(--color-text); color:white; padding:8px 12px; border-radius: 6px; font-weight: 500; font-size:12px; border:2px solid white;  cursor:pointer; pointer-events:auto; text-align:center; white-space:nowrap;">${job.price.toLocaleString('hu-HU')} Ft</div>`,
                     iconSize: [80, 36],
                     iconAnchor: [40, 18]
                 });
@@ -13856,7 +14524,7 @@ let settingsConfirmedAddress = null;
             
             pills.forEach(text => {
                 const pill = document.createElement('div');
-                pill.style.cssText = 'background:var(--color-surface);color:var(--color-text-muted);padding:6px 14px;border-radius:99px;font-size:11px;font-weight:400;text-align:center;margin:8px auto;max-width:80%;display:block;border: 0.5px solid var(--color-border);';
+                pill.style.cssText = 'background:#f3f4f6;color:#6b7280;padding:6px 14px;border-radius:99px;font-size:11px;font-weight:400;text-align:center;margin:8px auto;max-width:80%;display:block;border: 0.5px solid var(--color-border);';
                 pill.innerText = text;
                 msgContainer.appendChild(pill);
             });
@@ -14079,8 +14747,8 @@ let settingsConfirmedAddress = null;
                     }
                     bubble.style.cssText = `
                         max-width:80%; padding:10px 14px; border-radius:${isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px'};
-                        background:${isMe ? 'var(--color-chat-bubble-out)' : 'var(--color-chat-bubble-in)'};
-                        color:${isMe ? 'var(--color-chat-text-out)' : 'var(--color-chat-text-in)'};
+                        background:${isMe ? 'var(--color-navy)' : '#fff'};
+                        color:${isMe ? '#fff' : 'var(--color-navy)'};
                         font-size:14px; align-self:${isMe ? 'flex-end' : 'flex-start'};
                         
                     `;
@@ -14789,9 +15457,9 @@ let settingsConfirmedAddress = null;
                         document.getElementById('emp-street').value = a.road || '';
                         document.getElementById('emp-house').value = a.house_number || '';
                         
-                        btn.innerHTML = '📍 ' + (typeof window.t === 'function' ? window.t('Jelenlegi helyzet megadva') : 'Jelenlegi helyzet megadva');
-                        btn.style.background = 'rgba(255, 87, 34, 0.1)';
-                        btn.style.color = '#FF5722';
+                        btn.innerHTML = '📍 Jelenlegi helyzet megadva';
+                        btn.style.background = 'rgba(34, 197, 94, 0.1)';
+                        btn.style.color = 'var(--color-green)';
                     } else {
                         alert("Nem sikerült meghatározni a pontos címet.");
                         btn.innerHTML = originalText;
@@ -15118,19 +15786,6 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
         }
         
         async function openEmployerProfile(name, uid) {
-            // Open the overlay instantly
-            const el = document.getElementById('employer-profile-overlay');
-            if (el) {
-                el.style.display = '';
-                el.classList.add('open');
-                el.classList.add('active');
-            }
-            const backdrop = document.getElementById('global-overlay-backdrop');
-            if (backdrop) {
-                backdrop.classList.add('open');
-                backdrop.classList.add('active');
-            }
-
             // Find a job associated with this employer to extract general location details
             const job = mockJobs.find(j => j.employer === name || j.ownerName === name);
             let locationText = "Kaposvár";
@@ -15856,8 +16511,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         </button>
                     `;
                 } else {
-                    bar.style.backgroundColor = 'var(--color-surface)';
-                    bar.style.borderTop = '1px solid var(--color-border)';
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
                     bar.innerHTML = `
                         <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
                             <span style="font-size: 14px; animation: pulse 1.5s infinite;">⌛ Várakozás a megbízó elfogadására...</span>
@@ -15880,10 +16535,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         </button>
                     `;
                 } else {
-                    bar.style.backgroundColor = 'var(--color-surface)';
-                    bar.style.borderTop = '1px solid var(--color-border)';
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
                     bar.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-muted); flex: 1; justify-content: center; padding: 4px 0;">
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
                             <span style="font-size: 14px;">⌛ Várakozás a munka indítására...</span>
                         </div>
                     `;
@@ -15928,10 +16583,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         </button>
                     `;
                 } else {
-                    bar.style.backgroundColor = 'var(--color-surface)';
-                    bar.style.borderTop = '1px solid var(--color-border)';
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
                     bar.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-muted); flex: 1; justify-content: center; padding: 4px 0;">
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
                             <span style="font-size: 14px; animation: pulse 1.5s infinite;">⌛ Várakozás a megbízó jóváhagyására...</span>
                         </div>
                     `;
@@ -15956,10 +16611,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         </div>
                     `;
                 } else {
-                    bar.style.backgroundColor = 'var(--color-surface)';
-                    bar.style.borderTop = '1px solid var(--color-border)';
+                    bar.style.backgroundColor = '#f8fafc';
+                    bar.style.borderTop = '1px solid #e2e8f0';
                     bar.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-muted); flex: 1; justify-content: center; padding: 4px 0;">
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
                             <span style="font-size: 14px; animation: pulse 1.5s infinite;">⌛ Várakozás az értékelésre...</span>
                         </div>
                     `;
@@ -16381,7 +17036,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 bar.innerHTML = `
                     <div style="font-size: 12px; font-weight: 500; color: #92400E; text-align: center;">
                         ${typeof window.t === 'function' ? window.t("A diák befejezte a munkát! Értékeld a teljesítményét:") : "A diák befejezte a munkát! Értékeld a teljesítményét:"}
-                    </div>
+                    </div>`;
                     <div style="display: flex; gap: 14px; font-size: 28px; justify-content: center;" id="chat-stars-container">
                         <span style="cursor: pointer; transition: transform 0.1s;" onclick="employerRateWorkerFromChat('${jobTitle}', 1)" onmouseover="highlightChatStars(1)" onmouseout="resetChatStars()">⭐</span>
                         <span style="cursor: pointer; transition: transform 0.1s;" onclick="employerRateWorkerFromChat('${jobTitle}', 2)" onmouseover="highlightChatStars(2)" onmouseout="resetChatStars()">⭐</span>
@@ -17034,24 +17689,6 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 return;
             }
 
-            if (!isMapUsed && window.confirmedAddress) {
-                try {
-                    const geocodeRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(window.confirmedAddress)}&format=json&limit=1`, { headers: { 'Accept-Language': 'hu' } });
-                    const geocodeData = await geocodeRes.json();
-                    if (geocodeData && geocodeData.length > 0) {
-                        confirmedLat = parseFloat(geocodeData[0].lat);
-                        confirmedLon = parseFloat(geocodeData[0].lon);
-                    } else {
-                        const cityRes = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(document.getElementById('emp-city').value.trim())}&country=Hungary&format=json&limit=1`);
-                        const cityData = await cityRes.json();
-                        if (cityData && cityData.length > 0) {
-                            confirmedLat = parseFloat(cityData[0].lat);
-                            confirmedLon = parseFloat(cityData[0].lon);
-                        }
-                    }
-                } catch(e) { console.error("Geocoding failed during save", e); }
-            }
-
             const specificJob = document.getElementById('emp-job-select').value;
             const desc = details.value || 'Alkalmi munka precízen elvégezve.';
             const county = document.getElementById('emp-county').value || 'Somogy';
@@ -17604,7 +18241,6 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             ];
 
             if (enabled) {
-                root.setAttribute('data-theme', 'dark');
                 // Disable light-mode specific override style sheets
                 lightStyles.forEach(id => {
                     const el = document.getElementById(id);
@@ -17630,11 +18266,6 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 root.style.setProperty('--color-text-light', '#94A3B8');
                 document.body.style.background = '#121214';
                 document.body.style.color = '#F8FAFC';
-                // Fix iOS status bar gap: set html element bg and update theme-color
-                document.documentElement.style.background = '#121214';
-                document.documentElement.style.backgroundColor = '#121214';
-                const metaTheme = document.querySelector('meta[name="theme-color"]');
-                if (metaTheme) metaTheme.setAttribute('content', '#121214');
                 
                 // Chat variables
                 root.style.setProperty('--color-chat-bg', '#121214');
@@ -17643,12 +18274,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 root.style.setProperty('--color-chat-text-in', '#FFFFFF');
                 root.style.setProperty('--color-chat-text-out', '#000000');
                 root.style.setProperty('--color-chat-border-in', '#2a2a30');
-                
-                // Update iOS safe area / status bar color
-                const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-                if (metaThemeColor) metaThemeColor.setAttribute("content", "#121214");
             } else {
-                root.setAttribute('data-theme', 'light');
                 // Enable light-mode specific override style sheets
                 lightStyles.forEach(id => {
                     const el = document.getElementById(id);
@@ -17661,8 +18287,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     if (el) el.disabled = true;
                 });
 
-                root.style.setProperty('--color-profile-header-bg', '#F8F9FB');
-                root.style.setProperty('--color-profile-header-text', '#1D1D1F');
+                root.style.setProperty('--color-profile-header-bg', '#000000');
+                root.style.setProperty('--color-profile-header-text', '#FFFFFF');
                 root.style.setProperty('--color-bg', '#F8F9FB');
                 root.style.setProperty('--color-logo-green', '#c0fc2a');
                 root.style.setProperty('--color-surface', '#FFFFFF');
@@ -17678,17 +18304,10 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 // Chat variables
                 root.style.setProperty('--color-chat-bg', '#F3F4F6');
                 root.style.setProperty('--color-chat-bubble-in', '#FFFFFF');
-                root.style.setProperty('--color-chat-bubble-out', '#FF5722');
+                root.style.setProperty('--color-chat-bubble-out', '#000000');
                 root.style.setProperty('--color-chat-text-in', '#000000');
                 root.style.setProperty('--color-chat-text-out', '#FFFFFF');
-                root.style.setProperty('--color-chat-text-out', '#FFFFFF');
                 root.style.setProperty('--color-chat-border-in', '#E2E8F0');
-                
-                // Update iOS safe area / status bar color
-                document.documentElement.style.background = '';
-                document.documentElement.style.backgroundColor = '';
-                const metaTheme = document.querySelector('meta[name="theme-color"]');
-                if (metaTheme) metaTheme.setAttribute('content', '#F8F9FB');
             }
 
             // Dynamically toggle tile layer URLs between CartoDB Dark Matter and Google Maps
@@ -17726,11 +18345,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             if (manualPref !== null) {
                 isDark = manualPref === 'true';
             } else {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    isDark = true;
-                } else {
-                    isDark = false;
-                }
+                // Follow phone system preference
+                isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
             applyDarkMode(isDark);
             const toggle = document.getElementById('dark-mode-toggle');
@@ -17767,7 +18383,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     </svg>
                     <div style="font-size:17px;font-weight: 500;color: var(--color-text);margin-bottom:8px;">Nincs közeli munka</div>
                     <div style="font-size:14px;color: var(--color-text);line-height:1.6;margin-bottom:24px;">Próbálj nagyobb hatókört beállítani,<br>vagy nézz vissza hamarosan.</div>
-                    <button onclick="openRadiusSlider()" style="background:var(--color-text);color:#fff;border:none;padding:12px 24px;border-radius: 6px;font-weight: 400;font-size:14px;cursor:pointer;">${typeof t === "function" ? t("Hatókör növelése") : "Hatókör növelése"}</button>
+                    <button onclick="openRadiusSlider()" style="background:var(--color-text);color:#fff;border:none;padding:12px 24px;border-radius: 6px;font-weight: 400;font-size:14px;cursor:pointer;">Hatókör növelése</button>
                 </div>
             `;
         }
@@ -17784,8 +18400,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         <line x1="35" y1="45" x2="65" y2="45" opacity="0.5"/>
                         <line x1="35" y1="55" x2="55" y2="55" opacity="0.5"/>
                     </svg>
-                    <div style="font-size:17px;font-weight: 500;color: var(--color-text);margin-bottom:8px;">${typeof t === "function" ? t("Nincs még üzeneted") : "Nincs még üzeneted"}</div>
-                    <div style="font-size:14px;color: var(--color-text);line-height:1.6;">${typeof t === "function" ? t("Jelentkezz egy munkára és a beszélgetések") : "Jelentkezz egy munkára és a beszélgetések"}<br>${typeof t === "function" ? t("itt fognak megjelenni.") : "itt fognak megjelenni."}</div>
+                    <div style="font-size:17px;font-weight: 500;color: var(--color-text);margin-bottom:8px;">Nincs még üzeneted</div>
+                    <div style="font-size:14px;color: var(--color-text);line-height:1.6;">Jelentkezz egy munkára és a beszélgetések<br>itt fognak megjelenni.</div>
                 </div>
             `;
         }
@@ -18230,7 +18846,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                             <button onclick="reportOrBlockUser()" style="background:none; border:none; color:#EF4444; cursor:pointer; display:flex; padding:0;" title="Jelentés/Tiltás">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                             </button>
-                            <button style="background:none; border:none; color:var(--color-text); font-weight: 500; cursor:pointer;" onclick="closeWorkerJobDetail()">Bezár</button>
+                            <button style="background:none; border:none; color:var(--color-text); font-weight: 500; cursor:pointer;" onclick="document.getElementById('worker-action-overlay').style.display = 'none'">Bezár</button>
                         </div>
                     </div>
                     <div class="chat-body" style="gap: 12px;">
@@ -18299,7 +18915,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
     
     <!-- Apply Success Overlay -->
     <div id="apply-success-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7);  -webkit- z-index: 10000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1); flex-direction: column;">
-        <div class="success-checkmark-wrapper" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background: var(--color-input-bg); border-radius: 50%; transform: scale(0.7); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        <div class="success-checkmark-wrapper" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; transform: scale(0.7); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
             <svg class="checkmark-svg" width="60" height="60" viewBox="0 0 52 52">
                 <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
                 <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
@@ -18537,14 +19153,6 @@ setInterval(() => {
     });
 </script>
 
-
-<script>
-if (typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS.en) {
-    Object.assign(TRANSLATIONS.en, {
-        "V": "Sun", "H": "Mon", "K": "Tue", "Sze": "Wed", "Cs": "Thu", "P": "Fri", "Szo": "Sat"
-    });
-}
-</script>
 </body>
 </html>
 

@@ -17696,8 +17696,11 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             if (manualPref !== null) {
                 isDark = manualPref === 'true';
             } else {
-                // Default to Dark Mode for the user's review
-                isDark = true;
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    isDark = true;
+                } else {
+                    isDark = false;
+                }
             }
             applyDarkMode(isDark);
             const toggle = document.getElementById('dark-mode-toggle');

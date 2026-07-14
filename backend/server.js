@@ -5,6 +5,30 @@ require('dotenv').config();
 const Stripe = require('stripe');
 const { GoogleGenAI } = require('@google/generative-ai');
 
+const admin = require('firebase-admin');
+
+// Firebase Admin Inicializálás (Push Értesítésekhez)
+try {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log('Firebase Admin sikeresen inicializálva a környezeti változóból.');
+  } else if (fs.existsSync('./serviceAccountKey.json')) {
+    const serviceAccount = require('./serviceAccountKey.json');
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log('Firebase Admin sikeresen inicializálva helyi fájlból.');
+  } else {
+    console.log('Figyelem: Firebase Admin nincs inicializálva (hiányzó serviceAccountKey.json). Push értesítések nem fognak működni.');
+  }
+} catch (e) {
+  console.error("Hiba a Firebase Admin inicializálása során:", e);
+}
+
+
 // Inicializálás
 const app = express();
 app.use(cors());
@@ -200,6 +224,45 @@ app.post('/api/verify/job-photo', upload.single('photo'), async (req, res) => {
   } catch (error) {
     console.error('Gemini AI hiba:', error);
     res.status(500).json({ error: 'Hiba történt az AI elemzés során: ' + error.message });
+  }
+});
+
+
+// ==========================================
+// 3. PUSH ÉRTESÍTÉSEK (Firebase Cloud Messaging)
+// ==========================================
+
+/**
+ * 3.a Push értesítés küldése egy konkrét felhasználónak a Push Token (FCM token) alapján.
+ */
+app.post('/api/notifications/send', async (req, res) => {
+  try {
+    if (!admin.apps.length) {
+      return res.status(500).json({ error: 'Firebase Admin nincs inicializálva a szerveren.' });
+    }
+
+    const { targetToken, title, body, data } = req.body;
+
+    if (!targetToken) {
+      return res.status(400).json({ error: 'Nincs megadva céleszköz token (targetToken)!' });
+    }
+
+    const message = {
+      notification: {
+        title: title || 'Új értesítés a MelóGo-ban',
+        body: body || 'Kattints ide a részletekért.',
+      },
+      data: data || {},
+      token: targetToken,
+    };
+
+    const response = await admin.messaging().send(message);
+    console.log('Sikeresen elküldött push értesítés:', response);
+    
+    res.json({ success: true, messageId: response });
+  } catch (error) {
+    console.error('Hiba az értesítés küldése közben:', error);
+    res.status(500).json({ error: 'Hiba az értesítés küldése során: ' + error.message });
   }
 });
 

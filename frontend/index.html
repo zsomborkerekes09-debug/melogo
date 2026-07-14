@@ -8464,9 +8464,72 @@ input.auth-input-field:focus, input.login-input:focus, input[type="email"]:focus
         
         // Handle redirect login
         // Listen for authentication state changes
+        
+        // --- PUSH NOTIFICATION LOGIC ---
+        async function registerPushNotifications(userId) {
+            if (!window.Capacitor || !window.Capacitor.isNativePlatform()) {
+                console.log("Push notifications nem támogatott weben/nem natív környezetben");
+                return;
+            }
+            
+            const PushNotifications = window.Capacitor.Plugins.PushNotifications;
+            if (!PushNotifications) {
+                console.warn("PushNotifications plugin nem található");
+                return;
+            }
+
+            try {
+                let permStatus = await PushNotifications.checkPermissions();
+                if (permStatus.receive === 'prompt') {
+                    permStatus = await PushNotifications.requestPermissions();
+                }
+
+                if (permStatus.receive !== 'granted') {
+                    console.log("Push engedély megtagadva");
+                    return;
+                }
+
+                await PushNotifications.register();
+
+                // Token fogadása
+                PushNotifications.addListener('registration', async (token) => {
+                    console.log("Push regisztráció sikeres, token: " + token.value);
+                    if (window.firebaseAPI && window.firebaseDb && userId) {
+                        try {
+                            const userRef = window.firebaseAPI.doc(window.firebaseDb, 'users', userId);
+                            await window.firebaseAPI.updateDoc(userRef, {
+                                pushToken: token.value,
+                                tokenUpdatedAt: window.firebaseAPI.serverTimestamp()
+                            });
+                            console.log("Push token sikeresen elmentve a Firestore-ba!");
+                        } catch (err) {
+                            console.error("Hiba a push token mentésekor:", err);
+                        }
+                    }
+                });
+
+                PushNotifications.addListener('registrationError', (error) => {
+                    console.error("Push regisztrációs hiba: ", JSON.stringify(error));
+                });
+
+                PushNotifications.addListener('pushNotificationReceived', (notification) => {
+                    console.log("Push érkezett előtérben: ", JSON.stringify(notification));
+                });
+
+                PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
+                    console.log("Push kattintás: ", JSON.stringify(notification));
+                });
+            } catch (e) {
+                console.error("Hiba a push értesítések beállításakor", e);
+            }
+        }
+        // --- PUSH NOTIFICATION LOGIC VÉGE ---
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 console.log("Firebase User is logged in:", user.email);
+                // Setup push notifications
+                registerPushNotifications(user.uid);
                 let role = 'worker'; // Default to worker, removed pending role logic
                 let userName = user.displayName || '';
                 let name = userName;

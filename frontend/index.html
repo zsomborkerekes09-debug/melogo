@@ -8450,8 +8450,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 
                 let bounds = [];
                 try {
-                    if (window.geofireCommon) {
-                        bounds = window.geofireCommon.geohashQueryBounds([userCoords.lat, userCoords.lon], radiusInM);
+                    if (window['geofire-common']) {
+                        bounds = window['geofire-common'].geohashQueryBounds([userCoords.lat, userCoords.lon], radiusInM);
                     }
                 } catch(e) { console.error('Geofire error', e); }
 
@@ -10535,7 +10535,16 @@ function filterWorkerByExactJob(jobName) {
                             jobLat = window.userCoords.lat;
                             jobLon = window.userCoords.lon;
                         }
-                        const hash = typeof geofireCommon !== 'undefined' ? geofireCommon.geohashForLocation([jobLat, jobLon]) : null;
+                        try {
+                            const addressForGeocoding = `${city}, ${street} ${house}, Hungary`;
+                            const geocodeRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressForGeocoding));
+                            const geocodeData = await geocodeRes.json();
+                            if (geocodeData && geocodeData.length > 0) {
+                                jobLat = parseFloat(geocodeData[0].lat);
+                                jobLon = parseFloat(geocodeData[0].lon);
+                            }
+                        } catch(e) { console.error('Geocode fallback to GPS due to error', e); }
+                        const hash = window['geofire-common'] ? window['geofire-common'].geohashForLocation([jobLat, jobLon]) : null;
 
                         const newDocRef = await window.firebaseAPI.addDoc(window.firebaseAPI.collection(window.firebaseDb, "jobs"), {
                             title: finalJobTitle,
@@ -17201,7 +17210,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     toolsRequired: activeToolsRequired,
                     lat: confirmedLat || 46.3667,
                     lon: confirmedLon || 17.7833,
-                    geohash: window.geofireCommon ? window.geofireCommon.geohashForLocation([confirmedLat || 46.3667, confirmedLon || 17.7833]) : ''
+                    geohash: window['geofire-common'] ? window['geofire-common'].geohashForLocation([confirmedLat || 46.3667, confirmedLon || 17.7833]) : ''
                 };
 
                 localEmployerJobs.unshift(newJob);

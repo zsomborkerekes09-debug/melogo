@@ -3163,7 +3163,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js?v=1782741919009').then(registration => {
+          navigator.serviceWorker.register('/sw.js?v=' + Date.now()).then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, err => {
             console.log('ServiceWorker registration failed: ', err);
@@ -9871,10 +9871,46 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         }
         
         function openEmployerFormOverlay() {
+            // Reset geocoding state
+            confirmedAddress = null;
+            window.confirmedAddress = null;
+            confirmedLat = null;
+            confirmedLon = null;
+
+            // Clear input borders and errors
+            document.querySelectorAll('.emp-field-error').forEach(e => e.classList.remove('show'));
+            ['emp-zip', 'emp-county', 'emp-city', 'emp-street', 'emp-house'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.border = '0.5px solid var(--color-border)';
+                }
+            });
+
+            // Set up input change listeners to clear coordinates on manual edit of Zip or City
+            ['emp-zip', 'emp-city'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.oninput = () => {
+                        confirmedLat = null;
+                        confirmedLon = null;
+                        confirmedAddress = null;
+                        window.confirmedAddress = null;
+                        
+                        // Restore GPS button style if it was active
+                        const gpsBtn = document.getElementById('emp-gps-btn');
+                        if (gpsBtn) {
+                            gpsBtn.innerHTML = '📍 Jelenlegi helyzetem használata';
+                            gpsBtn.style.background = '#FF5722 !important';
+                            gpsBtn.style.color = '#000000 !important';
+                        }
+                    };
+                }
+            });
+
             document.getElementById('employer-form-overlay').classList.add('open');
             selectEmployerFormCat('Kert'); // load default options
             if (currentUser && currentUser.role === 'employer' && currentUser.address) {
-                selectAddress(currentUser.address);
+                selectAddress(currentUser.address, null, null);
             }
             if (typeof empFormMap !== 'undefined' && empFormMap) {
                 setTimeout(() => empFormMap.invalidateSize(), 200);
@@ -14727,6 +14763,7 @@ let settingsConfirmedAddress = null;
 
         function selectAddress(address, lat = null, lon = null) {
             confirmedAddress = address;
+            window.confirmedAddress = address;
             confirmedLat = lat;
             confirmedLon = lon;
             
@@ -14759,8 +14796,25 @@ let settingsConfirmedAddress = null;
                     if (data && data.length > 0) {
                         confirmedLat = parseFloat(data[0].lat);
                         confirmedLon = parseFloat(data[0].lon);
+                        updateMapPreview(confirmedLat, confirmedLon);
+                    } else {
+                        throw new Error("No Nominatim results");
                     }
-                }).catch(e => console.error("Geocoding error", e));
+                }).catch(async (e) => {
+                    console.warn("Nominatim search failed in selectAddress, trying Open-Meteo", e);
+                    try {
+                        const cityVal = document.getElementById('emp-city') ? document.getElementById('emp-city').value.trim() : '';
+                        if (cityVal) {
+                            const meteoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityVal)}&count=1&language=hu&format=json`);
+                            const meteoData = await meteoRes.json();
+                            if (meteoData && meteoData.results && meteoData.results.length > 0) {
+                                confirmedLat = parseFloat(meteoData.results[0].latitude);
+                                confirmedLon = parseFloat(meteoData.results[0].longitude);
+                                updateMapPreview(confirmedLat, confirmedLon);
+                            }
+                        }
+                    } catch (e2) { console.error("All geocoding failed in selectAddress", e2); }
+                });
             } else {
                 updateMapPreview(lat, lon);
             }
@@ -14856,7 +14910,13 @@ let settingsConfirmedAddress = null;
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
+                
+                // Save coordinates immediately
+                confirmedLat = lat;
+                confirmedLon = lon;
+                
                 try {
+                    // Try Nominatim reverse geocoding first
                     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`, {
                         headers: { 'Accept-Language': 'hu' }
                     });
@@ -14870,17 +14930,50 @@ let settingsConfirmedAddress = null;
                         document.getElementById('emp-street').value = a.road || '';
                         document.getElementById('emp-house').value = a.house_number || '';
                         
+                        let generatedAddress = `${a.postcode || ''} ${a.city || a.town || a.village || ''}, ${a.road || ''} ${a.house_number || ''}.`;
+                        confirmedAddress = generatedAddress;
+                        window.confirmedAddress = generatedAddress;
+
                         btn.innerHTML = '📍 ' + (typeof window.t === 'function' ? window.t('Jelenlegi helyzet megadva') : 'Jelenlegi helyzet megadva');
                         btn.style.background = 'rgba(255, 87, 34, 0.1)';
                         btn.style.color = '#FF5722';
-                    } else {
-                        alert("Nem sikerült meghatározni a pontos címet.");
-                        btn.innerHTML = originalText;
+                        return;
                     }
+                    throw new Error("No address found in Nominatim response");
                 } catch(e) {
-                    console.error("Geocoding failed:", e);
-                    alert("Nem sikerült lekérni a címet a koordinátákból.");
-                    btn.innerHTML = originalText;
+                    console.warn("Nominatim reverse geocoding failed, trying BigDataCloud", e);
+                    try {
+                        // Try BigDataCloud reverse geocoding fallback
+                        const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=hu`);
+                        const data = await response.json();
+                        
+                        if (data) {
+                            document.getElementById('emp-zip').value = data.postcode || '';
+                            document.getElementById('emp-county').value = data.principalSubdivision ? data.principalSubdivision.replace(' vármegye', '') : '';
+                            document.getElementById('emp-city').value = data.locality || data.city || '';
+                            document.getElementById('emp-street').value = '';
+                            document.getElementById('emp-house').value = '';
+                            
+                            let generatedAddress = `${data.postcode || ''} ${data.locality || data.city || ''}.`;
+                            confirmedAddress = generatedAddress;
+                            window.confirmedAddress = generatedAddress;
+
+                            btn.innerHTML = '📍 ' + (typeof window.t === 'function' ? window.t('Jelenlegi helyzet megadva') : 'Jelenlegi helyzet megadva');
+                            btn.style.background = 'rgba(255, 87, 34, 0.1)';
+                            btn.style.color = '#FF5722';
+                            
+                            showPushNotification("GPS koordináták rögzítve", "Kérlek, add meg az utca nevét és a házszámot kézzel!", "var(--color-text)");
+                            return;
+                        }
+                        throw new Error("No data from BigDataCloud response");
+                    } catch (e2) {
+                        console.error("All reverse geocoding failed:", e2);
+                        // Coordinates are still saved, but user needs to enter address manually
+                        btn.innerHTML = '📍 ' + (typeof window.t === 'function' ? window.t('Koordináták rögzítve') : 'Koordináták rögzítve');
+                        btn.style.background = 'rgba(255, 87, 34, 0.1)';
+                        btn.style.color = '#FF5722';
+                        showPushNotification("GPS koordináták rögzítve", "Cím lekérése sikertelen. Kérlek, add meg a címet kézzel!", "#EF4444");
+                    }
                 }
             }, (err) => {
                 console.error("GPS error:", err);
@@ -17017,7 +17110,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             }
 
             // Prefill Location (using the locked state logic)
-            selectAddress(job.location);
+            selectAddress(job.location, job.lat, job.lon);
 
             // Prefill Price
             const priceEl = document.getElementById('emp-price-input');
@@ -17115,7 +17208,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 return;
             }
 
-            if (!isMapUsed && window.confirmedAddress) {
+            if (!isMapUsed && window.confirmedAddress && (confirmedLat === null || confirmedLon === null)) {
                 try {
                     const geocodeRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(window.confirmedAddress)}&format=json&limit=1`, { headers: { 'Accept-Language': 'hu' } });
                     const geocodeData = await geocodeRes.json();
@@ -17128,9 +17221,27 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         if (cityData && cityData.length > 0) {
                             confirmedLat = parseFloat(cityData[0].lat);
                             confirmedLon = parseFloat(cityData[0].lon);
+                        } else {
+                            // Try Open-Meteo fallback
+                            const meteoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(document.getElementById('emp-city').value.trim())}&count=1&language=hu&format=json`);
+                            const meteoData = await meteoRes.json();
+                            if (meteoData && meteoData.results && meteoData.results.length > 0) {
+                                confirmedLat = parseFloat(meteoData.results[0].latitude);
+                                confirmedLon = parseFloat(meteoData.results[0].longitude);
+                            }
                         }
                     }
-                } catch(e) { console.error("Geocoding failed during save", e); }
+                } catch(e) { 
+                    console.error("Geocoding failed during save, trying Open-Meteo", e);
+                    try {
+                        const meteoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(document.getElementById('emp-city').value.trim())}&count=1&language=hu&format=json`);
+                        const meteoData = await meteoRes.json();
+                        if (meteoData && meteoData.results && meteoData.results.length > 0) {
+                            confirmedLat = parseFloat(meteoData.results[0].latitude);
+                            confirmedLon = parseFloat(meteoData.results[0].longitude);
+                        }
+                    } catch (e2) { console.error("All geocoding fallbacks failed", e2); }
+                }
             }
 
             const specificJob = document.getElementById('emp-job-select').value;
@@ -17156,6 +17267,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     localEmployerJobs[jobIndex].toolsRequired = activeToolsRequired;
                     localEmployerJobs[jobIndex].lat = confirmedLat || 46.3667;
                     localEmployerJobs[jobIndex].lon = confirmedLon || 17.7833;
+                    localEmployerJobs[jobIndex].geohash = window['geofire-common'] ? window['geofire-common'].geohashForLocation([confirmedLat || 46.3667, confirmedLon || 17.7833]) : '';
                     
                     // Frissítés Firestore-ban is
                     if (window.firebaseAuth && window.firebaseAuth.currentUser) {

@@ -14857,8 +14857,11 @@ let settingsConfirmedAddress = null;
 
         function resetAddressSearch() {
             confirmedAddress = null;
-            document.getElementById('emp-loc-locked-state').style.display = 'none';
-            document.getElementById('emp-loc-search-state').style.display = 'block';
+            const lockedState = document.getElementById('emp-loc-locked-state');
+            if (lockedState) lockedState.style.display = 'none';
+            
+            const searchState = document.getElementById('emp-loc-search-state');
+            if (searchState) searchState.style.display = 'block';
             
             if (document.getElementById('emp-zip')) document.getElementById('emp-zip').value = '';
             if (document.getElementById('emp-county')) document.getElementById('emp-county').value = '';
@@ -14870,9 +14873,14 @@ let settingsConfirmedAddress = null;
             const errLocStructured = document.getElementById('err-loc-structured');
             if (errLocStructured) errLocStructured.classList.remove('show');
 
-            document.getElementById('emp-address-suggestions').style.display = 'none';
-            document.getElementById('emp-city').value = '';
-            document.getElementById('emp-street').value = '';
+            const suggestions = document.getElementById('emp-address-suggestions');
+            if (suggestions) suggestions.style.display = 'none';
+            
+            const cityEl = document.getElementById('emp-city');
+            if (cityEl) cityEl.value = '';
+            
+            const streetEl = document.getElementById('emp-street');
+            if (streetEl) streetEl.value = '';
         }
 
         function autoFillGPS() {

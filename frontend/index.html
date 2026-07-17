@@ -7747,8 +7747,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     return;
                 }
 
-                await PushNotifications.register();
-
+                // Fontos: A listenereket regisztráció ELŐTT kell feliratkozni!
                 PushNotifications.addListener('registration', async (token) => {
                     console.log("Push regisztráció sikeres, token: " + token.value);
                     if (window.firebaseAPI && window.firebaseDb && userId) {
@@ -7764,6 +7763,21 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                         }
                     }
                 });
+
+                PushNotifications.addListener('registrationError', (error) => {
+                    console.error("Push regisztrációs hiba: ", JSON.stringify(error));
+                });
+
+                PushNotifications.addListener('pushNotificationReceived', (notification) => {
+                    console.log("Push érkezett előtérben: ", JSON.stringify(notification));
+                });
+
+                PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
+                    console.log("Push értesítésre kattintottak: ", JSON.stringify(action));
+                });
+
+                // Csak azután regisztrálunk, hogy a listenereket már feliratkoztattuk
+                await PushNotifications.register();
             } catch (e) {
                 console.error("Hiba a push értesítések beállításakor", e);
             }

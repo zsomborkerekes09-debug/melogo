@@ -7774,6 +7774,27 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
                 PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
                     console.log("Push értesítésre kattintottak: ", JSON.stringify(action));
+                    try {
+                        const notification = action.notification;
+                        if (notification && notification.data) {
+                            const type = notification.data.type;
+                            const chatId = notification.data.chatId;
+                            if (type === 'chat' && chatId) {
+                                // Váltás az üzenetek fülre
+                                if (typeof navigateApp === 'function') {
+                                    navigateApp(2);
+                                }
+                                // Kis késleltetés a felület betöltéséhez, majd a chat megnyitása
+                                setTimeout(() => {
+                                    if (typeof openChatRoom === 'function') {
+                                        openChatRoom(chatId);
+                                    }
+                                }, 300);
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Hiba az értesítésre való kattintás feldolgozásakor:", err);
+                    }
                 });
 
                 // Csak azután regisztrálunk, hogy a listenereket már feliratkoztattuk

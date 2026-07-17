@@ -15887,6 +15887,17 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     }).catch(e => console.warn("Job status update failed:", e));
                 }
                 
+                // 3. Write system message to messages subcollection for notification triggering
+                await window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
+                    {
+                        senderId: 'system',
+                        text: 'A munkás késznek jelölte a munkát',
+                        timestamp: window.firebaseAPI.serverTimestamp(),
+                        type: 'system'
+                    }
+                ).catch(e => console.warn("Msg subcollection write failed:", e));
+                
                 await updateApplicationStatusInFirestore(chatData, 'Értékelésre vár');
                 
                 gameState.status = 'Befejezve';

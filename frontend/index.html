@@ -14960,6 +14960,20 @@ let settingsConfirmedAddress = null;
             }
         }
 
+        function cleanGeocodeQuery(addressString) {
+            if (!addressString) return "";
+            let parts = addressString.split(',');
+            if (parts.length >= 3) {
+                // Strip county and country
+                parts = parts.slice(0, 2);
+            }
+            let clean = parts.join(',').trim();
+            if (clean.endsWith('.')) {
+                clean = clean.slice(0, -1).trim();
+            }
+            return clean;
+        }
+
         function selectAddress(address, lat = null, lon = null) {
             confirmedAddress = address;
             window.confirmedAddress = address;
@@ -14987,7 +15001,8 @@ let settingsConfirmedAddress = null;
             }
 
             if (!lat || !lon) {
-                fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`, {
+                let cleanAddr = cleanGeocodeQuery(address);
+                fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanAddr)}&format=json&limit=1&email=info@melogo.hu`, {
                     headers: { 'Accept-Language': 'hu' }
                 })
                 .then(res => res.json())
@@ -17428,13 +17443,14 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
             if (!isMapUsed && window.confirmedAddress && (confirmedLat === null || confirmedLon === null)) {
                 try {
-                    const geocodeRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(window.confirmedAddress)}&format=json&limit=1`, { headers: { 'Accept-Language': 'hu' } });
+                    let cleanAddr = cleanGeocodeQuery(window.confirmedAddress);
+                    const geocodeRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanAddr)}&format=json&limit=1&email=info@melogo.hu`, { headers: { 'Accept-Language': 'hu' } });
                     const geocodeData = await geocodeRes.json();
                     if (geocodeData && geocodeData.length > 0) {
                         confirmedLat = parseFloat(geocodeData[0].lat);
                         confirmedLon = parseFloat(geocodeData[0].lon);
                     } else {
-                        const cityRes = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(document.getElementById('emp-city').value.trim())}&country=Hungary&format=json&limit=1`);
+                        const cityRes = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(document.getElementById('emp-city').value.trim())}&country=Hungary&format=json&limit=1&email=info@melogo.hu`);
                         const cityData = await cityRes.json();
                         if (cityData && cityData.length > 0) {
                             confirmedLat = parseFloat(cityData[0].lat);
@@ -18977,25 +18993,23 @@ setInterval(() => {
         let found = false;
 
         try {
-            // Try full address first
-            let res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchAddress)}&format=json&limit=1`, { headers: { 'Accept-Language': 'hu' } });
+            let clean = cleanGeocodeQuery(searchAddress);
+            let res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(clean)}&format=json&limit=1&email=info@melogo.hu`, { headers: { 'Accept-Language': 'hu' } });
             let data = await res.json();
             if (data && data.length > 0) {
                 lat = parseFloat(data[0].lat);
                 lon = parseFloat(data[0].lon);
                 found = true;
             } else {
-                // Try street and city
-                let addrNoHouse = `${city}, ${street}, Hungary`;
-                res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addrNoHouse)}&format=json&limit=1`, { headers: { 'Accept-Language': 'hu' } });
+                let addrNoHouse = `${city} ${street}`;
+                res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addrNoHouse)}&format=json&limit=1&email=info@melogo.hu`, { headers: { 'Accept-Language': 'hu' } });
                 data = await res.json();
                 if (data && data.length > 0) {
                     lat = parseFloat(data[0].lat);
                     lon = parseFloat(data[0].lon);
                     found = true;
                 } else {
-                    // Fallback to city only
-                    res = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&country=Hungary&format=json&limit=1`);
+                    res = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&country=Hungary&format=json&limit=1&email=info@melogo.hu`);
                     data = await res.json();
                     if (data && data.length > 0) {
                         lat = parseFloat(data[0].lat);

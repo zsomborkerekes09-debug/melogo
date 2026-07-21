@@ -5,6 +5,15 @@
     <meta name="darkreader-lock">
     <meta name="google" content="notranslate">
     <script>if (/iPhone|iPod/.test(navigator.userAgent)) document.documentElement.style.setProperty('--safe-top', '55px'); else document.documentElement.style.setProperty('--safe-top', '0px');</script>
+    <style id="splash-theme-init">
+        /* Apply correct splash screen colors BEFORE JS runs, based on system preference */
+        #splash-screen {
+            background-color: var(--color-bg, #121214) !important;
+        }
+        #splash-screen > div {
+            color: var(--color-text, #F8FAFC) !important;
+        }
+    </style>
     
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -2616,10 +2625,10 @@
             -webkit-user-drag: none;
         }
         .chat-item-wrapper.unread {
-            background-color: #F8F9FF;
+            background-color: var(--color-unread-bg, rgba(80, 120, 255, 0.07));
         }
         .chat-item-wrapper.unread .chat-item-content {
-            background-color: #F8F9FF;
+            background-color: var(--color-unread-bg, rgba(80, 120, 255, 0.07));
         }
         .chat-item-avatar-container {
             position: relative;
@@ -2651,7 +2660,7 @@
             z-index: 3;
         }
         .chat-item-wrapper.unread .chat-item-online {
-            border-color: #F8F9FF;
+            border-color: var(--color-bg);
         }
         .chat-item-middle {
             flex: 1;
@@ -2935,39 +2944,41 @@
         }
         .emp-ad-pill {
             font-size: 11px;
-            font-weight: 400;
+            font-weight: 500;
             padding: 4px 10px;
-            border-radius: 6px;
+            border-radius: 20px;
             white-space: nowrap;
+            letter-spacing: 0.2px;
         }
         .emp-ad-card.status-seeking {
-            border-left: 3.5px solid var(--color-text) !important;
+            border-left: 3.5px solid var(--color-green) !important;
         }
         .emp-ad-card.status-applicants {
             border-left: 3.5px solid #F59E0B !important;
         }
         .emp-ad-card.status-active {
-            border-left: 3.5px solid var(--color-text) !important;
+            border-left: 3.5px solid #22C55E !important;
         }
         .emp-ad-card.status-completed {
-            border-left: 3.5px solid var(--color-text) !important;
+            border-left: 3.5px solid #64748B !important;
         }
 
+        /* Status pills - mindkét módban olvasható */
         .emp-ad-pill.seeking {
-            background-color: #FFFFFF !important;
-            color: var(--color-text) !important;
+            background-color: rgba(255, 87, 34, 0.15) !important;
+            color: #FF5722 !important;
         }
         .emp-ad-pill.applicants {
-            background-color: #FEF3C7 !important;
-            color: var(--color-text) !important;
+            background-color: rgba(245, 158, 11, 0.15) !important;
+            color: #D97706 !important;
         }
         .emp-ad-pill.active {
-            background-color: #DCFCE7 !important;
+            background-color: rgba(34, 197, 94, 0.15) !important;
             color: #16A34A !important;
         }
         .emp-ad-pill.completed {
-            background-color: #EFF6FF !important;
-            color: #1E40AF !important;
+            background-color: rgba(100, 116, 139, 0.15) !important;
+            color: #64748B !important;
         }
         .emp-empty-state {
             background-color: var(--color-bg); 
@@ -3398,6 +3409,7 @@ input:focus {
     --color-chat-text-in: #000000;
     --color-chat-text-out: #FFFFFF;
     --color-chat-border-in: #E2E8F0;
+    --color-unread-bg: rgba(0, 0, 0, 0.04);
 }
 
 body, html, #app-container, #app-home-screen, #app-messages-screen, #app-profile-screen, #app-login-screen { 
@@ -3469,8 +3481,8 @@ button:active, .job-card:active, .filter-pill:active, .msg-filter-pill:active {
 .sort-pill svg, .category-btn svg { stroke: var(--color-text-light) !important; fill: none !important; }
 .sort-pill.active svg, .category-btn.active svg { stroke: #FFFFFF !important; }
 
-#splash-screen { background-color: var(--color-bg) !important; }
-#splash-screen .brand-logo { color: var(--color-text) !important; }
+/* Splash screen background follows the active theme */
+#splash-screen { background-color: var(--color-bg, #F8F9FB) !important; }
 
 #search-overlay { background-color: var(--color-bg) !important; }
 .search-overlay-header { background-color: var(--color-bg) !important; }
@@ -3545,7 +3557,7 @@ strong, b, .font-semibold, .font-bold, .job-price, .celeb-amount {
 }
 
 .job-card:active { background-color: rgba(0,0,0,0.05) !important; }
-.emp-ad-pill.seeking { background-color: rgba(255, 87, 34, 0.1) !important; color: var(--color-green) !important; font-weight: 500 !important; }
+.emp-ad-pill.seeking { background-color: rgba(255, 87, 34, 0.15) !important; color: #FF5722 !important; font-weight: 500 !important; }
 .emp-ad-card.status-seeking { border-left: 3.5px solid var(--color-green) !important; }
 
 /* Employer Home fixes */
@@ -4170,7 +4182,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     }
 </style>
 
-<style id="map-invert-fix">
+<style id="map-invert-fix" disabled>
     /* Dark map: let CartoDB dark tile layer handle the dark look.
        Only ensure container bg is dark so no white flicker. */
     .leaflet-container {
@@ -4193,13 +4205,9 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     }
     
     /* Keep water (blue) visible but keep map clean and roads crisp */
-    .leaflet-layer {
-        filter: saturate(0.5) contrast(1.1) brightness(1.05) !important;
-        -webkit-filter: saturate(0.5) contrast(1.1) brightness(1.05) !important;
-    }
 </style>
 
-<style id="super-premium-dark-theme-css">
+<style id="super-premium-dark-theme-css" disabled>
     /* Go logo neon green */
     .brand-logo span, .logo span, .brand-logo + span, [class*="logo"] span {
         color: #c0fc2a !important;
@@ -4412,6 +4420,97 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         color: #FF5722 !important;
         border: 1px solid rgba(255, 87, 34, 0.25) !important;
     }
+    /* ===== UNREAD CHAT ITEM - DARK MODE ===== */
+    /* Subtle dark tint instead of bright white so unread items don't flash in dark mode */
+    .chat-item-wrapper.unread,
+    .chat-item-wrapper.unread .chat-item-content {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    /* ===== CHAT LIST TEXT VISIBILITY - DARK MODE ===== */
+    .chat-item-name {
+        color: #F8FAFC !important;
+    }
+    .chat-item-job {
+        color: rgba(248, 250, 252, 0.5) !important;
+    }
+    .chat-item-preview {
+        color: rgba(248, 250, 252, 0.6) !important;
+    }
+    .chat-item-time {
+        color: rgba(248, 250, 252, 0.4) !important;
+    }
+    .chat-item-wrapper.unread .chat-item-name {
+        color: #FFFFFF !important;
+        font-weight: 500 !important;
+    }
+    .chat-item-wrapper.unread .chat-item-preview {
+        color: rgba(248, 250, 252, 0.8) !important;
+        font-weight: 400 !important;
+    }
+
+    /* ===== [data-theme='dark'] SCOPED CHAT LIST - GUARANTEED DARK MODE VISIBILITY ===== */
+    /* These rules are scoped to data-theme='dark' so they always win the specificity battle */
+    [data-theme='dark'] .chat-item-wrapper {
+        background-color: #121214 !important;
+    }
+    [data-theme='dark'] .chat-item-content {
+        background-color: #121214 !important;
+    }
+    [data-theme='dark'] .chat-item-wrapper.unread,
+    [data-theme='dark'] .chat-item-wrapper.unread .chat-item-content {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    [data-theme='dark'] .chat-item-name {
+        color: #F8FAFC !important;
+    }
+    [data-theme='dark'] .chat-item-job {
+        color: rgba(248, 250, 252, 0.5) !important;
+    }
+    [data-theme='dark'] .chat-item-preview {
+        color: rgba(248, 250, 252, 0.6) !important;
+    }
+    [data-theme='dark'] .chat-item-time {
+        color: rgba(248, 250, 252, 0.4) !important;
+    }
+    [data-theme='dark'] .chat-item-wrapper.unread .chat-item-name {
+        color: #FFFFFF !important;
+        font-weight: 500 !important;
+    }
+    [data-theme='dark'] .chat-item-wrapper.unread .chat-item-preview {
+        color: rgba(248, 250, 252, 0.8) !important;
+        font-weight: 400 !important;
+    }
+    [data-theme='dark'] .chat-item-separator {
+        background-color: #2a2a30 !important;
+    }
+    [data-theme='dark'] .chat-item-badge {
+        background-color: #FF5722 !important;
+        color: #FFFFFF !important;
+    }
+
+    /* ===== EMPLOYER AD DETAIL SCREEN - DARK MODE FIX ===== */
+    [data-theme='dark'] #employer-ad-detail-screen > div:first-child {
+        background-color: #1e1e22 !important;
+    }
+
+    /* ===== EMPLOYER HOME PILLS - DARK MODE FIX ===== */
+    [data-theme='dark'] .emp-ad-pill.seeking {
+        background-color: rgba(255, 87, 34, 0.15) !important;
+        color: #FF5722 !important;
+    }
+    [data-theme='dark'] .emp-ad-pill.active {
+        background-color: rgba(34, 197, 94, 0.15) !important;
+        color: #16A34A !important;
+    }
+    [data-theme='dark'] .emp-ad-pill.applicants {
+        background-color: rgba(245, 158, 11, 0.15) !important;
+        color: #D97706 !important;
+    }
+    [data-theme='dark'] .emp-ad-pill.completed {
+        background-color: rgba(100, 116, 139, 0.15) !important;
+        color: #F8FAFC !important;
+    }
 </style>
 
 <style id="fix-map-buttons-icons">
@@ -4426,6 +4525,61 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     .map-floating-btn, .map-floating-btn svg {
         color: #FFFFFF !important;
         stroke: #FFFFFF !important;
+    }
+</style>
+
+<style id="user-requested-fixes">
+    /* 1. Fix System Message Bubble in Chat (kis fehér doboz) */
+    .system-msg-bubble {
+        background: #F8F9FB !important;
+        border: 1px solid #D1D5DB !important;
+        color: #080C1E !important;
+    }
+    [data-theme='dark'] .system-msg-bubble {
+        background: #1e1e22 !important;
+        border: 1px solid #2a2a30 !important;
+        color: #F8FAFC !important;
+    }
+
+    /* 2. Fix Global Snackbar Text Color */
+    #global-snackbar {
+        background-color: var(--color-surface, #FFFFFF) !important;
+        color: var(--color-text, #000000) !important;
+        border: 1px solid var(--color-border);
+    }
+
+    /* 3. Fix Back Arrows Visibility (vissza nyíl) */
+    button[onclick*="closeEmployerAdDetailNew"] svg,
+    button[onclick*="closeEmployerJobDetail"] svg,
+    button[onclick*="closeWorkerJobDetail"] svg,
+    button[onclick*="closeChatRoom"] svg,
+    button[onclick*="closeEmployerFormOverlay"] svg,
+    button.settings-back-btn svg,
+    .jp-back-btn svg,
+    .emp-form-back-btn svg {
+        stroke: var(--color-text) !important;
+    }
+
+    [data-theme='light'] button[onclick*="closeEmployerAdDetailNew"] svg,
+    [data-theme='light'] button[onclick*="closeEmployerJobDetail"] svg,
+    [data-theme='light'] button[onclick*="closeWorkerJobDetail"] svg,
+    [data-theme='light'] button[onclick*="closeChatRoom"] svg,
+    [data-theme='light'] button[onclick*="closeEmployerFormOverlay"] svg,
+    [data-theme='light'] button.settings-back-btn svg,
+    [data-theme='light'] .jp-back-btn svg,
+    [data-theme='light'] .emp-form-back-btn svg {
+        stroke: #1D1D1F !important;
+    }
+
+    [data-theme='dark'] button[onclick*="closeEmployerAdDetailNew"] svg,
+    [data-theme='dark'] button[onclick*="closeEmployerJobDetail"] svg,
+    [data-theme='dark'] button[onclick*="closeWorkerJobDetail"] svg,
+    [data-theme='dark'] button[onclick*="closeChatRoom"] svg,
+    [data-theme='dark'] button[onclick*="closeEmployerFormOverlay"] svg,
+    [data-theme='dark'] button.settings-back-btn svg,
+    [data-theme='dark'] .jp-back-btn svg,
+    [data-theme='dark'] .emp-form-back-btn svg {
+        stroke: #F8FAFC !important;
     }
 </style>
 <style id="modal-color-fixes">
@@ -5745,11 +5899,11 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
 
 <!-- Splash Screen -->
-<div id="splash-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width: 100%;background:#121214;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition: opacity 0.5s ease;">
-    <div style="font-size:44px;font-weight: 500;color:#fff;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;letter-spacing:-1.5px;animation: pulse 2s infinite;">Melo<span style="color:var(--color-logo-green);">Go</span></div>
+<div id="splash-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width: 100%;background:var(--color-bg, #121214);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition: opacity 0.5s ease;">
+    <div style="font-size:44px;font-weight: 500;color:var(--color-text, #1D1D1F);font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;letter-spacing:-1.5px;animation: pulse 2s infinite;">Melo<span style="color:var(--color-logo-green, #c0fc2a);">Go</span></div>
 </div>
 
-<div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width: 100%;background:#121214;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
+<div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width: 100%;background:var(--color-bg, #121214);z-index:9999;display:none;flex-direction:column;overflow:hidden;">
     <button onclick="skipOnboarding()" style="position:absolute;top:52px;right:24px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:14px;font-weight: 300;cursor:pointer;z-index:10;">Kihagyás</button>
     
     <div id="onboarding-slides" style="display:flex;width:300%;height:100%;transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
@@ -6788,7 +6942,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                         <div class="emp-form-section">
                             <div class="emp-section-label">Szükséges eszközök</div>
                             <div style="display:flex; gap:8px; margin-top:10px;">
-                                <button type="button" id="tools-btn-employer" onclick="selectToolsRequired('employer')" style="flex:1; padding:13px 8px; border-radius: 6px; border: 2px solid var(--color-text); background:var(--color-text); color:#fff; font-size:13px; font-weight: 400; cursor:pointer; transition:all 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">📦 Mi biztosítjuk</button>
+                                <button type="button" id="tools-btn-employer" onclick="selectToolsRequired('employer')" style="flex:1; padding:13px 8px; border-radius: 6px; border: 2px solid var(--color-text); background: var(--color-surface); color: var(--color-text); font-size:13px; font-weight: 400; cursor:pointer; transition:all 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">📦 Mi biztosítjuk</button>
                                 <button type="button" id="tools-btn-worker" onclick="selectToolsRequired('worker')" style="flex:1; padding:13px 8px; border-radius: 6px; border: 2px solid var(--color-text); background: var(--color-surface); color: var(--color-text); font-size:13px; font-weight: 400; cursor:pointer; transition:all 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">🔧 Munkás hozza</button>
                             </div>
                         </div>
@@ -6834,6 +6988,15 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                                         <input class="emp-input" id="emp-house" placeholder="Házszám" style="width:100%; border:0.5px solid var(--color-border); border-radius: 6px; padding:12px; background:var(--color-surface); color:var(--color-text);">
                                     </div>
                                 </div>
+                                <div id="emp-post-job-map-container" style="width:100%; height:200px; margin-top:8px; border-radius:6px; border:0.5px solid var(--color-border); display:none; position:relative; overflow:hidden;">
+                                    <div id="emp-post-job-map" style="width:100%; height:100%; border-radius:6px;"></div>
+                                    <div style="position:absolute; bottom:8px; left:8px; right:8px; background:var(--color-surface); color:var(--color-text); padding:8px; border-radius:4px; font-size:11px; text-align:center; z-index:1000; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 0.5px solid var(--color-border); pointer-events:none;">
+                                        Ha nem pontos a helyszín, <b>húzd a gombostűt</b> a megfelelő utcára!
+                                    </div>
+                                </div>
+                                <button type="button" id="emp-map-update-btn" onclick="updateEmpPostJobMap()" style="width:100%; padding:14px; margin-top:8px; border-radius: 6px; border:1px dashed var(--color-border) !important; background:transparent !important; color:var(--color-text) !important; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    🗺️ Cím ellenőrzése / pontosítása a térképen
+                                </button>
                                 <button type="button" id="emp-gps-btn" onclick="useCurrentLocationForJobPost()" style="width:100%; padding:14px; margin-top:8px; border-radius: 6px; border:none !important; background:#FF5722 !important; color:#000000 !important; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow: 0 2px 8px rgba(255, 204, 0, 0.15); transition: opacity 0.1s ease;">
                                     📍 Jelenlegi helyzetem használata
                                 </button>
@@ -7318,7 +7481,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                         </div>
                         
                         <!-- Divider -->
-                        <div style="width: 0.5px; height: 24px; background-color: var(--color-bg); margin: 0 8px; flex-shrink: 0;"></div>
+                        <div style="width: 0.5px; height: 24px; background-color: var(--color-border); margin: 0 8px; flex-shrink: 0;"></div>
                         
                         <!-- Right Item: Job Name -->
                         <div style="flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-width: 0;">
@@ -7355,18 +7518,16 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
     <!-- REDESIGN: Full screen Employer Ad Detail Screen -->
     <div class="full-screen-right" id="employer-ad-detail-screen">
-        <!-- Navy Header -->
-        <div style="background: var(--color-text); padding: 44px 20px 20px 20px; display: flex; align-items: center; justify-content: space-between; color: #fff; flex-shrink: 0; position: relative;">
-            <button onclick="closeEmployerAdDetailNew()" style="background: none; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
+        <!-- Header - sötét és világos módban is látható -->
+        <div style="background: var(--color-surface); padding: 52px 16px 16px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; border-bottom: 0.5px solid var(--color-border); position: relative;">
+            <!-- Vissza gomb - kontrasztos megjelenítéssel -->
+            <button onclick="closeEmployerAdDetailNew()" style="background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 10px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text); flex-shrink: 0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
-            <div style="font-size: 17px; font-weight: 300; color: #fff;" id="ad-detail-header-title">Munka részletei</div>
+            <div style="font-size: 17px; font-weight: 600; color: var(--color-text); flex: 1; text-align: center; margin: 0 8px;" id="ad-detail-header-title">Munka részletei</div>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <button onclick="openEditEmployerJob(currentEmployerDetailJobId)" style="background: none; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px;" title="Hirdetés szerkesztése">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <button onclick="openEditEmployerJob(currentEmployerDetailJobId)" style="background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 10px; width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text);" title="Hirdetés szerkesztése">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                     </svg>
@@ -13268,7 +13429,8 @@ let settingsConfirmedAddress = null;
             window.mainTileLayer = L.tileLayer(initialUrl, {
                 maxZoom: 18,
                 minZoom: 6,
-                subdomains: 'abcd'
+                subdomains: 'abcd',
+                detectRetina: true
             });
             window.mainTileLayer.addTo(leafletMap);
 
@@ -14211,7 +14373,8 @@ let settingsConfirmedAddress = null;
             msgs.forEach(msg => {
                 const bubble = document.createElement('div');
                 if (msg.from === 'system') {
-                    bubble.style.cssText = 'background: #F8F9FB; border: 1px solid #D1D5DB; color: #080C1E; padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 400; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
+                    bubble.className = 'system-msg-bubble';
+                    bubble.style.cssText = 'padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 400; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
                     bubble.innerHTML = escapeHTML(msg.text);
                 } else {
                     let isMe = false;
@@ -14566,7 +14729,7 @@ let settingsConfirmedAddress = null;
         // EMPLOYER FORM — NEW FUNCTIONS
         // ================================================================
         let empActiveCat = 'Kert';
-        let activeToolsRequired = 'employer';
+        let activeToolsRequired = null;
 
         function selectToolsRequired(type) {
             activeToolsRequired = type;
@@ -14783,7 +14946,8 @@ let settingsConfirmedAddress = null;
                     attributionControl: false
                 }).setView([lat, lon], 14);
                 window.empFormTileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&apistyle=s.e:l.i|p.v:off,s.t:2|p.v:off', {
-                    maxZoom: 19
+                    maxZoom: 19,
+                    detectRetina: true
                 });
                 window.empFormTileLayer.addTo(empFormMap);
                 empFormMarker = L.marker([lat, lon]).addTo(empFormMap);
@@ -17842,8 +18006,11 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 'modal-color-fixes',
                 'modal-solid-and-lava',
                 'force-modal-text-colors',
-                'force-modal-button-text'
+                'force-modal-button-text',
+                'fix-map-buttons-icons'  /* light-mode only: map button icon colors */
             ];
+            // NOTE: 'final-checklist-css' is included above — it contains .msg-item/.chat-item
+            // color:  #1C1C1E rules that MUST be disabled in dark mode to avoid invisible chat items.
             
             const darkStyles = [
                 'map-invert-fix',
@@ -18782,6 +18949,111 @@ setInterval(() => {
             updateSliderTrack();
         }
     });
+
+    // --- CREATE JOB MAP LOGIC ---
+    let empPostJobMap = null;
+    let empPostJobMarker = null;
+
+    async function updateEmpPostJobMap() {
+        const container = document.getElementById('emp-post-job-map-container');
+        if (container) container.style.display = 'block';
+
+        const city = (document.getElementById('emp-city') || {}).value || '';
+        const street = (document.getElementById('emp-street') || {}).value || '';
+        const house = (document.getElementById('emp-house') || {}).value || '';
+        
+        let searchAddress = `${city}, ${street} ${house}, Hungary`;
+        if (!city) {
+            alert('Kérjük, legalább a települést add meg a kereséshez!');
+            return;
+        }
+
+        const btn = document.getElementById('emp-map-update-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Keresés...';
+
+        let lat = 47.4979; // Default Budapest
+        let lon = 19.0402;
+        let found = false;
+
+        try {
+            // Try full address first
+            let res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchAddress)}&format=json&limit=1`, { headers: { 'Accept-Language': 'hu' } });
+            let data = await res.json();
+            if (data && data.length > 0) {
+                lat = parseFloat(data[0].lat);
+                lon = parseFloat(data[0].lon);
+                found = true;
+            } else {
+                // Try street and city
+                let addrNoHouse = `${city}, ${street}, Hungary`;
+                res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addrNoHouse)}&format=json&limit=1`, { headers: { 'Accept-Language': 'hu' } });
+                data = await res.json();
+                if (data && data.length > 0) {
+                    lat = parseFloat(data[0].lat);
+                    lon = parseFloat(data[0].lon);
+                    found = true;
+                } else {
+                    // Fallback to city only
+                    res = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&country=Hungary&format=json&limit=1`);
+                    data = await res.json();
+                    if (data && data.length > 0) {
+                        lat = parseFloat(data[0].lat);
+                        lon = parseFloat(data[0].lon);
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Geocoding failed", err);
+        }
+
+        btn.innerHTML = originalText;
+
+        window.confirmedLat = lat;
+        window.confirmedLon = lon;
+        window.confirmedAddress = searchAddress;
+
+        if (!empPostJobMap) {
+            empPostJobMap = L.map('emp-post-job-map').setView([lat, lon], found ? 16 : 13);
+            
+            let mapLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap &copy; CARTO'
+            });
+            
+            if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                mapLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap &copy; CARTO'
+                });
+            }
+            mapLayer.addTo(empPostJobMap);
+
+            empPostJobMarker = L.marker([lat, lon], {
+                draggable: true,
+                icon: L.divIcon({
+                    className: 'custom-pin',
+                    html: `<div style="background:#FF5722; width:20px; height:20px; border-radius:50%; border:3px solid white; box-shadow:0 2px 5px rgba(0,0,0,0.3);"></div>`,
+                    iconSize: [26, 26],
+                    iconAnchor: [13, 13]
+                })
+            }).addTo(empPostJobMap);
+
+            empPostJobMarker.on('dragend', function(e) {
+                const position = empPostJobMarker.getLatLng();
+                window.confirmedLat = position.lat;
+                window.confirmedLon = position.lng;
+                console.log("Marker dragged to:", position);
+            });
+        } else {
+            empPostJobMap.setView([lat, lon], found ? 16 : 13);
+            empPostJobMarker.setLatLng([lat, lon]);
+        }
+        
+        setTimeout(() => {
+            empPostJobMap.invalidateSize();
+        }, 300);
+    }
 </script>
 
 
@@ -18792,6 +19064,54 @@ if (typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS.en) {
     });
 }
 </script>
+<style id="dark-mode-hotfixes">
+    /* Hotfix: Ensure Employer Ad Detail Screen header is dark in dark mode */
+    [data-theme='dark'] #employer-ad-detail-screen > div:first-of-type,
+    [data-theme='dark'] #employer-ad-detail-screen > div[style*="background: var(--color-surface)"] {
+        background: #1e1e22 !important;
+        background-color: #1e1e22 !important;
+    }
+
+    /* Hotfix: Ensure applicant card is dark and readable in dark mode */
+    [data-theme='dark'] #ad-detail-applicants-container > div {
+        background: #1e1e22 !important;
+        background-color: #1e1e22 !important;
+        border-color: #2a2a30 !important;
+    }
+
+    /* Hotfix: Ensure 'Keresés' and all other pills are visible in dark mode */
+    [data-theme='dark'] .emp-ad-pill.seeking,
+    [data-theme='dark'] .emp-ad-card .emp-ad-pill.seeking,
+    [data-theme='dark'] span.emp-ad-pill.seeking {
+        background: rgba(255, 87, 34, 0.15) !important;
+        background-color: rgba(255, 87, 34, 0.15) !important;
+        color: #FF5722 !important;
+    }
+    
+    [data-theme='dark'] .emp-ad-pill.active,
+    [data-theme='dark'] .emp-ad-card .emp-ad-pill.active,
+    [data-theme='dark'] span.emp-ad-pill.active {
+        background: rgba(34, 197, 94, 0.15) !important;
+        background-color: rgba(34, 197, 94, 0.15) !important;
+        color: #16A34A !important;
+    }
+    
+    [data-theme='dark'] .emp-ad-pill.applicants,
+    [data-theme='dark'] .emp-ad-card .emp-ad-pill.applicants,
+    [data-theme='dark'] span.emp-ad-pill.applicants {
+        background: rgba(245, 158, 11, 0.15) !important;
+        background-color: rgba(245, 158, 11, 0.15) !important;
+        color: #D97706 !important;
+    }
+    
+    [data-theme='dark'] .emp-ad-pill.completed,
+    [data-theme='dark'] .emp-ad-card .emp-ad-pill.completed,
+    [data-theme='dark'] span.emp-ad-pill.completed {
+        background: rgba(100, 116, 139, 0.15) !important;
+        background-color: rgba(100, 116, 139, 0.15) !important;
+        color: #F8FAFC !important;
+    }
+</style>
 </body>
 </html>
 

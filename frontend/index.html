@@ -864,7 +864,7 @@
             pointer-events: auto !important;
             visibility: visible !important;
         }
-        body:has(.action-overlay.active, .settings-overlay.active) .overlay-backdrop {
+        body:has(.action-overlay.active, .settings-overlay.active) #global-overlay-backdrop {
             opacity: 1;
             pointer-events: auto;
         }
@@ -6746,7 +6746,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     <div class="confirm-sheet-title" style="text-align: center; font-size: 18px; font-weight: 500; color: var(--color-text);">Munka lezárása</div>
                     <div class="confirm-sheet-desc" style="text-align: center; font-size: 14px; color: var(--color-text); margin-bottom: 24px;">Biztosan befejezted a munkát?</div>
                     <button class="confirm-sheet-btn confirm-btn-cancel" onclick="closeCloseJobSheet()" style="margin-bottom: 8px;">Mégse</button>
-                    <button class="confirm-sheet-btn confirm-btn-destructive" style="background:var(--color-text); color:#fff;" onclick="confirmCloseJob(event)">Befejezés és Értékelés</button>
+                    <button class="confirm-sheet-btn confirm-btn-destructive" style="background:var(--color-text); color:var(--color-bg) !important;" onclick="confirmCloseJob(event)">Befejezés és Értékelés</button>
                 </div>
                 <div class="confirm-sheet" id="logout-sheet" style="padding:28px 20px; min-height:240px; box-sizing:border-box;">
                     <div class="confirm-sheet-handle" style="margin:0 auto 20px auto;"></div>
@@ -15376,7 +15376,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="openEmployerChatRoomFromAd(${chatIdArg})" style="background: var(--color-text); color: #fff; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 400; cursor: pointer;">${typeof window.t === 'function' ? window.t('Csevegés') : 'Csevegés'}</button>
+                            <button onclick="openEmployerChatRoomFromAd(${chatIdArg})" style="background: var(--color-text); color: var(--color-bg) !important; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 400; cursor: pointer;">${typeof window.t === 'function' ? window.t('Csevegés') : 'Csevegés'}</button>
                         </div>
                     `;
                 } else if (pendingApps.length > 0) {
@@ -15414,7 +15414,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                                 </div>
                                 <div style="display: flex; gap: 8px;">
                                     <button onclick="acceptWorkerApplication('${app.id}')" style="background: var(--color-green); color: #fff; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 400; cursor: pointer; transition: transform 0.1s ease;">${typeof window.t === 'function' ? window.t('Elfogad') : 'Elfogad'}</button>
-                                    <button onclick="openEmployerChatRoomFromAd(${chatIdArg})" style="background: var(--color-text); color: #fff; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 400; cursor: pointer; transition: transform 0.1s ease;">${typeof window.t === 'function' ? window.t('Csevegés') : 'Csevegés'}</button>
+                                    <button onclick="openEmployerChatRoomFromAd(${chatIdArg})" style="background: var(--color-text); color: var(--color-bg) !important; border: none; border-radius: 10px; padding: 8px 12px; font-size: 12px; font-weight: 400; cursor: pointer; transition: transform 0.1s ease;">${typeof window.t === 'function' ? window.t('Csevegés') : 'Csevegés'}</button>
                                 </div>
                             </div>
                         `;

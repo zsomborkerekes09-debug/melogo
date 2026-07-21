@@ -127,7 +127,20 @@
             }
         });
     </script>
-
+    <script>
+        // Initialize Facebook Analytics
+        window.addEventListener('load', async () => {
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.FacebookAnalytics) {
+                try {
+                    await window.Capacitor.Plugins.FacebookAnalytics.initAppEvents();
+                    console.log("Facebook Analytics App Events initialized.");
+                    await window.Capacitor.Plugins.FacebookAnalytics.logEvent({ event: 'fb_mobile_activate_app' });
+                } catch (e) {
+                    console.warn("Facebook Analytics Init Error:", e);
+                }
+            }
+        });
+    </script>
     <style>
         html, body { background-color: var(--color-bg); }
         button, a { touch-action: manipulation; }

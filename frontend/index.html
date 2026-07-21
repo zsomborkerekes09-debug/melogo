@@ -1249,13 +1249,14 @@
             display: inline-block;
         }
         .job-badge-cat {
-            background: var(--color-surface);
+            background: var(--color-bg);
             color: var(--color-text-light);
             font-size: 10px;
             font-weight: 400;
             padding: 2px 7px;
             border-radius: 6px;
             display: inline-block;
+            border: 0.5px solid var(--color-border);
         }
         .job-card-badges {
             display: flex;
@@ -4921,6 +4922,9 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             "Kijelentkezés": "Log Out",
             "Fiók végleges törlése": "Permanently Delete Account",
             "Hirdetés törlése": "Delete Ad",
+            "Törlöd a hirdetést?": "Delete this listing?",
+            "Ezt a műveletet később nem tudod visszavonni.": "This action cannot be undone.",
+            "Törlés": "Delete",
             "Munka lezárása": "Close Day Job",
             "Befejezés és Értékelés": "Finish & Rate",
             "Csak körülnézek": "Just Browsing",
@@ -8848,9 +8852,16 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         
         function showConfirmModal(title, text, confirmText, onConfirm) {
             const modal = document.getElementById('melogo-confirm-modal');
-            document.getElementById('melogo-confirm-title').innerText = title;
-            document.getElementById('melogo-confirm-text').innerText = text;
-            document.getElementById('melogo-confirm-ok').innerText = confirmText;
+            
+            const tTitle = typeof window.t === 'function' ? window.t(title) : title;
+            const tText = typeof window.t === 'function' ? window.t(text) : text;
+            const tConfirm = typeof window.t === 'function' ? window.t(confirmText) : confirmText;
+            const tCancel = typeof window.t === 'function' ? window.t('Mégse') : 'Mégse';
+            
+            document.getElementById('melogo-confirm-title').innerText = tTitle;
+            document.getElementById('melogo-confirm-text').innerText = tText;
+            document.getElementById('melogo-confirm-ok').innerText = tConfirm;
+            document.getElementById('melogo-confirm-cancel').innerText = tCancel;
             
             document.getElementById('melogo-confirm-cancel').onclick = function() {
                 modal.style.display = 'none';
@@ -13532,8 +13543,8 @@ let settingsConfirmedAddress = null;
                     <div class="job-price" style="font-size: 18px;">${(Number(job.price) || 0).toLocaleString('hu-HU')} Ft</div>
                 </div>
                 <div class="job-card-badges" style="margin-bottom: 12px; display: flex; gap: 6px;">
-                    <span class="job-badge-cat" style="background:var(--color-text); color:#fff; font-size:10px; padding:4px 8px; border-radius: 6px;">${typeof window.t === 'function' ? window.t(job.category || 'Egyéb') : (job.category || 'Egyéb')}</span>
-                    ${job.urgent ? '<span class="job-badge-urgent" style="border: 0.5px solid var(--color-border); color: var(--color-text); font-size:10px; padding:4px 8px; border-radius: 6px;">' + (typeof window.t === 'function' ? window.t('Sürgős') : 'Sürgős') + '</span>' : ''}
+                    <span class="job-badge-cat" style="font-size:10px; padding:4px 8px; border-radius: 6px;">${typeof window.t === 'function' ? window.t(job.category || 'Egyéb') : (job.category || 'Egyéb')}</span>
+                    ${job.urgent ? '<span class="job-badge-urgent" style="font-size:10px; padding:4px 8px; border-radius: 6px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> ' + (typeof window.t === 'function' ? window.t('Sürgős') : 'Sürgős') + '</span>' : ''}
                 </div>
                 <div class="job-meta" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px;">
                     <div class="job-meta-item" style="display:flex; align-items:center; gap:6px; font-size:12px; color: var(--color-text);">
@@ -19124,6 +19135,30 @@ if (typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS.en) {
         background: rgba(100, 116, 139, 0.15) !important;
         background-color: rgba(100, 116, 139, 0.15) !important;
         color: #F8FAFC !important;
+    }
+
+    /* Hotfix: Ensure profile avatar circle initials are readable in dark mode */
+    [data-theme='dark'] #profile-avatar-circle {
+        background-color: #2a2a30 !important;
+    }
+    [data-theme='dark'] #profile-avatar-circle + div {
+        background-color: #2a2a30 !important;
+        border-color: #1e1e22 !important;
+        box-shadow: 0 0 0 2px #1e1e22 !important;
+    }
+
+    /* Hotfix: Ensure job category badge is readable in dark mode */
+    [data-theme='dark'] .job-badge-cat {
+        background-color: #2a2a30 !important;
+        color: #F8FAFC !important;
+        border-color: #3f3f46 !important;
+    }
+
+    /* Hotfix: Ensure job urgent badge is readable in dark mode */
+    [data-theme='dark'] .job-badge-urgent {
+        background-color: rgba(251, 191, 36, 0.15) !important;
+        color: #FBBF24 !important;
+        border-color: rgba(251, 191, 36, 0.3) !important;
     }
 </style>
 </body>

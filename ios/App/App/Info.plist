@@ -57,5 +57,25 @@
 	<string>A MeloGo a profilkép és munkát bemutató képek feltöltéséhez használja a fotókönyvtárat.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>FacebookAppID</key>
+	<string>1357240066608435</string>
+	<key>FacebookClientToken</key>
+	<string>084217d48b87c769952b71e695cce13f</string>
+	<key>FacebookDisplayName</key>
+	<string>MeloGo</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1357240066608435</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+	</array>
 </dict>
 </plist>

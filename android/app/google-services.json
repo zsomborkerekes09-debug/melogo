@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "54031234",
+    "project_id": "melogo-app",
+    "storage_bucket": "melogo-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:54031234:android:448f109231be8a9ba9559b",
+        "android_client_info": {
+          "package_name": "com.melogo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "54031234-7ihets2ccaa6g54e55m8i091s0l9fi1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg-MwYZtdTuCxuyyZtL3VHt8pZLvEN0h4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "54031234-7ihets2ccaa6g54e55m8i091s0l9fi1b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "54031234-nmn7alldthee2i1d1ekb2lv1o0i0n3s5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.melogo.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

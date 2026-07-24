@@ -42,6 +42,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -7803,7 +7804,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, OAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, OAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signInWithCredential, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, initializeFirestore, collection, addDoc, setDoc, updateDoc, deleteDoc, getDocs, getDoc, doc, query, where, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
@@ -7856,6 +7857,9 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             GoogleAuthProvider,
             OAuthProvider,
             signInWithPopup,
+            signInWithRedirect,
+            getRedirectResult,
+            signInWithCredential,
             sendPasswordResetEmail,
             collection,
             addDoc,
@@ -7898,7 +7902,41 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         
         console.log("Firebase initialized successfully");
         
-        // Handle redirect login
+        // Handle redirect login result (for Google Sign-In on Capacitor Android WebView)
+        (async () => {
+            try {
+                const result = await getRedirectResult(auth);
+                if (result && result.user) {
+                    const user = result.user;
+                    if (!user.email) return;
+                    const role = localStorage.getItem('melogo_pending_role') || 'worker';
+                    localStorage.removeItem('melogo_pending_role');
+                    const session = {
+                        email: user.email,
+                        name: user.displayName || 'Google Felhasználó',
+                        role: role,
+                        loginAt: Date.now(),
+                        method: 'google',
+                        uid: user.uid
+                    };
+                    if (role === 'employer') {
+                        localStorage.setItem('melogo_employer_session', JSON.stringify(session));
+                        localStorage.setItem('melogo_active_role', 'employer');
+                    } else {
+                        localStorage.setItem('melogo_worker_session', JSON.stringify(session));
+                        localStorage.setItem('melogo_active_role', 'worker');
+                    }
+                    setTimeout(() => {
+                        if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                        if (typeof switchRole === 'function') switchRole(role);
+                    }, 500);
+                }
+            } catch (error) {
+                if (error.code !== 'auth/null-user' && error.code !== 'auth/no-redirect-result') {
+                    console.error('Google redirect result error:', error);
+                }
+            }
+        })();
         // Listen for authentication state changes
         
         // --- PUSH NOTIFICATION LOGIC ---
@@ -9773,11 +9811,104 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
         }
 
         async function loginWithGoogle() {
-            if (!window.firebaseAPI || !window.firebaseAPI.signInWithPopup) {
+            if (!window.firebaseAPI || !window.firebaseAPI.signInWithCredential) {
                 showPushNotification("Töltés...", "A Google bejelentkezés előkészítése folyamatban van. Próbáld újra egy pillanat múlva.", "#3b82f6"); 
                 setTimeout(() => { if(window.firebaseAuth && window.firebaseAPI) loginWithGoogle(); }, 1500);
                 return;
             }
+            
+            const role = loginSelectedRole || 'worker';
+
+            // 1. NATIVE MOBILE FLOW - uses @capacitor-firebase/authentication plugin
+            if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+                try {
+                    const { FirebaseAuthentication } = window.Capacitor.Plugins;
+                    if (!FirebaseAuthentication) {
+                        throw new Error("A natív bejelentkezési modul (FirebaseAuthentication plugin) nem található!");
+                    }
+                    
+                    const result = await FirebaseAuthentication.signInWithGoogle();
+                    if (!result || !result.credential || !result.credential.idToken) {
+                        throw new Error("Nem érkezett érvényes idToken a Google-től.");
+                    }
+                    
+                    const credential = window.firebaseAPI.GoogleAuthProvider.credential(result.credential.idToken);
+                    const authResult = await window.firebaseAPI.signInWithCredential(window.firebaseAuth, credential);
+                    const user = authResult.user;
+                    
+                    if (!user.email) {
+                        alert('Hiba: Nem kaptunk email címet a Google-től.');
+                        return;
+                    }
+                    
+                    const session = { email: user.email, name: user.displayName || 'Google Felhasználó', role: role, loginAt: Date.now(), method: 'google', uid: user.uid };
+                    if (role === 'employer') {
+                        localStorage.setItem('melogo_employer_session', JSON.stringify(session));
+                        localStorage.setItem('melogo_active_role', 'employer');
+                        if (document.getElementById('employer-login-screen')) document.getElementById('employer-login-screen').classList.add('hidden');
+                    } else {
+                        localStorage.setItem('melogo_worker_session', JSON.stringify(session));
+                        localStorage.setItem('melogo_active_role', 'worker');
+                        if (document.getElementById('login-screen')) document.getElementById('login-screen').classList.add('hidden');
+                    }
+                    if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                    if (typeof switchRole === 'function') switchRole(role);
+                    return; // Successfully logged in natively
+                } catch (e) {
+                    console.error("Native Google Login error:", e);
+                    alert("Natív Google bejelentkezési hiba: " + (e.message || "Ismeretlen hiba"));
+                    return; 
+                }
+            }
+
+            // 2. WEB FLOW: Google Identity Services (GIS) native prompt - avoids redirect sessionStorage issues
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                try {
+                    window.google.accounts.id.initialize({
+                        client_id: "54031234-7ihets2ccaa6g54e55m8i091s0l9fi1b.apps.googleusercontent.com",
+                        callback: async (response) => {
+                            try {
+                                const credential = window.firebaseAPI.GoogleAuthProvider.credential(response.credential);
+                                const result = await window.firebaseAPI.signInWithCredential(window.firebaseAuth, credential);
+                                const user = result.user;
+                                if (!user.email) {
+                                    alert('Hiba: Nem kaptunk email címet a Google-től.');
+                                    return;
+                                }
+                                const session = { email: user.email, name: user.displayName || 'Google Felhasználó', role: role, loginAt: Date.now(), method: 'google', uid: user.uid };
+                                if (role === 'employer') {
+                                    localStorage.setItem('melogo_employer_session', JSON.stringify(session));
+                                    localStorage.setItem('melogo_active_role', 'employer');
+                                    if (document.getElementById('employer-login-screen')) document.getElementById('employer-login-screen').classList.add('hidden');
+                                } else {
+                                    localStorage.setItem('melogo_worker_session', JSON.stringify(session));
+                                    localStorage.setItem('melogo_active_role', 'worker');
+                                    if (document.getElementById('login-screen')) document.getElementById('login-screen').classList.add('hidden');
+                                }
+                                if (typeof updateAllUserUI === 'function') updateAllUserUI();
+                                if (typeof switchRole === 'function') switchRole(role);
+                            } catch (err) {
+                                console.error("GIS Firebase auth error:", err);
+                                alert('Hiba a Google fiók feldolgozása során: ' + (err.message || err.code));
+                            }
+                        }
+                    });
+                    window.google.accounts.id.prompt((notification) => {
+                        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                            doPopupLogin(role);
+                        }
+                    });
+                    return;
+                } catch (e) {
+                    console.warn("GIS prompt failed, falling back to popup:", e);
+                }
+            }
+            
+            // 2. Fallback: Popup login
+            doPopupLogin(role);
+        }
+
+        async function doPopupLogin(role) {
             try {
                 const provider = new window.firebaseAPI.GoogleAuthProvider();
                 provider.setCustomParameters({ prompt: 'select_account' });
@@ -9787,7 +9918,6 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     alert('Hiba: Nem kaptunk email címet a Google-től.');
                     return;
                 }
-                const role = loginSelectedRole || 'worker';
                 const session = { email: user.email, name: user.displayName || 'Google Felhasználó', role: role, loginAt: Date.now(), method: 'google', uid: user.uid };
                 if (role === 'employer') {
                     localStorage.setItem('melogo_employer_session', JSON.stringify(session));
@@ -9801,7 +9931,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 if (typeof updateAllUserUI === 'function') updateAllUserUI();
                 if (typeof switchRole === 'function') switchRole(role);
             } catch (error) {
-                console.error("Google login error:", error);
+                console.error("Google popup login error:", error);
                 alert('Hiba a Google bejelentkezés során: ' + (error.message || error.code));
             }
         }

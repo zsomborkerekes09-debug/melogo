@@ -8,6 +8,12 @@
     "cleartext": true
   },
   "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": [
+        "google.com"
+      ]
+    },
     "SplashScreen": {
       "launchShowDuration": 500,
       "backgroundColor": "#000000",

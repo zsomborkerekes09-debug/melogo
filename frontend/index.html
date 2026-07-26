@@ -15668,52 +15668,22 @@ let settingsConfirmedAddress = null;
         let currentEmployerDetailJobId = null;
         let currentEditJobId = null;
 
-        
-        async function repostExpiredJob(jobId) {
-            const job = localEmployerJobs.find(j => j.id === jobId);
-            if (!job) return;
-
-            // One-click extension logic (24 hours)
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tzoffset = tomorrow.getTimezoneOffset() * 60000;
-            const localISOTime = (new Date(tomorrow - tzoffset)).toISOString().slice(0, 16);
+        function repostExpiredJob(jobId) {
+            closeEmployerAdDetailNew(); // Close detail view
+            openEditEmployerJob(jobId); // Open edit form
             
-            if (window.firebaseAPI && window.firebaseDb) {
-                try {
-                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, 'jobs', jobId);
-                    await window.firebaseAPI.updateDoc(jobRef, {
-                        datetime: localISOTime,
-                        status: 'Keresés', // Because it was expired, we set it back to active searching
-                        deadlineNotified: false // Reset notification flag so cron job can notify again
-                    });
-                    
-                    if (typeof showPushNotification === 'function') {
-                        showPushNotification("Siker", "A hirdetés határidejét meghosszabbítottuk 24 órával.", "#10B981");
-                    }
-                    
-                    job.datetime = localISOTime;
-                    job.status = 'Keresés';
-                    saveEmployerJobs();
-                    
-                    openEmployerAdDetailNew(jobId);
-                    if (typeof renderEmployerHome === 'function') renderEmployerHome();
-                } catch(e) {
-                    console.error("Hiba a meghosszabbításkor:", e);
-                    if (typeof showPushNotification === 'function') {
-                        showPushNotification("Hiba", "Nem sikerült meghosszabbítani a hirdetést.", "#EF4444");
-                    }
+            // Highlight the date field to prompt them to change it
+            setTimeout(() => {
+                const dtInput = document.getElementById('emp-datetime');
+                if (dtInput) {
+                    dtInput.style.border = '2px solid var(--color-green)';
+                    dtInput.style.backgroundColor = '#F0FDF4';
+                    setTimeout(() => {
+                        dtInput.style.border = '0.5px solid var(--color-border)';
+                        dtInput.style.backgroundColor = 'var(--color-surface)';
+                    }, 3000);
                 }
-            } else {
-                job.datetime = localISOTime;
-                job.status = 'Keresés';
-                saveEmployerJobs();
-                openEmployerAdDetailNew(jobId);
-                if (typeof renderEmployerHome === 'function') renderEmployerHome();
-                if (typeof showPushNotification === 'function') {
-                    showPushNotification("Siker", "Helyi módban meghosszabbítva.", "#10B981");
-                }
-            }
+            }, 500);
         }
 function openEmployerAdDetailNew(jobId) {
             currentEmployerDetailJobId = jobId;
@@ -18369,6 +18339,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     if (localEmployerJobs[jobIndex].status === 'expired' || localEmployerJobs[jobIndex].status === 'archived' || localEmployerJobs[jobIndex].status === 'expired_pending_grace') {
                         localEmployerJobs[jobIndex].status = 'Keresés';
                         localEmployerJobs[jobIndex].createdAt = Date.now();
+                        localEmployerJobs[jobIndex].deadlineNotified = false;
                         delete localEmployerJobs[jobIndex].expiredAt;
                         delete localEmployerJobs[jobIndex].gracePeriodStartedAt;
                         delete localEmployerJobs[jobIndex]._notifiedExpired;

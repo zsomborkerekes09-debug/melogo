@@ -1,4 +1,4 @@
-const CACHE_NAME = 'melogo-cache-v11';
+const CACHE_NAME = 'melogo-cache-v5491';
 const urlsToCache = [
   '/',
   '/manifest.json',

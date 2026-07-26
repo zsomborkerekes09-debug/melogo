@@ -1,0 +1,1 @@
+if (/iPhone|iPod/.test(navigator.userAgent)) document.documentElement.style.setProperty('--safe-top', '55px'); else document.documentElement.style.setProperty('--safe-top', '0px');

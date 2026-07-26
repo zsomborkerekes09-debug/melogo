@@ -3198,7 +3198,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js?v=11').then(registration => {
+          navigator.serviceWorker.register('/sw.js?v=4380').then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, err => {
             console.log('ServiceWorker registration failed: ', err);
@@ -14950,6 +14950,7 @@ let settingsConfirmedAddress = null;
             input.click();
         }
         function showPushNotification(title, msg, color, onClick) {
+            return; // Disabled per user request
             const banner = document.getElementById('push-banner');
             const icon = document.getElementById('push-banner-icon');
             document.getElementById('push-banner-title').innerText = title;
@@ -15670,23 +15671,107 @@ let settingsConfirmedAddress = null;
 
 function repostExpiredJob(jobId) {
             closeEmployerAdDetailNew(); // Close detail view
-            openEditEmployerJob(jobId); // Open edit form
-
             
-            // Highlight the date field to prompt them to change it
-            setTimeout(() => {
-                const dtInput = document.getElementById('emp-datetime');
-                if (dtInput) {
-                    dtInput.style.border = '2px solid var(--color-green)';
-                    dtInput.style.backgroundColor = '#F0FDF4';
-                    setTimeout(() => {
-                        dtInput.style.border = '0.5px solid var(--color-border)';
-                        dtInput.style.backgroundColor = 'var(--color-surface)';
-                    }, 3000);
+            // Create a simple modal for datetime extension
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay-backdrop';
+            overlay.style.zIndex = '3000';
+            overlay.style.opacity = '1';
+            overlay.style.pointerEvents = 'auto';
+            
+            const modal = document.createElement('div');
+            modal.style.position = 'absolute';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.width = '85%';
+            modal.style.maxWidth = '320px';
+            modal.style.background = 'var(--color-surface)';
+            modal.style.borderRadius = '16px';
+            modal.style.padding = '24px';
+            modal.style.zIndex = '3001';
+            modal.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
+            modal.style.display = 'flex';
+            modal.style.flexDirection = 'column';
+            modal.style.gap = '16px';
+            
+            modal.innerHTML = `
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; text-align: center; color: var(--color-text);">Hirdetés meghosszabbítása</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--color-text-muted); text-align: center;">Válassz egy új határidőt a hirdetésedhez!</p>
+                <input type="datetime-local" id="repost-datetime-input" style="width: 100%; padding: 12px; border: 0.5px solid var(--color-border); border-radius: 8px; font-size: 14px; box-sizing: border-box; background: var(--color-bg); color: var(--color-text);">
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <button id="repost-cancel-btn" style="flex: 1; padding: 12px; background: var(--color-bg); border: none; border-radius: 8px; color: var(--color-text); font-weight: 500; cursor: pointer;">Mégse</button>
+                    <button id="repost-save-btn" style="flex: 1; padding: 12px; background: var(--color-primary); border: none; border-radius: 8px; color: #fff; font-weight: 500; cursor: pointer;">Mentés</button>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(modal);
+            
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('repost-datetime-input').value = now.toISOString().slice(0,16);
+            
+            const cleanup = () => {
+                if (document.body.contains(overlay)) document.body.removeChild(overlay);
+                if (document.body.contains(modal)) document.body.removeChild(modal);
+            };
+            
+            document.getElementById('repost-cancel-btn').onclick = cleanup;
+            
+            document.getElementById('repost-save-btn').onclick = async () => {
+                const newVal = document.getElementById('repost-datetime-input').value;
+                if (!newVal) {
+                    alert('Kérlek válassz időpontot!');
+                    return;
                 }
-            }, 500);
+                const newDateObj = new Date(newVal);
+                if (newDateObj <= new Date()) {
+                    alert('Kérlek válassz egy jövőbeli időpontot!');
+                    return;
+                }
+                
+                const btn = document.getElementById('repost-save-btn');
+                btn.innerText = 'Mentés...';
+                btn.disabled = true;
+                
+                try {
+                    const deleteField = window.firebaseAPI.deleteField ? window.firebaseAPI.deleteField() : window.firebaseFirestore.deleteField();
+                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", jobId);
+                    const updateData = {
+                        datetime: newVal,
+                        createdAt: new Date().toISOString(),
+                        status: 'Keresés',
+                        gracePeriodStartedAt: deleteField,
+                        expiredAt: deleteField,
+                        _notifiedExpired: deleteField
+                    };
+                    await window.firebaseAPI.updateDoc(jobRef, updateData);
+                    
+                    const jobIndex = localEmployerJobs.findIndex(j => j.id === jobId);
+                    if (jobIndex > -1) {
+                        localEmployerJobs[jobIndex].datetime = newVal;
+                        localEmployerJobs[jobIndex].createdAt = updateData.createdAt;
+                        localEmployerJobs[jobIndex].status = 'Keresés';
+                        delete localEmployerJobs[jobIndex].gracePeriodStartedAt;
+                        delete localEmployerJobs[jobIndex].expiredAt;
+                        delete localEmployerJobs[jobIndex]._notifiedExpired;
+                        delete localEmployerJobs[jobIndex].deadlineNotified;
+                    }
+                    
+                    cleanup();
+                    renderEmployerJobs(localEmployerJobs);
+                } catch (e) {
+                    console.error('Error reposting job', e);
+                    alert('Hiba történt a mentés során.');
+                    btn.innerText = 'Mentés';
+                    btn.disabled = false;
+                }
+            };
         }
-function openEmployerAdDetailNew(jobId) {
+        
+        function openEmployerAdDetailNew(jobId) {
             currentEmployerDetailJobId = jobId;
             let job = localEmployerJobs.find(j => j.id === jobId);
             

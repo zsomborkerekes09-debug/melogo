@@ -1,7 +1,7 @@
 const fs = require('fs');
 const acorn = require('acorn');
 
-const html = fs.readFileSync('C:/Users/zsomb/Documents/melogo_app/scratch/melogo/frontend/preview_dark.html', 'utf8');
+const html = fs.readFileSync('C:/Users/zsomb/Documents/melogo_app/scratch/melogo/frontend/index.html', 'utf8');
 
 const regex = /<script[^>]*>([\s\S]*?)<\/script>/gi;
 let match;

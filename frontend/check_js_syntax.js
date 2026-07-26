@@ -1,49 +1,41 @@
 const fs = require('fs');
-const path = require('path');
-const vm = require('vm');
+const file = 'C:/Users/zsomb/Documents/melogo_app/scratch/melogo/frontend/index.html';
+const content = fs.readFileSync(file, 'utf8');
 
-const htmlPath = path.join(__dirname, 'index.html');
-const html = fs.readFileSync(htmlPath, 'utf8');
+// Simple parser to extract script blocks with their approximate line numbers
+const regex = /<script([\s\S]*?)>([\s\S]*?)<\/script>/g;
+let m;
+let index = 0;
 
-const lines = html.split('\n');
-
-// Find all script tags
-let pos = 0;
-const scriptRegex = /<script([\s\S]*?)>([\s\S]*?)<\/script>/gi;
-let match;
-let scriptIdx = 0;
-
-while ((match = scriptRegex.exec(html)) !== null) {
-    scriptIdx++;
-    const attribs = match[1];
-    const code = match[2];
-    const startIndex = match.index + match[0].indexOf(code);
+while ((m = regex.exec(content)) !== null) {
+    index++;
+    const attribs = m[1];
+    const js = m[2];
     
-    // Calculate line number
-    const precedingText = html.substring(0, startIndex);
-    const lineNum = precedingText.split('\n').length;
+    // Calculate line number in original file
+    const beforeText = content.substring(0, m.index);
+    const startLine = beforeText.split('\n').length;
     
     // Skip external scripts
-    if (attribs.includes('src=')) {
-        console.log(`Script ${scriptIdx}: External (src="${attribs.match(/src="([^"]+)"/)?.[1] || ''}") at line ${lineNum}`);
-        continue;
-    }
-    
-    console.log(`Script ${scriptIdx}: Inline at line ${lineNum}, size=${code.length} chars`);
+    if (attribs.includes('src=')) continue;
     
     try {
-        new vm.Script(code, { filename: `script_${scriptIdx}.js`, lineOffset: lineNum - 1 });
-        console.log(`  -> Valid syntax`);
-    } catch (e) {
-        console.error(`  -> SYNTAX ERROR in Script ${scriptIdx} starting at line ${lineNum}:`);
-        console.error(`     Message: ${e.message}`);
-        console.error(`     Stack: ${e.stack}`);
-        // Let's print surrounding lines of code
-        const startLine = Math.max(0, lineNum - 5);
-        const endLine = Math.min(lines.length, lineNum + 20);
-        console.log(`--- Surrounding Code around error line ---`);
-        for (let i = startLine; i < endLine; i++) {
-            console.log(`${i+1}: ${lines[i]}`);
+        new Function(js);
+    } catch(e) {
+        console.error(`❌ Script Block #${index} (starts at line ${startLine}) has JS Error:`);
+        console.error(e.stack);
+        
+        // Let's print the line of code that failed if possible
+        if (e.lineNumber || e.message) {
+            console.error(`Message: ${e.message}`);
+            // Let's parse exact syntax error location if Node can tell us
+            try {
+                const vm = require('vm');
+                const script = new vm.Script(js, { filename: `script-${index}.js` });
+            } catch(vmErr) {
+                console.error('Detailed VM Error:\n', vmErr.stack);
+            }
         }
     }
 }
+console.log('Syntax scan complete!');

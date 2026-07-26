@@ -1,18 +1,19 @@
 const fs = require('fs');
-const path = 'C:/Users/zsomb/Documents/melogo_app/scratch/melogo/frontend/index.html';
-let code = fs.readFileSync(path, 'utf8');
+const file = 'C:/Users/zsomb/Documents/melogo_app/scratch/melogo/frontend/index.html';
+let content = fs.readFileSync(file, 'utf8');
 
-const regex = /handleBlock\([^)]+\);\n\s*\}\n\s*\}\n\s*\}\n\s*function closeEmployerJobDetail\(\)/;
-const replacement = `handleBlock(reason || 'Nem adott meg okot');
-            }
-        }
+// Regex to find the broken closing
+// Look for </div>`; followed by <div style="display: flex; gap: 14px;
+const regex = /<\/div>`\s*;\s*<div style="display: flex; gap: 14px; font-size: 28px; justify-content: center;" id="chat-stars-container">/g;
+const newStr = '</div>\n                    <div style="display: flex; gap: 14px; font-size: 28px; justify-content: center;" id="chat-stars-container">';
 
-        function closeEmployerJobDetail()`;
+let matches = content.match(regex);
+console.log('Matches found:', matches ? matches.length : 0);
 
-if (code.match(regex)) {
-    code = code.replace(regex, replacement);
-    fs.writeFileSync(path, code);
-    console.log("Fixed syntax error via regex");
+if (matches) {
+    content = content.replace(regex, newStr);
+    fs.writeFileSync(file, content, 'utf8');
+    console.log('Replaced successfully.');
 } else {
-    console.log("Regex not found");
+    console.log('Not found.');
 }

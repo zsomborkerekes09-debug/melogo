@@ -1,10 +1,11 @@
 const fs = require('fs');
-const html = fs.readFileSync('C:/Users/zsomb/Documents/melogo_app/scratch/melogo/frontend/index.html', 'utf8');
+const content = fs.readFileSync('C:/Users/zsomb/Documents/melogo_app/scratch/melogo/frontend/index.html', 'utf8');
 
-const m = html.match(/<script type="module">([\s\S]*?)<\/script>/);
-if (m) {
-    fs.writeFileSync('C:/Users/zsomb/test_module.js', m[1]);
-    console.log('Module extracted to test_module.js');
-} else {
-    console.log('No module script found!');
+const regex = /<script.*?>([\s\S]*?)<\/script>/gi;
+let match;
+let i = 0;
+while ((match = regex.exec(content)) !== null) {
+    fs.writeFileSync(`C:/Users/zsomb/Documents/melogo_app/scratch/melogo/frontend/temp_${i}.js`, match[1]);
+    i++;
 }
+console.log(`Extracted ${i} script blocks.`);

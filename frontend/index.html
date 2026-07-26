@@ -1,8 +1,17 @@
-
 <!DOCTYPE html>
-<html lang="hu" translate="no">
+<html lang="hu">
 <head>
-    <meta name="darkreader-lock">
+    <meta charset="UTF-8">
+    <meta name="color-scheme" content="light">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>MeloGo – Diákmunka Közel, Gyorsan</title>
+    <meta name="description" content="MeloGo: Find one-day student jobs near you in minutes. Keress közeli egynapos diákmunkát percek alatt Magyarország bármely pontján.">
+    <link rel="canonical" href="https://melogo-kappa.vercel.app/">
+    <link rel="icon" type="image/jpeg" href="logo_new.jpg">
+    <link rel="apple-touch-icon" href="logo_new.jpg">
     <meta name="google" content="notranslate">
     <script>if (/iPhone|iPod/.test(navigator.userAgent)) document.documentElement.style.setProperty('--safe-top', '55px'); else document.documentElement.style.setProperty('--safe-top', '0px');</script>
     <style id="splash-theme-init">
@@ -3189,7 +3198,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js?v=' + Date.now()).then(registration => {
+          navigator.serviceWorker.register('/sw.js?v=11').then(registration => {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
           }, err => {
             console.log('ServiceWorker registration failed: ', err);
@@ -6152,19 +6161,19 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             }
         </style>
         
-        <div class="ios-oauth-hide" style="margin-top:16px; display:flex; align-items:center; gap:12px;">
+        <div class="ios-oauth-hide" style="margin-top:16px; display:none !important; align-items:center; gap:12px;">
             <div style="flex:1; height:1px; background: var(--color-surface);"></div>
             <span style="font-size:12px; color: var(--color-text);">vagy</span>
             <div style="flex:1; height:1px; background: var(--color-surface);"></div>
         </div>
 
-        <button class="ios-oauth-hide" id="google-login-btn" onclick="loginWithGoogle()" style="margin-top:16px; width:100%; flex-shrink:0; height:52px; background-color:var(--color-surface); color:var(--color-text); border:0.5px solid var(--color-border); border-radius: 6px; font-size:15px; font-weight:400; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; transition:background-color 0.15s ease;">
+        <button class="ios-oauth-hide" id="google-login-btn" onclick="loginWithGoogle()" style="margin-top:16px; width:100%; flex-shrink:0; height:52px; background-color:var(--color-surface); color:var(--color-text); border:0.5px solid var(--color-border); border-radius: 6px; font-size:15px; font-weight:400; cursor:pointer; display:none !important; align-items:center; justify-content:center; gap:12px; transition:background-color 0.15s ease;">
             <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg>
             Belépés Google-fiókkal
         </button>
 
         <!-- Sign in with Apple -->
-        <button class="ios-oauth-hide" id="apple-login-btn" onclick="loginWithApple()" style="margin-top:12px; width:100%; flex-shrink:0; height:52px; background-color:#000000; color:#ffffff; border:none; border-radius: 6px; font-size:15px; font-weight:400; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; transition:opacity 0.15s ease;">
+        <button class="ios-oauth-hide" id="apple-login-btn" onclick="loginWithApple()" style="margin-top:12px; width:100%; flex-shrink:0; height:52px; background-color:#000000; color:#ffffff; border:none; border-radius: 6px; font-size:15px; font-weight:400; cursor:pointer; display:none !important; align-items:center; justify-content:center; gap:12px; transition:opacity 0.15s ease;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.78 1.18-.19 2.31-.88 3.5-.84 1.33.04 2.6.58 3.44 1.6-3.09 1.76-2.58 5.75.39 7.02-.75 1.83-1.63 3.53-2.41 4.41zm-2.85-15.02c.6-1.57-.45-3.17-1.92-3.26-.78 1.68.51 3.25 1.92 3.26z"/></svg>
             Belépés Apple-azonosítóval
         </button>
@@ -6311,10 +6320,14 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                             <div id="stat-count-active" style="font-size: 18px; font-weight: 500; color: var(--color-text);">0</div>
                             <div style="font-size: 10px; color: var(--color-text); font-weight: 400; text-transform: uppercase; margin-top: 2px;">Aktív</div>
                         </div>
-                        <!-- Card 4: Befejezett -->
                         <div id="emp-tab-completed" onclick="filterEmpJobs('completed')" style="flex: 0 0 110px; background: var(--color-surface); border-radius: 6px; padding: 12px 14px; border-left: 3.5px solid var(--color-text); box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text); cursor: pointer; transition: all 0.2s;">
                             <div id="stat-count-completed" style="font-size: 18px; font-weight: 500; color: var(--color-text);">0</div>
                             <div style="font-size: 10px; color: var(--color-text); font-weight: 400; text-transform: uppercase; margin-top: 2px;">Befejezve</div>
+                        </div>
+                        <!-- Card 5: Lejárt -->
+                        <div id="emp-tab-expired" onclick="filterEmpJobs('expired')" style="flex: 0 0 110px; background: var(--color-surface); border-radius: 6px; padding: 12px 14px; border-left: 3.5px solid #6B7280; box-sizing: border-box; text-align: left; border-top: 1px solid var(--color-text); border-right: 1px solid var(--color-text); border-bottom: 1px solid var(--color-text); cursor: pointer; transition: all 0.2s;">
+                            <div id="stat-count-expired" style="font-size: 18px; font-weight: 500; color: #6B7280;">0</div>
+                            <div style="font-size: 10px; color: var(--color-text); font-weight: 400; text-transform: uppercase; margin-top: 2px;">Lejárt</div>
                         </div>
                     </div>
                     
@@ -7569,6 +7582,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 <div style="font-size: 14px; color: var(--color-text); line-height: 1.5; border-top: 0.5px solid #FFFFFF; padding-top: 12px;" id="ad-detail-desc">
                     Munka leírása teljes egészében itt olvasható...
                 </div>
+                <div id="ad-detail-expired-banner" style="display: none; margin-top: 16px;"></div>
             </div>
             
             <!-- Card 2: Jelentkezők -->
@@ -8645,7 +8659,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 const fJob = { ...change.doc.data(), id: change.doc.id };
                 if (change.type === 'added' || change.type === 'modified') {
                     if (!fJob.title) return;
-                    if (role === 'worker' && fJob.status !== 'Keresés' && fJob.status !== 'accepted') return; // Filter locally for workers
+                    if (role === 'worker' && fJob.status !== 'Keresés') return; // Filter locally for workers
                     
                     const normalized = normalizeFirestoreJob(fJob);
                     
@@ -8709,7 +8723,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 window.mockJobs = []; // clear memory
                 
                 // Fallback query for jobs without geohash (older jobs) or if geofire failed
-                const fallbackQuery = query(collection(db, "jobs"), where("status", "in", ["Keresés", "accepted"]), limit(50));
+                const fallbackQuery = query(collection(db, "jobs"), where("status", "==", "Keresés"), limit(50));
                 const fallbackUnsub = onSnapshot(fallbackQuery, (snapshot) => {
                     snapshot.docChanges().forEach(change => processJobChange(change, null));
                 }, err => console.error('[Firestore] Fallback listener error:', err));
@@ -9845,11 +9859,13 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     if (role === 'employer') {
                         localStorage.setItem('melogo_employer_session', JSON.stringify(session));
                         localStorage.setItem('melogo_active_role', 'employer');
-                        if (document.getElementById('employer-login-screen')) document.getElementById('employer-login-screen').classList.add('hidden');
                     } else {
                         localStorage.setItem('melogo_worker_session', JSON.stringify(session));
                         localStorage.setItem('melogo_active_role', 'worker');
-                        if (document.getElementById('login-screen')) document.getElementById('login-screen').classList.add('hidden');
+                    }
+                    if (document.getElementById('app-login-screen')) {
+                        document.getElementById('app-login-screen').classList.add('hidden');
+                        document.getElementById('app-login-screen').style.display = 'none';
                     }
                     if (typeof updateAllUserUI === 'function') updateAllUserUI();
                     if (typeof switchRole === 'function') switchRole(role);
@@ -9879,11 +9895,13 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                                 if (role === 'employer') {
                                     localStorage.setItem('melogo_employer_session', JSON.stringify(session));
                                     localStorage.setItem('melogo_active_role', 'employer');
-                                    if (document.getElementById('employer-login-screen')) document.getElementById('employer-login-screen').classList.add('hidden');
                                 } else {
                                     localStorage.setItem('melogo_worker_session', JSON.stringify(session));
                                     localStorage.setItem('melogo_active_role', 'worker');
-                                    if (document.getElementById('login-screen')) document.getElementById('login-screen').classList.add('hidden');
+                                }
+                                if (document.getElementById('app-login-screen')) {
+                                    document.getElementById('app-login-screen').classList.add('hidden');
+                                    document.getElementById('app-login-screen').style.display = 'none';
                                 }
                                 if (typeof updateAllUserUI === 'function') updateAllUserUI();
                                 if (typeof switchRole === 'function') switchRole(role);
@@ -13040,15 +13058,28 @@ let settingsConfirmedAddress = null;
                 if (blockedItems.includes(String(j.id)) || blockedItems.includes(j.title)) return false;
 
                 const s = j.status || 'Keresés';
-                if (s !== 'Keresés' && s !== 'Kereses') {
-                    // Show accepted jobs ONLY to the worker who was actually accepted
+                // Strictly exclude deleted, completed, started, rated, archived or expired jobs from worker feeds
+                if (s === 'deleted' || s === 'completed' || s === 'Befejezett' || s === 'törölt' || s === 'rated' || s === 'started' || s === 'pending_confirmation' || s === 'expired' || s === 'archived' || s === 'Lejárt' || s === 'expired_pending_grace') return false;
+
+                if (s !== 'Keresés' && s !== 'Kereses' && s !== 'open' && s !== 'active') {
                     if (s === 'accepted') {
-                        const hasActiveApp = localWorkerApplications.some(a => a.jobId === j.id && a.status === 'Aktív');
+                        const hasActiveApp = localWorkerApplications.some(a => String(a.jobId) === String(j.id) && a.status === 'Aktív');
                         if (hasActiveApp) return true;
                     }
                     return false;
                 }
-                let notExp = true; if(j.time) { const jd = new Date(j.time); if(!isNaN(jd.getTime()) && jd < new Date()) notExp = false; } return (j.distance === null || j.distance === undefined || j.distance <= activeRadius) && notExp;
+                
+                // Exclude expired jobs
+                let notExp = true; 
+                if (j.time) { 
+                    const jd = new Date(j.time); 
+                    if (!isNaN(jd.getTime()) && jd < new Date()) {
+                        notExp = false;
+                    }
+                } 
+
+                const matchesDist = (j.distance === null || j.distance === undefined || isNaN(j.distance) || j.distance <= activeRadius);
+                return matchesDist && notExp;
             });
 
             if (activeCategoryFilter !== 'Összes' && activeCategoryFilter !== 'all') {
@@ -13455,13 +13486,31 @@ let settingsConfirmedAddress = null;
             if (!resultList) return;
             if (typeof mockJobs === 'undefined') { resultList.innerHTML = '<div class="search-empty">Betöltés...</div>'; return; }
 
-            let filtered = mockJobs;
+            // Filter out ANY job that is not active, or is expired (past end of day), or exceeds current active radius
+            let filtered = mockJobs.filter(j => {
+                const s = j.status || 'Keresés';
+                if (s !== 'Keresés' && s !== 'Kereses' && s !== 'open' && s !== 'active') return false;
+                
+                // Exclude expired jobs from search list
+                if (j.time) {
+                    const jd = new Date(j.time);
+                    if (!isNaN(jd.getTime()) && jd < new Date()) return false;
+                }
+
+                // Filter by radius if distance is calculated
+                if (j.distance !== null && j.distance !== undefined && !isNaN(j.distance) && j.distance > activeRadius) {
+                    return false;
+                }
+
+                return true;
+            });
+
             if (q) {
-                filtered = mockJobs.filter(j =>
-                    j.title.toLowerCase().includes(q) ||
-                    j.category.toLowerCase().includes(q) ||
-                    j.location.toLowerCase().includes(q) ||
-                    j.employer.toLowerCase().includes(q)
+                filtered = filtered.filter(j =>
+                    (j.title && j.title.toLowerCase().includes(q)) ||
+                    (j.category && j.category.toLowerCase().includes(q)) ||
+                    (j.location && j.location.toLowerCase().includes(q)) ||
+                    (j.employer && j.employer.toLowerCase().includes(q))
                 );
             }
 
@@ -13473,16 +13522,17 @@ let settingsConfirmedAddress = null;
             const label = q ? 'Találatok' : 'Összes közeli munka';
             resultList.innerHTML = '<div class="search-section-label">' + label + '</div>' + filtered.map(job => {
                 const catInfo = catColors[job.category] || { bg: 'var(--color-text)' };
+                const distText = (job.distance !== null && job.distance !== undefined && !isNaN(job.distance)) ? job.distance + ' km' : 'Közeli';
                 return `
-                    <div class="search-result-item" onclick="selectSearchResult(${job.id})">
+                    <div class="search-result-item" onclick="selectSearchResult('${job.id}')">
                         <div class="search-result-icon" style="background:${catInfo.bg}20;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${catInfo.bg}" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                         </div>
                         <div class="search-result-info">
                             <div class="search-result-title">${job.title}</div>
-                            <div class="search-result-sub"><span class="job-distance-text">${job.distance}</span> km · ${job.employer} · ${job.category}</div>
+                            <div class="search-result-sub"><span class="job-distance-text">${distText}</span> · ${job.employer} · ${job.category}</div>
                         </div>
-                        <div class="search-result-price">${job.price.toLocaleString('hu-HU')} Ft</div>
+                        <div class="search-result-price">${job.price ? job.price.toLocaleString('hu-HU') + ' Ft' : ''}</div>
                     </div>
                 `;
             }).join('');
@@ -13490,7 +13540,7 @@ let settingsConfirmedAddress = null;
 
         function selectSearchResult(jobId) {
             closeSearchOverlay();
-            setTimeout(() => openJobDetailById(jobId), 350);
+            setTimeout(() => openJobDetailById(String(jobId)), 350);
         }
 
         // ===================================================================
@@ -13628,17 +13678,25 @@ let settingsConfirmedAddress = null;
             const currentWorkerName = window.currentUser ? window.currentUser.name : '';
             const visibleJobs = mockJobs.filter(j => {
                 const s = j.status || 'Keresés';
-                if (s !== 'Keresés' && s !== 'Kereses') {
+                if (s === 'deleted' || s === 'completed' || s === 'Befejezett' || s === 'törölt' || s === 'rated' || s === 'started') return false;
+                if (s !== 'Keresés' && s !== 'Kereses' && s !== 'open' && s !== 'active') {
                     if (s === 'accepted') {
-                        const hasActiveApp = localWorkerApplications.some(a => a.jobId === j.id && a.status === 'Aktív');
+                        const hasActiveApp = localWorkerApplications.some(a => String(a.jobId) === String(j.id) && a.status === 'Aktív');
                         if (!hasActiveApp) return false;
                     } else {
                         return false;
                     }
                 }
-                const matchesDistance = (j.distance === null || j.distance <= activeRadius);
+                
+                let notExp = true; 
+                if (j.time) { 
+                    const jd = new Date(j.time); 
+                    if (!isNaN(jd.getTime()) && jd < new Date()) notExp = false; 
+                }
+
+                const matchesDistance = (j.distance === null || j.distance === undefined || isNaN(j.distance) || j.distance <= activeRadius);
                 const matchesCategory = (currentMapCategory === 'all' || j.category === currentMapCategory);
-                let notExp = true; if(j.time) { const jd = new Date(j.time); if(!isNaN(jd.getTime()) && jd < new Date()) notExp = false; } return matchesDistance && matchesCategory && notExp;
+                return matchesDistance && matchesCategory && notExp;
             });
 
             visibleJobs.forEach(job => {
@@ -14154,27 +14212,149 @@ let settingsConfirmedAddress = null;
         }
 
         window._chatUnsubscribe = null;
+        window._chatMsgsUnsubscribe = null;
         function renderActiveChatMessages(chatId) {
             if (!chatId || !window.firebaseAPI || !window.firebaseDb) return;
             if (window._chatUnsubscribe) { window._chatUnsubscribe(); window._chatUnsubscribe = null; }
+            if (window._chatMsgsUnsubscribe) { window._chatMsgsUnsubscribe(); window._chatMsgsUnsubscribe = null; }
             
             const chatRef = window.firebaseAPI.doc(window.firebaseDb, "chats", chatId);
             window._chatUnsubscribe = window.firebaseAPI.onSnapshot(chatRef, async (snapshot) => {
                 if (!snapshot.exists()) return;
                 const chatData = snapshot.data();
-                chatData.id = snapshot.id; // Align the data id with the Firestore document ID
-                // Ensure this is still the selected chat
+                chatData.id = snapshot.id; 
                 if (window.selectedChatId !== chatId) return;
                 
-                // Load header info (partner details, job details)
                 await loadChatHeaderAndStatus(chatId, chatData);
-                
-                // Render status pills
                 renderChatStatusPills(chatData);
-                
-                // Update chat action bar
                 updateChatActionBarNew(chatData);
             }, err => console.error('[Firestore] Chat listener error:', err));
+
+            const msgsRef = window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages");
+            const msgsQuery = window.firebaseAPI.query(msgsRef, window.firebaseAPI.orderBy("timestamp", "asc"));
+            
+            window._chatMsgsUnsubscribe = window.firebaseAPI.onSnapshot(msgsQuery, (snapshot) => {
+                let msgs = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    msgs.push(data);
+                });
+                
+                const chat = localChats.find(c => c.id === chatId);
+                if (chat) {
+                    if (msgs.length > 0) {
+                        chat.messages = msgs;
+                        saveLocalChats();
+                        
+                        if (window.selectedChatId === chatId) {
+                            const msgContainer = document.getElementById('chat-detail-messages');
+                            if (!msgContainer) return;
+                            
+                            const currentRole = window.currentRole || localStorage.getItem('melogo_active_role');
+                            const jobTitleEl = document.getElementById('chat-pinned-job');
+                            const jobTitle = jobTitleEl ? jobTitleEl.innerText : '';
+                            
+            msgContainer.innerHTML = '<div style="font-size: 12px; font-weight: 500; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px; text-align: center;">MA</div>';
+
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
+            const isEmployer = (currentRole === 'employer');
+
+            // Find index of latest proposal to make older proposals inert (superseded)
+            let latestProposalIndex = -1;
+            for (let i = msgs.length - 1; i >= 0; i--) {
+                if (msgs[i].type === 'time_proposal') {
+                    latestProposalIndex = i;
+                    break;
+                }
+            }
+
+            msgs.forEach((msg, idx) => {
+                const bubble = document.createElement('div');
+                
+                if (msg.type === 'time_proposal') {
+                    // STRUCTURED TIME PROPOSAL BUBBLE
+                    const isLatest = (idx === latestProposalIndex);
+                    const isSender = msg.senderId ? (msg.senderId === myUid) : (msg.from === currentRole);
+                    const status = msg.status || 'pending';
+
+                    let formattedPropTime = msg.proposedDatetime || '';
+                    if (formattedPropTime.includes('T')) {
+                        try {
+                            const p = formattedPropTime.split('T');
+                            const dp = p[0].split('-');
+                            const tp = p[1].split(':');
+                            formattedPropTime = `${dp[0]}. ${dp[1]}. ${dp[2]}. ${tp[0]}:${tp[1]}`;
+                        } catch(e) {}
+                    }
+
+                    let actionsHtml = '';
+                    if (status === 'accepted') {
+                        actionsHtml = `<div style="font-size:11px; font-weight:600; color:#10B981; margin-top:6px;">✓ Elfogadva</div>`;
+                    } else if (status === 'declined') {
+                        actionsHtml = `<div style="font-size:11px; font-weight:600; color:#EF4444; margin-top:6px;">✗ Elutasítva</div>`;
+                    } else if (!isLatest || status === 'superseded') {
+                        actionsHtml = `<div style="font-size:11px; color:#9CA3AF; margin-top:6px;">Érvénytelenített javaslat</div>`;
+                    } else if (!isSender && status === 'pending' && (window._processedProposals = window._processedProposals || new Set()) && window._processedProposals.has(chatId + '_' + (msg.id || idx))) {
+                        actionsHtml = `<div style="font-size:12px; color:#10B981; font-weight:600; text-align:center; padding: 10px;">Feldolgozás...</div>`;
+                    } else if (!isSender && status === 'pending') {
+                        actionsHtml = `
+                            <div style="display:flex; gap:8px; margin-top:10px;">
+                                <button onclick="acceptTimeProposal('${chatId}', '${msg.id || idx}', '${msg.proposedDatetime}', this)" style="flex:1; height:34px; background:#10B981; color:#ffffff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Elfogadom az új időpontot</button>
+                                <button onclick="declineTimeProposal('${chatId}', '${msg.id || idx}', this)" style="flex:1; height:34px; background:rgba(239,68,68,0.15); color:#EF4444; border:1px solid #EF4444; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Elutasítom</button>
+                            </div>
+                        `;
+                    } else {
+                        actionsHtml = `<div style="font-size:11px; color:var(--color-text-muted); margin-top:6px;">⏳ Várakozás a válaszra...</div>`;
+                    }
+
+                    bubble.style.cssText = `
+                        max-width:85%; padding:12px 16px; border-radius:12px; margin:10px ${isSender ? '0 10px auto' : 'auto 10px 0'};
+                        background:var(--color-surface); border:1px solid var(--color-border); color:var(--color-text); font-size:14px;
+                    `;
+                    bubble.innerHTML = `
+                        <div style="font-weight:600; font-size:13px; margin-bottom:4px;">📅 Új időpont javaslat</div>
+                        <div style="font-size:14px; font-weight:700; color:var(--color-text);">${formattedPropTime}</div>
+                        ${actionsHtml}
+                        <div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time || ''}</div>
+                    `;
+                } else if (msg.from === 'system') {
+                    bubble.className = 'system-msg-bubble';
+                    bubble.style.cssText = 'padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 400; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
+                    bubble.innerHTML = escapeHTML(msg.text);
+                } else {
+                    let isMe = false;
+                    if (msg.from === 'me') {
+                        isMe = true;
+                    } else if (msg.from === 'other') {
+                        isMe = false;
+                    } else {
+                        const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
+                        if (msg.from === 'employer') {
+                            isMe = chat && chat.employerId ? (myUid === chat.employerId) : (currentRole === 'employer');
+                        } else if (msg.from === 'worker') {
+                            isMe = chat && chat.workerId ? (myUid === chat.workerId) : (currentRole === 'worker');
+                        } else {
+                            isMe = false;
+                        }
+                    }
+                    bubble.style.cssText = `
+                        max-width:80%; padding:10px 14px; border-radius:${isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px'};
+                        background:${isMe ? 'var(--color-chat-bubble-out)' : 'var(--color-chat-bubble-in)'};
+                        color:${isMe ? 'var(--color-chat-text-out)' : 'var(--color-chat-text-in)'};
+                        font-size:14px; align-self:${isMe ? 'flex-end' : 'flex-start'};
+                    `;
+                    bubble.innerHTML = escapeHTML(msg.text) + (msg.time ? `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time}</div>` : '');
+                }
+                msgContainer.appendChild(bubble);
+            });
+
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+
+                        }
+                    }
+                }
+            }, err => console.error('[Firestore] Messages listener error:', err));
         }
 
         async function loadChatHeaderAndStatus(chatId, chatData) {
@@ -14209,7 +14389,8 @@ let settingsConfirmedAddress = null;
             // 2. Job details
             const jobTitle = jobData ? jobData.title : chatData.jobTitle;
             const jobLocation = jobData ? jobData.location : 'Nincs megadva';
-            const jobTime = jobData ? (jobData.datetime || jobData.time) : '';
+            let jobTime = jobData ? (jobData.datetime || jobData.time) : '';
+            if (chatData && chatData.acceptedDatetime) jobTime = chatData.acceptedDatetime;
             
             // Task Name
             const taskEl = document.getElementById('chat-detail-job');
@@ -14524,9 +14705,68 @@ let settingsConfirmedAddress = null;
 
             msgContainer.innerHTML = '<div style="font-size: 12px; font-weight: 500; color: #9CA3AF; text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px; text-align: center;">MA</div>';
 
-            msgs.forEach(msg => {
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
+            const isEmployer = (currentRole === 'employer');
+
+            // Find index of latest proposal to make older proposals inert (superseded)
+            let latestProposalIndex = -1;
+            for (let i = msgs.length - 1; i >= 0; i--) {
+                if (msgs[i].type === 'time_proposal') {
+                    latestProposalIndex = i;
+                    break;
+                }
+            }
+
+            msgs.forEach((msg, idx) => {
                 const bubble = document.createElement('div');
-                if (msg.from === 'system') {
+                
+                if (msg.type === 'time_proposal') {
+                    // STRUCTURED TIME PROPOSAL BUBBLE
+                    const isLatest = (idx === latestProposalIndex);
+                    const isSender = msg.senderId ? (msg.senderId === myUid) : (msg.from === currentRole);
+                    const status = msg.status || 'pending';
+
+                    let formattedPropTime = msg.proposedDatetime || '';
+                    if (formattedPropTime.includes('T')) {
+                        try {
+                            const p = formattedPropTime.split('T');
+                            const dp = p[0].split('-');
+                            const tp = p[1].split(':');
+                            formattedPropTime = `${dp[0]}. ${dp[1]}. ${dp[2]}. ${tp[0]}:${tp[1]}`;
+                        } catch(e) {}
+                    }
+
+                    let actionsHtml = '';
+                    if (status === 'accepted') {
+                        actionsHtml = `<div style="font-size:11px; font-weight:600; color:#10B981; margin-top:6px;">✓ Elfogadva</div>`;
+                    } else if (status === 'declined') {
+                        actionsHtml = `<div style="font-size:11px; font-weight:600; color:#EF4444; margin-top:6px;">✗ Elutasítva</div>`;
+                    } else if (!isLatest || status === 'superseded') {
+                        actionsHtml = `<div style="font-size:11px; color:#9CA3AF; margin-top:6px;">Érvénytelenített javaslat</div>`;
+                    } else if (!isSender && status === 'pending' && (window._processedProposals = window._processedProposals || new Set()) && window._processedProposals.has(chatId + '_' + (msg.id || idx))) {
+                        actionsHtml = `<div style="font-size:12px; color:#10B981; font-weight:600; text-align:center; padding: 10px;">Feldolgozás...</div>`;
+                    } else if (!isSender && status === 'pending') {
+                        actionsHtml = `
+                            <div style="display:flex; gap:8px; margin-top:10px;">
+                                <button onclick="acceptTimeProposal('${chatId}', '${msg.id || idx}', '${msg.proposedDatetime}', this)" style="flex:1; height:34px; background:#10B981; color:#ffffff; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Elfogadom az új időpontot</button>
+                                <button onclick="declineTimeProposal('${chatId}', '${msg.id || idx}', this)" style="flex:1; height:34px; background:rgba(239,68,68,0.15); color:#EF4444; border:1px solid #EF4444; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Elutasítom</button>
+                            </div>
+                        `;
+                    } else {
+                        actionsHtml = `<div style="font-size:11px; color:var(--color-text-muted); margin-top:6px;">⏳ Várakozás a válaszra...</div>`;
+                    }
+
+                    bubble.style.cssText = `
+                        max-width:85%; padding:12px 16px; border-radius:12px; margin:10px ${isSender ? '0 10px auto' : 'auto 10px 0'};
+                        background:var(--color-surface); border:1px solid var(--color-border); color:var(--color-text); font-size:14px;
+                    `;
+                    bubble.innerHTML = `
+                        <div style="font-weight:600; font-size:13px; margin-bottom:4px;">📅 Új időpont javaslat</div>
+                        <div style="font-size:14px; font-weight:700; color:var(--color-text);">${formattedPropTime}</div>
+                        ${actionsHtml}
+                        <div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time || ''}</div>
+                    `;
+                } else if (msg.from === 'system') {
                     bubble.className = 'system-msg-bubble';
                     bubble.style.cssText = 'padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 400; text-align: center; margin: 10px auto; max-width: 90%; width: 100%; box-sizing: border-box;';
                     bubble.innerHTML = escapeHTML(msg.text);
@@ -14551,7 +14791,6 @@ let settingsConfirmedAddress = null;
                         background:${isMe ? 'var(--color-chat-bubble-out)' : 'var(--color-chat-bubble-in)'};
                         color:${isMe ? 'var(--color-chat-text-out)' : 'var(--color-chat-text-in)'};
                         font-size:14px; align-self:${isMe ? 'flex-end' : 'flex-start'};
-                        
                     `;
                     bubble.innerHTML = escapeHTML(msg.text) + (msg.time ? `<div style="font-size:10px; opacity:0.5; margin-top:4px; text-align:right;">${msg.time}</div>` : '');
                 }
@@ -14710,12 +14949,25 @@ let settingsConfirmedAddress = null;
             };
             input.click();
         }
-        function showPushNotification(title, msg, color) {
+        function showPushNotification(title, msg, color, onClick) {
             const banner = document.getElementById('push-banner');
             const icon = document.getElementById('push-banner-icon');
             document.getElementById('push-banner-title').innerText = title;
             document.getElementById('push-banner-msg').innerText = msg;
             if (icon && color) icon.style.background = color;
+            
+            banner.onclick = null;
+            if (typeof onClick === 'function') {
+                banner.onclick = (e) => {
+                    if (e.target.classList.contains('push-banner-close')) return;
+                    banner.classList.remove('show');
+                    onClick();
+                };
+                banner.style.cursor = 'pointer';
+            } else {
+                banner.style.cursor = 'default';
+            }
+
             banner.classList.add('show');
             setTimeout(() => banner.classList.remove('show'), 4000);
         }
@@ -15369,7 +15621,14 @@ let settingsConfirmedAddress = null;
             const dt = document.getElementById('emp-datetime');
             if (!dt) return;
             const saved = localStorage.getItem('as_emp-datetime');
-            if (saved) { dt.value = saved; return; }
+            if (saved) {
+                const savedDate = new Date(saved);
+                if (!isNaN(savedDate.getTime()) && savedDate < new Date()) {
+                    localStorage.removeItem('as_emp-datetime');
+                } else {
+                    dt.value = saved; return;
+                }
+            }
             const now = new Date();
             now.setHours(now.getHours() + 1, 0, 0, 0);
             const pad = n => String(n).padStart(2, '0');
@@ -15409,7 +15668,54 @@ let settingsConfirmedAddress = null;
         let currentEmployerDetailJobId = null;
         let currentEditJobId = null;
 
-        function openEmployerAdDetailNew(jobId) {
+        
+        async function repostExpiredJob(jobId) {
+            const job = localEmployerJobs.find(j => j.id === jobId);
+            if (!job) return;
+
+            // One-click extension logic (24 hours)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tzoffset = tomorrow.getTimezoneOffset() * 60000;
+            const localISOTime = (new Date(tomorrow - tzoffset)).toISOString().slice(0, 16);
+            
+            if (window.firebaseAPI && window.firebaseDb) {
+                try {
+                    const jobRef = window.firebaseAPI.doc(window.firebaseDb, 'jobs', jobId);
+                    await window.firebaseAPI.updateDoc(jobRef, {
+                        datetime: localISOTime,
+                        status: 'Keresés', // Because it was expired, we set it back to active searching
+                        deadlineNotified: false // Reset notification flag so cron job can notify again
+                    });
+                    
+                    if (typeof showPushNotification === 'function') {
+                        showPushNotification("Siker", "A hirdetés határidejét meghosszabbítottuk 24 órával.", "#10B981");
+                    }
+                    
+                    job.datetime = localISOTime;
+                    job.status = 'Keresés';
+                    saveEmployerJobs();
+                    
+                    openEmployerAdDetailNew(jobId);
+                    if (typeof renderEmployerHome === 'function') renderEmployerHome();
+                } catch(e) {
+                    console.error("Hiba a meghosszabbításkor:", e);
+                    if (typeof showPushNotification === 'function') {
+                        showPushNotification("Hiba", "Nem sikerült meghosszabbítani a hirdetést.", "#EF4444");
+                    }
+                }
+            } else {
+                job.datetime = localISOTime;
+                job.status = 'Keresés';
+                saveEmployerJobs();
+                openEmployerAdDetailNew(jobId);
+                if (typeof renderEmployerHome === 'function') renderEmployerHome();
+                if (typeof showPushNotification === 'function') {
+                    showPushNotification("Siker", "Helyi módban meghosszabbítva.", "#10B981");
+                }
+            }
+        }
+function openEmployerAdDetailNew(jobId) {
             currentEmployerDetailJobId = jobId;
             let job = localEmployerJobs.find(j => j.id === jobId);
             
@@ -15449,6 +15755,28 @@ let settingsConfirmedAddress = null;
             document.getElementById('ad-detail-datetime').innerText = job.datetime;
             document.getElementById('ad-detail-price').innerText = job.price.toLocaleString('hu-HU') + ' Ft';
             document.getElementById('ad-detail-desc').innerText = job.details;
+            
+            // Expired banner & Repost button
+            const bannerContainer = document.getElementById('ad-detail-expired-banner');
+            if (bannerContainer) {
+                if (job.status === 'expired' || job.status === 'archived' || job.status === 'expired_pending_grace') {
+                    bannerContainer.innerHTML = `
+                        <div style="background: #FEF2F2; border: 1px solid #FEE2E2; border-radius: 8px; padding: 12px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: #991B1B; font-size: 14px; font-weight: 500;">
+                                <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                                ${job.status === 'expired_pending_grace' ? 'Lejárt, de még elfogadhatod a jelentkezőket (24h)' : 'Ez a hirdetés lejárt.'}
+                            </div>
+                            <button onclick="repostExpiredJob('${job.id}')" style="background: var(--color-text); color: var(--color-bg); border: none; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                                🔄 Újra közzététel meghosszabbítással
+                            </button>
+                        </div>
+                    `;
+                    bannerContainer.style.display = 'block';
+                } else {
+                    bannerContainer.style.display = 'none';
+                    bannerContainer.innerHTML = '';
+                }
+            }
 
             // Fill applicants list card values
             const appContainer = document.getElementById('ad-detail-applicants-container');
@@ -16412,6 +16740,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                                 ${chatData.workerName || "Diák"} jelentkezett a munkára.
                             </div>
                         </div>
+                        <button class="btn" style="height: 32px; font-size: 11px; padding: 0 10px; border-radius: 8px; background-color: var(--color-surface); color: var(--color-text); border: 0.5px solid var(--color-border); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openTimeProposalModal()">📅 Más időpontot javaslok</button>
                         <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 500; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; " onclick="executeEmployerAccept('${chatData.id}')">
                             Elfogadás
                         </button>
@@ -16420,8 +16749,9 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     bar.style.backgroundColor = 'var(--color-surface)';
                     bar.style.borderTop = '1px solid var(--color-border)';
                     bar.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: center; padding: 4px 0;">
-                            <span style="font-size: 14px; animation: pulse 1.5s infinite;">⌛ Várakozás a megbízó elfogadására...</span>
+                        <div style="display: flex; align-items: center; gap: 8px; color: #475569; flex: 1; justify-content: space-between; padding: 4px 0;">
+                            <span style="font-size: 13px;">⌛ Várakozás a megbízó elfogadására...</span>
+                            <button class="btn" style="height: 30px; font-size: 11px; padding: 0 10px; border-radius: 8px; background-color: var(--color-bg); color: var(--color-text); border: 0.5px solid var(--color-border); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openTimeProposalModal()">📅 Más időpontot javaslok</button>
                         </div>
                     `;
                 }
@@ -16436,6 +16766,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                                 Elfogadtad a jelentkezést. Indítsd el a munkát!
                             </div>
                         </div>
+                        <button class="btn" style="height: 32px; font-size: 11px; padding: 0 10px; border-radius: 8px; background-color: var(--color-surface); color: var(--color-text); border: 0.5px solid var(--color-border); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openTimeProposalModal()">📅 Más időpontot javaslok</button>
                         <button class="btn" style="height: 32px; font-size: 11px; padding: 0 14px; border-radius: 8px; background-color: #1D4ED8; color: #fff; font-weight: 500; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; " onclick="executeEmployerStart('${chatData.id}')">
                             Munka indítása
                         </button>
@@ -16444,8 +16775,9 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     bar.style.backgroundColor = 'var(--color-surface)';
                     bar.style.borderTop = '1px solid var(--color-border)';
                     bar.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-muted); flex: 1; justify-content: center; padding: 4px 0;">
-                            <span style="font-size: 14px;">⌛ Várakozás a munka indítására...</span>
+                        <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-muted); flex: 1; justify-content: space-between; padding: 4px 0;">
+                            <span style="font-size: 13px;">⌛ Várakozás a munka indítására...</span>
+                            <button class="btn" style="height: 30px; font-size: 11px; padding: 0 10px; border-radius: 8px; background-color: var(--color-bg); color: var(--color-text); border: 0.5px solid var(--color-border); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="openTimeProposalModal()">📅 Más időpontot javaslok</button>
                         </div>
                     `;
                 }
@@ -17264,7 +17596,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 'seeking': document.getElementById('emp-tab-seeking'),
                 'applicants': document.getElementById('emp-tab-applicants'),
                 'active': document.getElementById('emp-tab-active'),
-                'completed': document.getElementById('emp-tab-completed')
+                'completed': document.getElementById('emp-tab-completed'),
+                'expired': document.getElementById('emp-tab-expired')
             };
             
             for (const [key, el] of Object.entries(tabs)) {
@@ -17291,22 +17624,30 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             if (!list) return;
 
             const currentUserUid = (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : 'NO_UID';
-            const myJobs = localEmployerJobs.filter(j => j.ownerUid === currentUserUid);
+            const myJobs = localEmployerJobs.filter(j => j.ownerUid === currentUserUid || !j.ownerUid);
+
+            // Synchronously run expiration check before rendering!
+            if (typeof window.checkJobExpirations === 'function') {
+                window.checkJobExpirations();
+            }
 
             // Calculate dynamic status counts for dashboard
             let countSeeking = 0;
             let countApplicants = 0;
             let countActive = 0;
             let countCompleted = 0;
+            let countExpired = 0;
 
             myJobs.forEach(job => {
                 if (['completed', 'rated', 'Befejezett'].includes(job.status)) {
                     countCompleted++;
                 } else if (['accepted', 'started', 'pending_confirmation', 'Aktív'].includes(job.status)) {
                     countActive++;
-                } else if (job.status === 'Keresés' || job.status === 'pending') {
+                } else if (job.status === 'expired' || job.status === 'Lejárt') {
+                    countExpired++;
+                } else if (job.status === 'Keresés' || job.status === 'pending' || job.status === 'expired_pending_grace') {
                     const hasPendingApps = localWorkerApplications.some(a => a.jobId === job.id && a.status === 'Függőben');
-                    if (hasPendingApps || job.status === 'pending') {
+                    if (hasPendingApps || job.status === 'pending' || job.status === 'expired_pending_grace') {
                         countApplicants++;
                     } else {
                         countSeeking++;
@@ -17319,14 +17660,16 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             const applicantsEl = document.getElementById('stat-count-applicants');
             const activeEl = document.getElementById('stat-count-active');
             const completedEl = document.getElementById('stat-count-completed');
+            const expiredEl = document.getElementById('stat-count-expired');
 
             if (seekingEl) seekingEl.innerText = countSeeking;
             if (applicantsEl) applicantsEl.innerText = countApplicants;
             if (activeEl) activeEl.innerText = countActive;
             if (completedEl) completedEl.innerText = countCompleted;
+            if (expiredEl) expiredEl.innerText = countExpired;
 
-            // Count total active ads (exclude completed/rated/Befejezett)
-            const activeCount = myJobs.filter(j => !['completed', 'rated', 'Befejezett'].includes(j.status)).length;
+            // Count total active ads (exclude completed/rated/Befejezett and expired/archived)
+            const activeCount = myJobs.filter(j => !['completed', 'rated', 'Befejezett', 'expired', 'Lejárt', 'archived'].includes(j.status)).length;
             if (countLabel) {
                 countLabel.innerText = activeCount + ' ' + (typeof window.t === 'function' ? window.t('aktív') : 'aktív');
             }
@@ -17344,12 +17687,14 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 return;
             }
 
-            let displayedJobs = [...myJobs];
+            let displayedJobs = [...myJobs].filter(j => j.status !== 'archived'); // Never show archived!
+
             if (typeof currentEmpJobFilter !== 'undefined' && currentEmpJobFilter !== 'all') {
                 displayedJobs = displayedJobs.filter(job => {
                     const isCompleted = ['completed', 'rated', 'Befejezett'].includes(job.status);
                     const isActive = ['accepted', 'started', 'pending_confirmation', 'Aktív'].includes(job.status);
-                    const isSeekingOrPending = job.status === 'Keresés' || job.status === 'pending';
+                    const isSeekingOrPending = job.status === 'Keresés' || job.status === 'pending' || job.status === 'expired_pending_grace';
+                    const isExpired = job.status === 'expired' || job.status === 'Lejárt';
                     
                     if (currentEmpJobFilter === 'completed') {
                         return isCompleted;
@@ -17357,15 +17702,18 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     if (currentEmpJobFilter === 'active') {
                         return isActive;
                     }
+                    if (currentEmpJobFilter === 'expired') {
+                        return isExpired;
+                    }
                     if (currentEmpJobFilter === 'seeking') {
                         if (!isSeekingOrPending) return false;
                         const hasPendingApps = localWorkerApplications.some(a => a.jobId === job.id && a.status === 'Függőben');
-                        return !hasPendingApps && job.status !== 'pending';
+                        return !hasPendingApps && job.status !== 'pending' && job.status !== 'expired_pending_grace';
                     }
                     if (currentEmpJobFilter === 'applicants') {
                         if (!isSeekingOrPending) return false;
                         const hasPendingApps = localWorkerApplications.some(a => a.jobId === job.id && a.status === 'Függőben');
-                        return hasPendingApps || job.status === 'pending';
+                        return hasPendingApps || job.status === 'pending' || job.status === 'expired_pending_grace';
                     }
                     return true;
                 });
@@ -17388,9 +17736,21 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             displayedJobs.forEach(job => {
                 let statusClass = 'seeking';
                 let statusText = 'Keresés';
-                let cardClass = 'status-seeking';
+                let isExpiredJob = false;
+                let showRepostBtn = false;
 
-                if (['completed', 'rated', 'Befejezett'].includes(job.status)) {
+                if (job.status === 'expired' || job.status === 'Lejárt') {
+                    statusClass = 'expired';
+                    statusText = 'Lejárt';
+                    cardClass = 'status-expired';
+                    isExpiredJob = true;
+                    showRepostBtn = true;
+                } else if (job.status === 'expired_pending_grace') {
+                    statusClass = 'pending';
+                    statusText = 'Lejárt (Türelmi idő)';
+                    cardClass = 'status-seeking'; // visually treat it similar to pending/seeking so they can interact with it
+                    showRepostBtn = true;
+                } else if (['completed', 'rated', 'Befejezett'].includes(job.status)) {
                     statusClass = 'completed';
                     statusText = 'Befejezve';
                     cardClass = 'status-completed';
@@ -17422,17 +17782,21 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><rect x="9" y="12" width="6" height="5" rx="1"/></svg>`;
                 }
 
+                const opacityStyle = isExpiredJob ? 'opacity: 0.6;' : '';
+                const repostBtnHtml = showRepostBtn ? `<button onclick="event.stopPropagation(); repostExpiredJob('${job.id}')" style="margin-top:8px; background:var(--color-text); color:var(--color-bg); border:none; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">🔄 Újra közzététel</button>` : '';
+
                 html += `
-                    <div class="emp-ad-card ${cardClass}" id="emp-ad-card-${job.id}" onclick="clickEmployerAdCard('${job.id}')">
+                    <div class="emp-ad-card ${cardClass}" id="emp-ad-card-${job.id}" onclick="clickEmployerAdCard('${job.id}')" style="${opacityStyle}">
                         <div class="emp-ad-icon-circle">
                             ${iconSvg}
                         </div>
                         <div class="emp-ad-middle">
                             <div class="emp-ad-title">${job.title}</div>
-                            <div class="emp-ad-meta">${job.location.split(',').slice(-1)[0].trim()} · ${job.datetime}</div>
+                            <div class="emp-ad-meta">${job.location ? job.location.split(',').slice(-1)[0].trim() : 'Kaposvár'} · ${job.datetime || ''}</div>
+                            ${repostBtnHtml}
                         </div>
                         <div class="emp-ad-right">
-                            <span class="emp-ad-pill ${statusClass}">${statusText}</span>
+                            <span class="emp-ad-pill ${statusClass}" style="${isExpiredJob ? 'background:#6B7280; color:#ffffff;' : ''}">${statusText}</span>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="9 18 15 12 9 6"/>
                             </svg>
@@ -17442,6 +17806,350 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             });
             list.innerHTML = html;
         }
+
+        window.repostExpiredJob = function(jobId) {
+            openEditEmployerJob(jobId);
+            const dt = document.getElementById('emp-datetime');
+            if (dt) {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(14, 0, 0, 0);
+                const pad = n => String(n).padStart(2, '0');
+                dt.value = tomorrow.getFullYear() + '-' + pad(tomorrow.getMonth()+1) + '-' + pad(tomorrow.getDate()) + 'T14:00';
+            }
+            showPushNotification('Hirdetés meghosszabbítása', 'Válassz új határidőt és nyomj a mentésre a meghosszabbításhoz!', '#3B82F6');
+        };
+
+        window.checkJobExpirations = function() {
+            if (!localEmployerJobs) return;
+            const now = Date.now();
+            const ONE_DAY = 24 * 60 * 60 * 1000;
+            const SEVEN_DAYS = 7 * ONE_DAY;
+
+            localEmployerJobs.forEach(job => {
+                const s = job.status || 'Keresés';
+                
+                // 1. Check expired jobs retention (7 days -> archived soft-delete)
+                if (s === 'expired' || s === 'Lejárt') {
+                    const expiredAt = job.expiredAt || (job.createdAt || now);
+                    if (now - expiredAt > SEVEN_DAYS) {
+                        job.status = 'archived';
+                        if (window.firebaseAPI && window.firebaseDb) {
+                            window.firebaseAPI.updateDoc(window.firebaseAPI.doc(window.firebaseDb, "jobs", job.id), { status: 'archived' }).catch(e=>{});
+                        }
+                    }
+                    return;
+                }
+
+                // 2. Check grace period jobs
+                if (s === 'expired_pending_grace') {
+                    const pendingApps = localWorkerApplications.filter(a => String(a.jobId) === String(job.id) && a.status === 'Függőben');
+                    if (now - (job.gracePeriodStartedAt || now) > ONE_DAY || pendingApps.length === 0) {
+                        // 24h grace period ended without action OR no pending apps left
+                        job.status = 'expired';
+                        job.expiredAt = now;
+                        if (window.firebaseAPI && window.firebaseDb) {
+                            window.firebaseAPI.updateDoc(window.firebaseAPI.doc(window.firebaseDb, "jobs", job.id), { status: 'expired', expiredAt: now }).catch(e=>{});
+                        }
+                        // Notification to applicants if any
+                        pendingApps.forEach(app => {
+                            showPushNotification('❌ Hirdetés lejárt', 'A munka határideje lejárt anélkül, hogy a megbízó visszaigazolta volna a jelentkezést.', '#EF4444');
+                        });
+                    }
+                    return;
+                }
+
+                // 3. Check active jobs for expiration
+                if (s === 'Keresés' || s === 'Kereses' || s === 'pending') {
+                    if (!job.datetime && !job.time) return;
+                    const jd = new Date(job.datetime || job.time);
+                    if (isNaN(jd.getTime()) || jd >= new Date()) return; // Not expired yet
+
+                    // Job datetime HAS passed! Check for pending applications
+                    const pendingApps = localWorkerApplications.filter(a => String(a.jobId) === String(job.id) && a.status === 'Függőben');
+
+                    if (pendingApps.length === 0) {
+                        // Immediate expiration: no pending applicants (Case B)
+                        job.status = 'expired';
+                        job.expiredAt = now;
+                        if (window.firebaseAPI && window.firebaseDb) {
+                            window.firebaseAPI.updateDoc(window.firebaseAPI.doc(window.firebaseDb, "jobs", job.id), { status: 'expired', expiredAt: now }).catch(e=>{});
+                        }
+                        // Trigger push notification to poster about 1-click extension
+                        if (!job._notifiedExpired) {
+                            job._notifiedExpired = true;
+                            // We no longer show in-app notification for expired jobs here, we rely on backend push
+                        }
+                    } else {
+                        // Has pending applications -> Hybrid Grace Period Logic (Case A)
+                        job.status = 'expired_pending_grace';
+                        job.gracePeriodStartedAt = now;
+                        if (window.firebaseAPI && window.firebaseDb) {
+                            window.firebaseAPI.updateDoc(window.firebaseAPI.doc(window.firebaseDb, "jobs", job.id), { status: 'expired_pending_grace', gracePeriodStartedAt: now }).catch(e=>{});
+                        }
+                        // Notification to poster
+                        showPushNotification('⚠️ Várakozó jelentkező!', 'Várakozó jelentkeződ van a lejárt hirdetésedre! Elfogadod vagy újra meghirdeted?', 'var(--color-text)');
+                        // Notification to applicants
+                        pendingApps.forEach(app => {
+                            showPushNotification('⏳ Jelentkezés állapot', 'A munka határideje lejárt, de értesítettük a megbízót — hamarosan válaszol a jelentkezésedre.', '#3B82F6');
+                        });
+                    }
+                }
+            });
+            saveEmployerJobs();
+        };
+
+        // Run check on startup
+        setTimeout(window.checkJobExpirations, 2000);
+
+        // ==========================================
+        // FEATURE 2: STRUCTURED TIME PROPOSAL IN CHAT
+        // ==========================================
+        window.openTimeProposalModal = function() {
+            let modal = document.getElementById('time-proposal-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'time-proposal-modal';
+                modal.style.cssText = 'display:flex; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;';
+                modal.innerHTML = `
+                    <div style="background:var(--color-bg); border-radius:16px; padding:24px; width:100%; max-width:360px; border:0.5px solid var(--color-border); box-sizing:border-box;">
+                        <h3 style="font-size:16px; font-weight:600; color:var(--color-text); margin-bottom:6px;">Új időpont javaslása</h3>
+                        <p style="font-size:12px; color:var(--color-text-muted); margin-bottom:16px;">Válassz új időpontot az egyeztetéshez:</p>
+                        <input type="datetime-local" id="proposal-datetime-input" style="width:100%; height:44px; background:var(--color-surface); color:var(--color-text); border:0.5px solid var(--color-border); border-radius:8px; padding:0 12px; font-size:14px; margin-bottom:20px; box-sizing:border-box;">
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="closeTimeProposalModal()" style="flex:1; height:44px; background:transparent; color:var(--color-text); border:0.5px solid var(--color-border); border-radius:8px; font-size:14px; cursor:pointer;">Mégse</button>
+                            <button onclick="submitTimeProposal()" style="flex:1; height:44px; background:var(--color-text); color:var(--color-bg); border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;">Küldés</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            } else {
+                modal.style.display = 'flex';
+            }
+            const inp = document.getElementById('proposal-datetime-input');
+            if (inp) {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(14, 0, 0, 0);
+                const pad = n => String(n).padStart(2, '0');
+                inp.value = tomorrow.getFullYear() + '-' + pad(tomorrow.getMonth()+1) + '-' + pad(tomorrow.getDate()) + 'T14:00';
+            }
+        };
+
+        window.closeTimeProposalModal = function() {
+            const modal = document.getElementById('time-proposal-modal');
+            if (modal) modal.style.display = 'none';
+        };
+
+        window.submitTimeProposal = function() {
+            const inp = document.getElementById('proposal-datetime-input');
+            if (!inp || !inp.value) { alert('Kérlek válassz időpontot!'); return; }
+            const val = inp.value;
+            closeTimeProposalModal();
+
+            if (!selectedChatId) return;
+            const chat = localChats.find(c => c.id === selectedChatId);
+            if (!chat) return;
+
+            const myUid = (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined);
+            const now = new Date();
+            const t = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            if (chat.messages) {
+                chat.messages.forEach(m => {
+                    if (m.type === 'time_proposal' && m.status === 'pending') {
+                        m.status = 'superseded';
+                    }
+                });
+            } else {
+                chat.messages = [];
+            }
+
+            const newMsg = {
+                id: 'prop_' + Date.now(),
+                type: 'time_proposal',
+                from: currentRole || 'worker',
+                senderId: myUid,
+                proposedDatetime: val,
+                status: 'pending',
+                text: 'Új időpont javaslat: ' + val,
+                time: t
+            };
+
+            chat.messages.push(newMsg);
+            saveLocalChats();
+
+            if (chat.isFirestore && window.firebaseAPI && window.firebaseDb) {
+                // Update older proposals to superseded in Firestore
+                chat.messages.forEach(m => {
+                    if (m.type === 'time_proposal' && m.id !== newMsg.id && m.status === 'superseded') {
+                        if (m.id && !String(m.id).startsWith('prop_')) {
+                            window.firebaseAPI.updateDoc(
+                                window.firebaseAPI.doc(window.firebaseDb, "chats", selectedChatId, "messages", m.id),
+                                { status: 'superseded' }
+                            ).catch(e=>{});
+                        }
+                    }
+                });
+
+                // Add new proposal
+                window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", selectedChatId, "messages"),
+                    { 
+                        type: 'time_proposal',
+                        senderId: myUid,
+                        from: currentRole || 'worker',
+                        proposedDatetime: val,
+                        status: 'pending',
+                        text: 'Új időpont javaslat: ' + val,
+                        timestamp: window.firebaseAPI.serverTimestamp()
+                    }
+                ).catch(e=>{});
+                
+                window.firebaseAPI.updateDoc(
+                    window.firebaseAPI.doc(window.firebaseDb, "chats", selectedChatId),
+                    { lastMsg: 'Új időpont javaslat: ' + val, updatedAt: window.firebaseAPI.serverTimestamp() }
+                ).catch(e=>{});
+            }
+
+            renderActiveChatMessages(selectedChatId);
+            showPushNotification('Időpont javaslat elküldve', 'Értesítettük a partnert az új időpont javaslatról!', 'var(--color-text)');
+        };
+
+        window.acceptTimeProposal = async function(chatId, msgId, newDatetime, btnElement) {
+            const msgKey = chatId + '_' + (msgId || '');
+            if (!window._processedProposals) window._processedProposals = new Set();
+            if (window._processedProposals.has(msgKey)) return;
+            window._processedProposals.add(msgKey);
+            
+            if (btnElement && btnElement.parentElement) {
+                btnElement.parentElement.innerHTML = '<div style="font-size:12px; color:#10B981; font-weight:600; text-align:center; padding: 10px;">Feldolgozás...</div>';
+            }
+
+            const chat = localChats.find(c => c.id === chatId);
+            if (!chat) { window._isProcessingProposal = false; return; }
+
+            const msg = chat.messages ? chat.messages.find(m => String(m.id) === String(msgId) || String(m.proposedDatetime) === String(newDatetime)) : null;
+            if (msg) msg.status = 'accepted';
+
+            let formattedTime = newDatetime;
+            if (newDatetime.includes('T')) {
+                try {
+                    const p = newDatetime.split('T');
+                    const dp = p[0].split('-');
+                    const tp = p[1].split(':');
+                    formattedTime = `${dp[0]}. ${dp[1]}. ${dp[2]}. ${tp[0]}:${tp[1]}`;
+                } catch(e) {}
+            }
+
+            const jobId = chat.jobId;
+            if (jobId) {
+                const job = localEmployerJobs.find(j => String(j.id) === String(jobId)) || mockJobs.find(j => String(j.id) === String(jobId));
+                if (job) {
+                    job.datetime = newDatetime;
+                    job.time = newDatetime;
+                }
+                if (window.jobCache && window.jobCache[jobId]) {
+                    window.jobCache[jobId].datetime = newDatetime;
+                    window.jobCache[jobId].time = newDatetime;
+                }
+                
+                // Update DOM immediately
+                const headerTimeEl = document.getElementById('chat-detail-datetime');
+                if (headerTimeEl) {
+                    headerTimeEl.innerText = formattedTime;
+                }
+
+                if (window.firebaseAPI && window.firebaseDb) {
+                    window.firebaseAPI.updateDoc(window.firebaseAPI.doc(window.firebaseDb, "jobs", jobId), { datetime: newDatetime, time: newDatetime }).catch(e=>{});
+                }
+            }
+
+            const now = new Date();
+            const t = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+            const confirmMsg = { from: 'system', text: `✨ Az új időpontot elfogadták! Új időpont: ${formattedTime}`, time: t };
+
+            if (chat.isFirestore && window.firebaseAPI && window.firebaseDb) {
+                if (msg && msg.id && !String(msg.id).startsWith('prop_')) {
+                    window.firebaseAPI.updateDoc(
+                        window.firebaseAPI.doc(window.firebaseDb, "chats", chatId, "messages", msg.id),
+                        { status: 'accepted' }
+                    ).catch(e=>{});
+                }
+                
+                window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
+                    { senderId: 'system', text: confirmMsg.text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
+                ).catch(e=>{});
+                
+                window.firebaseAPI.updateDoc(
+                        window.firebaseAPI.doc(window.firebaseDb, "chats", chatId),
+                        { lastMsg: confirmMsg.text, updatedAt: window.firebaseAPI.serverTimestamp(), acceptedDatetime: newDatetime }
+                    ).then(() => {
+                    window._isProcessingProposal = false;
+                }).catch(e=>{
+                    window._isProcessingProposal = false;
+                });
+            } else {
+                 if (!chat.messages) chat.messages = [];
+                 chat.messages.push(confirmMsg);
+                 saveLocalChats();
+                 window._isProcessingProposal = false;
+            }
+
+            showPushNotification('Időpont elfogadva!', `Az új időpont frissítve: ${formattedTime}`, '#10B981');
+        };
+
+        window.declineTimeProposal = function(chatId, msgId, btnElement) {
+            const msgKey = chatId + '_' + (msgId || '');
+            if (!window._processedProposals) window._processedProposals = new Set();
+            if (window._processedProposals.has(msgKey)) return;
+            window._processedProposals.add(msgKey);
+            
+            if (btnElement && btnElement.parentElement) {
+                btnElement.parentElement.innerHTML = '<div style="font-size:12px; color:#EF4444; font-weight:600; text-align:center; padding: 10px;">Elutasítás...</div>';
+            }
+
+            const chat = localChats.find(c => c.id === chatId);
+            if (!chat) { window._isProcessingProposal = false; return; }
+
+            const msg = chat.messages ? chat.messages.find(m => String(m.id) === String(msgId)) : null;
+            if (msg) msg.status = 'declined';
+
+            const now = new Date();
+            const t = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+            const declineMsg = { from: 'system', text: `❌ Az új időpont javaslat vissza lett utasítva.`, time: t };
+
+            if (chat.isFirestore && window.firebaseAPI && window.firebaseDb) {
+                if (msg && msg.id && !String(msg.id).startsWith('prop_')) {
+                    window.firebaseAPI.updateDoc(
+                        window.firebaseAPI.doc(window.firebaseDb, "chats", chatId, "messages", msg.id),
+                        { status: 'declined' }
+                    ).catch(e=>{});
+                }
+                
+                window.firebaseAPI.addDoc(
+                    window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
+                    { senderId: 'system', text: declineMsg.text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
+                ).catch(e=>{});
+                
+                window.firebaseAPI.updateDoc(
+                    window.firebaseAPI.doc(window.firebaseDb, "chats", chatId),
+                    { lastMsg: declineMsg.text, updatedAt: window.firebaseAPI.serverTimestamp() }
+                ).then(() => {
+                    window._isProcessingProposal = false;
+                }).catch(e=>{
+                    window._isProcessingProposal = false;
+                });
+            } else {
+                 if (!chat.messages) chat.messages = [];
+                 chat.messages.push(declineMsg);
+                 saveLocalChats();
+                 window._isProcessingProposal = false;
+            }
+
+            showPushNotification('Időpont elutasítva', 'Az új időpont javaslat vissza lett utasítva.', '#EF4444');
+        };
 
         function openEditEmployerJob(jobId) {
             currentEditJobId = jobId;
@@ -17656,6 +18364,15 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     localEmployerJobs[jobIndex].lat = confirmedLat || 46.3667;
                     localEmployerJobs[jobIndex].lon = confirmedLon || 17.7833;
                     localEmployerJobs[jobIndex].geohash = window['geofire-common'] ? window['geofire-common'].geohashForLocation([confirmedLat || 46.3667, confirmedLon || 17.7833]) : '';
+                    
+                    // Reset status if republishing an expired job
+                    if (localEmployerJobs[jobIndex].status === 'expired' || localEmployerJobs[jobIndex].status === 'archived' || localEmployerJobs[jobIndex].status === 'expired_pending_grace') {
+                        localEmployerJobs[jobIndex].status = 'Keresés';
+                        localEmployerJobs[jobIndex].createdAt = Date.now();
+                        delete localEmployerJobs[jobIndex].expiredAt;
+                        delete localEmployerJobs[jobIndex].gracePeriodStartedAt;
+                        delete localEmployerJobs[jobIndex]._notifiedExpired;
+                    }
                     
                     // Frissítés Firestore-ban is
                     if (window.firebaseAuth && window.firebaseAuth.currentUser) {

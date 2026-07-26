@@ -7961,6 +7961,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             }
             
             const PushNotifications = window.Capacitor.Plugins.PushNotifications;
+            const FirebaseMessaging = window.Capacitor.Plugins.FirebaseMessaging;
+            
             if (!PushNotifications) {
                 console.warn("PushNotifications plugin nem található");
                 return;
@@ -7977,17 +7979,49 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     return;
                 }
 
-                // Fontos: A listenereket regisztráció ELŐTT kell feliratkozni!
+                // Ha telepítve van a FirebaseMessaging plugin, azt használjuk a tokenhez (iOS FCM token miatt)
+                if (FirebaseMessaging) {
+                    FirebaseMessaging.addListener('tokenReceived', async (event) => {
+                        console.log("Firebase FCM token érkezett: " + event.token);
+                        if (window.firebaseAPI && window.firebaseDb && userId) {
+                            try {
+                                const userRef = window.firebaseAPI.doc(window.firebaseDb, 'users', userId);
+                                await window.firebaseAPI.updateDoc(userRef, {
+                                    pushToken: event.token, // Ezt a mezőt használja a Cloud Function
+                                    fcmToken: event.token,
+                                    tokenUpdatedAt: window.firebaseAPI.serverTimestamp()
+                                });
+                                console.log("FCM token sikeresen elmentve a Firestore-ba!");
+                            } catch (err) {
+                                console.error("Hiba a push token mentésekor:", err);
+                            }
+                        }
+                    });
+                    
+                    // Lekérjük a tokent manuálisan is, ha már van
+                    try {
+                       const tokenResult = await FirebaseMessaging.getToken();
+                       if (tokenResult && tokenResult.token) {
+                          const userRef = window.firebaseAPI.doc(window.firebaseDb, 'users', userId);
+                          await window.firebaseAPI.updateDoc(userRef, {
+                              pushToken: tokenResult.token,
+                              fcmToken: tokenResult.token,
+                              tokenUpdatedAt: window.firebaseAPI.serverTimestamp()
+                          });
+                       }
+                    } catch(e) { console.log('FCM getToken error:', e); }
+                }
+
+                // Régi APNS regisztráció (megtartjuk fallback-ként, és az események miatt)
                 PushNotifications.addListener('registration', async (token) => {
-                    console.log("Push regisztráció sikeres, token: " + token.value);
-                    if (window.firebaseAPI && window.firebaseDb && userId) {
+                    console.log("Push regisztráció sikeres (APNS/fallback), token: " + token.value);
+                    if (!FirebaseMessaging && window.firebaseAPI && window.firebaseDb && userId) {
                         try {
                             const userRef = window.firebaseAPI.doc(window.firebaseDb, 'users', userId);
                             await window.firebaseAPI.updateDoc(userRef, {
                                 pushToken: token.value,
                                 tokenUpdatedAt: window.firebaseAPI.serverTimestamp()
                             });
-                            console.log("Push token sikeresen elmentve a Firestore-ba!");
                         } catch (err) {
                             console.error("Hiba a push token mentésekor:", err);
                         }
@@ -8009,17 +8043,30 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                         if (notification && notification.data) {
                             const type = notification.data.type;
                             const chatId = notification.data.chatId;
+                            
                             if (type === 'chat' && chatId) {
                                 // Váltás az üzenetek fülre
                                 if (typeof navigateApp === 'function') {
                                     navigateApp(2);
                                 }
-                                // Kis késleltetés a felület betöltéséhez, majd a chat megnyitása
                                 setTimeout(() => {
                                     if (typeof openChatRoom === 'function') {
                                         openChatRoom(chatId);
                                     }
                                 }, 300);
+                            } else if (type === 'job_expired') {
+                                // Váltás a Munkáltató fülre (ami a hirdetéseit tartalmazza)
+                                if (typeof navigateApp === 'function') {
+                                    navigateApp(1); // 1 = Munkáltató fül
+                                }
+                                // Ha esetleg egyből a szerkesztőt akarjuk kinyitni:
+                                /*
+                                setTimeout(() => {
+                                   if (typeof openEditEmployerJob === 'function' && notification.data.jobId) {
+                                       openEditEmployerJob(notification.data.jobId);
+                                   }
+                                }, 500);
+                                */
                             }
                         }
                     } catch (err) {
@@ -8027,7 +8074,6 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     }
                 });
 
-                // Csak azután regisztrálunk, hogy a listenereket már feliratkoztattuk
                 await PushNotifications.register();
             } catch (e) {
                 console.error("Hiba a push értesítések beállításakor", e);

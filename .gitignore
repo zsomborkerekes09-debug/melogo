@@ -1,2 +1,9 @@
 .vercel
 .env*
+node-v2*/
+node_modules/
+functions/node_modules/
+
+node-v2*
+Melogo (1)
+

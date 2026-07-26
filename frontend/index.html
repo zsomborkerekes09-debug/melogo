@@ -8055,18 +8055,13 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                                     }
                                 }, 300);
                             } else if (type === 'job_expired') {
-                                // Váltás a Munkáltató fülre (ami a hirdetéseit tartalmazza)
+                                // Váltás a Főlapra (0) és Munkáltató nézetre
                                 if (typeof navigateApp === 'function') {
-                                    navigateApp(1); // 1 = Munkáltató fül
+                                    navigateApp(0);
                                 }
-                                // Ha esetleg egyből a szerkesztőt akarjuk kinyitni:
-                                /*
-                                setTimeout(() => {
-                                   if (typeof openEditEmployerJob === 'function' && notification.data.jobId) {
-                                       openEditEmployerJob(notification.data.jobId);
-                                   }
-                                }, 500);
-                                */
+                                if (typeof switchRole === 'function') {
+                                    switchRole('employer');
+                                }
                             }
                         }
                     } catch (err) {

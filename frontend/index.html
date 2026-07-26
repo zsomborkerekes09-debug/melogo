@@ -17911,11 +17911,11 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     await window.firebaseAPI.updateDoc(jobRef, {
                         datetime: newVal,
                         createdAt: new Date().toISOString(),
-                        status: 'Keresés',
-                        gracePeriodStartedAt: window.firebaseAPI.deleteField(),
-                        expiredAt: window.firebaseAPI.deleteField(),
-                        _notifiedExpired: window.firebaseAPI.deleteField(),
-                        deadlineNotified: window.firebaseAPI.deleteField()
+                        status: 'Keres\u00e9s',
+                        gracePeriodStartedAt: null,
+                        expiredAt: null,
+                        _notifiedExpired: null,
+                        deadlineNotified: null
                     });
                     const idx = localEmployerJobs.findIndex(j => j.id === jobId);
                     if (idx > -1) {

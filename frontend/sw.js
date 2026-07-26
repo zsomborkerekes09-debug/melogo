@@ -1,7 +1,6 @@
-const CACHE_NAME = 'melogo-cache-v4';
+const CACHE_NAME = 'melogo-cache-v11';
 const urlsToCache = [
   '/',
-  '/index.html',
   '/manifest.json',
   '/assets/logo_new.jpg'
 ];
@@ -31,9 +30,16 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  if (event.request.mode === 'navigate' || event.request.url.includes('index.html')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+  
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
     })
   );
 });

@@ -15668,10 +15668,10 @@ let settingsConfirmedAddress = null;
         let currentEmployerDetailJobId = null;
         let currentEditJobId = null;
 
-        
-        function repostExpiredJob(jobId) {
-            closeEmployerAdDetail(); // Close detail view
-            editEmployerJob(jobId); // Open edit form
+function repostExpiredJob(jobId) {
+            closeEmployerAdDetailNew(); // Close detail view
+            openEditEmployerJob(jobId); // Open edit form
+
             
             // Highlight the date field to prompt them to change it
             setTimeout(() => {
@@ -18340,6 +18340,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     if (localEmployerJobs[jobIndex].status === 'expired' || localEmployerJobs[jobIndex].status === 'archived' || localEmployerJobs[jobIndex].status === 'expired_pending_grace') {
                         localEmployerJobs[jobIndex].status = 'Keresés';
                         localEmployerJobs[jobIndex].createdAt = Date.now();
+localEmployerJobs[jobIndex].deadlineNotified = false;
+
                         delete localEmployerJobs[jobIndex].expiredAt;
                         delete localEmployerJobs[jobIndex].gracePeriodStartedAt;
                         delete localEmployerJobs[jobIndex]._notifiedExpired;

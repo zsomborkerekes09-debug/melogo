@@ -4,6 +4,7 @@ const multer = require('multer');
 require('dotenv').config();
 const Stripe = require('stripe');
 const { GoogleGenAI } = require('@google/generative-ai');
+const cron = require('node-cron');
 
 const admin = require('firebase-admin');
 
@@ -275,6 +276,88 @@ app.get('/api/status', (req, res) => {
     stripeActive: !!stripe,
     aiActive: !!process.env.GEMINI_API_KEY && !process.env.GEMINI_API_KEY.includes('töltsd_ki'),
   });
+});
+
+// ==========================================
+// 4. CRON JOBS (Időzített feladatok)
+// ==========================================
+
+// Futás 15 percenként: ellenőrzi a lejárt határidős munkákat
+cron.schedule('*/15 * * * *', async () => {
+  try {
+    if (!admin.apps.length) return; // Ha nincs Firebase admin inicializálva
+    
+    console.log('[CRON] Ellenőrzöm a lejárt határidős munkákat...');
+    const now = new Date();
+    
+    // Lekérdezzük a 'Keresés' státuszú munkákat
+    const jobsSnapshot = await admin.firestore().collection('jobs')
+      .where('status', '==', 'Keresés')
+      .get();
+      
+    if (jobsSnapshot.empty) return;
+    
+    for (const doc of jobsSnapshot.docs) {
+      const job = doc.data();
+      
+      // Ha már értesítettük, kihagyjuk
+      if (job.deadlineNotified === true) continue;
+      
+      // Megpróbáljuk feldolgozni a datetime-ot. Ha "Holnap, 14:00" jellegű, 
+      // és nem standard formátumú, kihagyjuk.
+      if (!job.datetime) continue;
+      
+      const jobDate = new Date(job.datetime);
+      if (isNaN(jobDate.getTime())) {
+         continue; // Érvénytelen dátum
+      }
+      
+      // Ha a határidő a múltban van
+      if (jobDate < now) {
+        // Ellenőrizzük, van-e jelentkező
+        const appsSnapshot = await admin.firestore().collection('applications')
+          .where('jobId', '==', doc.id)
+          .get();
+          
+        if (appsSnapshot.empty) {
+          // Nincs jelentkező! Küldünk értesítést a hirdetőnek.
+          const ownerUid = job.ownerUid;
+          if (ownerUid) {
+            const userDoc = await admin.firestore().collection('users').doc(ownerUid).get();
+            if (userDoc.exists && userDoc.data().pushToken) {
+              const token = userDoc.data().pushToken;
+              
+              const message = {
+                notification: {
+                  title: 'Lejárt a határidő!',
+                  body: 'Nem jelentkezett senki a munkádra, de meghosszabbíthatod a határidőt egyetlen gombnyomással.',
+                },
+                data: {
+                  type: 'job_expired',
+                  jobId: doc.id
+                },
+                token: token,
+              };
+              
+              try {
+                await admin.messaging().send(message);
+                console.log(`[CRON] Értesítés elküldve a(z) ${doc.id} munkához.`);
+              } catch (e) {
+                console.error(`[CRON] Hiba az értesítés küldésekor (${doc.id}):`, e);
+              }
+            }
+          }
+          
+          // Akkor is beállítjuk, ha nincs pushToken
+          await admin.firestore().collection('jobs').doc(doc.id).update({
+            deadlineNotified: true
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.error('[CRON] Hiba az időzített feladat során:', error);
+  }
 });
 
 // Szerver indítása

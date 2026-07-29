@@ -1,4 +1,5 @@
 const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
@@ -113,5 +114,100 @@ exports.notifyExpiredJobs = onSchedule("every 5 minutes", async (event) => {
     console.log(`[notifyExpiredJobs] Cloud Function futás befejeződött.`);
   } catch (error) {
     console.error("[notifyExpiredJobs] Globális hiba a funkcióban:", error);
+  }
+});
+
+exports.onNewMessage = onDocumentCreated("chats/{chatId}/messages/{messageId}", async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) {
+    return;
+  }
+
+  const message = snapshot.data();
+  const chatId = event.params.chatId;
+  const db = admin.firestore();
+  const messaging = admin.messaging();
+
+  try {
+    // Read the chat document to get the participants
+    const chatDoc = await db.collection("chats").doc(chatId).get();
+    if (!chatDoc.exists) {
+      console.log(`[onNewMessage] Chat nem talalhato: ${chatId}`);
+      return;
+    }
+
+    const chat = chatDoc.data();
+    const workerId = chat.workerId;
+    const employerId = chat.employerId;
+
+    let recipients = [];
+
+    // Normal messages
+    if (message.senderId === workerId) {
+      recipients.push(employerId);
+    } else if (message.senderId === employerId) {
+      recipients.push(workerId);
+    } 
+    // System messages (e.g. accepted time, finished job)
+    else if (message.senderId === 'system' || message.type === 'system') {
+      recipients.push(employerId);
+      recipients.push(workerId);
+    } else {
+      console.log(`[onNewMessage] Ismeretlen senderId: ${message.senderId}`);
+      return;
+    }
+
+    // Filter out duplicates just in case
+    recipients = [...new Set(recipients)];
+
+    for (const recipientId of recipients) {
+      if (!recipientId) continue;
+
+      const userDoc = await db.collection("users").doc(recipientId).get();
+      if (!userDoc.exists) continue;
+
+      const userData = userDoc.data();
+      const token = userData.pushToken || userData.fcmToken;
+
+      if (token) {
+        let notificationTitle = "Új üzeneted érkezett";
+        let notificationBody = message.text || "Nézd meg a legújabb üzenetet!";
+
+        // If it's a normal message, we could try to put the sender's name as title, but we don't have it easily.
+        // If it's a system message, we use the system message text
+        if (message.type === 'system' || message.senderId === 'system') {
+          notificationTitle = "Rendszerüzenet";
+          notificationBody = message.text || "Új esemény a beszélgetésben.";
+        }
+
+        const payload = {
+          notification: {
+            title: notificationTitle,
+            body: notificationBody,
+          },
+          data: {
+            type: "chat",
+            chatId: chatId
+          },
+          token: token,
+          apns: {
+            payload: {
+              aps: {
+                sound: "default"
+              }
+            }
+          }
+        };
+
+        try {
+          await messaging.send(payload);
+          console.log(`[onNewMessage] Ertesites elkuldve a(z) ${recipientId} felhasznalonak.`);
+        } catch (sendError) {
+          console.error(`[onNewMessage] Hiba az ertesites kuldesekor (${token}):`, sendError);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("[onNewMessage] Hiba tortent:", error);
   }
 });

@@ -7323,7 +7323,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 </div>
 
                 <!-- ===== PUSH NOTIFICATION BANNER ===== -->
-                <div id="push-banner">
+                <div id="push-banner" style="display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;">
                     <div class="push-banner-icon" id="push-banner-icon">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                     </div>
@@ -15778,15 +15778,14 @@ function repostExpiredJob(jobId) {
                 btn.disabled = true;
                 
                 try {
-                    const deleteField = window.firebaseAPI.deleteField ? window.firebaseAPI.deleteField() : window.firebaseFirestore.deleteField();
                     const jobRef = window.firebaseAPI.doc(window.firebaseDb, "jobs", jobId);
                     const updateData = {
                         datetime: newVal,
                         createdAt: new Date().toISOString(),
                         status: 'Keresés',
-                        gracePeriodStartedAt: deleteField,
-                        expiredAt: deleteField,
-                        _notifiedExpired: deleteField
+                        gracePeriodStartedAt: null,
+                        expiredAt: null,
+                        _notifiedExpired: null
                     };
                     await window.firebaseAPI.updateDoc(jobRef, updateData);
                     

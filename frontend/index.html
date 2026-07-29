@@ -8520,10 +8520,41 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             const btn = document.getElementById('btn-step-3-next');
             if (btn) {
                 btn.disabled = true;
-                btn.innerText = 'Mentés...';
+                btn.innerText = 'Ment\u00e9s...';
             }
             
             try {
+                // Szigor\u00fa c\u00edmellen\u02ddrz\u00e9s
+                const addressForGeocoding = `${city}, ${street} ${house}, Hungary`;
+                const geocodeRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressForGeocoding) + '&email=info@melogo.hu', { headers: { 'Accept-Language': 'hu' } });
+                const geocodeData = await geocodeRes.json();
+                
+                if (!geocodeData || geocodeData.length === 0) {
+                    let errEl = document.getElementById('reg-address-global-error');
+                    if (!errEl) {
+                        errEl = document.createElement('div');
+                        errEl.id = 'reg-address-global-error';
+                        errEl.style.color = '#EF4444'; // Red
+                        errEl.style.marginTop = '8px';
+                        errEl.style.marginBottom = '8px';
+                        errEl.style.fontSize = '14px';
+                        errEl.style.fontWeight = '500';
+                        btn.parentNode.insertBefore(errEl, btn);
+                    }
+                    errEl.innerText = 'Nem tal\u00e1lhat\u00f3 ilyen c\u00edm! K\u00e9rlek val\u00f3s, l\u00e9tez\u02dd c\u00edmet adj meg.';
+                    errEl.style.display = 'block';
+                    
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = 'Tov\u00e1bb';
+                    }
+                    return; // Block save
+                }
+                
+                // Ha sikeres, hiba\u00fczenet elt\u00fcntet\u00e9se
+                const existErr = document.getElementById('reg-address-global-error');
+                if (existErr) existErr.style.display = 'none';
+
                 const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", user.uid);
                 await window.firebaseAPI.setDoc(userRef, {
                     address: fullAddress
@@ -8536,7 +8567,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 window.enterAppFromAuth();
             } catch (e) {
                 console.error("Step 3 error:", e);
-                alert("Hiba történt a cím mentése során.");
+                alert("Hiba t\u00f6rt\u00e9nt a c\u00edm ment\u00e9se sor\u00e1n.");
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -10912,35 +10943,85 @@ function filterWorkerByExactJob(jobName) {
         // INTERAKTÍV SZIMULÁCIÓS FOLYAMATOK
         // =======================================================
 
-        // A. MUNKÁLTATÓ FELAD EGY MUNKÁT
+        // A. MUNK\u00c1LTAT\u00d3 FELAD EGY MUNK\u00c1T
         async function employerPublishJob() {
             if (!window.firebaseAuth || (!window.firebaseAuth.currentUser && !localStorage.getItem('melogo_employer_session') && !localStorage.getItem('melogo_worker_session'))) {
-                showPushNotification("Hiba", "Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!", "#EF4444");
+                showPushNotification("Hiba", "Hirdet\u00e9s felad\u00e1s\u00e1hoz be kell jelentkezned vagy regisztr\u00e1lnod kell!", "#EF4444");
                 localStorage.removeItem('melogo_guest_mode');
                 if (typeof window.updateRegistrationStepUI === 'function') {
                     window.updateRegistrationStepUI(0);
                 }
                 return;
             }
-            closeEmployerFormOverlay();
+            
+            const publishBtn = document.querySelector('#employer-form-overlay .btn[style*="background-color: #1D4ED8"]');
+            if (publishBtn) {
+                publishBtn.disabled = true;
+                publishBtn._origText = publishBtn.innerText;
+                publishBtn.innerText = 'Ment\u00e9s...';
+            }
+            
             const specificJob = document.getElementById('emp-job-select').value;
-            const details = document.getElementById('emp-details').value || 'Alkalmi munka precízen elvégezve.';
+            const details = document.getElementById('emp-details').value || 'Alkalmi munka prec\u00edzen elv\u00e9gezve.';
             const county = document.getElementById('emp-county').value || 'Somogy';
-            const city = document.getElementById('emp-city').value || 'Kaposvár';
-            const street = document.getElementById('emp-street').value || 'Fő utca';
+            const city = document.getElementById('emp-city').value || 'Kaposv\u00e1r';
+            const street = document.getElementById('emp-street').value || 'F\u02dd utca';
             const house = document.getElementById('emp-house').value || '1';
             const price = parseInt(document.getElementById('emp-price-input').value) || 8000;
 
+            let jobLat = 47.4979; // Default Budapest
+            let jobLon = 19.0402;
+            let geocodeValid = false;
+            
+            // Szigor\u00fa c\u00edmellen\u02ddrz\u00e9s felad\u00e1s el\u02ddtt
+            try {
+                const addressForGeocoding = `${city}, ${street} ${house}, Hungary`;
+                const geocodeRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressForGeocoding) + '&email=info@melogo.hu', { headers: { 'Accept-Language': 'hu' } });
+                const geocodeData = await geocodeRes.json();
+                if (geocodeData && geocodeData.length > 0) {
+                    jobLat = parseFloat(geocodeData[0].lat);
+                    jobLon = parseFloat(geocodeData[0].lon);
+                    geocodeValid = true;
+                }
+            } catch(e) { console.error('Geocode error', e); }
+            
+            if (!geocodeValid) {
+                let errEl = document.getElementById('job-publish-error');
+                if (!errEl) {
+                    errEl = document.createElement('div');
+                    errEl.id = 'job-publish-error';
+                    errEl.style.color = '#EF4444';
+                    errEl.style.fontSize = '14px';
+                    errEl.style.fontWeight = '500';
+                    errEl.style.marginTop = '8px';
+                    errEl.style.marginBottom = '8px';
+                    if (publishBtn) publishBtn.parentNode.insertBefore(errEl, publishBtn);
+                }
+                errEl.innerText = 'Nem tal\u00e1lhat\u00f3 ilyen c\u00edm! K\u00e9rlek val\u00f3s, l\u00e9tez\u02dd c\u00edmet adj meg.';
+                errEl.style.display = 'block';
+                
+                if (publishBtn) {
+                    publishBtn.disabled = false;
+                    publishBtn.innerText = publishBtn._origText || 'K\u00e9sz, ment\u00e9s';
+                }
+                return; // BLOCK
+            }
+            
+            const errEl = document.getElementById('job-publish-error');
+            if (errEl) errEl.style.display = 'none';
+            
+            closeEmployerFormOverlay();
+
             let activeCat = empActiveCat;
             let finalJobTitle = specificJob;
-            if (activeCat === 'Magántanár') {
+            if (activeCat === 'Mag\u00e1ntan\u00e1r') {
                 const lvl = document.getElementById('emp-tutor-level-select').value;
                 if (lvl) {
                     finalJobTitle = `${specificJob} (${lvl})`;
                 }
             }
 
-            // Beállítjuk az állapotot
+            // Be\u00e1ll\u00edtjuk az \u00e1llapotot
             gameState.jobTitle = finalJobTitle;
             gameState.jobPrice = price;
             gameState.jobCounty = county;
@@ -10949,7 +11030,7 @@ function filterWorkerByExactJob(jobName) {
             gameState.jobHouse = house;
             gameState.jobDesc = details;
             gameState.jobDistance = 4.2;
-            gameState.status = 'Keresés';
+            gameState.status = 'Keres\u00e9s';
 
             // Allowed duplicate posts for testing
             const exists = localEmployerJobs.some(j => j.title === finalJobTitle && j.price === price);
@@ -10961,34 +11042,19 @@ function filterWorkerByExactJob(jobName) {
                     details: details,
                     location: `${county}, ${city}, ${street} ${house}.`,
                     price: price,
-                    status: 'Keresés',
+                    status: 'Keres\u00e9s',
                     category: activeCat,
                     datetime: (document.getElementById('emp-datetime') ? document.getElementById('emp-datetime').value : '') || 'Holnap, 14:00'
                 });
                 saveEmployerJobs();
                 renderEmployerHome();
 
-                // MENTÉS FIRESTORE-BA: Létrehozás
+                // MENT\u00c9S FIRESTORE-BA: L\u00e9trehoz\u00e1s
                 if (window.firebaseAuth && window.firebaseAuth.currentUser && window.firebaseAPI && window.firebaseDb) {
                     try {
                         const _posterSession = JSON.parse(localStorage.getItem('melogo_employer_session') || '{}');
-                        const _posterName = localStorage.getItem('melogo_name') || _posterSession.name || window.firebaseAuth.currentUser.displayName || 'Megbízó';
+                        const _posterName = localStorage.getItem('melogo_name') || _posterSession.name || window.firebaseAuth.currentUser.displayName || 'Megb\u00edz\u00f3';
                         
-                        let jobLat = 47.4979; // Default Budapest
-                        let jobLon = 19.0402;
-                        if (window.userCoords && window.userCoords.lat) {
-                            jobLat = window.userCoords.lat;
-                            jobLon = window.userCoords.lon;
-                        }
-                        try {
-                            const addressForGeocoding = `${city}, ${street} ${house}, Hungary`;
-                            const geocodeRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressForGeocoding));
-                            const geocodeData = await geocodeRes.json();
-                            if (geocodeData && geocodeData.length > 0) {
-                                jobLat = parseFloat(geocodeData[0].lat);
-                                jobLon = parseFloat(geocodeData[0].lon);
-                            }
-                        } catch(e) { console.error('Geocode fallback to GPS due to error', e); }
                         const hash = window['geofire-common'] ? window['geofire-common'].geohashForLocation([jobLat, jobLon]) : null;
 
                         const newDocRef = await window.firebaseAPI.addDoc(window.firebaseAPI.collection(window.firebaseDb, "jobs"), {
@@ -12654,6 +12720,7 @@ let settingsConfirmedAddress = null;
             if (!zip || !county || !city || !street || !house) {
                 addressValid = false;
                 if (err) {
+                    err.innerText = "Minden mez\u02ddt ki kell t\u00f6lteni!";
                     err.classList.add('show');
                     err.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
@@ -12662,6 +12729,27 @@ let settingsConfirmedAddress = null;
                 generatedAddress = `${zip} ${city}, ${street} ${house}.`;
                 if (apt) generatedAddress += ` ${apt}`;
                 settingsConfirmedAddress = generatedAddress;
+                
+                // Szigor\u00fa c\u00edmellen\u02ddrz\u00e9s:
+                try {
+                    const addressForGeocoding = `${city}, ${street} ${house}, Hungary`;
+                    const geocodeRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressForGeocoding) + '&email=info@melogo.hu', { headers: { 'Accept-Language': 'hu' } });
+                    const geocodeData = await geocodeRes.json();
+                    
+                    if (!geocodeData || geocodeData.length === 0) {
+                        addressValid = false;
+                        if (err) {
+                            err.innerText = 'Nem tal\u00e1lhat\u00f3 ilyen c\u00edm! K\u00e9rlek val\u00f3s, l\u00e9tez\u02dd c\u00edmet adj meg.';
+                            err.classList.add('show');
+                            err.style.color = '#EF4444';
+                            err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        restoreBtn();
+                        return; // Block save process
+                    }
+                } catch (e) {
+                    console.warn("Geocoding validation failed in saveSettings", e);
+                }
             }
 
             // Save to local storage

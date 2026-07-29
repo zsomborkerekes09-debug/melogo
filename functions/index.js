@@ -149,9 +149,31 @@ exports.onNewMessage = onDocumentCreated("chats/{chatId}/messages/{messageId}", 
       recipients.push(workerId);
     } 
     // System messages (e.g. accepted time, finished job)
-    else if (message.senderId === 'system' || message.type === 'system') {
-      recipients.push(employerId);
-      recipients.push(workerId);
+    else if (message.senderId === 'system' || message.type === 'system' || message.type === 'time_proposal') {
+      if (message.triggerId) {
+        if (message.triggerId === workerId) {
+          recipients.push(employerId);
+        } else if (message.triggerId === employerId) {
+          recipients.push(workerId);
+        } else {
+          recipients.push(employerId);
+          recipients.push(workerId);
+        }
+      } else {
+        // Text-based routing fallback for older client versions
+        const text = message.text || "";
+        if (text.includes("jelentkezett a munkára") || text.includes("késznek jelölte a munkát")) {
+          // Actions done by worker -> send to employer
+          recipients.push(employerId);
+        } else if (text.includes("elfogadta a munkást") || text.includes("munka elkezdődött") || text.includes("befejeződött") || text.includes("Értékelés leadva")) {
+          // Actions done by employer -> send to worker
+          recipients.push(workerId);
+        } else {
+          // Default fallback
+          recipients.push(employerId);
+          recipients.push(workerId);
+        }
+      }
     } else {
       console.log(`[onNewMessage] Ismeretlen senderId: ${message.senderId}`);
       return;
@@ -175,7 +197,7 @@ exports.onNewMessage = onDocumentCreated("chats/{chatId}/messages/{messageId}", 
 
         // If it's a normal message, we could try to put the sender's name as title, but we don't have it easily.
         // If it's a system message, we use the system message text
-        if (message.type === 'system' || message.senderId === 'system') {
+        if (message.type === 'system' || message.senderId === 'system' || message.type === 'time_proposal') {
           notificationTitle = "Rendszerüzenet";
           notificationBody = message.text || "Új esemény a beszélgetésben.";
         }

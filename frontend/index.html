@@ -7114,7 +7114,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
                         <!-- Scoped Submit Button in scrollable content -->
                         <div style="margin-top: 32px; margin-bottom: 40px; padding: 0; display: flex; align-items: center;">
-                            <button class="emp-submit-btn" style="height: 56px; border-radius: 6px; background: #FF5722 !important; color: #FFFFFF !important; width: 100%; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 16px; cursor:pointer;" onclick="employerPublishJobNew()">
+                            <button class="emp-submit-btn" id="emp-final-submit-btn" style="height: 56px; border-radius: 6px; background: #FF5722 !important; color: #FFFFFF !important; width: 100%; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 16px; cursor:pointer;" onclick="employerPublishJobNew()">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 Hirdetés közzététele
                             </button>
@@ -19004,15 +19004,70 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                     delay: 100
                 },
                 {
-                    targetId: 'employer-form-overlay',
-                    title: 'Végső simítások',
-                    text: 'A leírás után már csak a helyszínt, időpontot és a fizetést kell megadnod!',
-                    tapLabel: 'Kattints bárhova a folytatáshoz!',
-                    padding: 0,
+                    targetId: 'emp-job-display',
+                    title: 'Pontos munka',
+                    text: 'Itt tudod kiválasztani, hogy egészen pontosan milyen feladatra keresel embert a kategórián belül.',
+                    tapLabel: 'Koppints a mezőre!',
+                    padding: 8,
+                    tooltipPos: 'bottom',
+                    requireEmployer: true,
+                    noClick: true,
+                    delay: 100
+                },
+                {
+                    targetId: 'tools-btn-employer',
+                    title: 'Szükséges eszközök',
+                    text: 'Itt jelezheted, hogy te adod-e a szerszámokat, vagy a munkásnak kell hoznia magával.',
+                    tapLabel: 'Koppints a választómezőre!',
+                    padding: 8,
                     tooltipPos: 'top',
                     requireEmployer: true,
-                    delay: 100,
-                    noClick: true // Don't click the overlay directly so it doesn't close
+                    noClick: true,
+                    delay: 100
+                },
+                {
+                    targetId: 'emp-loc-structured-state',
+                    title: 'Helyszín',
+                    text: 'Ide írd be, hogy pontosan hol kell elvégezni a munkát. Minél pontosabb, annál jobb!',
+                    tapLabel: 'Koppints a címhez!',
+                    padding: 12,
+                    tooltipPos: 'top',
+                    requireEmployer: true,
+                    noClick: true,
+                    delay: 100
+                },
+                {
+                    targetId: 'emp-price-input',
+                    title: 'Ár beállítása',
+                    text: 'Állítsd be, hogy mennyit fizetnél ezért a munkáért összesen. Az ajánlott ár segít a döntésben.',
+                    tapLabel: 'Koppints az árra!',
+                    padding: 12,
+                    tooltipPos: 'top',
+                    requireEmployer: true,
+                    noClick: true,
+                    delay: 100
+                },
+                {
+                    targetId: 'emp-datetime',
+                    title: 'Időpont',
+                    text: 'Válaszd ki, hogy mikor lenne esedékes a munka.',
+                    tapLabel: 'Koppints az időpontra!',
+                    padding: 8,
+                    tooltipPos: 'top',
+                    requireEmployer: true,
+                    noClick: true,
+                    delay: 100
+                },
+                {
+                    targetId: 'emp-final-submit-btn',
+                    title: 'Munka feladása!',
+                    text: 'Ha mindennel megvagy, ezzel a gombbal teheted közzé az ajánlatot. A közeli munkások azonnal értesítést kapnak!',
+                    tapLabel: 'Koppints a gombra (csak teszt)!',
+                    padding: 4,
+                    tooltipPos: 'top',
+                    requireEmployer: true,
+                    noClick: true,
+                    delay: 100
                 }
             ];
             // Filter out employer-only step if user is in worker mode
@@ -19037,6 +19092,9 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             const tapLabel = document.getElementById('spt-tap-label');
             const dotsContainer = document.getElementById('spt-dots');
 
+            // Scroll target into view instantly so bounding rect is correct
+            targetEl.scrollIntoView({ behavior: 'auto', block: 'center' });
+            
             // Get target element position
             const rect = targetEl.getBoundingClientRect();
             const pad = step.padding || 10;

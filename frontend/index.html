@@ -8554,17 +8554,78 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             }
             
             try {
-                // A térképes ellenőrzés (Nominatim API) túlságosan szigorú volt, és valós magyar címeket is elutasított.
-                // Így ezt a lépést teljesen eltávolítottuk. Mostantól megbízunk a felhasználó által beírt adatokban.
+                let geocodeFound = false;
+                let confirmedLat = null;
+                let confirmedLon = null;
+                
+                try {
+                    const addressForGeocoding = `${city}, ${street} ${house}, Hungary`;
+                    const geocodeRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressForGeocoding) + '&email=info@melogo.hu', { headers: { 'Accept-Language': 'hu' } });
+                    const geocodeData = await geocodeRes.json();
+                    
+                    if (geocodeData && geocodeData.length > 0) {
+                        geocodeFound = true;
+                        confirmedLat = parseFloat(geocodeData[0].lat);
+                        confirmedLon = parseFloat(geocodeData[0].lon);
+                    } else {
+                        const fallbackAddress = `${city}, ${street}, Hungary`;
+                        const fallbackRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(fallbackAddress) + '&email=info@melogo.hu', { headers: { 'Accept-Language': 'hu' } });
+                        const fallbackData = await fallbackRes.json();
+                        if (fallbackData && fallbackData.length > 0) {
+                            geocodeFound = true;
+                            confirmedLat = parseFloat(fallbackData[0].lat);
+                            confirmedLon = parseFloat(fallbackData[0].lon);
+                        }
+                    }
+                } catch (e) {
+                    console.log("Geocoding API hiba:", e);
+                }
+                
+                // Hibrid megoldás: Ha a térkép (Nominatim) nem találta, vagy a szerver letiltott (403),
+                // ellenőrizzük a formátumot. Ha az hibátlan, elfogadjuk!
+                if (!geocodeFound) {
+                    const isZipValid = /^\d{4}$/.test(zip); // Irányítószám pontosan 4 számjegy
+                    const isCityValid = city.length >= 2;
+                    const isStreetValid = street.length >= 3;
+                    
+                    if (isZipValid && isCityValid && isStreetValid) {
+                        geocodeFound = true; // Formailag tökéletes, mehet tovább!
+                    }
+                }
+                
+                if (!geocodeFound) {
+                    let errEl = document.getElementById('reg-address-global-error');
+                    if (!errEl) {
+                        errEl = document.createElement('div');
+                        errEl.id = 'reg-address-global-error';
+                        errEl.style.color = '#EF4444'; // Piros hiba
+                        errEl.style.marginTop = '8px';
+                        errEl.style.marginBottom = '8px';
+                        errEl.style.fontSize = '14px';
+                        errEl.style.fontWeight = '500';
+                        btn.parentNode.insertBefore(errEl, btn);
+                    }
+                    errEl.innerText = 'Nem megfelelő cím. Kérjük adj meg egy valós magyar irányítószámot (4 számjegy), várost és utcát!';
+                    errEl.style.display = 'block';
+                    
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = 'Tovább';
+                    }
+                    return; // Blokkolás, amíg nem ad meg jót!
+                }
                 
                 // Ha sikeres, hibaüzenet eltüntetése
                 const existErr = document.getElementById('reg-address-global-error');
                 if (existErr) existErr.style.display = 'none';
 
                 const userRef = window.firebaseAPI.doc(window.firebaseDb, "users", user.uid);
-                await window.firebaseAPI.setDoc(userRef, {
-                    address: fullAddress
-                }, { merge: true });
+                let updateData = { address: fullAddress };
+                if (confirmedLat && confirmedLon) {
+                    updateData.lat = confirmedLat;
+                    updateData.lon = confirmedLon;
+                }
+                await window.firebaseAPI.setDoc(userRef, updateData, { merge: true });
                 
                 const userData = JSON.parse(localStorage.getItem('melogo_user_data') || '{}');
                 userData.address = fullAddress;

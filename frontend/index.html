@@ -19177,11 +19177,9 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             if (isTop) {
                 // Place ABOVE the element (bottom of tooltip hugs top of element)
                 tooltip.style.bottom = (window.innerHeight - rect.top + pad + 16) + 'px';
-                if (arrowDown) arrowDown.style.display = 'block';
             } else {
                 // Place BELOW the element (top of tooltip hugs bottom of element)
                 tooltip.style.top = (rect.bottom + pad + 16) + 'px';
-                if (arrowUp) arrowUp.style.display = 'block';
             }
 
             // Update tooltip content

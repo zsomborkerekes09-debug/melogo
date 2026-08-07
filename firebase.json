@@ -5,5 +5,13 @@
   },
   "functions": {
     "source": "functions"
+  },
+  "hosting": {
+    "public": "frontend",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
   }
-}
+}

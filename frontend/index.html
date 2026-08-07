@@ -5930,67 +5930,97 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
     <div style="font-size:44px;font-weight: 500;color:var(--color-text, #1D1D1F);font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;letter-spacing:-1.5px;animation: pulse 2s infinite;">Melo<span style="color:var(--color-logo-green, #c0fc2a);">Go</span></div>
 </div>
 
-<div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width: 100%;background:var(--color-bg, #121214);z-index:9999;display:none;flex-direction:column;overflow:hidden;">
-    <button onclick="skipOnboarding()" style="position:absolute;top:52px;right:24px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:14px;font-weight: 300;cursor:pointer;z-index:10;">Kihagyás</button>
-    
-    <div id="onboarding-slides" style="display:flex;width:300%;height:100%;transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-        <!-- Slide 1 -->
-        <div style="width:33.333%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;box-sizing:border-box;">
-            <svg width="180" height="180" viewBox="0 0 200 200" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:40px;">
-                <circle cx="100" cy="60" r="28"/>
-                <path d="M52 160c0-26.5 21.5-48 48-48s48 21.5 48 48"/>
-                <rect x="60" y="120" width="80" height="50" rx="8"/>
-                <path d="M80 135 L90 155 L120 130" stroke="var(--color-text)" stroke-width="1.5"/>
-                <rect x="30" y="150" width="40" height="30" rx="4"/>
-                <rect x="130" y="150" width="40" height="30" rx="4"/>
-                <path d="M30 155 L15 140 L30 125 M70 155 L85 140 L70 125" opacity="0.4"/>
-            </svg>
-            <h2 style="font-size:24px;font-weight: 400;color:#fff;text-align:center;margin:0 0 12px;line-height:1.3;">Vállalj munkát a közeledben</h2>
-            <p style="font-size:15px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.6;margin:0;">Találj egynapos munkákat percek alatt, bárhol Magyarországon.</p>
+<div id="onboarding-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;margin:0 auto;max-width:100%;background:#0d0d10;z-index:9999;display:none;flex-direction:column;overflow:hidden;">
+    <!-- Skip button -->
+    <button onclick="skipOnboarding()" style="position:absolute;top:52px;right:24px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;font-weight:400;cursor:pointer;z-index:10;padding:8px;">Kihagyás</button>
+    <!-- Progress bar -->
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.1);z-index:10;">
+        <div id="ob-progress-bar" style="height:100%;background:#FF5722;width:25%;transition:width 0.4s ease;"></div>
+    </div>
+    <!-- Slides -->
+    <div id="onboarding-slides" style="display:flex;width:400%;height:100%;transition:transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);">
+        <!-- SLIDE 1 -->
+        <div class="ob-slide">
+            <div style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#FF5722,#e53935);display:flex;align-items:center;justify-content:center;margin-bottom:32px;box-shadow:0 8px 32px rgba(255,87,34,0.4);">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <h2 class="ob-title">Munkák a közeledben</h2>
+            <p class="ob-desc">A Térkép fülön látod az összes elérhető munkát. Koppints bármelyik piros pontra a részletekhez!</p>
         </div>
-        <!-- Slide 2 -->
-        <div style="width:33.333%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;box-sizing:border-box;">
-            <svg width="180" height="180" viewBox="0 0 200 200" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:40px;">
-                <rect x="55" y="40" width="70" height="120" rx="10"/>
-                <rect x="63" y="55" width="54" height="75" rx="4"/>
-                <circle cx="90" cy="148" r="5"/>
-                <path d="M75 70 L105 70 M75 82 L100 82 M75 94 L95 94"/>
-                <path d="M115 90 L145 90 L145 130 L115 130 Z" stroke="var(--color-text)"/>
-                <path d="M125 110 L135 110 M125 120 L133 120"/>
-                <path d="M110 95 L115 90"/>
-            </svg>
-            <h2 style="font-size:24px;font-weight: 400;color:#fff;text-align:center;margin:0 0 12px;line-height:1.3;">Adj fel munkát percek alatt</h2>
-            <p style="font-size:15px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.6;margin:0;">Keress megbízható munkásokat a környékeden, azonnal.</p>
+        <!-- SLIDE 2 -->
+        <div class="ob-slide">
+            <div style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#FF5722,#e53935);display:flex;align-items:center;justify-content:center;margin-bottom:32px;box-shadow:0 8px 32px rgba(255,87,34,0.4);">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h2 class="ob-title">Chatelj közvetlenül</h2>
+            <p class="ob-desc">Az Üzenetek fülön tudsz kapcsolatba lépni a megbízóval egyenesen!</p>
         </div>
-        <!-- Slide 3 -->
-        <div style="width:33.333%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;box-sizing:border-box;">
-            <svg width="180" height="180" viewBox="0 0 200 200" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:40px;">
-                <path d="M100 30 L140 50 L140 100 C140 135 100 165 100 165 C100 165 60 135 60 100 L60 50 Z"/>
-                <path d="M82 100 L93 112 L118 88" stroke="var(--color-text)" stroke-width="1.5"/>
-                <circle cx="70" cy="40" r="12" opacity="0.4"/>
-                <circle cx="130" cy="40" r="12" opacity="0.4"/>
-                <path d="M70 45 L100 50 L130 45" opacity="0.3" stroke-dasharray="4,4"/>
-            </svg>
-            <h2 style="font-size:24px;font-weight: 400;color:#fff;text-align:center;margin:0 0 12px;line-height:1.3;">Biztonságos és átlátható</h2>
-            <p style="font-size:15px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.6;margin:0;">Értékelési rendszer, ellenőrzött profilok, teljes biztonság.</p>
+        <!-- SLIDE 3 -->
+        <div class="ob-slide">
+            <div style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#FF5722,#e53935);display:flex;align-items:center;justify-content:center;margin-bottom:32px;box-shadow:0 8px 32px rgba(255,87,34,0.4);">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <h2 class="ob-title">Munkás és Megbízó</h2>
+            <p class="ob-desc">A Profil oldalon bármikor válthatsz munkás és megbízó szerep között!</p>
+        </div>
+        <!-- SLIDE 4 -->
+        <div class="ob-slide">
+            <div style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#FF5722,#e53935);display:flex;align-items:center;justify-content:center;margin-bottom:32px;box-shadow:0 8px 32px rgba(255,87,34,0.4);">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <h2 class="ob-title">Tölts fel munkát!</h2>
+            <p class="ob-desc">Megbízóként a + gombra koppintva percek alatt feladhatod az új hirdetésedet!</p>
         </div>
     </div>
-    
     <!-- Dots -->
-    <div style="position:absolute;bottom:120px;left:0;right:0;display:flex;justify-content:center;gap:8px;" id="onboarding-dots">
+    <div style="position:absolute;bottom:112px;left:0;right:0;display:flex;justify-content:center;gap:8px;" id="onboarding-dots">
         <div class="ob-dot ob-dot-active"></div>
         <div class="ob-dot"></div>
         <div class="ob-dot"></div>
+        <div class="ob-dot"></div>
     </div>
-    
-    <!-- CTA buttons -->
-    <div style="position:absolute;bottom:44px;left:32px;right:32px;">
-        <button id="ob-next-btn" onclick="onboardingNext()" style="width:100%;height:52px;background:var(--color-green);color:#ffffff;border:none;border-radius: 6px;font-size:16px;font-weight: 500;cursor:pointer;transition:transform 0.15s ease;">Tovább</button>
+    <!-- CTA -->
+    <div style="position:absolute;bottom:38px;left:24px;right:24px;">
+        <button id="ob-next-btn" onclick="onboardingNext()" style="width:100%;height:52px;background:#FF5722;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:-0.2px;box-shadow:0 4px 20px rgba(255,87,34,0.4);">Tovább</button>
     </div>
 </div>
 <style>
-.ob-dot { width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.3s ease; }
-.ob-dot-active { background:var(--color-green) !important;width:24px;border-radius:4px; }
+.ob-dot { width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all 0.3s ease; }
+.ob-dot-active { background:#FF5722 !important;width:24px;border-radius:4px; }
+.ob-slide { width:25%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px 180px;box-sizing:border-box; }
+.ob-title { font-size:24px;font-weight:700;color:#fff;text-align:center;margin:0 0 14px;line-height:1.3;letter-spacing:-0.4px; }
+.ob-desc { font-size:15px;color:rgba(255,255,255,0.55);text-align:center;line-height:1.7;margin:0;max-width:300px; }
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SPOTLIGHT TOUR OVERLAY
+     Shows after first login — darkens everything except target element
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="spt-blocker" style="display:none;position:fixed;inset:0;z-index:10000;pointer-events:all;"></div>
+<div id="spt-spotlight" style="display:none;position:fixed;z-index:10001;pointer-events:none;border-radius:16px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);"></div>
+<div id="spt-tooltip" style="display:none;position:fixed;z-index:10002;pointer-events:none;max-width:280px;text-align:center;">
+    <div id="spt-tooltip-inner" style="background:#1c1c1e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:18px 20px;box-shadow:0 16px 48px rgba(0,0,0,0.6);">
+        <div id="spt-step-indicator" style="font-size:11px;color:#FF5722;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;"></div>
+        <div id="spt-tip-title" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.3;"></div>
+        <div id="spt-tip-text" style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.55;margin-bottom:16px;"></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px;">
+            <div id="spt-arrow-bounce" style="color:#FF5722;font-size:22px;animation:sptBounce 1s ease-in-out infinite;">&#x25BC;</div>
+        </div>
+        <div id="spt-tap-label" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,87,34,0.15);border:1px solid rgba(255,87,34,0.3);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:#FF5722;"></div>
+    </div>
+    <!-- Progress dots inside tooltip -->
+    <div id="spt-dots" style="display:flex;justify-content:center;gap:6px;margin-top:12px;"></div>
+    <!-- Skip -->
+    <button onclick="sptSkip()" style="margin-top:10px;background:none;border:none;color:rgba(255,255,255,0.35);font-size:12px;cursor:pointer;padding:6px 16px;">Kihagyás</button>
+</div>
+<style>
+@keyframes sptBounce { 0%,100%{transform:translateY(-3px)} 50%{transform:translateY(3px)} }
+@keyframes sptFadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.spt-ring {
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.82) !important;
+    border-radius: 16px;
+    transition: all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+}
 </style>
 
     <div id="app-login-screen" style="position:absolute; top:0; left:0; right:0; bottom:0; background-color: var(--color-bg) !important; z-index:1000; padding:60px 24px 40px 24px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; -ms-overflow-style:none; box-sizing:border-box;">
@@ -6015,7 +6045,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             </div>
         </div>
 
-        <!-- Error message slot -->
+<!-- Error message slot -->
         <div id="login-err" style="display:none; color:#EF4444; font-size:13px; text-align:center; margin:16px 0 0 0; padding:10px 16px; background:#FEF2F2; border-radius:10px; border:1px solid #FECACA; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;"></div>
 
         <!-- REGISTER fields -->
@@ -6041,7 +6071,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     </button>
                 </div>
             </div>
-            
+        </div>
             <!-- Custom ÁSZF checkbox group -->
             <div id="terms-group" class="floating-group" style="display:flex; gap:10px; align-items:flex-start; margin:16px 4px 0 4px; cursor:pointer;" onclick="toggleTermsCheckbox()">
                 <div id="terms-checkbox" style="width:16px; height:16px; border:1.5px solid var(--color-border); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background: var(--color-surface); transition:all 0.2s;">
@@ -6053,7 +6083,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             </div>
         <!-- Guest Mode Button -->
         <div style="margin-top:12px; text-align:center;">
-            <button onclick="document.getElementById('app-login-screen').style.display = 'none';" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#FFFFFF; font-size:14px; font-weight:500; cursor:pointer; padding: 10px 24px; border-radius: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);">
+            <button onclick="document.getElementById('app-login-screen').style.display = 'none'; document.getElementById('app-login-screen').classList.add('hidden'); setTimeout(startSpotlightTour, 600);" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#FFFFFF; font-size:14px; font-weight:500; cursor:pointer; padding: 10px 24px; border-radius: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);">
                 Csak körülnézek
             </button>
         </div>
@@ -8190,6 +8220,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 if (typeof updateAllUserUI === 'function') updateAllUserUI();
                 if (typeof updateGreetings === 'function') updateGreetings();
                 if (typeof switchRole === 'function') switchRole(role);
+                if (typeof startSpotlightTourAfterLogin === 'function') startSpotlightTourAfterLogin();
             } else {
                 // Not logged in: Check if we are in Guest Mode
                 var screen = document.getElementById('app-login-screen');
@@ -9869,6 +9900,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     if (typeof updateAllUserUI === 'function') updateAllUserUI();
                     if (typeof updateGreetings === 'function') updateGreetings();
                     if (typeof switchRole === 'function') switchRole(role);
+                    if (typeof startSpotlightTourAfterLogin === 'function') startSpotlightTourAfterLogin();
                 }, 350);
             }
         }
@@ -9953,6 +9985,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     }
                     if (typeof updateAllUserUI === 'function') updateAllUserUI();
                     if (typeof switchRole === 'function') switchRole(role);
+                    if (typeof startSpotlightTourAfterLogin === 'function') startSpotlightTourAfterLogin();
                     return; // Successfully logged in natively
                 } catch (e) {
                     console.error("Native Google Login error:", e);
@@ -9989,6 +10022,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                                 }
                                 if (typeof updateAllUserUI === 'function') updateAllUserUI();
                                 if (typeof switchRole === 'function') switchRole(role);
+                                if (typeof startSpotlightTourAfterLogin === 'function') startSpotlightTourAfterLogin();
                             } catch (err) {
                                 console.error("GIS Firebase auth error:", err);
                                 alert('Hiba a Google fiók feldolgozása során: ' + (err.message || err.code));
@@ -18366,7 +18400,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 
                 window.firebaseAPI.addDoc(
                     window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
-                    { senderId: 'system', text: confirmMsg.text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
+                    { senderId: 'system', triggerId: (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined), text: confirmMsg.text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
                 ).catch(e=>{});
                 
                 window.firebaseAPI.updateDoc(
@@ -18417,7 +18451,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 
                 window.firebaseAPI.addDoc(
                     window.firebaseAPI.collection(window.firebaseDb, "chats", chatId, "messages"),
-                    { senderId: 'system', text: declineMsg.text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
+                    { senderId: 'system', triggerId: (window.firebaseAuth && window.firebaseAuth.currentUser ? window.firebaseAuth.currentUser.uid : undefined), text: declineMsg.text, timestamp: window.firebaseAPI.serverTimestamp(), type: 'system' }
                 ).catch(e=>{});
                 
                 window.firebaseAPI.updateDoc(
@@ -18807,34 +18841,276 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
 
         function onboardingNext() {
             currentOnboardingSlide++;
-            if (currentOnboardingSlide >= 3) {
+            if (currentOnboardingSlide >= 4) {
                 skipOnboarding();
                 return;
             }
             const slides = document.getElementById('onboarding-slides');
-            slides.style.transform = 'translateX(-' + (currentOnboardingSlide * 33.333) + '%)';
-            
+            slides.style.transform = 'translateX(-' + (currentOnboardingSlide * 25) + '%)';
+            const pb = document.getElementById('ob-progress-bar');
+            if (pb) pb.style.width = ((currentOnboardingSlide + 1) * 25) + '%';
             const dots = document.querySelectorAll('.ob-dot');
-            dots.forEach((d, i) => {
-                d.classList.toggle('ob-dot-active', i === currentOnboardingSlide);
-            });
-            
+            dots.forEach((d, i) => { d.classList.toggle('ob-dot-active', i === currentOnboardingSlide); });
             const btn = document.getElementById('ob-next-btn');
-            if (currentOnboardingSlide === 2) {
-                btn.innerText = 'Kezdjük el';
-                btn.style.background = 'var(--color-text)';
-            }
+            if (btn) btn.innerText = currentOnboardingSlide === 3 ? 'Indulás!' : 'Tovább';
         }
 
-        function skipOnboarding() {
+                function skipOnboarding() {
             localStorage.setItem('melogo_onboarding_done', 'true');
             const screen = document.getElementById('onboarding-screen');
             if (screen) {
                 screen.style.transition = 'opacity 0.4s ease';
                 screen.style.opacity = '0';
                 screen.style.pointerEvents = 'none';
-                setTimeout(function() { screen.style.display = 'none'; screen.style.opacity = ''; screen.style.pointerEvents = ''; }, 450);
+                setTimeout(function() {
+                    screen.style.display = 'none';
+                    screen.style.opacity = '';
+                    screen.style.pointerEvents = '';
+                    // After the slide intro, start the spotlight tour
+                    setTimeout(startSpotlightTour, 600);
+                }, 450);
             }
+        }
+
+        // ==========================================
+        // SPOTLIGHT INTERACTIVE TOUR
+        // ==========================================
+        let _sptStep = 0;
+        let _sptSteps = [];
+        let _sptActive = false;
+
+        function startSpotlightTour() {
+            // Only run once per install
+            if (localStorage.getItem('melogo_spotlight_done')) return;
+
+            // Check if user is logged in or in guest mode!
+            const isGuest = localStorage.getItem('melogo_guest_mode') === 'true';
+            const isLoggedIn = localStorage.getItem('melogo_app_session') === 'true';
+            if (!isGuest && !isLoggedIn) {
+                // User is not logged in and not in guest mode — MUST NOT RUN SPOTLIGHT TOUR!
+                return;
+            }
+            
+            // Do not run if slide onboarding is still visible
+            const obScreen = document.getElementById('onboarding-screen');
+            if (obScreen && window.getComputedStyle(obScreen).display !== 'none' && !obScreen.classList.contains('hidden') && obScreen.style.opacity !== '0') {
+                return;
+            }
+
+            // Do not run if login screen is still visible
+            const loginScreen = document.getElementById('app-login-screen');
+            if (loginScreen) {
+                const compStyle = window.getComputedStyle(loginScreen);
+                if (compStyle.display !== 'none' && compStyle.visibility !== 'hidden' && compStyle.opacity !== '0' && !loginScreen.classList.contains('hidden')) {
+                    return;
+                }
+            }
+
+            _initSpotlightTour();
+        }
+
+        function startSpotlightTourAfterLogin() {
+            if (localStorage.getItem('melogo_spotlight_done')) return;
+            setTimeout(startSpotlightTour, 500);
+        }
+
+        function _initSpotlightTour() {
+            _sptStep = 0;
+            _sptActive = true;
+            _sptSteps = [
+                {
+                    targetId: 'app-nav-0',
+                    title: 'Főlap',
+                    text: 'A Főlapon látod a közelben lévő munkákat listában. Koppints ide!',
+                    tapLabel: 'Koppints a Főlapra!',
+                    padding: 12,
+                    tooltipPos: 'top'
+                },
+                {
+                    targetId: 'app-nav-1',
+                    title: 'Térkép',
+                    text: 'A Térkép fülön a térképen látod a munkákat. Koppints ide!',
+                    tapLabel: 'Koppints a Térképre!',
+                    padding: 12,
+                    tooltipPos: 'top'
+                },
+                {
+                    targetId: 'app-nav-2',
+                    title: 'Üzenetek',
+                    text: 'Az Üzenetek fülön chatelj közvetlenül a megbízóval. Koppints ide!',
+                    tapLabel: 'Koppints az Üzenetekre!',
+                    padding: 12,
+                    tooltipPos: 'top'
+                },
+                {
+                    targetId: 'app-nav-3',
+                    title: 'Profil',
+                    text: 'A Profil oldalon válthatsz munkás és megbízó szerepkör között. Koppints ide!',
+                    tapLabel: 'Koppints a Profilra!',
+                    padding: 12,
+                    tooltipPos: 'top'
+                },
+                {
+                    targetId: 'emp-floating-plus',
+                    title: 'Munka feltöltése',
+                    text: 'Megbízóként ezzel a gombbal adhatsz fel új munkaajánlatot percek alatt!',
+                    tapLabel: 'Koppints a + gombra!',
+                    padding: 18,
+                    tooltipPos: 'top',
+                    requireEmployer: true
+                }
+            ];
+            // Filter out employer-only step if user is in worker mode
+            if (typeof currentRole !== 'undefined' && currentRole === 'worker') {
+                _sptSteps = _sptSteps.filter(function(s) { return !s.requireEmployer; });
+            }
+            _sptShowStep(0);
+        }
+
+        function _sptShowStep(idx) {
+            if (idx >= _sptSteps.length) { _sptFinish(); return; }
+            const step = _sptSteps[idx];
+            const targetEl = document.getElementById(step.targetId);
+            if (!targetEl) { _sptShowStep(idx + 1); return; }
+
+            const blocker = document.getElementById('spt-blocker');
+            const spotlight = document.getElementById('spt-spotlight');
+            const tooltip = document.getElementById('spt-tooltip');
+            const stepIndicator = document.getElementById('spt-step-indicator');
+            const tipTitle = document.getElementById('spt-tip-title');
+            const tipText = document.getElementById('spt-tip-text');
+            const tapLabel = document.getElementById('spt-tap-label');
+            const dotsContainer = document.getElementById('spt-dots');
+
+            // Get target element position
+            const rect = targetEl.getBoundingClientRect();
+            const pad = step.padding || 10;
+
+            // Position spotlight exactly over the element
+            spotlight.style.left = (rect.left - pad) + 'px';
+            spotlight.style.top = (rect.top - pad) + 'px';
+            spotlight.style.width = (rect.width + pad * 2) + 'px';
+            spotlight.style.height = (rect.height + pad * 2) + 'px';
+            spotlight.style.borderRadius = step.targetId === 'emp-floating-plus' ? '50%' : '16px';
+            spotlight.className = 'spt-ring';
+            spotlight.style.display = 'block';
+
+            // Tooltip position
+            const tooltipWidth = 280;
+            let tooltipLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
+            tooltipLeft = Math.max(12, Math.min(tooltipLeft, window.innerWidth - tooltipWidth - 12));
+            let tooltipTop;
+            if (step.tooltipPos === 'top') {
+                tooltipTop = rect.top - pad - 230;
+                if (tooltipTop < 60) tooltipTop = rect.bottom + pad + 16;
+            } else {
+                tooltipTop = rect.bottom + pad + 16;
+                if (tooltipTop + 220 > window.innerHeight) tooltipTop = rect.top - pad - 230;
+            }
+
+            // Update tooltip content
+            stepIndicator.textContent = 'Lépés ' + (idx + 1) + ' / ' + _sptSteps.length;
+            tipTitle.textContent = step.title;
+            tipText.textContent = step.text;
+            tapLabel.innerHTML = '&#9993; ' + step.tapLabel;
+
+            // Dots
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < _sptSteps.length; i++) {
+                const d = document.createElement('div');
+                d.style.cssText = 'width:' + (i === idx ? '20px' : '6px') + ';height:6px;border-radius:3px;background:' + (i === idx ? '#FF5722' : 'rgba(255,255,255,0.2)') + ';transition:all 0.3s ease;';
+                dotsContainer.appendChild(d);
+            }
+
+            // Position and show tooltip
+            tooltip.style.left = tooltipLeft + 'px';
+            tooltip.style.top = tooltipTop + 'px';
+            tooltip.style.width = tooltipWidth + 'px';
+            tooltip.style.display = 'block';
+            tooltip.style.animation = 'sptFadeIn 0.35s ease both';
+
+            // Show blocker (captures all clicks except on target)
+            blocker.style.display = 'block';
+
+            // Remove old click handler from target
+            if (targetEl._sptClickHandler) {
+                targetEl.removeEventListener('click', targetEl._sptClickHandler, true);
+            }
+            // Intercept click on the target element to advance tour
+            targetEl._sptClickHandler = function(e) {
+                // Allow original click to propagate (user actually navigates)
+                _sptAdvance();
+            };
+            targetEl.addEventListener('click', targetEl._sptClickHandler, true);
+
+            // Elevate target element above blocker
+            targetEl.style.position = 'relative';
+            targetEl.style.zIndex = '10003';
+            targetEl.style.pointerEvents = 'auto';
+
+            // Pulse the target element
+            targetEl.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
+            clearInterval(targetEl._sptPulse);
+            targetEl._sptPulse = setInterval(function() {
+                targetEl.style.transform = 'scale(1.06)';
+                setTimeout(function() { if (targetEl) targetEl.style.transform = 'scale(1)'; }, 300);
+            }, 1200);
+
+            _sptStep = idx;
+        }
+
+        function _sptAdvance() {
+            const step = _sptSteps[_sptStep];
+            if (!step) return;
+            const el = document.getElementById(step.targetId);
+            if (el) {
+                el.style.zIndex = '';
+                el.style.position = '';
+                el.style.pointerEvents = '';
+                el.style.transform = '';
+                clearInterval(el._sptPulse);
+                if (el._sptClickHandler) {
+                    el.removeEventListener('click', el._sptClickHandler, true);
+                    delete el._sptClickHandler;
+                }
+            }
+            _sptStep++;
+            if (_sptStep >= _sptSteps.length) {
+                _sptFinish();
+            } else {
+                _sptShowStep(_sptStep);
+            }
+        }
+
+        function _sptFinish() {
+            _sptActive = false;
+            localStorage.setItem('melogo_spotlight_done', 'true');
+            const blocker = document.getElementById('spt-blocker');
+            const spotlight = document.getElementById('spt-spotlight');
+            const tooltip = document.getElementById('spt-tooltip');
+            if (blocker) blocker.style.display = 'none';
+            if (tooltip) { tooltip.style.opacity = '0'; tooltip.style.transition = 'opacity 0.3s ease'; setTimeout(function() { tooltip.style.display = 'none'; tooltip.style.opacity = ''; }, 350); }
+            if (spotlight) { spotlight.style.opacity = '0'; spotlight.style.transition = 'opacity 0.3s ease'; setTimeout(function() { spotlight.style.display = 'none'; spotlight.style.opacity = ''; spotlight.className = ''; }, 350); }
+            // Show completion banner
+            if (typeof showGreenBanner === 'function') showGreenBanner('Kész! Most már mindent tudsz az approl!');
+        }
+
+        function sptSkip() {
+            // Clean up current step element styling
+            if (_sptActive && _sptSteps[_sptStep]) {
+                const el = document.getElementById(_sptSteps[_sptStep].targetId);
+                if (el) {
+                    el.style.zIndex = '';
+                    el.style.position = '';
+                    el.style.pointerEvents = '';
+                    el.style.transform = '';
+                    clearInterval(el._sptPulse);
+                    if (el._sptClickHandler) {
+                        el.removeEventListener('click', el._sptClickHandler, true);
+                    }
+                }
+            }
+            _sptFinish();
         }
 
         // ==========================================

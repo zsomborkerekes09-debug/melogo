@@ -83,9 +83,9 @@ service cloud.firestore {
     // USERS collection
     // ===========================
     match /users/{userId} {
-      // Anyone can read user profiles.
-      // Phone numbers are only revealed post-acceptance in the app UI (enforced in JS).
-      allow read: if true;
+      // Anyone with auth can read user profiles.
+      // Phone numbers are only revealed post-acceptance in the app UI.
+      allow read: if request.auth != null;
       // Only the user themselves can write their own profile
       allow write: if request.auth != null && request.auth.uid == userId;
     }

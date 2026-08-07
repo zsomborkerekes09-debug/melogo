@@ -4,6 +4,19 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
+function parseJobDate(datetimeStr) {
+  if (!datetimeStr) return null;
+  let str = String(datetimeStr).trim();
+  // Ha nincs időzóna megadva (pl. "2026-07-31T09:51"), magyar időzónát tételezünk fel (+02:00 nyáron, +01:00 télen)
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(str) && !str.includes('Z') && !str.includes('+')) {
+    const month = parseInt(str.substring(5, 7), 10);
+    const offset = (month >= 4 && month <= 10) ? "+02:00" : "+01:00";
+    str += offset;
+  }
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 exports.notifyExpiredJobs = onSchedule("every 5 minutes", async (event) => {
   const db = admin.firestore();
   const messaging = admin.messaging();
@@ -12,9 +25,9 @@ exports.notifyExpiredJobs = onSchedule("every 5 minutes", async (event) => {
   console.log(`[notifyExpiredJobs] Cloud Function started at ${now.toISOString()}`);
 
   try {
-    // 1. Keresés státuszú munkák lekérdezése, amik még nincsenek értesítve
+    // 1. Keresés és expired státuszú munkák lekérdezése, amik még nincsenek értesítve
     const jobsSnapshot = await db.collection("jobs")
-      .where("status", "==", "Keresés")
+      .where("status", "in", ["Keresés", "expired"])
       .get();
 
     if (jobsSnapshot.empty) {
@@ -30,12 +43,8 @@ exports.notifyExpiredJobs = onSchedule("every 5 minutes", async (event) => {
         continue;
       }
 
-      if (!job.datetime) {
-        continue;
-      }
-
-      const jobDate = new Date(job.datetime);
-      if (isNaN(jobDate.getTime())) {
+      const jobDate = parseJobDate(job.datetime);
+      if (!jobDate) {
         continue;
       }
 
@@ -148,28 +157,21 @@ exports.onNewMessage = onDocumentCreated("chats/{chatId}/messages/{messageId}", 
     } else if (message.senderId === employerId) {
       recipients.push(workerId);
     } 
-    // System messages (e.g. accepted time, finished job)
+    // System messages & time proposals (never send push notification to the person who performed the action)
     else if (message.senderId === 'system' || message.type === 'system' || message.type === 'time_proposal') {
-      if (message.triggerId) {
-        if (message.triggerId === workerId) {
-          recipients.push(employerId);
-        } else if (message.triggerId === employerId) {
-          recipients.push(workerId);
-        } else {
-          recipients.push(employerId);
-          recipients.push(workerId);
-        }
+      const actorId = message.triggerId || (message.senderId !== 'system' ? message.senderId : null);
+      if (actorId === workerId) {
+        recipients.push(employerId);
+      } else if (actorId === employerId) {
+        recipients.push(workerId);
       } else {
-        // Text-based routing fallback for older client versions
+        // Fallback when actorId is unknown (e.g. legacy client versions)
         const text = message.text || "";
         if (text.includes("jelentkezett a munkára") || text.includes("késznek jelölte a munkát")) {
-          // Actions done by worker -> send to employer
           recipients.push(employerId);
-        } else if (text.includes("elfogadta a munkást") || text.includes("munka elkezdődött") || text.includes("befejeződött") || text.includes("Értékelés leadva")) {
-          // Actions done by employer -> send to worker
+        } else if (text.includes("elfogadta a munkást") || text.includes("munka elkezdődött") || text.includes("befejeződött") || text.includes("Értékelés leadva") || text.includes("elfogadták") || text.includes("vissza lett utasítva")) {
           recipients.push(workerId);
         } else {
-          // Default fallback
           recipients.push(employerId);
           recipients.push(workerId);
         }

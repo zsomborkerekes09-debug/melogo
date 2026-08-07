@@ -8554,10 +8554,54 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             }
             
             try {
-                // A térképes ellenőrzés (Nominatim API) túlságosan szigorú volt, és valós magyar címeket is elutasított.
-                // Így ezt a lépést teljesen eltávolítottuk. Mostantól megbízunk a felhasználó által beírt adatokban.
+                // Szigor\u00fa c\u00edmellen\u02ddrz\u00e9s
+                const addressForGeocoding = `${city}, ${street} ${house}, Hungary`;
+                const geocodeRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressForGeocoding) + '&email=info@melogo.hu', { headers: { 'Accept-Language': 'hu' } });
+                let geocodeData = await geocodeRes.json();
                 
-                // Ha sikeres, hibaüzenet eltüntetése
+                let isValid = (geocodeData && geocodeData.length > 0);
+                
+                // Fallback: Ha a pontos h\u00e1zsz\u00e1mot nem tal\u00e1lja a t\u00e9rk\u00e9p, pr\u00f3b\u00e1ljuk meg csak a v\u00e1rossal \u00e9s utc\u00e1val
+                if (!isValid) {
+                    const fallbackAddress = `${city}, ${street}, Hungary`;
+                    const fallbackRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(fallbackAddress) + '&email=info@melogo.hu', { headers: { 'Accept-Language': 'hu' } });
+                    const fallbackData = await fallbackRes.json();
+                    if (fallbackData && fallbackData.length > 0) {
+                        isValid = true; // Elfogadjuk, mert maga az utca l\u00e9tezik
+                    }
+                }
+                
+                if (!isValid) {
+                    if (btn && btn.dataset.warned === 'true') {
+                        // User clicked Next twice, bypass the validation!
+                        isValid = true;
+                    } else {
+                        let errEl = document.getElementById('reg-address-global-error');
+                        if (!errEl) {
+                            errEl = document.createElement('div');
+                            errEl.id = 'reg-address-global-error';
+                            errEl.style.color = '#F59E0B'; // Amber warning color
+                            errEl.style.marginTop = '8px';
+                            errEl.style.marginBottom = '8px';
+                            errEl.style.fontSize = '14px';
+                            errEl.style.fontWeight = '500';
+                            btn.parentNode.insertBefore(errEl, btn);
+                        }
+                        errEl.innerText = 'Nem tal\u00e1ltuk ezt a c\u00edmet a t\u00e9rk\u00e9pen. Ha biztosan helyes, kattints a Tov\u00e1bb gombra m\u00e9g egyszer!';
+                        errEl.style.display = 'block';
+                        
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerText = 'Tov\u00e1bb';
+                            btn.dataset.warned = 'true';
+                        }
+                        return; // Block save for the first attempt
+                    }
+                }
+                
+                if (btn) btn.dataset.warned = 'false';
+                
+                // Ha sikeres, hiba\u00fczenet elt\u00fcntet\u00e9se
                 const existErr = document.getElementById('reg-address-global-error');
                 if (existErr) existErr.style.display = 'none';
 

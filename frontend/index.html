@@ -6082,7 +6082,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 </div>
             </div>
         <!-- Guest Mode Button -->
-        <div style="margin-top:12px; text-align:center;">
+        <div id="guest-btn-container" style="margin-top:12px; text-align:center;">
             <button onclick="document.getElementById('app-login-screen').style.display = 'none'; document.getElementById('app-login-screen').classList.add('hidden'); setTimeout(startSpotlightTour, 600);" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#FFFFFF; font-size:14px; font-weight:500; cursor:pointer; padding: 10px 24px; border-radius: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);">
                 Csak körülnézek
             </button>
@@ -8252,6 +8252,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             const sub = document.getElementById('login-mode-subtitle');
             const divider = googleBtn ? googleBtn.previousElementSibling : null;
             
+            const termsGroup = document.getElementById('terms-group');
+            const guestBtn = document.getElementById('guest-btn-container');
             const step1Div = document.getElementById('auth-step-1');
             const step2Div = document.getElementById('auth-step-2');
             const step3Div = document.getElementById('auth-step-3');
@@ -8262,16 +8264,19 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             
             if (step === 0) {
                 if (sub) sub.style.display = 'block';
+                if (guestBtn) guestBtn.style.display = 'block';
                 if (isLoginMode) {
                     if (rf) rf.style.display = 'none';
                     if (lf) lf.style.display = 'flex';
                     if (roleSel) roleSel.style.display = 'none';
+                    if (termsGroup) termsGroup.style.display = 'none';
                     if (btn) { btn.style.display = 'block'; btn.innerText = 'Bejelentkezem'; }
                     if (sw) { sw.style.display = 'block'; sw.innerHTML = `${typeof t === 'function' ? t('Nincs még fiókod?') : 'Nincs még fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Regisztrálj') : 'Regisztrálj'}</span>`; }
                 } else {
                     if (rf) rf.style.display = 'flex';
                     if (lf) lf.style.display = 'none';
                     if (roleSel) roleSel.style.display = 'none'; // Role selector removed!
+                    if (termsGroup) termsGroup.style.display = 'flex';
                     if (btn) { btn.style.display = 'block'; btn.innerText = 'Regisztrálok & Bejelentkezem'; }
                     if (sw) { sw.style.display = 'block'; sw.innerHTML = `${typeof t === 'function' ? t('Van már fiókod?') : 'Van már fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Jelentkezz be') : 'Jelentkezz be'}</span>`; }
                 }
@@ -8289,6 +8294,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                 if (roleSel) roleSel.style.display = 'none';
                 if (sub) sub.style.display = 'none';
                 if (divider) divider.style.display = 'none';
+                if (termsGroup) termsGroup.style.display = 'none';
+                if (guestBtn) guestBtn.style.display = 'none';
                 
                 if (step === 1 && step1Div) step1Div.style.display = 'flex';
                 if (step === 2 && step2Div) step2Div.style.display = 'flex';
@@ -8657,6 +8664,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                     if (typeof updateAllUserUI === 'function') updateAllUserUI();
                     if (typeof updateGreetings === 'function') updateGreetings();
                     if (typeof switchRole === 'function') switchRole(activeRole);
+                    if (typeof startSpotlightTourAfterLogin === 'function') startSpotlightTourAfterLogin();
                 }, 350);
             }
         };
@@ -9866,6 +9874,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             if (rf) rf.style.display = 'none';
             if (lf) lf.style.display = 'flex';
             if (roleSel) roleSel.style.display = 'none';
+            const termsGroup = document.getElementById('terms-group');
+            if (termsGroup) termsGroup.style.display = 'none';
             if (sub) sub.innerText = 'Lépj be a fiókodba';
             if (btn) btn.innerText = 'Bejelentkezem';
             if (sw) sw.innerHTML = `${typeof t === 'function' ? t('Nincs még fiókod?') : 'Nincs még fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Regisztrálj') : 'Regisztrálj'}</span>`;
@@ -9886,6 +9896,8 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
             if (rf) rf.style.display = 'flex';
             if (lf) lf.style.display = 'none';
             if (roleSel) roleSel.style.display = 'none';
+            const termsGroup = document.getElementById('terms-group');
+            if (termsGroup) termsGroup.style.display = 'flex';
             if (sub) sub.innerText = 'Hozd létre a fiókodat';
             if (btn) btn.innerText = 'Regisztrálok & Bejelentkezem';
             if (sw) sw.innerHTML = `${typeof t === 'function' ? t('Van már fiókod?') : 'Van már fiókod?'} <span style="color:var(--color-text); font-weight: 400; text-decoration:underline; cursor:pointer;" onclick="toggleAuthMode()">${typeof t === 'function' ? t('Jelentkezz be') : 'Jelentkezz be'}</span>`;

@@ -19126,6 +19126,14 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             tooltip.style.left = tooltipLeft + 'px';
             tooltip.style.width = tooltipWidth + 'px';
             tooltip.style.display = 'block';
+            
+            // Determine dynamic height of tooltip box
+            const tooltipHeight = tooltip.offsetHeight;
+            let isTop = step.tooltipPos === 'top';
+            
+            // Re-evaluate if it goes out of bounds
+            if (isTop && rect.top - pad - tooltipHeight < 60) isTop = false;
+            else if (!isTop && rect.bottom + pad + tooltipHeight > window.innerHeight) isTop = true;
 
             const tail = document.getElementById('spt-bubble-tail');
             if (tail) {
@@ -19163,14 +19171,6 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                 }
             }
 
-            // Determine dynamic height of tooltip box
-            const tooltipHeight = tooltip.offsetHeight;
-            let isTop = step.tooltipPos === 'top';
-            
-            // Re-evaluate if it goes out of bounds
-            if (isTop && rect.top - pad - tooltipHeight < 60) isTop = false;
-            else if (!isTop && rect.bottom + pad + tooltipHeight > window.innerHeight) isTop = true;
-            
             tooltip.style.top = '';
             tooltip.style.bottom = '';
             

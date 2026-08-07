@@ -5996,9 +5996,9 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
      SPOTLIGHT TOUR OVERLAY
      Shows after first login — darkens everything except target element
      ═══════════════════════════════════════════════════════════════ -->
-<div id="spt-blocker" style="display:none;position:fixed;inset:0;z-index:10000;pointer-events:all;"></div>
-<div id="spt-spotlight" style="display:none;position:fixed;z-index:10001;pointer-events:auto;cursor:pointer;border-radius:16px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);"></div>
-<div id="spt-tooltip" style="display:none;position:fixed;z-index:10002;pointer-events:none;max-width:280px;text-align:center;">
+<div id="spt-blocker" style="display:none;position:fixed;inset:0;z-index:10000;pointer-events:all;cursor:pointer;"></div>
+<div id="spt-spotlight" style="display:none;position:fixed;z-index:10001;pointer-events:auto;cursor:pointer;background:rgba(0,0,0,0.01);border-radius:16px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);"></div>
+<div id="spt-tooltip" style="display:none;position:fixed;z-index:10002;pointer-events:auto;cursor:pointer;max-width:280px;text-align:center;">
     <div id="spt-tooltip-inner" style="background:#1c1c1e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:18px 20px;box-shadow:0 16px 48px rgba(0,0,0,0.6);">
         <div id="spt-step-indicator" style="font-size:11px;color:#FF5722;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;"></div>
         <div id="spt-tip-title" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.3;"></div>
@@ -19056,15 +19056,26 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             // Show blocker (captures all clicks except on target)
             blocker.style.display = 'block';
 
-            // Mivel a targetEl gyakran egy z-index kontextusba van zárva (pl. bottom nav),
-            // a legegyszerűbb, ha maga az spt-spotlight (a "kivágás") kapja a kattintást!
-            spotlight.onclick = function(e) {
-                // Programozottan rákattintunk a cél elemre
-                targetEl.click();
+            // iOS Safari miatt cursor: pointer van az elemeken, de biztonság kedvéért touchstart is
+            const advanceTour = function(e) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                if (targetEl) targetEl.click();
                 _sptAdvance();
             };
+            
+            spotlight.onclick = advanceTour;
+            spotlight.ontouchstart = advanceTour;
+            
+            blocker.onclick = advanceTour;
+            blocker.ontouchstart = advanceTour;
+            
+            // A tooltip inner részére ne rakjunk, hogy a Kihagyás gomb működhessen
+            const tooltipInner = document.getElementById('spt-tooltip-inner');
+            if (tooltipInner) {
+                tooltipInner.onclick = advanceTour;
+                tooltipInner.ontouchstart = advanceTour;
+            }
 
-            // Nem kell z-index hack a targetEl-re, mert a spotlight veszi fel a kattintást
             targetEl.style.position = 'relative';
 
             // Pulse the target element

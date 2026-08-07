@@ -5997,7 +5997,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
      Shows after first login — darkens everything except target element
      ═══════════════════════════════════════════════════════════════ -->
 <div id="spt-blocker" style="display:none;position:fixed;inset:0;z-index:10000;pointer-events:all;"></div>
-<div id="spt-spotlight" style="display:none;position:fixed;z-index:10001;pointer-events:none;border-radius:16px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);"></div>
+<div id="spt-spotlight" style="display:none;position:fixed;z-index:10001;pointer-events:auto;cursor:pointer;border-radius:16px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);"></div>
 <div id="spt-tooltip" style="display:none;position:fixed;z-index:10002;pointer-events:none;max-width:280px;text-align:center;">
     <div id="spt-tooltip-inner" style="background:#1c1c1e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:18px 20px;box-shadow:0 16px 48px rgba(0,0,0,0.6);">
         <div id="spt-step-indicator" style="font-size:11px;color:#FF5722;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;"></div>
@@ -19056,21 +19056,16 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             // Show blocker (captures all clicks except on target)
             blocker.style.display = 'block';
 
-            // Remove old click handler from target
-            if (targetEl._sptClickHandler) {
-                targetEl.removeEventListener('click', targetEl._sptClickHandler, true);
-            }
-            // Intercept click on the target element to advance tour
-            targetEl._sptClickHandler = function(e) {
-                // Allow original click to propagate (user actually navigates)
+            // Mivel a targetEl gyakran egy z-index kontextusba van zárva (pl. bottom nav),
+            // a legegyszerűbb, ha maga az spt-spotlight (a "kivágás") kapja a kattintást!
+            spotlight.onclick = function(e) {
+                // Programozottan rákattintunk a cél elemre
+                targetEl.click();
                 _sptAdvance();
             };
-            targetEl.addEventListener('click', targetEl._sptClickHandler, true);
 
-            // Elevate target element above blocker
+            // Nem kell z-index hack a targetEl-re, mert a spotlight veszi fel a kattintást
             targetEl.style.position = 'relative';
-            targetEl.style.zIndex = '10003';
-            targetEl.style.pointerEvents = 'auto';
 
             // Pulse the target element
             targetEl.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';

@@ -18982,6 +18982,37 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                     padding: 18,
                     tooltipPos: 'top',
                     requireEmployer: true
+                },
+                {
+                    targetId: 'emp-cat-Kert',
+                    title: 'Válassz kategóriát',
+                    text: 'Első lépésként ki kell választanod, milyen jellegű munkára keresel embert.',
+                    tapLabel: 'Koppints a Kertészetre!',
+                    padding: 6,
+                    tooltipPos: 'bottom',
+                    requireEmployer: true,
+                    delay: 400
+                },
+                {
+                    targetId: 'emp-details',
+                    title: 'Részletes leírás',
+                    text: 'Írd le pontosan, mik lennének a feladatok. Minél pontosabb, annál jobb!',
+                    tapLabel: 'Koppints a mezőre!',
+                    padding: 12,
+                    tooltipPos: 'top',
+                    requireEmployer: true,
+                    delay: 100
+                },
+                {
+                    targetId: 'employer-form-overlay',
+                    title: 'Végső simítások',
+                    text: 'A leírás után már csak a helyszínt, időpontot és a fizetést kell megadnod!',
+                    tapLabel: 'Kattints bárhova a folytatáshoz!',
+                    padding: 0,
+                    tooltipPos: 'top',
+                    requireEmployer: true,
+                    delay: 100,
+                    noClick: true // Don't click the overlay directly so it doesn't close
                 }
             ];
             // Filter out employer-only step if user is in worker mode
@@ -19059,7 +19090,8 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             // iOS Safari miatt cursor: pointer van az elemeken, de biztonság kedvéért touchstart is
             const advanceTour = function(e) {
                 if (e) { e.preventDefault(); e.stopPropagation(); }
-                if (targetEl) targetEl.click();
+                if (targetEl && !step.noClick) targetEl.click();
+                if (targetEl && targetEl.tagName === 'TEXTAREA') targetEl.focus(); // Extra help for textareas
                 _sptAdvance();
             };
             
@@ -19108,7 +19140,20 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             if (_sptStep >= _sptSteps.length) {
                 _sptFinish();
             } else {
-                _sptShowStep(_sptStep);
+                const nextStep = _sptSteps[_sptStep];
+                if (nextStep && nextStep.delay) {
+                    // Hide spotlight temporarily during delay
+                    const spotlight = document.getElementById('spt-spotlight');
+                    const tooltip = document.getElementById('spt-tooltip');
+                    if (spotlight) spotlight.style.display = 'none';
+                    if (tooltip) tooltip.style.display = 'none';
+                    
+                    setTimeout(function() {
+                        _sptShowStep(_sptStep);
+                    }, nextStep.delay);
+                } else {
+                    _sptShowStep(_sptStep);
+                }
             }
         }
 

@@ -18860,6 +18860,9 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             if (seen) {
                 screen.style.display = 'none';
                 screen.style.pointerEvents = 'none';
+                if (!localStorage.getItem('melogo_spotlight_done')) {
+                    setTimeout(startSpotlightTour, 800);
+                }
             } else {
                 screen.style.display = 'flex';
                 screen.style.pointerEvents = 'auto';
@@ -18891,6 +18894,7 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
 
                 function skipOnboarding() {
             localStorage.setItem('melogo_onboarding_done', 'true');
+            localStorage.setItem('melogo_guest_mode', 'true');
             const screen = document.getElementById('onboarding-screen');
             if (screen) {
                 screen.style.transition = 'opacity 0.4s ease';
@@ -18920,12 +18924,11 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                 return;
             }
 
-            // Check if user is logged in or in guest mode!
+            // Ensure guest or app session mode so tour always fires on first visit!
             const isGuest = localStorage.getItem('melogo_guest_mode') === 'true';
-            const isLoggedIn = localStorage.getItem('melogo_app_session') === 'true';
+            const isLoggedIn = localStorage.getItem('melogo_app_session') === 'true' || localStorage.getItem('melogo_worker_session') || localStorage.getItem('melogo_employer_session');
             if (!isGuest && !isLoggedIn) {
-                // User is not logged in and not in guest mode — MUST NOT RUN SPOTLIGHT TOUR!
-                return;
+                localStorage.setItem('melogo_guest_mode', 'true');
             }
             
             // Do not run if slide onboarding is still visible (retry after fadeout)

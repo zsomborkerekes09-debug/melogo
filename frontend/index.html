@@ -5998,7 +5998,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
      ═══════════════════════════════════════════════════════════════ -->
 <div id="spt-blocker" style="display:none;position:fixed;inset:0;z-index:10000;pointer-events:all;cursor:pointer;"></div>
 <div id="spt-spotlight" style="display:none;position:fixed;z-index:10001;pointer-events:auto;cursor:pointer;background:rgba(0,0,0,0.01);border-radius:16px;transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);"></div>
-<div id="spt-tooltip" style="display:none;position:fixed;z-index:10002;pointer-events:auto;cursor:pointer;max-width:280px;text-align:center;">
+<div id="spt-tooltip" style="display:none;position:fixed;z-index:10002;pointer-events:auto;cursor:pointer;box-sizing:border-box;text-align:center;">
     <div id="spt-tooltip-inner" style="position:relative;background:#1c1c1e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:18px 20px;box-shadow:0 16px 48px rgba(0,0,0,0.6);">
         <div id="spt-bubble-tail" style="position:absolute;width:16px;height:16px;background:#1c1c1e;transform:rotate(45deg);border-bottom-right-radius:3px;border-top-left-radius:3px;"></div>
         <div id="spt-step-indicator" style="position:relative;z-index:2;font-size:11px;color:#FF5722;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;"></div>
@@ -6464,7 +6464,7 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                             <div>
                                 <div style="font-size: 12px; font-weight: 500; color: var(--color-text); text-transform: uppercase; margin-top: 20px; margin-bottom: 8px; letter-spacing: 0.5px;">SZEREPEM</div>
                                 <div style="background-color: var(--color-surface); border-radius: 6px; border: 0.5px solid var(--color-border); padding: 16px;">
-                                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                                    <div id="profile-role-switcher-card" style="display: flex; gap: 12px; margin-bottom: 12px;">
                                         <div id="role-btn-worker" class="auth-role-card active" onclick="switchRole('worker')" style="flex: 1;">
                                             Munkás
                                         </div>
@@ -18913,9 +18913,12 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
         let _sptSteps = [];
         let _sptActive = false;
 
-        function startSpotlightTour() {
-            // Only run once per install
-            if (localStorage.getItem('melogo_spotlight_done')) return;
+        function startSpotlightTour(force) {
+            if (force) {
+                localStorage.removeItem('melogo_spotlight_done');
+            } else if (localStorage.getItem('melogo_spotlight_done')) {
+                return;
+            }
 
             // Check if user is logged in or in guest mode!
             const isGuest = localStorage.getItem('melogo_guest_mode') === 'true';
@@ -18925,32 +18928,44 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                 return;
             }
             
-            // Do not run if slide onboarding is still visible
+            // Do not run if slide onboarding is still visible (retry after fadeout)
             const obScreen = document.getElementById('onboarding-screen');
             if (obScreen && window.getComputedStyle(obScreen).display !== 'none' && !obScreen.classList.contains('hidden') && obScreen.style.opacity !== '0') {
+                setTimeout(function() { startSpotlightTour(force); }, 400);
                 return;
             }
 
-            // Do not run if login screen is still visible
+            // Do not run if login screen is still visible (retry after fadeout)
             const loginScreen = document.getElementById('app-login-screen');
             if (loginScreen) {
                 const compStyle = window.getComputedStyle(loginScreen);
                 if (compStyle.display !== 'none' && compStyle.visibility !== 'hidden' && compStyle.opacity !== '0' && !loginScreen.classList.contains('hidden')) {
+                    setTimeout(function() { startSpotlightTour(force); }, 400);
                     return;
                 }
             }
+
+            // Close any open location/distance bottom sheets so they don't obstruct the tour UI
+            if (typeof closeLocationSheet === 'function') closeLocationSheet();
+            if (typeof closeLocationModal === 'function') closeLocationModal();
+            const locSheet = document.getElementById('location-sheet');
+            if (locSheet) { locSheet.style.display = 'none'; locSheet.classList.remove('active', 'open'); }
+            const locBackdrop = document.getElementById('location-backdrop');
+            if (locBackdrop) { locBackdrop.style.display = 'none'; locBackdrop.classList.remove('active', 'open'); }
 
             _initSpotlightTour();
         }
 
         function startSpotlightTourAfterLogin() {
             if (localStorage.getItem('melogo_spotlight_done')) return;
-            setTimeout(startSpotlightTour, 500);
+            setTimeout(startSpotlightTour, 600);
         }
 
         function _initSpotlightTour() {
             _sptStep = 0;
             _sptActive = true;
+            _sptStepPrepared = {};
+            _sptStepRetries = {};
             _sptSteps = [
                 {
                     targetId: 'app-nav-0',
@@ -18979,10 +18994,22 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                 {
                     targetId: 'app-nav-3',
                     title: 'Profil',
-                    text: 'A Profil oldalon válthatsz munkás és megbízó szerepkör között. Koppints ide!',
+                    text: 'A Profil fülön éred el a saját fiókodat és beállításaidat. Koppints ide!',
                     tapLabel: 'Koppints a Profilra!',
                     padding: 12,
                     tooltipPos: 'top'
+                },
+                {
+                    targetId: 'profile-role-switcher-card',
+                    title: 'Szerepkör váltása',
+                    text: 'Itt a Profil oldalon a Munkás és Megbízó gombokkal bármikor egyetlen koppintással válthatsz szerepkört!',
+                    tapLabel: 'Válts szerepkört!',
+                    padding: 10,
+                    tooltipPos: 'bottom',
+                    onBeforeShow: function() {
+                        if (typeof navigateApp === 'function') navigateApp(3);
+                    },
+                    onBeforeShowDelay: 350
                 },
                 {
                     targetId: 'emp-floating-plus',
@@ -18991,7 +19018,12 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                     tapLabel: 'Koppints a + gombra!',
                     padding: 18,
                     tooltipPos: 'top',
-                    requireEmployer: true
+                    requireEmployer: true,
+                    // onBeforeShow: make the + button visible by switching to employer mode
+                    onBeforeShow: function() {
+                        if (typeof switchRole === 'function') switchRole('employer');
+                    },
+                    onBeforeShowDelay: 400
                 },
                 {
                     targetId: 'emp-cat-Kert',
@@ -19001,7 +19033,11 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                     padding: 6,
                     tooltipPos: 'bottom',
                     requireEmployer: true,
-                    delay: 400
+                    delay: 400,
+                    onBeforeShow: function() {
+                        if (typeof openEmployerFormOverlay === 'function') openEmployerFormOverlay();
+                    },
+                    onBeforeShowDelay: 400
                 },
                 {
                     targetId: 'emp-details',
@@ -19070,9 +19106,9 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                 },
                 {
                     targetId: 'emp-final-submit-btn',
-                    title: 'Munka feladása!',
-                    text: 'Ha mindennel megvagy, ezzel a gombbal teheted közzé az ajánlatot. A közeli munkások azonnal értesítést kapnak!',
-                    tapLabel: 'Koppints a gombra (csak teszt)!',
+                    title: 'Minden kész!',
+                    text: 'Gratulálunk! Átnézted az összes mezőt. A gombra kattintva a hirdetés élesedne, de a bevezető most sikeresen véget ért.',
+                    tapLabel: 'Értem, befejezés!',
                     padding: 4,
                     tooltipPos: 'top',
                     requireEmployer: true,
@@ -19080,18 +19116,42 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                     delay: 100
                 }
             ];
-            // Filter out employer-only step if user is in worker mode
-            if (typeof currentRole !== 'undefined' && currentRole === 'worker') {
-                _sptSteps = _sptSteps.filter(function(s) { return !s.requireEmployer; });
-            }
             _sptShowStep(0);
         }
 
+        let _sptStepPrepared = {};
+        let _sptStepRetries = {};
         function _sptShowStep(idx) {
             if (idx >= _sptSteps.length) { _sptFinish(); return; }
             const step = _sptSteps[idx];
+            
+            // Close any location sheets at each step just in case
+            const locSheet = document.getElementById('location-sheet');
+            if (locSheet && (locSheet.style.display !== 'none' || locSheet.classList.contains('active'))) {
+                if (typeof closeLocationSheet === 'function') closeLocationSheet();
+                locSheet.style.display = 'none';
+                locSheet.classList.remove('active', 'open');
+            }
+            
+            // If step has an onBeforeShow action and hasn't been prepared yet, run it and wait
+            if (typeof step.onBeforeShow === 'function' && !_sptStepPrepared[idx]) {
+                _sptStepPrepared[idx] = true;
+                step.onBeforeShow();
+                setTimeout(function() { _sptShowStep(idx); }, step.onBeforeShowDelay || 400);
+                return;
+            }
+
             const targetEl = document.getElementById(step.targetId);
-            if (!targetEl) { _sptShowStep(idx + 1); return; }
+            const isHidden = !targetEl || window.getComputedStyle(targetEl).display === 'none' || window.getComputedStyle(targetEl).visibility === 'hidden';
+            if (isHidden) {
+                _sptStepRetries[idx] = (_sptStepRetries[idx] || 0) + 1;
+                if (_sptStepRetries[idx] <= 4) {
+                    setTimeout(function() { _sptShowStep(idx); }, 350);
+                    return;
+                }
+                _sptShowStep(idx + 1); // skip if still hidden after retries
+                return;
+            }
 
             const blocker = document.getElementById('spt-blocker');
             const spotlight = document.getElementById('spt-spotlight');
@@ -19102,8 +19162,13 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             const tapLabel = document.getElementById('spt-tap-label');
             const dotsContainer = document.getElementById('spt-dots');
 
-            // Scroll target into view instantly so bounding rect is correct
-            targetEl.scrollIntoView({ behavior: 'auto', block: 'center' });
+            // Only scroll if element is not visible — prevents background content (e.g. location picker) from appearing
+            const _preRect = targetEl.getBoundingClientRect();
+            const _isVisible = _preRect.top >= 0 && _preRect.bottom <= window.innerHeight
+                            && _preRect.left >= 0 && _preRect.right <= window.innerWidth;
+            if (!_isVisible) {
+                targetEl.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+            }
             
             // Get target element position
             const rect = targetEl.getBoundingClientRect();
@@ -19118,13 +19183,18 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             spotlight.className = 'spt-ring';
             spotlight.style.display = 'block';
 
-            // Tooltip position
-            const tooltipWidth = 280;
+            // Tooltip position — fully responsive, never overflows viewport
+            const margin = 12;
+            const maxTooltipWidth = Math.min(280, window.innerWidth - margin * 2);
+            const tooltipWidth = maxTooltipWidth;
+            // Center under/over target element
             let tooltipLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
-            tooltipLeft = Math.max(12, Math.min(tooltipLeft, window.innerWidth - tooltipWidth - 12));
+            // Clamp so it never falls outside the screen
+            tooltipLeft = Math.max(margin, Math.min(tooltipLeft, window.innerWidth - tooltipWidth - margin));
             
             tooltip.style.left = tooltipLeft + 'px';
             tooltip.style.width = tooltipWidth + 'px';
+            tooltip.style.maxWidth = (window.innerWidth - margin * 2) + 'px';
             tooltip.style.display = 'block';
             
             // Determine dynamic height of tooltip box
@@ -19150,11 +19220,12 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                 // Point arrow at target center
                 const targetCenterX = rect.left + rect.width / 2;
                 let tailOffset = targetCenterX - tooltipLeft - (tooltipWidth / 2);
-                // Constrain arrow so it doesn't fly off the edge of the tooltip bubble
-                const maxOffset = tooltipWidth / 2 - 24;
+                // Constrain arrow so it stays within rounded corners (18px radius + 8px half-width = 26px inset)
+                const maxOffset = tooltipWidth / 2 - 32;
                 tailOffset = Math.max(-maxOffset, Math.min(maxOffset, tailOffset));
-                // Convert relative center offset to left position
-                tail.style.left = `calc(50% + ${tailOffset}px - 8px)`;
+                // Convert relative center offset to absolute left position (tail is 16px wide, centered)
+                const tailLeftPx = tooltipWidth / 2 + tailOffset - 8;
+                tail.style.left = tailLeftPx + 'px';
 
                 if (isTop) {
                     // Bubble is ABOVE target, tail points DOWN
@@ -19290,6 +19361,7 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             if (blocker) blocker.style.display = 'none';
             if (tooltip) { tooltip.style.opacity = '0'; tooltip.style.transition = 'opacity 0.3s ease'; setTimeout(function() { tooltip.style.display = 'none'; tooltip.style.opacity = ''; }, 350); }
             if (spotlight) { spotlight.style.opacity = '0'; spotlight.style.transition = 'opacity 0.3s ease'; setTimeout(function() { spotlight.style.display = 'none'; spotlight.style.opacity = ''; spotlight.className = ''; }, 350); }
+            if (typeof closeEmployerFormOverlay === 'function') closeEmployerFormOverlay();
             // Show completion banner
             if (typeof showGreenBanner === 'function') showGreenBanner('Kész! Most már mindent tudsz az approl!');
         }

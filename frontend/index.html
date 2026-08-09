@@ -19300,11 +19300,7 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
             blocker.onclick = advanceTour;
             blocker.ontouchstart = advanceTour;
             
-            // A tooltip inner részére ne rakjunk, hogy a Kihagyás gomb működhessen
-            if (tooltipInner) {
-                tooltipInner.onclick = advanceTour;
-                tooltipInner.ontouchstart = advanceTour;
-            }
+            // Tooltip inner click handlers removed so Kihagyás (Skip) button and dots work properly
 
             targetEl.style.position = 'relative';
 

@@ -877,7 +877,7 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.4);
-            z-index: 9000 !important;
+            z-index: 10001 !important;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
@@ -10807,18 +10807,18 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
 
                         <!-- Card 6: Dátumintervallum (Rugalmas időpont) -->
                         <div class="emp-form-section" style="border-bottom:none;">
-                            <div class="emp-section-label">${typeof window.t === 'function' ? window.t('Időpont (Dátumintervallum)') : 'Időpont (Dátumintervallum)'}</div>
-                            <div style="font-size:11px; color: var(--color-text-muted); margin-top:2px; margin-bottom:10px;">${typeof window.t === 'function' ? window.t('Válassz dátumtartományt! A pontos órát és percit a munkással egyeztetheted a chatben.') : 'Válassz dátumtartományt! A pontos órát és percit a munkással egyeztetheted a chatben.'}</div>
+                            <div class="emp-section-label">Időpont (Dátumintervallum)</div>
+                            <div style="font-size:11px; color: var(--color-text-muted); margin-top:2px; margin-bottom:10px;">Válassz dátumtartományt! A pontos órát és percit a munkással egyeztetheted a chatben.</div>
                             <div style="display:flex; gap:10px;">
                                 <div style="flex:1;">
-                                    <label style="font-size:11px; color:var(--color-text-muted); display:block; margin-bottom:4px;">${typeof window.t === 'function' ? window.t('Kezdő dátum') : 'Kezdő dátum'}</label>
+                                    <label style="font-size:11px; color:var(--color-text-muted); display:block; margin-bottom:4px;">Kezdő dátum</label>
                                     <div class="emp-input-row" style="padding:10px 12px;">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                         <input type="date" class="emp-input" id="emp-date-start" style="color: var(--color-text); font-size:13px;" onchange="syncEmpDatetimeRange()">
                                     </div>
                                 </div>
                                 <div style="flex:1;">
-                                    <label style="font-size:11px; color:var(--color-text-muted); display:block; margin-bottom:4px;">${typeof window.t === 'function' ? window.t('Záró dátum') : 'Záró dátum'}</label>
+                                    <label style="font-size:11px; color:var(--color-text-muted); display:block; margin-bottom:4px;">Záró dátum</label>
                                     <div class="emp-input-row" style="padding:10px 12px;">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                         <input type="date" class="emp-input" id="emp-date-end" style="color: var(--color-text); font-size:13px;" onchange="syncEmpDatetimeRange()">

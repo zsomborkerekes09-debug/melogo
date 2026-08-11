@@ -21981,6 +21981,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     }
                     cleanup();
                     renderEmployerJobs(localEmployerJobs);
+                    showPushNotification(typeof window.t === 'function' ? window.t('Hirdetés meghosszabbítva!') : 'Hirdetés meghosszabbítva!', typeof window.t === 'function' ? window.t('A munkások újra látják a hirdetésedet az új határidőig!') : 'A munkások újra látják a hirdetésedet az új határidőig!', 'var(--color-text)');
                 } catch(e) {
                     console.error('repost error', e);
                     alert(window.t('Hiba történt a mentés során.'));

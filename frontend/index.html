@@ -14632,7 +14632,7 @@ function filterWorkerByExactJob(jobName) {
             items.forEach(item => {
                 const opt = document.createElement('option');
                 opt.value = item.name;
-                opt.innerText = item.name + '  —  ' + item.price.toLocaleString('hu-HU') + ' Ft';
+                opt.innerText = (typeof window.t === 'function' ? window.t(item.name) : item.name) + ' — ' + item.price.toLocaleString('hu-HU') + ' Ft';
                 select.appendChild(opt);
             });
 
@@ -19161,7 +19161,7 @@ let settingsConfirmedAddress = null;
                 const firstItem = jobCatalog[mappedCat][0];
                 const label = document.getElementById('emp-job-display-text');
                 if (label) {
-                    label.textContent = firstItem.name + '  —  ' + firstItem.price.toLocaleString('hu-HU') + ' Ft';
+                    label.textContent = (typeof window.t === 'function' ? window.t(firstItem.name) : firstItem.name) + ' — ' + firstItem.price.toLocaleString('hu-HU') + ' Ft';
                 }
                 updateEmpPriceFromJob(firstItem.name);
             }

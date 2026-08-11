@@ -7101,13 +7101,27 @@ input[type="checkbox"]:checked { background-color: var(--color-green) !important
                             </div>
                         </div>
 
-                        <!-- Card 6: Időpont -->
+                        <!-- Card 6: Dátumintervallum (Rugalmas időpont) -->
                         <div class="emp-form-section" style="border-bottom:none;">
-                            <div class="emp-section-label">Időpont</div>
-                            <div class="emp-input-row">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                                <input type="datetime-local" class="emp-input" id="emp-datetime" style="color: var(--color-text);">
+                            <div class="emp-section-label">Időpont (Dátumintervallum)</div>
+                            <div style="font-size:11px; color: var(--color-text-muted); margin-top:2px; margin-bottom:10px;">Válassz dátumtartományt! A pontos órát és percit a munkással egyeztetheted a chatben.</div>
+                            <div style="display:flex; gap:10px;">
+                                <div style="flex:1;">
+                                    <label style="font-size:11px; color:var(--color-text-muted); display:block; margin-bottom:4px;">Kezdő dátum</label>
+                                    <div class="emp-input-row" style="padding:10px 12px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        <input type="date" class="emp-input" id="emp-date-start" style="color: var(--color-text); font-size:13px;" onchange="syncEmpDatetimeRange()">
+                                    </div>
+                                </div>
+                                <div style="flex:1;">
+                                    <label style="font-size:11px; color:var(--color-text-muted); display:block; margin-bottom:4px;">Záró dátum</label>
+                                    <div class="emp-input-row" style="padding:10px 12px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text)" stroke-width="1.5" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        <input type="date" class="emp-input" id="emp-date-end" style="color: var(--color-text); font-size:13px;" onchange="syncEmpDatetimeRange()">
+                                    </div>
+                                </div>
                             </div>
+                            <input type="hidden" id="emp-datetime">
                         </div>
 
                         <!-- Scoped Submit Button in scrollable content -->
@@ -13029,7 +13043,10 @@ let settingsConfirmedAddress = null;
                     lon: fJob.lon || (17.79 + (Math.random() - 0.5) * 0.05),
                     category: fJob.category || 'Kert',
                     location: fJob.location || 'Kaposvár',
-                    time: fJob.datetime ? fJob.datetime : new Date().toISOString().slice(0, 16),
+                    time: fJob.agreedDatetime || (fJob.dateStart ? fJob.dateStart + 'T00:00' : (fJob.datetime ? fJob.datetime : new Date().toISOString().slice(0, 16))),
+                    dateStart: fJob.dateStart || (fJob.datetime ? fJob.datetime.slice(0, 10) : ''),
+                    dateEnd: fJob.dateEnd || (fJob.datetime ? fJob.datetime.slice(0, 10) : ''),
+                    agreedDatetime: fJob.agreedDatetime || '',
                     urgent: fJob.urgent || false,
                     timeOffset: fJob.createdAt ? -(Number(fJob.createdAt)) : -Date.now(),
                     desc: fJob.details || fJob.desc || '',
@@ -13246,7 +13263,7 @@ let settingsConfirmedAddress = null;
                             </div>
                             <div class="job-meta-item">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                ${getRelativeTime(job.time)}
+                                ${typeof formatJobDateDisplay === 'function' ? formatJobDateDisplay(job) : getRelativeTime(job.time)}
                             </div>
                             <div class="job-meta-item" style="color:var(--color-text-light); font-size:11px;">
                                 📍 ${job.location && typeof job.location === 'string' ? job.location.split(',').slice(-1)[0].trim() : (typeof window.t === 'function' ? window.t('Ismeretlen') : 'Ismeretlen')}
@@ -13302,7 +13319,12 @@ let settingsConfirmedAddress = null;
                 
                 // Exclude expired jobs
                 let notExp = true; 
-                if (j.time) { 
+                if (j.dateEnd) {
+                    const jd = new Date(j.dateEnd + 'T23:59:59');
+                    if (!isNaN(jd.getTime()) && jd < new Date()) {
+                        notExp = false;
+                    }
+                } else if (j.time) { 
                     const jd = new Date(j.time); 
                     if (!isNaN(jd.getTime()) && jd < new Date()) {
                         notExp = false;
@@ -13336,7 +13358,12 @@ let settingsConfirmedAddress = null;
 
             // Date filter
             if (activeDateFilter) {
-                jobs = jobs.filter(j => j.time && j.time.startsWith(activeDateFilter));
+                jobs = jobs.filter(j => {
+                    if (j.dateStart && j.dateEnd) {
+                        return activeDateFilter >= j.dateStart && activeDateFilter <= j.dateEnd;
+                    }
+                    return j.time && j.time.startsWith(activeDateFilter);
+                });
             }
 
             if (activeSortMode === 'newest') {
@@ -13344,7 +13371,11 @@ let settingsConfirmedAddress = null;
                 return jobs;
             }
             if (activeSortMode === 'date') {
-                jobs.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+                jobs.sort((a, b) => {
+                    const keyA = a.dateStart || a.time || '';
+                    const keyB = b.dateStart || b.time || '';
+                    return keyA.localeCompare(keyB);
+                });
                 return jobs;
             }
 
@@ -13723,7 +13754,10 @@ let settingsConfirmedAddress = null;
                 if (s !== 'Keresés' && s !== 'Kereses' && s !== 'open' && s !== 'active') return false;
                 
                 // Exclude expired jobs from search list
-                if (j.time) {
+                if (j.dateEnd) {
+                    const jd = new Date(j.dateEnd + 'T23:59:59');
+                    if (!isNaN(jd.getTime()) && jd < new Date()) return false;
+                } else if (j.time) {
                     const jd = new Date(j.time);
                     if (!isNaN(jd.getTime()) && jd < new Date()) return false;
                 }
@@ -15848,23 +15882,100 @@ let settingsConfirmedAddress = null;
             btn.style.color = 'var(--color-green)';
         }
 
-        // Init datetime field with today + 1 hour
-        function initEmpDatetime() {
-            const dt = document.getElementById('emp-datetime');
-            if (!dt) return;
-            const saved = localStorage.getItem('as_emp-datetime');
-            if (saved) {
-                const savedDate = new Date(saved);
-                if (!isNaN(savedDate.getTime()) && savedDate < new Date()) {
-                    localStorage.removeItem('as_emp-datetime');
-                } else {
-                    dt.value = saved; return;
+        // Format job date for display (Range or Agreed Time)
+        function formatJobDateDisplay(job) {
+            if (!job) return "N/A";
+            
+            // 1. If an exact time was agreed upon or specified
+            if (job.agreedDatetime || (job.status === 'accepted' && job.datetime && job.datetime.includes('T'))) {
+                const dtVal = job.agreedDatetime || job.datetime;
+                if (dtVal && dtVal.includes('T')) {
+                    try {
+                        const parts = dtVal.split('T');
+                        const dp = parts[0].split('-');
+                        const tp = parts[1].split(':');
+                        const months = ['jan.', 'febr.', 'márc.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+                        const monthIndex = parseInt(dp[1], 10) - 1;
+                        const mStr = months[monthIndex] || dp[1] + '.';
+                        return `${mStr} ${parseInt(dp[2], 10)}. ${tp[0]}:${tp[1]}`;
+                    } catch(e) {}
+                }
+                return dtVal;
+            }
+            
+            // 2. If flexible range is defined (dateStart and dateEnd)
+            if (job.dateStart && job.dateEnd) {
+                if (job.dateStart === job.dateEnd) {
+                    try {
+                        const dp = job.dateStart.split('-');
+                        const months = ['január', 'február', 'március', 'április', 'május', 'június', 'július', 'augusztus', 'szeptember', 'október', 'november', 'december'];
+                        const monthIndex = parseInt(dp[1], 10) - 1;
+                        const mStr = months[monthIndex] ? (months[monthIndex].charAt(0).toUpperCase() + months[monthIndex].slice(1)) : dp[1];
+                        return `${mStr} ${parseInt(dp[2], 10)}.`;
+                    } catch(e) {}
+                    return job.dateStart;
+                }
+                try {
+                    const p1 = job.dateStart.split('-');
+                    const p2 = job.dateEnd.split('-');
+                    const months = ['január', 'február', 'március', 'április', 'május', 'június', 'július', 'augusztus', 'szeptember', 'október', 'november', 'december'];
+                    const m1 = months[parseInt(p1[1], 10) - 1] || p1[1];
+                    const m2 = months[parseInt(p2[1], 10) - 1] || p2[1];
+                    const capM1 = m1.charAt(0).toUpperCase() + m1.slice(1);
+                    
+                    if (p1[1] === p2[1]) {
+                        return `${capM1} ${parseInt(p1[2], 10)}–${parseInt(p2[2], 10)}. között`;
+                    } else {
+                        const capM2 = m2.charAt(0).toUpperCase() + m2.slice(1);
+                        return `${capM1} ${parseInt(p1[2], 10)}. – ${capM2} ${parseInt(p2[2], 10)}. között`;
+                    }
+                } catch(e) {
+                    return `${job.dateStart} – ${job.dateEnd}`;
                 }
             }
-            const now = new Date();
-            now.setHours(now.getHours() + 1, 0, 0, 0);
+            
+            // 3. Fallback for legacy jobs
+            if (job.datetime) return job.datetime;
+            if (job.time) return job.time;
+            return "Rugalmas időpont";
+        }
+
+        function syncEmpDatetimeRange() {
+            const sEl = document.getElementById('emp-date-start');
+            const eEl = document.getElementById('emp-date-end');
+            const dtHidden = document.getElementById('emp-datetime');
+            if (sEl && eEl) {
+                if (sEl.value && !eEl.value) {
+                    eEl.value = sEl.value;
+                } else if (eEl.value && sEl.value && eEl.value < sEl.value) {
+                    eEl.value = sEl.value;
+                }
+                if (dtHidden) {
+                    dtHidden.value = formatJobDateDisplay({ dateStart: sEl.value, dateEnd: eEl.value });
+                }
+            }
+        }
+
+        // Init date range fields
+        function initEmpDatetime() {
+            const sEl = document.getElementById('emp-date-start');
+            const eEl = document.getElementById('emp-date-end');
+            const dt = document.getElementById('emp-datetime');
+            
+            const today = new Date();
             const pad = n => String(n).padStart(2, '0');
-            dt.value = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + 'T' + pad(now.getHours()) + ':00';
+            const todayStr = today.getFullYear() + '-' + pad(today.getMonth()+1) + '-' + pad(today.getDate());
+            
+            const endDay = new Date();
+            endDay.setDate(today.getDate() + 3);
+            const endStr = endDay.getFullYear() + '-' + pad(endDay.getMonth()+1) + '-' + pad(endDay.getDate());
+            
+            if (sEl && !sEl.value) sEl.value = todayStr;
+            if (eEl && !eEl.value) eEl.value = endStr;
+            
+            if (dt) {
+                dt.value = formatJobDateDisplay({ dateStart: todayStr, dateEnd: endStr });
+            }
         }
 
         // ================================================================
@@ -18085,7 +18196,7 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                         </div>
                         <div class="emp-ad-middle">
                             <div class="emp-ad-title">${job.title}</div>
-                            <div class="emp-ad-meta">${job.location ? job.location.split(',').slice(-1)[0].trim() : 'Kaposvár'} · ${job.datetime || ''}</div>
+                            <div class="emp-ad-meta">${job.location ? job.location.split(',').slice(-1)[0].trim() : 'Kaposvár'} · ${typeof formatJobDateDisplay === 'function' ? formatJobDateDisplay(job) : (job.datetime || '')}</div>
                             ${repostBtnHtml}
                         </div>
                         <div class="emp-ad-right">
@@ -18216,9 +18327,13 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
                 // 3. Check active jobs for expiration
                 if (s === 'Keresés' || s === 'Kereses' || s === 'pending') {
-                    if (!job.datetime && !job.time) return;
-                    const jd = new Date(job.datetime || job.time);
-                    if (isNaN(jd.getTime()) || jd >= new Date()) return; // Not expired yet
+                    let expirationDateObj = null;
+                    if (job.dateEnd) {
+                        expirationDateObj = new Date(job.dateEnd + 'T23:59:59');
+                    } else if (job.datetime || job.time) {
+                        expirationDateObj = new Date(job.datetime || job.time);
+                    }
+                    if (!expirationDateObj || isNaN(expirationDateObj.getTime()) || expirationDateObj >= new Date()) return; // Not expired yet
 
                     // Job datetime HAS passed! Check for pending applications
                     const pendingApps = localWorkerApplications.filter(a => String(a.jobId) === String(job.id) && a.status === 'Függőben');
@@ -18569,10 +18684,14 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 updateEmpPriceDisplay(job.price);
             }
 
-            // Prefill Datetime
+            // Prefill Datetime Range
+            const sEl = document.getElementById('emp-date-start');
+            const eEl = document.getElementById('emp-date-end');
+            if (sEl && job.dateStart) sEl.value = job.dateStart;
+            if (eEl && job.dateEnd) eEl.value = job.dateEnd;
             const datetimeEl = document.getElementById('emp-datetime');
             if (datetimeEl) {
-                datetimeEl.value = job.datetime;
+                datetimeEl.value = formatJobDateDisplay(job);
             }
         }
 
@@ -18702,7 +18821,13 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
             const street = document.getElementById('emp-street').value || 'Fő utca';
             const house = document.getElementById('emp-house').value || '1';
             const price = parseInt(document.getElementById('emp-price-input').value) || 12000;
-            const dt = document.getElementById('emp-datetime').value || 'Holnap, 14:00';
+            
+            const todayISO = new Date().toISOString().slice(0, 10);
+            const dateStartVal = (document.getElementById('emp-date-start') ? document.getElementById('emp-date-start').value : '') || todayISO;
+            const dateEndVal = (document.getElementById('emp-date-end') ? document.getElementById('emp-date-end').value : '') || dateStartVal;
+            const dtFormatted = formatJobDateDisplay({ dateStart: dateStartVal, dateEnd: dateEndVal });
+            const dtHidden = document.getElementById('emp-datetime');
+            if (dtHidden) dtHidden.value = dtFormatted;
 
             if (currentEditJobId) {
                 // Editing existing job
@@ -18713,7 +18838,16 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                     localEmployerJobs[jobIndex].location = confirmedAddress;
                     localEmployerJobs[jobIndex].price = price;
                     localEmployerJobs[jobIndex].category = empActiveCat;
-                    localEmployerJobs[jobIndex].datetime = dt;
+                    localEmployerJobs[jobIndex].dateStart = dateStartVal;
+                    localEmployerJobs[jobIndex].dateEnd = dateEndVal;
+                    localEmployerJobs[jobIndex].isFlexibleRange = true;
+                    localEmployerJobs[jobIndex].datetime = dtFormatted;
+                    localEmployerJobs[jobIndex].time = dtFormatted;
+                    localEmployerJobs[jobIndex].urgent = document.getElementById('emp-urgent-toggle') ? document.getElementById('emp-urgent-toggle').checked : false;
+                    localEmployerJobs[jobIndex].toolsRequired = activeToolsRequired;
+                    localEmployerJobs[jobIndex].lat = confirmedLat || 46.3667;
+                    localEmployerJobs[jobIndex].lon = confirmedLon || 17.7833;
+                    localEmployerJobs[jobIndex].geohash = window['geofire-common'] ? window['geofire-common'].geohashForLocation([confirmedLat || 46.3667, confirmedLon || 17.7833]) : '';
                     localEmployerJobs[jobIndex].urgent = document.getElementById('emp-urgent-toggle') ? document.getElementById('emp-urgent-toggle').checked : false;
                     localEmployerJobs[jobIndex].toolsRequired = activeToolsRequired;
                     localEmployerJobs[jobIndex].lat = confirmedLat || 46.3667;
@@ -18776,7 +18910,11 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                     price: price,
                     status: 'Keresés',
                     category: empActiveCat,
-                    datetime: dt,
+                    dateStart: dateStartVal,
+                    dateEnd: dateEndVal,
+                    isFlexibleRange: true,
+                    datetime: dtFormatted,
+                    time: dtFormatted,
                     ownerEmail: (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.email : 'employer@melogo.hu',
                     ownerUid: (window.firebaseAuth && window.firebaseAuth.currentUser) ? window.firebaseAuth.currentUser.uid : 'NO_UID',
                     createdAt: Date.now(),

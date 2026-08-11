@@ -18518,10 +18518,12 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
                 if (job) {
                     job.datetime = newDatetime;
                     job.time = newDatetime;
+                    job.agreedDatetime = newDatetime;
                 }
                 if (window.jobCache && window.jobCache[jobId]) {
                     window.jobCache[jobId].datetime = newDatetime;
                     window.jobCache[jobId].time = newDatetime;
+                    window.jobCache[jobId].agreedDatetime = newDatetime;
                 }
                 
                 // Update DOM immediately

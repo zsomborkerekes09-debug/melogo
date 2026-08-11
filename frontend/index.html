@@ -793,7 +793,7 @@
             max-width: 100%;
             width: 100%;
             background-color: var(--color-surface);
-            z-index: 9999 !important;
+            z-index: 10002 !important;
             pointer-events: none !important;
             transform: translateY(100%);
             visibility: hidden;
@@ -24405,7 +24405,13 @@ function openJobSheet() {
         if(!opt.value) return; // Skip empty placeholder
         const div = document.createElement('div');
         div.className = 'custom-sheet-option';
-        div.innerText = opt.text;
+        const parts = opt.text.split(/ [—-] /);
+        const baseName = opt.value;
+        const translatedName = typeof window.t === 'function' ? window.t(baseName) : baseName;
+        const priceStr = parts.length > 1 ? parts[1] : '';
+        div.style.display = 'flex';
+        div.style.justifyContent = 'space-between';
+        div.innerHTML = '<span style="pointer-events: none;">' + translatedName + '</span>' + (priceStr ? '<span style="pointer-events: none; color: var(--color-text-light);">' + priceStr + '</span>' : '');
         div.onclick = () => {
             select.value = opt.value;
             document.getElementById('emp-job-display-text').innerText = opt.text;

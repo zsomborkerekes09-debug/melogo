@@ -19190,7 +19190,7 @@ let settingsConfirmedAddress = null;
             items.forEach(item => {
                 const row = document.createElement('div');
                 row.style.cssText = 'padding:14px 0;/* removed */display:flex;justify-content:space-between;align-items:center;cursor:pointer;';
-                row.innerHTML = '<span style="font-size:14px;color: var(--color-text);font-weight: 300;">' + item.name + '</span><span style="font-size:13px;color: var(--color-text);font-weight: 400;">' + item.price.toLocaleString('hu-HU') + ' Ft</span>';
+                row.innerHTML = '<span style="font-size:14px;color: var(--color-text);font-weight: 300;">' + (typeof window.t === 'function' ? window.t(item.name) : item.name) + '</span><span style="font-size:13px;color: var(--color-text);font-weight: 400;">' + item.price.toLocaleString('hu-HU') + ' Ft</span>';
                 row.onclick = () => {
                     let jobName = item.name;
                     if (jobName === 'Egyéni munka megadása') {

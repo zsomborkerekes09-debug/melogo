@@ -22404,6 +22404,8 @@ const matchedChat = localChats.find(c => c.jobId === acceptedApp.jobId && (c.wor
 
         // Overwrite employerPublishJob to push or update the localEmployerJobs database
         async function employerPublishJobNew(btnEvent) {
+            if (window._isPublishingJob) return;
+            window._isPublishingJob = true;
             if (!window.firebaseAuth || (!window.firebaseAuth.currentUser && !localStorage.getItem('melogo_employer_session') && !localStorage.getItem('melogo_worker_session'))) {
                 showPushNotification(window.t("Hiba"), window.t("Hirdetés feladásához be kell jelentkezned vagy regisztrálnod kell!"), "#EF4444");
                 localStorage.removeItem('melogo_guest_mode');
@@ -22605,6 +22607,7 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                         openEmployerAdDetailNew(currentEditJobId);
                         showPushNotification(window.t('Hirdetés módosítva!'), window.t('A változtatások sikeresen elmentve!'), 'var(--color-text)');
                         if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = submitBtn._originalText || 'Hirdetés közzététele'; }
+                        window._isPublishingJob = false;
                     }, 1800);
                 }
             } else {
@@ -22674,6 +22677,7 @@ localEmployerJobs[jobIndex].deadlineNotified = false;
                         renderMapPins(); // sync map pins
                         showPushNotification(window.t('Hirdetés közzétéve!'), window.t('A munkások már látják a munkádat!'), 'var(--color-text)');
                         if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = submitBtn._originalText || 'Hirdetés közzététele'; }
+                        window._isPublishingJob = false;
                     }, 1800);
                 }
             }
